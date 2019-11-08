@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
+// A contract for the repository
+
 abstract class SkillRepository {
   Future<Either<Failure, List<Skill>>> getAllSkills();
   Future<Either<Failure, Skill>> getSkillById(int id);

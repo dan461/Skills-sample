@@ -22,7 +22,7 @@ void main() {
     () async {
       when(mockSkillsRepo.insertNewSkill(testSkill))
           .thenAnswer((_) async => Right(newId));
-      final result = await useCase(Params(skill: testSkill));
+      final result = await useCase(InsertParams(skill: testSkill));
       expect(result, Right(newId));
       verify(mockSkillsRepo.insertNewSkill(testSkill));
       verifyNoMoreInteractions(mockSkillsRepo);

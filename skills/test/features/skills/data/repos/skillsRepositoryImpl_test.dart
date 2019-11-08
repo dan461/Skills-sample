@@ -1,6 +1,10 @@
+import 'package:flutter/services.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:skills/core/error/exceptions.dart';
+import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
+import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/data/repos/skillsRepositoryImpl.dart';
 import 'package:skills/core/network/networkInfo.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -8,20 +12,42 @@ import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:dartz/dartz.dart';
 
 class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
-
+class MockRemoteDataSource extends Mock implements SkillsRemoteDataSource {}
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
   SkillsRepositoryImpl repositoryImpl;
   MockNetworkInfo mockNetworkInfo;
   MockLocalDataSource mockLocalDataSource;
+  MockRemoteDataSource mockRemoteDataSource;
 
   setUp(() {
     mockLocalDataSource = MockLocalDataSource();
+    mockRemoteDataSource = MockRemoteDataSource();
     mockNetworkInfo = MockNetworkInfo();
     repositoryImpl = SkillsRepositoryImpl(
-        localDataSource: mockLocalDataSource, networkInfo: mockNetworkInfo);
+        localDataSource: mockLocalDataSource, remoteDataSource: mockRemoteDataSource, networkInfo: mockNetworkInfo);
   });
+
+  void runTestsOnline(Function body){
+    group('device is online', (){
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenThrow((_) async => true);
+      });
+
+      body();
+    });
+  }
+
+  void runTestsOffline(Function body){
+    group('device is offline', (){
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenThrow((_) async => false);
+      });
+
+      body();
+    });
+  }
 
   group('getAllSkills', (){
     final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
@@ -29,7 +55,7 @@ void main() {
     final Skill tSkill = skillModel;
     
 
-    test('returns a List of Skills', () async {
+    test('returns a List of SkillModels', () async {
       when(mockLocalDataSource.getAllSkills()).thenAnswer((_) async => skillModelList);
       final result = await repositoryImpl.getAllSkills();
       verify(mockLocalDataSource.getAllSkills());
@@ -44,7 +70,7 @@ void main() {
 
     setUp(() {});
 
-    test('returns list of Skills', () async {
+    test('returns a specific SkillModel', () async {
       when(mockLocalDataSource.getSkillById(1))
           .thenAnswer((_) async => skillModel);
       final result = await repositoryImpl.getSkillById(1);
@@ -54,14 +80,28 @@ void main() {
     });
   });
 
-  /* TODO this is only testing for connection for now, only implementing to
-      follow the course
+  /* TODO only implementing to follow the course. No Remote source yet
   */
+  
   group('downloadAllSkills', () {
     test('test for connection', () async {
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       repositoryImpl.downloadAllSkills();
       verify(mockNetworkInfo.isConnected);
     });
+
+    test('should return failure when call to remote data source is unsuccessful', ()
+     async {
+
+       // TODO remove this after adding else to downloadAllSkills to repo impl
+       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+       when(mockRemoteDataSource.downloadAllSkills()).thenThrow(ServerException());
+
+       final result = await repositoryImpl.downloadAllSkills();
+
+       verify(mockRemoteDataSource.downloadAllSkills());
+       expect(result, equals(Left(ServerFailure())));
+       verifyZeroInteractions(mockLocalDataSource);
+     });
   });
 }

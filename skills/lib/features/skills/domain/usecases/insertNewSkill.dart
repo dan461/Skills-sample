@@ -6,18 +6,22 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/repos/skill_repo.dart';
 import 'package:dartz/dartz.dart';
 
-class InsertNewSkill extends UseCase<int, Params> {
+class InsertNewSkill extends UseCase<int, InsertParams> {
   final SkillRepository repo;
 
   InsertNewSkill(this.repo);
 
-  Future<Either<Failure, int>> call(Params params) async {
+  Future<Either<Failure, int>> call(InsertParams params) async {
     return await repo.insertNewSkill(params.skill);
   }
 }
 
-class Params extends Equatable {
+class InsertParams extends Params {
   final Skill skill;
 
-  Params({@required this.skill}) : super([skill]);
+  InsertParams({@required this.skill}) : super();
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [skill];
 }

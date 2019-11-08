@@ -6,5 +6,27 @@ import 'package:skills/core/network/networkInfo.dart';
 class MockDataConnectionChecker extends Mock implements DataConnectionChecker {}
 
 void main() {
-  MockDataConnectionChecker dataConnectionChecker;
+  NetworkInfoImpl networkInfoImpl;
+  MockDataConnectionChecker mockDataConnectionChecker;
+
+  setUp((){
+    mockDataConnectionChecker = MockDataConnectionChecker();
+    networkInfoImpl = NetworkInfoImpl(mockDataConnectionChecker);
+  });
+
+  group('isConnected', (){
+    test('should forward the call to DataConnectionChecker.hasConnection', () async {
+
+      // using a Future as the return of call to .hasConnection. 
+      final tHasConnectionFuture = Future.value(true);
+
+      when(mockDataConnectionChecker.hasConnection)
+      .thenAnswer((_) => tHasConnectionFuture);
+
+      final result = networkInfoImpl.isConnected;
+      verify(mockDataConnectionChecker.hasConnection);
+      // using pass-by-reference to be sure the result is the same Future instance returned above
+      expect(result, tHasConnectionFuture);
+    });
+  });
 }
