@@ -1,4 +1,4 @@
-import 'package:skills/core/error/failures.dart';
+import 'package:skills/core/error/failures.dart' show CacheFailure;
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
