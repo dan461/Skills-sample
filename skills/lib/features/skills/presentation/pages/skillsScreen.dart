@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
+import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
+import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
+import 'package:skills/service_locator.dart';
 
 
 class SkillsScreen extends StatefulWidget {
@@ -8,17 +17,13 @@ class SkillsScreen extends StatefulWidget {
 }
 
 class _SkillsScreenState extends State<SkillsScreen> {
-  // DbHelper helper = DbHelper.instance;
-  // final skillData = SkillData();
+  
+  void addSkill() {
+     final testSkill = Skill(name: 'test', source: 'test');
+          var insert = locator.get<InsertNewSkill>();
+          insert(InsertParams(skill: testSkill));
 
-  // void addSkill() {
-  //   skillData.addNewSkill('Newest', 'kdkdkkd');
-  //  showModalBottomSheet(
-  //      context: context,
-  //       builder: (context) {
-  //         return Container();
-  //       });
-  // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +31,39 @@ class _SkillsScreenState extends State<SkillsScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          
-//          skillData.addNewSkill('NEWWW', 'jdjdjdjd');
+          addSkill();
         },
       ),
-      body: Container(
-        child: new SkillsList(),
+      body: BlocProvider(
+        builder: (_) => locator<SkillsBloc>(),
+          child: BlocBuilder<SkillsBloc, SkillsState>(
+            builder: (context, state){
+              BlocProvider.of<SkillsBloc>(context).add(GetAllSkillsEvent());
+              if (state is InitialSkillsState) {
+                return Container(
+                  height: MediaQuery.of(context).size.height / 5,
+                  child: Center(
+                    child: Text('Empty'),
+                  ),
+                );
+              } else if (state is AllSkillsLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is AllSkillsLoaded) {
+                return Container(child: SkillsList(skills: state.skills,));
+              }
+            },
+          )
       ),
     );
   }
 }
 
 class SkillsList extends StatefulWidget {
+  final List<Skill> skills;
   const SkillsList({
-    Key key,
+    Key key, this.skills,
   }) : super(key: key);
 
   @override
@@ -49,14 +73,10 @@ class SkillsList extends StatefulWidget {
 class _SkillsListState extends State<SkillsList> {
   // static DbHelper helper = DbHelper.instance;
 
-  Future<List<Skill>> _allSkills;
-//  SkillData _skillData;
-
+  
   @override
   void initState() {
     super.initState();
-    // SkillData skillData = SkillData();
-    // _allSkills = skillData.skills;
   }
 
   SkillCell _skillsListBuilder(BuildContext context, int index) {
@@ -72,12 +92,7 @@ class _SkillsListState extends State<SkillsList> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Skill>>(
-      future: _allSkills,
-      builder: (BuildContext context, AsyncSnapshot<List<Skill>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            return Container(
+    return Container(
               color: Colors.grey[200],
               margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
               child: Column(
@@ -86,25 +101,15 @@ class _SkillsListState extends State<SkillsList> {
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         return SkillCell(
-                          skill: snapshot.data[index],
+                          skill: widget.skills[index],
                         );
                       },
-                      itemCount: snapshot.data.length,
+                      itemCount: widget.skills.length,
                     ),
                   ),
                 ],
               ),
             );
-          case ConnectionState.waiting:
-            return CircularProgressIndicator();
-          case ConnectionState.active:
-            break;
-          case ConnectionState.none:
-            break;
-        }
-        return null;
-      },
-    );
   }
 }
 

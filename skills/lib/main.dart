@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:skills/features/skills/presentation/pages/homeScreen.dart';
+import 'package:skills/service_locator.dart' as locator;
 
-void main() => runApp(SkillsApp());
+void main() {
+  locator.init();
+  runApp(SkillsApp());
+} 
 
 class SkillsApp extends StatefulWidget {
   @override
