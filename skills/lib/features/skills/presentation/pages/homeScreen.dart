@@ -15,7 +15,6 @@ class _HomeScreenState extends State<HomeScreen> {
   static List<Widget> _routes = <Widget>[
     SkillsScreen(),
     SchedulerScreen(),
-    
   ];
 
   void _itemTapped(int index) {
@@ -27,9 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('Your Skills')),
-      ),
+      backgroundColor: Colors.green,
       body: SafeArea(child: _routes[_selectedIndex]),
       bottomNavigationBar:
           BottomNavigationBar(items: const <BottomNavigationBarItem>[

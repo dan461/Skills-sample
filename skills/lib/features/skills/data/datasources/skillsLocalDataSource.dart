@@ -12,7 +12,7 @@ abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
   Future<SkillModel> getSkillById(int id);
-  Future<int> insertNewSkill(SkillModel skillModel);
+  Future<int> insertNewSkill(Skill skill);
 }
 
 
@@ -83,9 +83,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> insertNewSkill(SkillModel skillModel) {
-    // TODO: implement insertNewSkill
-    return null;
+  Future<int> insertNewSkill(Skill skill) async {
+    final Database db = await database;
+    final skillModel = SkillModel(name: skill.name, source: skill.source);
+    int id = await db.insert(skillsTable, skillModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+
+    return id;
   }
 
 }

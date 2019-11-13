@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
-import 'package:skills/features/skills/presentation/bloc/newSkillScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
 import 'package:skills/service_locator.dart';
+import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 
+import 'newSkillScreen.dart';
 
 class SkillsScreen extends StatefulWidget {
   @override
@@ -17,44 +15,62 @@ class SkillsScreen extends StatefulWidget {
 }
 
 class _SkillsScreenState extends State<SkillsScreen> {
-  
-  void addSkill() {
-     final testSkill = Skill(name: 'test', source: 'test');
-          var insert = locator.get<InsertNewSkill>();
-          insert(InsertParams(skill: testSkill));
+  SkillsBloc bloc;
+  @override
+  void initState() {
+    super.initState();
+    bloc = locator<SkillsBloc>();
+    bloc.add(GetAllSkillsEvent());
+  }
 
+  void addSkill() async {
+    Skill newSkill =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewSkillScreen();
+    }));
+    if (newSkill != null) {
+      var insert = locator.get<InsertNewSkill>();
+      await insert(InsertParams(skill: newSkill));
+      bloc.add(GetAllSkillsEvent());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          addSkill();
-        },
-      ),
-      body: BlocProvider(
-        builder: (_) => locator<SkillsBloc>(),
-          child: BlocBuilder<SkillsBloc, SkillsState>(
-            builder: (context, state){
-              BlocProvider.of<SkillsBloc>(context).add(GetAllSkillsEvent());
-              if (state is InitialSkillsState) {
-                return Container(
-                  height: MediaQuery.of(context).size.height / 5,
-                  child: Center(
-                    child: Text('Empty'),
-                  ),
-                );
-              } else if (state is AllSkillsLoading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is AllSkillsLoaded) {
-                return Container(child: SkillsList(skills: state.skills,));
-              }
-            },
-          )
+    return BlocProvider(
+      builder: (_) => bloc,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Center(child: Text('Your Skills')),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                addSkill();
+              },
+            )
+          ],
+        ),
+        body: BlocBuilder<SkillsBloc, SkillsState>(
+          builder: (context, state) {
+            if (state is InitialSkillsState) {
+              return Container(
+                height: MediaQuery.of(context).size.height / 5,
+                child: Center(
+                  child: Text('Empty'),
+                ),
+              );
+            } else if (state is AllSkillsLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is AllSkillsLoaded) {
+              return Container(
+                child: SkillsList(skills: state.skills),
+              );
+            }
+          },
+        ),
       ),
     );
   }
@@ -63,7 +79,8 @@ class _SkillsScreenState extends State<SkillsScreen> {
 class SkillsList extends StatefulWidget {
   final List<Skill> skills;
   const SkillsList({
-    Key key, this.skills,
+    Key key,
+    this.skills,
   }) : super(key: key);
 
   @override
@@ -71,45 +88,31 @@ class SkillsList extends StatefulWidget {
 }
 
 class _SkillsListState extends State<SkillsList> {
-  // static DbHelper helper = DbHelper.instance;
-
-  
   @override
   void initState() {
     super.initState();
   }
 
-  SkillCell _skillsListBuilder(BuildContext context, int index) {
-    return SkillCell();
-  }
-
-  // static Skill testSkill(String name, String source) {
-  //   Skill skill = Skill();
-  //   skill.name = name;
-  //   skill.source = source;
-  //   return skill;
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-              color: Colors.grey[200],
-              margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return SkillCell(
-                          skill: widget.skills[index],
-                        );
-                      },
-                      itemCount: widget.skills.length,
-                    ),
-                  ),
-                ],
-              ),
-            );
+      color: Colors.grey[200],
+      margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return SkillCell(
+                  skill: widget.skills[index],
+                );
+              },
+              itemCount: widget.skills.length,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

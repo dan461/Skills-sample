@@ -80,6 +80,21 @@ void main() {
     });
   });
 
+  group('insertNewSkill', () {
+    final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
+    final Skill tSkill = skillModel;
+
+    setUp(() {});
+
+    test('returns a specific SkillModel', () async {
+      when(mockLocalDataSource.insertNewSkill(tSkill)).thenAnswer((_) async => 1);
+      final result = await repositoryImpl.insertNewSkill(tSkill);
+
+      verify(mockLocalDataSource.insertNewSkill(tSkill));
+      expect(result, equals(Right(1)));
+    });
+  });
+
   /* TODO only implementing to follow the course. No Remote source yet
   */
   

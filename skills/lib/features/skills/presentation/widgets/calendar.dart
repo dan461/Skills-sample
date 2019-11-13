@@ -18,7 +18,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  double monthHeight = 300.0;
+  double monthHeight;
   DateTime activeMonth = DateTime.now();
 
   String monthString(int month) {
@@ -102,7 +102,7 @@ class _CalendarState extends State<Calendar> {
 
   Container monthBuilder() {
     return Container(
-      height: monthHeight + 1,
+      height: monthHeight,
       decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(width: 1.0, color: Colors.grey[300]),
@@ -208,6 +208,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    monthHeight = MediaQuery.of(context).size.height / 2.5;
     return Container(
       color: Colors.white,
       child: Column(
