@@ -1,8 +1,18 @@
+// import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_event.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_state.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/bloc.dart';
 import 'package:skills/service_locator.dart';
+
+import 'goalEditorScreen.dart';
 
 class NewSkillScreen extends StatefulWidget {
   @override
@@ -10,6 +20,14 @@ class NewSkillScreen extends StatefulWidget {
 }
 
 class _NewSkillScreenState extends State<NewSkillScreen> {
+  NewSkillBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = locator<NewSkillBloc>();
+  }
+
   TextEditingController _nameController = TextEditingController();
   TextEditingController _sourceController = TextEditingController();
   bool _doneEnabled = false;
@@ -21,59 +39,141 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     });
   }
 
-  void _insertNewSkill() {
+  void _insertNewSkill() async {
     Skill newSkill =
         Skill(name: _nameController.text, source: _sourceController.text);
-    Navigator.of(context).pop(newSkill);
+    _bloc.add(InsertNewSkillEvent(newSkill));
+
+    // Navigator.of(context).pop();
+  }
+
+  void _goToGoalEditor()
+  {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      return GoalCreationScreen();
+    }));
+  }
+
+  Container _skillUpdateArea() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: TextField(
+                onChanged: (_) {
+                  setDoneButtonEnabled();
+                },
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: TextField(
+                onChanged: (_) {
+                  setDoneButtonEnabled();
+                },
+                controller: _sourceController,
+                decoration: InputDecoration(labelText: 'Source'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: ButtonBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('Add goal'),
+                    onPressed: () {
+                      _goToGoalEditor();
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('Schedule'),
+                    onPressed: () {},
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: RaisedButton(
+                child: Text('Done'),
+                onPressed: () {},
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _newSkillAreaBuilder() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: TextField(
+                onChanged: (_) {
+                  setDoneButtonEnabled();
+                },
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: TextField(
+                onChanged: (_) {
+                  setDoneButtonEnabled();
+                },
+                controller: _sourceController,
+                decoration: InputDecoration(labelText: 'Source'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: RaisedButton(
+                  child: Text('Done'),
+                  onPressed: _doneEnabled
+                      ? () {
+                          _insertNewSkill();
+                        }
+                      : null),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text('New Skill'),
-        ),
-      ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-                child: TextField(
-                  onChanged: (_) {
-                    setDoneButtonEnabled();
-                  },
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
-                ),
+    return BlocProvider(
+        builder: (_) => _bloc,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Center(
+                child: Text('New Skill'),
               ),
-              Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-                child: TextField(
-                  onChanged: (_) {
-                    setDoneButtonEnabled();
-                  },
-                  controller: _sourceController,
-                  decoration: InputDecoration(labelText: 'Source'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-                child: RaisedButton(
-                    child: Text('Done'),
-                    onPressed: _doneEnabled
-                        ? () {
-                            _insertNewSkill();
-                          }
-                        : null),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+            body: BlocBuilder<NewSkillBloc, NewSkillState>(
+              builder: (context, state) {
+                Widget body;
+                if (state is EmptyNewSkillState) {
+                  body = _newSkillAreaBuilder();
+                  // body = _skillUpdateArea();
+                } else if (state is NewSkillInsertedState) {
+                  body = _skillUpdateArea();
+                }
+                return body;
+              },
+            )));
   }
 }

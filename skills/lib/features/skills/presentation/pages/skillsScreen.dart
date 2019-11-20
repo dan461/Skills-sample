@@ -24,15 +24,15 @@ class _SkillsScreenState extends State<SkillsScreen> {
   }
 
   void addSkill() async {
-    Skill newSkill =
-        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    bool skillAdded = false;
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return NewSkillScreen();
     }));
-    if (newSkill != null) {
-      var insert = locator.get<InsertNewSkill>();
-      await insert(InsertParams(skill: newSkill));
-      bloc.add(GetAllSkillsEvent());
-    }
+    // if (result != null) {
+    // var insert = locator.get<InsertNewSkill>();
+    // await insert(InsertParams(skill: newSkill));
+    bloc.add(GetAllSkillsEvent());
+    // }
   }
 
   @override
@@ -53,22 +53,31 @@ class _SkillsScreenState extends State<SkillsScreen> {
         ),
         body: BlocBuilder<SkillsBloc, SkillsState>(
           builder: (context, state) {
+            Widget body;
             if (state is InitialSkillsState) {
-              return Container(
+              body = Container(
                 height: MediaQuery.of(context).size.height / 5,
                 child: Center(
                   child: Text('Empty'),
                 ),
               );
             } else if (state is AllSkillsLoading) {
-              return Center(
+              body = Center(
                 child: CircularProgressIndicator(),
               );
             } else if (state is AllSkillsLoaded) {
-              return Container(
+              body = Container(
                 child: SkillsList(skills: state.skills),
               );
+            } else {
+              // TODO - not great, deal with error better
+              body = Container(
+                child: Center(
+                  child: Text('All skills error'),
+                ),
+              );
             }
+            return body;
           },
         ),
       ),
