@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:skills/core/error/failures.dart' show CacheFailure;
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -9,31 +12,39 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bl
 
 class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
 
-void main(){
+void main() {
   NewSkillBloc sut;
   MockInsertNewSkillUC mockInsertNewSkillUC;
 
-  setUp((){
+  
+
+  setUp(() {
     mockInsertNewSkillUC = MockInsertNewSkillUC();
     sut = NewSkillBloc(insertNewSkillUC: mockInsertNewSkillUC);
   });
 
-  test('test bloc initial state is correct', (){
+  test('test bloc initial state is correct', () {
     expect(sut.initialState, equals(EmptyNewSkillState()));
   });
 
-  group('InertNewSkill', (){
+  
+
+  group('InertNewSkill', () {
     final testSkill = Skill(name: 'test', source: 'test');
 
     test('test that new id for skill is returned', () async {
-      when(mockInsertNewSkillUC(InsertParams(skill: testSkill))).thenAnswer((_) async => Right(1));
+      when(mockInsertNewSkillUC(InsertParams(skill: testSkill)))
+          .thenAnswer((_) async => Right(1));
       sut.add(InsertNewSkillEvent(testSkill));
       await untilCalled(mockInsertNewSkillUC(InsertParams(skill: testSkill)));
       verify(mockInsertNewSkillUC(InsertParams(skill: testSkill)));
     });
 
-    test('test that bloc emits [NewSkillInsertingState, NewSkillInsertedState] on successful insert', () async {
-      when(mockInsertNewSkillUC(InsertParams(skill: testSkill))).thenAnswer((_) async => Right(1));
+    test(
+        'test that bloc emits [NewSkillInsertingState, NewSkillInsertedState] on successful insert',
+        () async {
+      when(mockInsertNewSkillUC(InsertParams(skill: testSkill)))
+          .thenAnswer((_) async => Right(1));
       final expected = [
         EmptyNewSkillState(),
         NewSkillInsertingState(),
@@ -44,8 +55,11 @@ void main(){
       sut.add(InsertNewSkillEvent(testSkill));
     });
 
-    test('test that bloc emits [NewSkillInsertingState, NewSkillErrorState] on unsuccessful insert', () async {
-      when(mockInsertNewSkillUC(InsertParams(skill: testSkill))).thenAnswer((_) async => Left(CacheFailure()));
+    test(
+        'test that bloc emits [NewSkillInsertingState, NewSkillErrorState] on unsuccessful insert',
+        () async {
+      when(mockInsertNewSkillUC(InsertParams(skill: testSkill)))
+          .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
         EmptyNewSkillState(),
         NewSkillInsertingState(),
@@ -56,5 +70,4 @@ void main(){
       sut.add(InsertNewSkillEvent(testSkill));
     });
   });
-
 }

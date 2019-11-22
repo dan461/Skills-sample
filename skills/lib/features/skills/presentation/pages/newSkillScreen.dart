@@ -155,12 +155,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     );
   }
 
-  String _translateGoalToString()
-  {
-    String goalString = "Goal: ";
-
-    return goalString;
-  }
+  
 
   Container _goalDescriptionArea(bool withGoal) {
     String desc =

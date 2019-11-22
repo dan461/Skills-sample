@@ -14,6 +14,8 @@ final InsertNewSkill insertNewSkillUC;
   @override
   NewSkillState get initialState => EmptyNewSkillState();
 
+  
+
   @override
   Stream<NewSkillState> mapEventToState(
     NewSkillEvent event,

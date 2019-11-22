@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
 class SkillModel extends Skill {
