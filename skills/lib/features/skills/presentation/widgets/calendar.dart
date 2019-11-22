@@ -104,6 +104,7 @@ class _CalendarState extends State<Calendar> {
     return Container(
       height: monthHeight,
       decoration: BoxDecoration(
+          color: Colors.red,
           border: Border(
               bottom: BorderSide(width: 1.0, color: Colors.grey[300]),
               right: BorderSide(width: 1.0, color: Colors.grey[300]))),
@@ -114,11 +115,11 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  List<Row> buildMonth({int month, int year}) {
+  List<Expanded> buildMonth({int month, int year}) {
     // using 12 noon to avoid daylight savings issues
     DateTime firstOfMonth = DateTime(year, month, 1, 12);
 
-    List<Row> weeks = [];
+    List<Expanded> weeks = [];
 
     int week = 0;
     while (week < 5) {
@@ -138,7 +139,7 @@ class _CalendarState extends State<Calendar> {
     return weeks;
   }
 
-  Row buildWeek(DateTime sunday) {
+  Expanded buildWeek(DateTime sunday) {
     List<Widget> days = [];
 
     for (var i = 0; i < 7; i++) {
@@ -150,14 +151,15 @@ class _CalendarState extends State<Calendar> {
         thisDay = sunday.add(Duration(days: i));
       }
 
-      days.add(DayCell(
-          height: monthHeight / 5, date: thisDay, month: activeMonth.month));
+      days.add(DayCell(date: thisDay, month: activeMonth.month));
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: days,
+    return Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: days,
+      ),
     );
   }
 
@@ -172,7 +174,7 @@ class _CalendarState extends State<Calendar> {
   }
 
   DayCell buildDayCell() {
-    return DayCell(height: monthHeight / 5, date: DateTime.now());
+    return DayCell(date: DateTime.now());
   }
 
   Container headerBuilder() {
@@ -208,7 +210,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    monthHeight = MediaQuery.of(context).size.height / 2.5;
+    monthHeight = MediaQuery.of(context).size.height / 2.25;
     return Container(
       color: Colors.white,
       child: Column(

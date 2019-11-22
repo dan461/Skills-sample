@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skills/features/skills/presentation/widgets/calendar.dart';
-
+import 'package:skills/features/skills/presentation/widgets/dayDetails.dart';
 
 class SchedulerScreen extends StatefulWidget {
   @override
@@ -16,12 +16,9 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       children: <Widget>[
         Expanded(flex: 2, child: Calendar()),
         // Day Detail
-        Container(
-          height: height / 4.5,
-          child: Center(
-            child: Text('Day Details'),
-          ),
-          color: Colors.red,
+        Expanded(
+          flex: 1,
+          child: DayDetails()
         ),
       ],
     );

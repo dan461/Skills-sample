@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class DayCell extends StatelessWidget {
   DateTime date;
-  double cellHeight;
+  // double cellHeight;
   int displayedMonth;
 
-  DayCell({double height, DateTime date, int month}) {
-    this.cellHeight = height;
+  DayCell({DateTime date, int month}) {
+    // this.cellHeight = height;
     this.date = date;
     this.displayedMonth = month;
   }
@@ -22,7 +22,7 @@ class DayCell extends StatelessWidget {
       child: GestureDetector(
         onTap: dayTapped,
         child: Container(
-          height: cellHeight,
+          // height: cellHeight,
           decoration: BoxDecoration(
             color: date.weekday > 5 ? Colors.grey[100] : Colors.white,
             border: Border(
