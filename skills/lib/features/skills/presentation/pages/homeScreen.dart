@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      // backgroundColor: Colors.green,
       body: SafeArea(child: _routes[_selectedIndex]),
       bottomNavigationBar:
           BottomNavigationBar(items: const <BottomNavigationBarItem>[

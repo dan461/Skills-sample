@@ -1,0 +1,191 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class SessionEditor extends StatefulWidget {
+  @override
+  _SessionEditorState createState() => _SessionEditorState();
+}
+
+class _SessionEditorState extends State<SessionEditor> {
+  TimeOfDay _selectedStartTime;
+  TimeOfDay _selectedFinishTime;
+
+  String get _startTimeString {
+    return _selectedStartTime == null
+        ? 'Select Time'
+        : _selectedStartTime.format(context);
+  }
+
+  String get _finishTimeString {
+    return _selectedFinishTime == null
+        ? 'Select Time'
+        : _selectedFinishTime.format(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('New Session'),),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Nov. 22, 2019',
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _timeSelectionBox(
+                        'Start: ', _startTimeString, _selectStartTime)),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _timeSelectionBox(
+                        'Finish: ', _finishTimeString, _selectFinishTime)),
+                  ],
+                ),
+                
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Duration: 30 min.',
+                          style: Theme.of(context).textTheme.subhead),
+                          Text('Available: 30 min.',
+                          style: Theme.of(context).textTheme.subhead)
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              children: <Widget>[
+                Container(
+                    color: Colors.grey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Activities',
+                              style: Theme.of(context).textTheme.subhead),
+                          Text('0 scheduled',
+                              style: Theme.of(context).textTheme.subhead),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {},
+                          )
+                        ],
+                      ),
+                    )),
+                _sessionActivityCard()
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Card _sessionActivityCard() {
+    return Card(
+      color: Colors.amber[300],
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6))),
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Bouree in E minor',
+                      style: Theme.of(context).textTheme.subhead),
+                      Text('30 min',
+                      style: Theme.of(context).textTheme.subhead),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text('J.S. Bach', style: Theme.of(context).textTheme.body1)
+                ],
+              ),
+              Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Goal: 1 hr 30 min by 11/30', style: Theme.of(context).textTheme.body1),
+                    Text('30 min completed', style: Theme.of(context).textTheme.body1)
+                  ],
+                ),
+                              ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container _timeSelectionBox(String descText, String timeText, Function callback) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(descText, style: Theme.of(context).textTheme.subhead),
+          InkWell(
+            child: Text(timeText, style: Theme.of(context).textTheme.subhead),
+            onTap: () {
+              callback();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  void _selectStartTime() async {
+    TimeOfDay selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      setState(() {
+        _selectedStartTime = selectedTime;
+      });
+    }
+  }
+
+  void _selectFinishTime() async {
+    TimeOfDay selectedTime =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+
+    if (selectedTime != null) {
+      setState(() {
+        _selectedFinishTime = selectedTime;
+      });
+    }
+  }
+}
