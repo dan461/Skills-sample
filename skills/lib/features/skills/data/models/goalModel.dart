@@ -8,11 +8,14 @@ class GoalModel extends Goal {
       @required int fromDate,
       @required int toDate,
       @required bool timeBased,
-      int goalTime,
+      @required bool isComplete,
+      @required int goalTime,
+      int timeRemaining,
       String desc})
       : super(
             fromDate: fromDate,
             toDate: toDate,
+            isComplete: isComplete,
             timeBased: timeBased,
             goalTime: goalTime,
             desc: desc);
@@ -21,8 +24,10 @@ class GoalModel extends Goal {
     return GoalModel(
         fromDate: map['fromDate'],
         toDate: map['toDate'],
+        isComplete: map['isComplete'],
         timeBased: map['timeBased'],
         goalTime: map['goalTime'],
+        timeRemaining: map['timeRemaining'],
         desc: map['desc']);
   }
 
@@ -30,12 +35,14 @@ class GoalModel extends Goal {
     return {
       'fromDate': fromDate,
       'toDate': toDate,
+      'isComplete' : isComplete,
       'timeBased': timeBased,
       'goalTime' : goalTime,
+      'timeRemaining' : timeRemaining,
       'desc': desc
     };
   }
 
   @override
-  List<Object> get props => [id, fromDate, toDate, timeBased, goalTime, desc];
+  List<Object> get props => [id, fromDate, toDate, isComplete, timeBased, goalTime, timeRemaining, desc];
 }

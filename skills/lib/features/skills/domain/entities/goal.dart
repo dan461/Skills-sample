@@ -6,8 +6,10 @@ class Goal extends Equatable {
   final int id;
   final int fromDate;
   final int toDate;
+  final bool isComplete;
   final bool timeBased;
   final int goalTime;
+  final int timeRemaining;
   final String desc;
   
 
@@ -15,14 +17,16 @@ class Goal extends Equatable {
     this.id,
     @required this.fromDate,
     @required this.toDate,
+    @required this.isComplete,
     @required this.timeBased,
     @required this.goalTime,
+    this.timeRemaining,
     this.desc
 
   }) : super();
 
 
   @override
-  List<Object> get props => [id, fromDate, toDate, timeBased, goalTime, desc];
+  List<Object> get props => [id, fromDate, toDate, isComplete, timeBased, goalTime, timeRemaining, desc];
   
 }
