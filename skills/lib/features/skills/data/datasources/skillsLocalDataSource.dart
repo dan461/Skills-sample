@@ -1,4 +1,7 @@
+import 'package:skills/core/error/failures.dart';
+import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'dart:async';
 import 'dart:io';
@@ -7,19 +10,22 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-
 abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
   Future<SkillModel> getSkillById(int id);
   Future<int> insertNewSkill(Skill skill);
+  Future<GoalModel> getGoalById(int id);
+  Future<int> insertNewGoal(Goal goal);
+  Future<int> updateGoal(Goal goal);
+  Future<int> deleteGoalWithId(int id);
 }
-
 
 // Singleton class for providing access to sqlite database
 class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 // implementing singleton pattern with a factory constructor
-  static final SkillsLocalDataSourceImpl instance = new SkillsLocalDataSourceImpl.internal();
+  static final SkillsLocalDataSourceImpl instance =
+      new SkillsLocalDataSourceImpl.internal();
   factory SkillsLocalDataSourceImpl() => instance;
   static Database _database;
   Future<Database> tempDB() async {
@@ -31,6 +37,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   static final int dbVersion = 1;
 
   final String skillsTable = 'skills';
+  final String goalsTable = 'goals';
+  final String sessionsTable = 'sessions';
+  final String sessionSkillsTable = 'session_skills';
   final String columnId = 'id';
 
   Future<Database> get database async {
@@ -51,6 +60,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
+    await db.execute(_createGoalTable);
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
   }
@@ -60,9 +70,24 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   static final String idKey = "id INTEGER PRIMARY KEY, ";
+  static final String integer = "INTEGER";
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
+
+  // table creation
   final String _createSkillTable = "$createTable skills($idKey "
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER)";
+
+  final String _createGoalTable = "$createTable goals)$idKey "
+      "fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
+      "goalTime $integer, timeRemaining $integer";
+
+  final String _createSessionsTable = "$createTable sessions($idKey"
+      "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
+      "isScheduled INTEGER, isCompleted INTEGER, timeRemaining INTEGER)";
+
+  final String _createSessionSkillsJoinTable =
+      "$createTable session_skills($idKey"
+      "skill_Id INTEGER, session_Id INTEGER)";
 
   @override
   Future<List<SkillModel>> getAllSkills() async {
@@ -77,19 +102,59 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<SkillModel> getSkillById(int id) {
-    // TODO: implement getSkillById
+  Future<SkillModel> getSkillById(int id) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(skillsTable,
+        columns: null, where: '$columnId = ?', whereArgs: [id]);
+    if (maps.length > 0) {
+      return SkillModel.fromMap(maps.first);
+    }
     return null;
   }
 
   @override
   Future<int> insertNewSkill(Skill skill) async {
     final Database db = await database;
-    final skillModel = SkillModel(name: skill.name, source: skill.source);
+    final SkillModel skillModel = skill;
     int id = await db.insert(skillsTable, skillModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
 
     return id;
   }
 
+  @override
+  Future<int> deleteGoalWithId(int id) async {
+    final Database db = await database;
+    int result = await db.delete(goalsTable, where: '$columnId = ?', whereArgs: [id]);
+    return result;
+  }
+
+  @override
+  Future<GoalModel> getGoalById(int id) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(goalsTable,
+        columns: null, where: '$columnId = ?', whereArgs: [id]);
+    if (maps.length > 0) {
+      return GoalModel.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  @override
+  Future<int> insertNewGoal(Goal goal) async {
+    final Database db = await database;
+    final GoalModel goalModel = goal;
+    int id = await db.insert(goalsTable, goalModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  @override
+  Future<int> updateGoal(Goal goal) async {
+    final Database db = await database;
+    final GoalModel goalModel = goal;
+    // TODO - any WHERE needed? or conflict alg?
+    int updates = await db.update(goalsTable, goalModel.toMap());
+    return updates;
+  }
 }

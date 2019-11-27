@@ -16,10 +16,10 @@ void main() {
   });
 
   test('should delete a goal and return zero', () async {
-    when(mockGoalRepo.deleteGoal(0)).thenAnswer((_) async => Right(0));
+    when(mockGoalRepo.deleteGoalWithId(0)).thenAnswer((_) async => Right(0));
     final result = await sut(GoalCrudParams(id: 0, goal: null));
     expect(result, Right(0));
-    verify(mockGoalRepo.deleteGoal(0));
+    verify(mockGoalRepo.deleteGoalWithId(0));
     verifyNoMoreInteractions(mockGoalRepo);
   });
 }

@@ -10,6 +10,6 @@ class DeleteGoalWithId extends UseCase<int, GoalCrudParams> {
   DeleteGoalWithId(this.repo);
 
   Future<Either<Failure, int>> call(GoalCrudParams params) async {
-    return await repo.deleteGoal(params.id);
+    return await repo.deleteGoalWithId(params.id);
   }
 }

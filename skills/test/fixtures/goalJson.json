@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "toDate": 1574812800,
+  "fromDate": 1574899200,
+  "isComplete": false,
+  "timeBased": true,
+  "goalTime": 60,
+  "timeRemaining": 60,
+  "desc": "Achieve this goal."
+}

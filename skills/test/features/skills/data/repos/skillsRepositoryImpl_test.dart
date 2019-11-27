@@ -88,7 +88,7 @@ void main() {
 
     setUp(() {});
 
-    test('returns a specific SkillModel', () async {
+    test('returns an ID after inserting a SkillModel', () async {
       when(mockLocalDataSource.insertNewSkill(tSkill))
           .thenAnswer((_) async => 1);
       final result = await repositoryImpl.insertNewSkill(tSkill);

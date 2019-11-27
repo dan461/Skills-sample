@@ -12,6 +12,7 @@ class GoalModel extends Goal {
       int timeRemaining,
       String desc})
       : super(
+            id: id,
             fromDate: fromDate,
             toDate: toDate,
             isComplete: isComplete,
@@ -21,6 +22,7 @@ class GoalModel extends Goal {
 
   factory GoalModel.fromMap(Map<String, dynamic> map) {
     return GoalModel(
+        id: map['id'],
         fromDate: map['fromDate'],
         toDate: map['toDate'],
         isComplete: map['isComplete'],
@@ -32,6 +34,7 @@ class GoalModel extends Goal {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'fromDate': fromDate,
       'toDate': toDate,
       'isComplete': isComplete,
