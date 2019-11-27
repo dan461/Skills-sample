@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:skills/core/error/failures.dart' show CacheFailure;
-import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -16,8 +13,6 @@ void main() {
   NewSkillBloc sut;
   MockInsertNewSkillUC mockInsertNewSkillUC;
 
-  
-
   setUp(() {
     mockInsertNewSkillUC = MockInsertNewSkillUC();
     sut = NewSkillBloc(insertNewSkillUC: mockInsertNewSkillUC);
@@ -26,8 +21,6 @@ void main() {
   test('test bloc initial state is correct', () {
     expect(sut.initialState, equals(EmptyNewSkillState()));
   });
-
-  
 
   group('InertNewSkill', () {
     final testSkill = Skill(name: 'test', source: 'test');

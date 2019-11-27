@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+
 import 'package:skills/core/error/failures.dart';
 
 /* used to allow all UseCases to have a call(), which makes having
@@ -16,11 +17,10 @@ class NoParams extends Equatable {
 }
 
 class Params extends Equatable {
-  // final Skill skill;
+  // final Object object;
 
-  // Params({@required this.skill}) : super();
+  // Params({this.object}) : super();
 
   @override
-  // TODO: implement props
   List<Object> get props => null;
 }

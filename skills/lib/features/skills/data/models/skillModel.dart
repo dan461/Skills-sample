@@ -41,6 +41,5 @@ class SkillModel extends Skill {
   }
 
   @override
-  // TODO: implement props
-  List<Object> get props => [id,name,source,startDate,totalTime];
+  List<Object> get props => [id, name, source, startDate, totalTime];
 }

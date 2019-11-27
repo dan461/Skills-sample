@@ -1,13 +1,10 @@
-import 'package:skills/core/error/failures.dart' show CacheFailure;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 
 void main() {
   GoaleditorBloc sut;
-  Goal testTaskGoal;
+  
 
   setUp(() {
     sut = GoaleditorBloc();
@@ -23,6 +20,7 @@ void main() {
       final testTimeGoal = Goal(
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
+          isComplete: false,
           timeBased: true,
           goalTime: 330);
 
@@ -41,6 +39,7 @@ void main() {
       final testTimeGoal = Goal(
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
+          isComplete: false,
           timeBased: true,
           goalTime: 60);
 
@@ -59,6 +58,7 @@ void main() {
       final testTimeGoal = Goal(
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
+          isComplete: false,
           timeBased: true,
           goalTime: 15);
 
@@ -77,6 +77,7 @@ void main() {
       final testTimeGoal = Goal(
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
+          isComplete: false,
           timeBased: true,
           goalTime: 90);
 
@@ -95,11 +96,13 @@ void main() {
       final testTimeGoal = Goal(
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
+          isComplete: false,
           timeBased: false,
           goalTime: 0,
           desc: 'Practice practice practice');
 
-      String matcher = "Goal: Practice practice practice between Jul 2 and Jul 4.";
+      String matcher =
+          "Goal: Practice practice practice between Jul 2 and Jul 4.";
       String translation = sut.translateGoal(testTimeGoal);
 
       expect(translation, matcher);
@@ -114,6 +117,7 @@ void main() {
       final testTimeGoal = Goal(
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
+          isComplete: false,
           timeBased: false,
           goalTime: 0,
           desc: 'Practice practice practice');

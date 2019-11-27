@@ -2,14 +2,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_event.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_state.dart';
-import 'package:skills/features/skills/presentation/bloc/skills_screen/bloc.dart';
 import 'package:skills/service_locator.dart';
 
 import 'goalEditorScreen.dart';
@@ -155,8 +151,6 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     );
   }
 
-  
-
   Container _goalDescriptionArea(bool withGoal) {
     String desc =
         'Goal: 5 hrs from 11/15 to 11/21 sll laljjdl jlgjlj  jallj agjlasljl ';
@@ -166,7 +160,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
       body = Container(
         color: Colors.grey[100],
         child: InkWell(
-          onTap: (){
+          onTap: () {
             _goToGoalEditor();
           },
           child: Padding(

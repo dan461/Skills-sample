@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'package:skills/features/skills/presentation/pages/homeScreen.dart';
 
 class GoalCreationScreen extends StatefulWidget {
   @override
@@ -233,9 +232,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                   children: <Widget>[
                     RaisedButton(
                       child: Text('Cancel'),
-                      onPressed: () {
-                       
-                      },
+                      onPressed: () {},
                     ),
                     RaisedButton(
                       child: Text('Done'),

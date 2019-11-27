@@ -5,8 +5,6 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bl
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
 import 'package:skills/service_locator.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
-
 import 'newSkillScreen.dart';
 
 class SkillsScreen extends StatefulWidget {

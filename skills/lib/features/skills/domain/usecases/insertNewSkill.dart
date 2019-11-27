@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';

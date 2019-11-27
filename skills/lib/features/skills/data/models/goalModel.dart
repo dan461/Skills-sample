@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 
 class GoalModel extends Goal {
@@ -35,14 +34,23 @@ class GoalModel extends Goal {
     return {
       'fromDate': fromDate,
       'toDate': toDate,
-      'isComplete' : isComplete,
+      'isComplete': isComplete,
       'timeBased': timeBased,
-      'goalTime' : goalTime,
-      'timeRemaining' : timeRemaining,
+      'goalTime': goalTime,
+      'timeRemaining': timeRemaining,
       'desc': desc
     };
   }
 
   @override
-  List<Object> get props => [id, fromDate, toDate, isComplete, timeBased, goalTime, timeRemaining, desc];
+  List<Object> get props => [
+        id,
+        fromDate,
+        toDate,
+        isComplete,
+        timeBased,
+        goalTime,
+        timeRemaining,
+        desc
+      ];
 }
