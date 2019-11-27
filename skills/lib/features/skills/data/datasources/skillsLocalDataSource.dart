@@ -19,6 +19,7 @@ abstract class SkillsLocalDataSource {
   Future<int> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
+  Future<int> addGoalToSkill(int skillId, int goalId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -38,6 +39,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   final String skillsTable = 'skills';
   final String goalsTable = 'goals';
+  final String skillsGoalsTable = 'skills_goals';
   final String sessionsTable = 'sessions';
   final String sessionSkillsTable = 'session_skills';
   final String columnId = 'id';
@@ -61,6 +63,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
+    await db.execute(_createSkillsGoalsJoinTable);
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
   }
@@ -81,13 +84,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
       "goalTime $integer, timeRemaining $integer";
 
-  final String _createSessionsTable = "$createTable sessions($idKey"
-      "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
-      "isScheduled INTEGER, isCompleted INTEGER, timeRemaining INTEGER)";
+  final String _createSkillsGoalsJoinTable = "$createTable skills_goals($idKey"
+      "skill_id $integer, goal_id $integer";
 
-  final String _createSessionSkillsJoinTable =
-      "$createTable session_skills($idKey"
-      "skill_Id INTEGER, session_Id INTEGER)";
+  // final String _createSessionsTable = "$createTable sessions($idKey"
+  //     "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
+  //     "isScheduled INTEGER, isCompleted INTEGER, timeRemaining INTEGER)";
+
+  // final String _createSessionSkillsJoinTable =
+  //     "$createTable session_skills($idKey"
+  //     "skill_Id INTEGER, session_Id INTEGER)";
 
   @override
   Future<List<SkillModel>> getAllSkills() async {
@@ -125,7 +131,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> deleteGoalWithId(int id) async {
     final Database db = await database;
-    int result = await db.delete(goalsTable, where: '$columnId = ?', whereArgs: [id]);
+    int result =
+        await db.delete(goalsTable, where: '$columnId = ?', whereArgs: [id]);
     return result;
   }
 
@@ -156,5 +163,17 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     // TODO - any WHERE needed? or conflict alg?
     int updates = await db.update(goalsTable, goalModel.toMap());
     return updates;
+  }
+
+  @override
+  Future<int> addGoalToSkill(int skillId, int goalId) async {
+    final Database db = await database;
+    int newId;
+    await db.transaction((txn) async {
+      newId = await txn.rawInsert(
+          'INSERT INTO $skillsGoalsTable(skill_id, goal_id) VALUES ($skillId, $goalId)');
+    });
+
+    return newId;
   }
 }

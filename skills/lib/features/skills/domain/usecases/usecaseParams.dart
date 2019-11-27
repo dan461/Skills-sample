@@ -7,3 +7,11 @@ class GoalCrudParams extends Params {
 
   GoalCrudParams({this.id, this.goal}) : super();
 }
+
+class AddGoalToSkillParams extends Params {
+  final int skillId;
+  final int goalId;
+
+  AddGoalToSkillParams({this.skillId, this.goalId});
+  
+}

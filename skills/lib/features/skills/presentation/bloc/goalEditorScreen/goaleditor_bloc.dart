@@ -2,17 +2,44 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
+import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
+import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
+import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
+import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import './bloc.dart';
+import 'goalEditor_event.dart';
+import 'goalEditor_state.dart';
 
-class GoaleditorBloc extends Bloc<GoaleditorEvent, GoaleditorState> {
-  @override
-  GoaleditorState get initialState => InitialGoaleditorState();
+class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
+  final InsertNewGoal insertNewGoalUC;
+  final UpdateGoal updateGoalUC;
+  final AddGoalToSkill addGoalToSkill;
+
+  GoaleditorBloc(
+      {this.insertNewGoalUC, this.updateGoalUC, this.addGoalToSkill});
 
   @override
-  Stream<GoaleditorState> mapEventToState(
-    GoaleditorEvent event,
+  GoalEditorState get initialState => EmptyGoalEditorState();
+
+  @override
+  Stream<GoalEditorState> mapEventToState(
+    GoalEditorEvent event,
   ) async* {
-    // TODO: Add Logic
+    if (event is InsertNewGoalEvent) {
+      yield NewGoalInsertingState();
+      final failureOrNewId =
+          await insertNewGoalUC(GoalCrudParams(goal: event.newGoal));
+      yield failureOrNewId.fold(
+          (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
+          (newId) => NewGoalInsertedState(newId));
+    } else if (event is AddGoalToSkillEvent) {
+      yield AddingGoalToSkillState();
+      final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams());
+      yield failureOrNewId.fold(
+          (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
+          (newId) => GoalAddedToSkillState(newId));
+    }
   }
 
   String translateGoal(Goal goal) {

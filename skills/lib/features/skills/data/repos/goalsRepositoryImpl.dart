@@ -36,4 +36,9 @@ class GoalsRepositoryImpl implements GoalRepository {
   Future<Either<Failure, int>> updateGoal(Goal goal) async {
     return Right(await localDataSource.updateGoal(goal));
   }
+
+  @override
+  Future<Either<Failure, int>> addGoalToSkill(int skillId, int goalId) async {
+    return Right(await localDataSource.addGoalToSkill(skillId, goalId));
+  }
 }

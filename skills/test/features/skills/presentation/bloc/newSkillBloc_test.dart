@@ -25,7 +25,7 @@ void main() {
   group('InertNewSkill', () {
     final testSkill = Skill(name: 'test', source: 'test');
 
-    test('test that new id for skill is returned', () async {
+    test('test that InsertNewSkill is called', () async {
       when(mockInsertNewSkillUC(InsertParams(skill: testSkill)))
           .thenAnswer((_) async => Right(1));
       sut.add(InsertNewSkillEvent(testSkill));
