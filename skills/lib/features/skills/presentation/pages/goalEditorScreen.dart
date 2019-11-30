@@ -1,21 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
+import 'package:skills/service_locator.dart';
 
 class GoalCreationScreen extends StatefulWidget {
+  final int skillId;
+
+  const GoalCreationScreen({Key key, @required this.skillId}) : super(key: key);
   @override
   _GoalCreationScreenState createState() => _GoalCreationScreenState();
 }
 
 class _GoalCreationScreenState extends State<GoalCreationScreen> {
+  GoaleditorBloc _bloc;
   int _goalType;
+  
+  bool _doneEnabled;
+  String _goalTranslation;
 
   @override
   void initState() {
     super.initState();
+    _bloc = locator<GoaleditorBloc>();
     _goalType = 0;
+    _doneEnabled = false;
+    _goalTranslation = '';
   }
+
+  TextEditingController _hoursTextController = TextEditingController();
+  TextEditingController _minTextController = TextEditingController();
+  TextEditingController _goalDescTextController = TextEditingController();
 
   String get _startDateString {
     return _startDate == null
@@ -29,10 +47,42 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
         : DateFormat.yMMMd().format(_endDate);
   }
 
+  bool get _isTimeBased {
+    return _goalType == 0;
+  }
+
+  int get _goalMinutes {
+    int minutes = (int.parse(_hoursTextController.text) * 60) +
+        int.parse(_minTextController.text);
+    return minutes;
+  }
+
   DateTime _startDate;
   DateTime _endDate;
 
-  Future<Null> _selectStartDate(BuildContext context) async {
+  void _setDoneButtonEnabled() {
+    bool timeOrTaskSet;
+    if (_isTimeBased)
+      timeOrTaskSet = _goalMinutes > 0;
+    else
+      timeOrTaskSet = _goalDescTextController.text != null;
+
+    _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+  }
+
+  void _insertNewGoal() async {
+    Goal newGoal = Goal(
+      fromDate: _startDate.millisecondsSinceEpoch,
+      toDate: _endDate.millisecondsSinceEpoch,
+      isComplete: false,
+      timeBased: _isTimeBased,
+      goalTime: _goalMinutes,
+    );
+    _bloc.add(InsertNewGoalEvent(newGoal));
+    _goalTranslation = _bloc.translateGoal(newGoal);
+  }
+
+  void _selectStartDate() async {
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -46,7 +96,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     }
   }
 
-  Future<Null> _selectEndDate(BuildContext context) async {
+  void _selectEndDate() async {
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -62,9 +112,10 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
 
   Widget _goalDetailAreaBuilder() {
     Widget area;
-    if (_goalType == 0)
+    if (_isTimeBased)
       area = _goalTimeSelectionArea();
-    else if (_goalType == 1) area = _goalDescriptionField();
+    else
+      area = _goalDescriptionField();
 
     return area;
   }
@@ -76,6 +127,10 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
       maxLines: 4,
       maxLengthEnforced: true,
       keyboardType: TextInputType.text,
+      controller: _goalDescTextController,
+      onChanged: (_) {
+        _setDoneButtonEnabled();
+      },
     );
   }
 
@@ -96,6 +151,10 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                   keyboardType: TextInputType.number,
                   decoration:
                       InputDecoration(hintText: '00', border: InputBorder.none),
+                  controller: _hoursTextController,
+                  onChanged: (_) {
+                    _setDoneButtonEnabled();
+                  },
                 ),
               )
             ],
@@ -114,6 +173,10 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                   decoration:
                       InputDecoration(hintText: '00', border: InputBorder.none),
                   keyboardType: TextInputType.number,
+                  controller: _minTextController,
+                  onChanged: (_) {
+                    _setDoneButtonEnabled();
+                  },
                 ),
               )
             ],
@@ -123,127 +186,128 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Bouree in E Minor',
-                      style: Theme.of(context).textTheme.title,
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                ],
+  Row _dateSelectionRow(
+      String descText, String placeholder, Function callback) {
+    return Row(
+      children: <Widget>[
+        Text(
+          descText,
+          style: Theme.of(context).textTheme.subhead,
+          textAlign: TextAlign.left,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+          child: Material(
+            child: InkWell(
+              child: Text(
+                placeholder,
+                style: Theme.of(context).textTheme.subhead,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'Start goal on:',
-                      style: Theme.of(context).textTheme.subhead,
-                      textAlign: TextAlign.left,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                      child: Material(
-                        child: InkWell(
-                          child: Text(
-                            _startDateString,
-                            style: Theme.of(context).textTheme.subhead,
-                          ),
-                          onTap: () {
-                            _selectStartDate(context);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'End On:',
-                      style: Theme.of(context).textTheme.subhead,
-                      textAlign: TextAlign.left,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                      child: Material(
-                        child: InkWell(
-                          child: Text(
-                            _endDateString,
-                            style: Theme.of(context).textTheme.subhead,
-                          ),
-                          onTap: () {
-                            _selectEndDate(context);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Segmented Control
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CupertinoSegmentedControl(
-                  children: {
-                    0: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Text('Time'),
-                    ),
-                    1: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Text('Task'),
-                    ),
-                  },
-                  onValueChanged: (int val) {
-                    setState(() {
-                      _goalType = val;
-                    });
-                  },
-                  groupValue: _goalType,
-                ),
-              ),
-              // Duration or Task description
-              Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(child: _goalDetailAreaBuilder())),
-              Expanded(
-                child: ButtonBar(
-                  alignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RaisedButton(
-                      child: Text('Cancel'),
-                      onPressed: () {},
-                    ),
-                    RaisedButton(
-                      child: Text('Done'),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              )
-            ],
+              onTap: () {
+                callback();
+                _setDoneButtonEnabled();
+              },
+            ),
           ),
         ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => _bloc,
+      child: Scaffold(
+        appBar: AppBar(),
+        body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
+            builder: (context, state) {
+          if (state is NewGoalInsertedState) {
+            _bloc.add(AddGoalToSkillEvent(
+                goalId: state.newGoalId, skillId: widget.skillId));
+          } else if (state is GoalAddedToSkillState) {
+            Navigator.pop(context, _goalTranslation);
+          }
+          return Container(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Bouree in E Minor',
+                          style: Theme.of(context).textTheme.title,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _dateSelectionRow(
+                        'Start goal on:', _startDateString, _selectStartDate),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _dateSelectionRow(
+                        'End on:', _endDateString, _selectEndDate),
+                  ),
+
+                  // Segmented Control
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CupertinoSegmentedControl(
+                      children: {
+                        0: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                          child: Text('Time'),
+                        ),
+                        1: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                          child: Text('Task'),
+                        ),
+                      },
+                      onValueChanged: (int val) {
+                        setState(() {
+                          _goalType = val;
+                        });
+                      },
+                      groupValue: _goalType,
+                    ),
+                  ),
+                  // Duration or Task description
+                  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(child: _goalDetailAreaBuilder())),
+                  Expanded(
+                    child: ButtonBar(
+                      alignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Text('Cancel'),
+                          onPressed: () {},
+                        ),
+                        RaisedButton(
+                            child: Text('Done'),
+                            onPressed: _doneEnabled
+                                ? () {
+                                    _insertNewGoal();
+                                  }
+                                : null),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        }),
       ),
     );
   }

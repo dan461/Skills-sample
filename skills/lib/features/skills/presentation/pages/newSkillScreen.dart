@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_event.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_state.dart';
+import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/service_locator.dart';
 
 import 'goalEditorScreen.dart';
@@ -16,14 +18,18 @@ class NewSkillScreen extends StatefulWidget {
 }
 
 class _NewSkillScreenState extends State<NewSkillScreen> {
-  NewSkillBloc _bloc;
+  NewSkillBloc _newSkillBloc;
+  // GoaleditorBloc _goalEditorBloc;
   bool _goalAdded;
+  String goalDesc;
 
   @override
   void initState() {
     super.initState();
-    _bloc = locator<NewSkillBloc>();
+    _newSkillBloc = locator<NewSkillBloc>();
+    // _goalEditorBloc = locator<GoaleditorBloc>();
     _goalAdded = false;
+    goalDesc = 'Goal: none';
   }
 
   TextEditingController _nameController = TextEditingController();
@@ -40,18 +46,22 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   void _insertNewSkill() async {
     Skill newSkill =
         Skill(name: _nameController.text, source: _sourceController.text);
-    _bloc.add(InsertNewSkillEvent(newSkill));
+    _newSkillBloc.add(InsertNewSkillEvent(newSkill));
 
     // Navigator.of(context).pop();
   }
 
-  void _goToGoalEditor() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalCreationScreen();
+  void _goToGoalEditor(int skillId) async {
+    String goalText =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return GoalCreationScreen(skillId: skillId);
     }));
+    if (!goalText.isEmpty) {
+      goalDesc = goalText;
+    }
   }
 
-  Container _skillUpdateArea() {
+  Container _skillUpdateArea(int skillId) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -77,7 +87,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
                 decoration: InputDecoration(labelText: 'Source'),
               ),
             ),
-            _goalDescriptionArea(_goalAdded),
+            _goalDescriptionArea(_goalAdded, skillId),
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: ButtonBar(
@@ -86,7 +96,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
                   RaisedButton(
                     child: Text('Add goal'),
                     onPressed: () {
-                      _goToGoalEditor();
+                      _goToGoalEditor(skillId);
                     },
                   ),
                   RaisedButton(
@@ -100,7 +110,9 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: RaisedButton(
                 child: Text('Done'),
-                onPressed: () {},
+                onPressed: () {
+                  // update skill with goal description
+                },
               ),
             ),
           ],
@@ -151,9 +163,9 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     );
   }
 
-  Container _goalDescriptionArea(bool withGoal) {
-    String desc =
-        'Goal: 5 hrs from 11/15 to 11/21 sll laljjdl jlgjlj  jallj agjlasljl ';
+  Container _goalDescriptionArea(bool withGoal, int skillId) {
+    // String desc =
+    //     'Goal: 5 hrs from 11/15 to 11/21 sll laljjdl jlgjlj  jallj agjlasljl ';
 
     Widget body;
     if (withGoal) {
@@ -161,12 +173,12 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
         color: Colors.grey[100],
         child: InkWell(
           onTap: () {
-            _goToGoalEditor();
+            _goToGoalEditor(skillId);
           },
           child: Padding(
               padding: const EdgeInsets.only(top: 4, bottom: 4),
               child: Text(
-                desc,
+                goalDesc,
                 style: Theme.of(context).textTheme.subhead,
                 maxLines: 2,
                 textAlign: TextAlign.start,
@@ -187,7 +199,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     _goalAdded = true;
 
     return BlocProvider(
-        builder: (_) => _bloc,
+        builder: (_) => _newSkillBloc,
         child: Scaffold(
             appBar: AppBar(
               title: Center(
@@ -198,10 +210,10 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
               builder: (context, state) {
                 Widget body;
                 if (state is EmptyNewSkillState) {
-                  // body = _newSkillAreaBuilder();
-                  body = _skillUpdateArea();
+                  body = _newSkillAreaBuilder();
+                  // body = _skillUpdateArea();
                 } else if (state is NewSkillInsertedState) {
-                  body = _skillUpdateArea();
+                  body = _skillUpdateArea(state.newSkillId);
                 }
                 return body;
               },

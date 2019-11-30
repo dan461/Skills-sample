@@ -30,6 +30,12 @@ class SkillsRepositoryImpl implements SkillRepository {
     return Right(await localDataSource.insertNewSkill(skill));
   }
 
+  @override
+  Future<Either<Failure, int>> updateSkill(Skill skill) async {
+    
+    return Right(await localDataSource.updateSkill(skill));
+  }
+
   // TODO only added to follow course, no remote source yet
   @override
   Future<Either<Failure, List<Skill>>> downloadAllSkills() async {
@@ -44,4 +50,6 @@ class SkillsRepositoryImpl implements SkillRepository {
     
     
   }
+
+  
 }

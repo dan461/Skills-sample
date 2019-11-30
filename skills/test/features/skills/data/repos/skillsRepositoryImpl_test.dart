@@ -1,3 +1,4 @@
+import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/core/error/exceptions.dart';
@@ -52,27 +53,20 @@ void main() {
     });
   }
 
-  group('getAllSkills', () {
+  group('Skills CRUD tests', () {
     final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
     final List<SkillModel> skillModelList = [skillModel];
     final Skill tSkill = skillModel;
 
-    test('returns a List of SkillModels', () async {
+    test('getAllSkills - returns a List of SkillModels', () async {
       when(mockLocalDataSource.getAllSkills())
           .thenAnswer((_) async => skillModelList);
       final result = await repositoryImpl.getAllSkills();
       verify(mockLocalDataSource.getAllSkills());
       expect(result, equals(Right(skillModelList)));
     });
-  });
 
-  group('getSkillById', () {
-    final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
-    final Skill tSkill = skillModel;
-
-    setUp(() {});
-
-    test('returns a specific SkillModel', () async {
+    test('getSkillById - returns a specific SkillModel', () async {
       when(mockLocalDataSource.getSkillById(1))
           .thenAnswer((_) async => skillModel);
       final result = await repositoryImpl.getSkillById(1);
@@ -80,20 +74,22 @@ void main() {
       verify(mockLocalDataSource.getSkillById(1));
       expect(result, equals(Right(tSkill)));
     });
-  });
 
-  group('insertNewSkill', () {
-    final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
-    final Skill tSkill = skillModel;
-
-    setUp(() {});
-
-    test('returns an ID after inserting a SkillModel', () async {
+    test('insertNewSkill - returns an ID after inserting a SkillModel',
+        () async {
       when(mockLocalDataSource.insertNewSkill(tSkill))
           .thenAnswer((_) async => 1);
       final result = await repositoryImpl.insertNewSkill(tSkill);
 
       verify(mockLocalDataSource.insertNewSkill(tSkill));
+      expect(result, equals(Right(1)));
+    });
+
+    test('updateSkill - returns an int for number of changes to Skill',
+        () async {
+      when(mockLocalDataSource.updateSkill(tSkill)).thenAnswer((_) async => 1);
+      final result = await repositoryImpl.updateSkill(tSkill);
+      verify(mockLocalDataSource.updateSkill(tSkill));
       expect(result, equals(Right(1)));
     });
   });

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
@@ -35,7 +36,8 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
           (newId) => NewGoalInsertedState(newId));
     } else if (event is AddGoalToSkillEvent) {
       yield AddingGoalToSkillState();
-      final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams());
+      final failureOrNewId = await addGoalToSkill(
+          AddGoalToSkillParams(skillId: event.skillId, goalId: event.goalId));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newId) => GoalAddedToSkillState(newId));
@@ -50,6 +52,7 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
       final timeString = createGoalTimeString(goal.goalTime);
       translation = 'Goal: $timeString $durationString.';
     } else {
+      // TODO shouldn't be able to have an empty goal description
       var desc = goal.desc != null ? goal.desc : "n/a";
       translation = 'Goal: $desc $durationString.';
     }
@@ -69,8 +72,11 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
       timeString = '1 hour';
     } else {
       hours = (time / 60).floor().toString();
-      min = time % 60 != 0 ? (time % 60).toString() : '';
-      timeString = '$hours hrs $min min';
+      timeString = '$hours hrs';
+      if (time % 60 != 0) {
+        min = (time % 60).toString();
+        timeString = '$hours hrs $min min';
+      }
     }
 
     return timeString;
