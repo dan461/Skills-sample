@@ -1,24 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
-import 'package:skills/service_locator.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_event.dart';
 
-class GoalCreationScreen extends StatefulWidget {
-  final int skillId;
+import '../../../../service_locator.dart';
 
-  const GoalCreationScreen({Key key, @required this.skillId}) : super(key: key);
+class GoalEditor extends StatefulWidget {
   @override
-  _GoalCreationScreenState createState() => _GoalCreationScreenState();
+  _GoalEditorState createState() => _GoalEditorState();
 }
 
-class _GoalCreationScreenState extends State<GoalCreationScreen> {
+class _GoalEditorState extends State<GoalEditor> {
   GoaleditorBloc _bloc;
   int _goalType;
-  
+
   bool _doneEnabled;
   String _goalTranslation;
 
@@ -110,16 +107,6 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     }
   }
 
-  Widget _goalDetailAreaBuilder() {
-    Widget area;
-    if (_isTimeBased)
-      area = _goalTimeSelectionArea();
-    else
-      area = _goalDescriptionField();
-
-    return area;
-  }
-
   TextField _goalDescriptionField() {
     return TextField(
       decoration: InputDecoration(labelText: 'Goal Description'),
@@ -132,6 +119,16 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
         _setDoneButtonEnabled();
       },
     );
+  }
+
+  Widget _goalDetailAreaBuilder() {
+    Widget area;
+    if (_isTimeBased)
+      area = _goalTimeSelectionArea();
+    else
+      area = _goalDescriptionField();
+
+    return area;
   }
 
   Row _goalTimeSelectionArea() {
@@ -216,99 +213,71 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => _bloc,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
-            builder: (context, state) {
-          if (state is NewGoalInsertedState) {
-            _bloc.add(AddGoalToSkillEvent(
-                goalId: state.newGoalId, skillId: widget.skillId));
-          } 
-          else if (state is GoalAddedToSkillState) {
-            Navigator.pop(context, _goalTranslation);
-          }
-          return Container(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Bouree in E Minor',
-                          style: Theme.of(context).textTheme.title,
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _dateSelectionRow(
-                        'Start goal on:', _startDateString, _selectStartDate),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _dateSelectionRow(
-                        'End on:', _endDateString, _selectEndDate),
-                  ),
+    return Container(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _dateSelectionRow(
+                  'Start goal on:', _startDateString, _selectStartDate),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+                  _dateSelectionRow('End on:', _endDateString, _selectEndDate),
+            ),
 
-                  // Segmented Control
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CupertinoSegmentedControl(
-                      children: {
-                        0: Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                          child: Text('Time'),
-                        ),
-                        1: Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                          child: Text('Task'),
-                        ),
-                      },
-                      onValueChanged: (int val) {
-                        setState(() {
-                          _goalType = val;
-                        });
-                      },
-                      groupValue: _goalType,
-                    ),
+            // Segmented Control
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CupertinoSegmentedControl(
+                children: {
+                  0: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                    child: Text('Time'),
                   ),
-                  // Duration or Task description
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Material(child: _goalDetailAreaBuilder())),
-                  Expanded(
-                    child: ButtonBar(
-                      alignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        RaisedButton(
-                          child: Text('Cancel'),
-                          onPressed: () {},
-                        ),
-                        RaisedButton(
-                            child: Text('Done'),
-                            onPressed: _doneEnabled
-                                ? () {
-                                    _insertNewGoal();
-                                  }
-                                : null),
-                      ],
-                    ),
-                  )
-                ],
+                  1: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                    child: Text('Task'),
+                  ),
+                },
+                onValueChanged: (int val) {
+                  setState(() {
+                    _goalType = val;
+                  });
+                },
+                groupValue: _goalType,
               ),
             ),
-          );
-        }),
+            // Duration or Task description
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(child: _goalDetailAreaBuilder())),
+            Expanded(
+              child: ButtonBar(
+                alignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('Cancel'),
+                    onPressed: () {},
+                  ),
+                  RaisedButton(
+                      child: Text('Done'),
+                      onPressed: _doneEnabled
+                          ? () {
+                              _insertNewGoal();
+                            }
+                          : null),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

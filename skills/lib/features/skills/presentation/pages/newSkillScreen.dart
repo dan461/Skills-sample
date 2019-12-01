@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_state.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_event.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_state.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
+import 'package:skills/features/skills/presentation/widgets/goalEditor.dart';
 import 'package:skills/service_locator.dart';
 
 import 'goalEditorScreen.dart';
@@ -19,17 +21,21 @@ class NewSkillScreen extends StatefulWidget {
 
 class _NewSkillScreenState extends State<NewSkillScreen> {
   NewSkillBloc _newSkillBloc;
-  // GoaleditorBloc _goalEditorBloc;
+  GoaleditorBloc _goalEditorBloc;
   bool _goalAdded;
+  bool _showGoalEditor;
   String goalDesc;
+  Container goalArea;
 
   @override
   void initState() {
     super.initState();
     _newSkillBloc = locator<NewSkillBloc>();
-    // _goalEditorBloc = locator<GoaleditorBloc>();
+    _goalEditorBloc = locator<GoaleditorBloc>();
     _goalAdded = false;
+    _showGoalEditor = false;
     goalDesc = 'Goal: none';
+    goalArea = Container();
   }
 
   TextEditingController _nameController = TextEditingController();
@@ -59,6 +65,54 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     if (!goalText.isEmpty) {
       goalDesc = goalText;
     }
+  }
+
+  void _showGoalTapped() {
+    setState(() {
+      _showGoalEditor = !_showGoalEditor;
+    });
+  }
+
+  Column _goalCreationArea() {
+    Row buttonRow = Row(
+      children: <Widget>[_goalButtonContainer()],
+    );
+    Row contentRow = Row(
+      children: <Widget>[_goalCreationArea()],
+    );
+    return Column(
+      children: <Widget>[buttonRow, contentRow],
+    );
+  }
+
+  Container _goalButtonContainer() {
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: InkWell(
+        onTap: () {
+          _showGoalTapped();
+        },
+        child: Text(
+          'Add a Goal (optional)',
+          style: Theme.of(context).textTheme.body1,
+        ),
+      ),
+    );
+  }
+
+  Container _goalEditorArea() {
+    Container content;
+
+    if (_showGoalEditor) {
+      content = Container(
+        child: GoalEditor(),
+        color: Colors.grey[200],
+      );
+    } else {
+      content = Container();
+    }
+
+    return content;
   }
 
   Container _skillUpdateArea(int skillId) {
@@ -111,7 +165,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
               child: RaisedButton(
                 child: Text('Done'),
                 onPressed: () {
-                  // update skill with goal description
+                  // update skill with goal description and id of current goal
                 },
               ),
             ),
@@ -121,7 +175,10 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     );
   }
 
-  Container _newSkillAreaBuilder() {
+  Container _newSkillAreaBuilder({bool withGoalArea}) {
+    Container buttonContainer =
+        withGoalArea ? _goalButtonContainer() : Container();
+
     return Container(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -147,6 +204,8 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
                 decoration: InputDecoration(labelText: 'Source'),
               ),
             ),
+            Padding(padding: const EdgeInsets.all(4), child: buttonContainer),
+            Expanded(child: _goalEditorArea()),
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: RaisedButton(
@@ -164,9 +223,6 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   }
 
   Container _goalDescriptionArea(bool withGoal, int skillId) {
-    // String desc =
-    //     'Goal: 5 hrs from 11/15 to 11/21 sll laljjdl jlgjlj  jallj agjlasljl ';
-
     Widget body;
     if (withGoal) {
       body = Container(
@@ -198,8 +254,13 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     // TODO - testing/layout only
     _goalAdded = true;
 
-    return BlocProvider(
-        builder: (_) => _newSkillBloc,
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<NewSkillBloc>(
+              builder: (BuildContext context) => _newSkillBloc),
+          BlocProvider<GoaleditorBloc>(
+              builder: (BuildContext context) => _goalEditorBloc),
+        ],
         child: Scaffold(
             appBar: AppBar(
               title: Center(
@@ -210,11 +271,10 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
               builder: (context, state) {
                 Widget body;
                 if (state is EmptyNewSkillState) {
-                  body = _newSkillAreaBuilder();
-                  // body = _skillUpdateArea();
+                  body = _newSkillAreaBuilder(withGoalArea: false);
                 } else if (state is NewSkillInsertedState) {
-                  body = _skillUpdateArea(state.newSkillId);
-                }
+                  body = _newSkillAreaBuilder(withGoalArea: true);
+                } else if (state is NewGoalInsertedState) {}
                 return body;
               },
             )));
