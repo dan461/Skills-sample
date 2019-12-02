@@ -274,7 +274,9 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
                   body = _newSkillAreaBuilder(withGoalArea: false);
                 } else if (state is NewSkillInsertedState) {
                   body = _newSkillAreaBuilder(withGoalArea: true);
-                } else if (state is NewGoalInsertedState) {}
+                } else if (state is NewGoalInsertedState) {
+                  
+                }
                 return body;
               },
             )));

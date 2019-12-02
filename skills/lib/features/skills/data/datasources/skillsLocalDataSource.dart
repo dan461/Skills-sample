@@ -15,7 +15,8 @@ abstract class SkillsLocalDataSource {
   Future<List<SkillModel>> getAllSkills();
   Future<SkillModel> getSkillById(int id);
   Future<int> insertNewSkill(Skill skill);
-  Future<int> updateSkill(Skill skill);
+  // Future<int> updateSkill(Skill skill);
+  Future<int> updateSkill(int skillId, Map changeMap);
   Future<GoalModel> getGoalById(int id);
   Future<int> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
@@ -137,16 +138,23 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateSkill(Skill skill) async {
+  Future<int> updateSkill(int skillId, Map changeMap) async {
     final Database db = await database;
-    final SkillModel skillModel = SkillModel(
-        name: skill.name,
-        source: skill.source,
-        startDate: skill.startDate,
-        totalTime: skill.totalTime);
-     int updates = await db.update(skillsTable, skillModel.toMap());
+    int updates = await db.update(skillsTable, changeMap, where:'$columnId = ?', whereArgs: [skillId]);
     return updates;
   }
+
+  @override
+  // Future<int> updateSkill(Skill skill) async {
+  //   final Database db = await database;
+  //   final SkillModel skillModel = SkillModel(
+  //       name: skill.name,
+  //       source: skill.source,
+  //       startDate: skill.startDate,
+  //       totalTime: skill.totalTime);
+  //    int updates = await db.update(skillsTable, skillModel.toMap());
+  //   return updates;
+  // }
 
   @override
   Future<int> deleteGoalWithId(int id) async {

@@ -13,7 +13,10 @@ class SkillsRepositoryImpl implements SkillRepository {
   final SkillsRemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;
 
-  SkillsRepositoryImpl({@required this.localDataSource, this.remoteDataSource, this.networkInfo});
+  SkillsRepositoryImpl(
+      {@required this.localDataSource,
+      this.remoteDataSource,
+      this.networkInfo});
 
   @override
   Future<Either<Failure, List<Skill>>> getAllSkills() async {
@@ -30,26 +33,27 @@ class SkillsRepositoryImpl implements SkillRepository {
     return Right(await localDataSource.insertNewSkill(skill));
   }
 
+  // @override
+  // Future<Either<Failure, int>> updateSkill(Skill skill) async {
+
+  //   return Right(await localDataSource.updateSkill(skill));
+  // }
+
   @override
-  Future<Either<Failure, int>> updateSkill(Skill skill) async {
-    
-    return Right(await localDataSource.updateSkill(skill));
+  Future<Either<Failure, int>> updateSkill(int skillId, Map changeMap) async {
+    return Right(await localDataSource.updateSkill(skillId, changeMap));
   }
 
   // TODO only added to follow course, no remote source yet
   @override
   Future<Either<Failure, List<Skill>>> downloadAllSkills() async {
-    if(await networkInfo.isConnected){
-      try{
-      final remoteSkills = await remoteDataSource.downloadAllSkills();
-      return Right(remoteSkills);
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteSkills = await remoteDataSource.downloadAllSkills();
+        return Right(remoteSkills);
       } on ServerException {
-        return Left(ServerFailure()); 
+        return Left(ServerFailure());
       }
     }
-    
-    
   }
-
-  
 }

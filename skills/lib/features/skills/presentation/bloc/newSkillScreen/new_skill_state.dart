@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
 
 abstract class NewSkillState extends Equatable {
   const NewSkillState();
@@ -21,6 +22,15 @@ class NewSkillInsertedState extends NewSkillState {
   List<Object> get props => [newSkillId];
 }
 
+class NewSkillUpdatedState extends NewSkillState {
+  final int updates;
+
+  NewSkillUpdatedState(this.updates);
+
+  @override
+  List<Object> get props => [updates];
+}
+
 class NewSkillErrorState extends NewSkillState {
   final String message;
 
@@ -28,4 +38,3 @@ class NewSkillErrorState extends NewSkillState {
   @override
   List<Object> get props => [message];
 }
-

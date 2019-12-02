@@ -227,6 +227,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                 goalId: state.newGoalId, skillId: widget.skillId));
           } 
           else if (state is GoalAddedToSkillState) {
+            
             Navigator.pop(context, _goalTranslation);
           }
           return Container(

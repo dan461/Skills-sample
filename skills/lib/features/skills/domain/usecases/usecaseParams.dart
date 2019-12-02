@@ -15,3 +15,10 @@ class AddGoalToSkillParams extends Params {
   AddGoalToSkillParams({this.skillId, this.goalId});
   
 }
+
+class SkillUpdateParams extends Params {
+  final int skillId;
+  final Map changeMap;
+
+  SkillUpdateParams({this.skillId, this.changeMap});
+}
