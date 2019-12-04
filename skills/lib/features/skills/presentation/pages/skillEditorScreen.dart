@@ -46,10 +46,38 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   }
 
   void setDoneButtonEnabled() {
-    setState(() {
-      _doneEnabled =
-          _nameController.text.isNotEmpty && _sourceController.text.isNotEmpty;
-    });
+    // if (skillEditorBloc.state is EditingSkillState) {
+    //   setState(() {
+    //     _doneEnabled = _nameController.text != _skill.name ||
+    //         _sourceController.text != _skill.source;
+    //   });
+    // } else if (skillEditorBloc.state is CreatingNewSkillState) {
+      setState(() {
+        _doneEnabled = _nameController.text.isNotEmpty &&
+            _sourceController.text.isNotEmpty;
+      });
+    // }
+  }
+
+  void _doneTapped() {
+    if (skillEditorBloc.state is EditingSkillState) {
+      _updateSkill();
+    } else if (skillEditorBloc.state is CreatingNewSkillState) {
+      _insertNewSkill();
+    }
+  }
+
+  void _updateSkill() async {
+    Skill updatedSkill = Skill(
+        id: _skill.id,
+        name: _nameController.text,
+        source: _sourceController.text,
+        startDate: _skill.startDate,
+        totalTime: _skill.totalTime,
+        currentGoalId: _skill.currentGoalId,
+        goalText: _skill.goalText);
+
+    skillEditorBloc.add(UpdateSkillEvent(updatedSkill));
   }
 
   void _insertNewSkill() async {
@@ -133,9 +161,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   }
 
   Container _newSkillAreaBuilder() {
-    // Container buttonContainer =
-    //     withGoalArea ? _goalButtonContainer() : Container();
-
     return Container(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -189,7 +214,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: TextField(
-                onChanged: (_) {
+                onChanged: (text) {
+                  _nameController.text = text;
                   setDoneButtonEnabled();
                 },
                 controller: _nameController,
@@ -199,7 +225,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: TextField(
-                onChanged: (_) {
+                onChanged: (text) {
+                  _sourceController.text = text;
                   setDoneButtonEnabled();
                 },
                 controller: _sourceController,
@@ -210,12 +237,13 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: RaisedButton(
-                  child: Text('Done!'),
-                  onPressed: _doneEnabled
-                      ? () {
-                          _insertNewSkill();
-                        }
-                      : null),
+                child: Text('Done!'),
+                onPressed: _doneEnabled
+                    ? () {
+                        _doneTapped();
+                      }
+                    : null,
+              ),
             ),
           ],
         ),
@@ -277,10 +305,19 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
               body = _newSkillAreaBuilder();
             } else if (state is EditingSkillState) {
               _skill = state.skill;
-
               body = _skillEditingArea(_skill);
             } else if (state is NewSkillInsertedState) {
               body = _skillUpdateArea(state.newId);
+            } else if (state is UpdatedSkillState) {
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
+              Navigator.of(context).pop();
+            } else if (state is NewSkillInsertingState ||
+                state is UpdatingSkillState) {
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
             }
 
             return body;

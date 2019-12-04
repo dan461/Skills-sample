@@ -28,7 +28,9 @@ class _SkillsScreenState extends State<SkillsScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
       editorBloc.add(CreateSkillEvent());
-      return SkillEditorScreen(skillEditorBloc: editorBloc,);
+      return SkillEditorScreen(
+        skillEditorBloc: editorBloc,
+      );
     }));
     // if (result != null) {
     // var insert = locator.get<InsertNewSkill>();
@@ -38,12 +40,14 @@ class _SkillsScreenState extends State<SkillsScreen> {
   }
 
   void editSkill(Skill skill) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
       editorBloc.add(EditSkillEvent(skill));
-      return SkillEditorScreen(skillEditorBloc: editorBloc,);
+      return SkillEditorScreen(
+        skillEditorBloc: editorBloc,
+      );
     }));
-    
+    bloc.add(GetAllSkillsEvent());
   }
 
   @override
@@ -78,7 +82,10 @@ class _SkillsScreenState extends State<SkillsScreen> {
               );
             } else if (state is AllSkillsLoaded) {
               body = Container(
-                child: SkillsList(skills: state.skills, callback: editSkill,),
+                child: SkillsList(
+                  skills: state.skills,
+                  callback: editSkill,
+                ),
               );
             } else {
               // TODO - not great, deal with error better
@@ -101,7 +108,8 @@ class SkillsList extends StatefulWidget {
   final Function callback;
   const SkillsList({
     Key key,
-    this.skills, this.callback,
+    this.skills,
+    this.callback,
   }) : super(key: key);
 
   @override
@@ -146,10 +154,10 @@ class SkillCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         callback(skill);
       },
-          child: Container(
+      child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),

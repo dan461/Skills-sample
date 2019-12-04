@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
@@ -39,6 +40,13 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
     } else if (event is EditSkillEvent) {
       yield EditingSkillState(event.skill);
       skillId = event.skill.id;
+    } else if (event is UpdateSkillEvent) {
+      yield UpdatingSkillState();
+      final failureOrUpdates =
+          await updateSkill(SkillInsertOrUpdateParams(skill: event.skill));
+      yield failureOrUpdates.fold(
+          (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
+          (updates) => UpdatedSkillState());
     }
   }
 }

@@ -150,13 +150,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> updateSkill(Skill skill) async {
     final Database db = await database;
     final SkillModel skillModel = SkillModel(
+        id: skill.id,
         name: skill.name,
         source: skill.source,
         startDate: skill.startDate,
         totalTime: skill.totalTime,
         currentGoalId: skill.currentGoalId,
         goalText: skill.goalText);
-    int updates = await db.update(skillsTable, skillModel.toMap());
+    int updates = await db.update(skillsTable, skillModel.toMap(), where: '$columnId = ?', whereArgs: [skillModel.id]);
     return updates;
   }
 

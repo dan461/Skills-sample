@@ -95,5 +95,34 @@ void main() {
     });
   });
 
-  group('UpdateSkill', () {});
+  group('UpdateSkill', () {
+    test(
+        'test that bloc emits [UpdatingSkillState, UpdatedSkillState on successful update',
+        () async {
+      when(mockUpdateSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+          .thenAnswer((_) async => Right(1));
+      final expected = [
+        InitialSkillEditorState(),
+        UpdatingSkillState(),
+        UpdatedSkillState()
+      ];
+      prefix0.expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateSkillEvent(testSkill));
+    });
+
+    test(
+        'test that bloc emits [UpdatingSkillState, SkillEditorErrorState] on unsuccessful update',
+        () async {
+      when(mockUpdateSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        InitialSkillEditorState(),
+        UpdatingSkillState(),
+        SkillEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      // assert before act due to possibility of act event completing too quickly
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateSkillEvent(testSkill));
+    });
+  });
 }
