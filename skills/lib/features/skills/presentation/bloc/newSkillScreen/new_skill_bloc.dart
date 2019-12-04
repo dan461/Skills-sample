@@ -23,20 +23,20 @@ class NewSkillBloc extends Bloc<NewSkillEvent, NewSkillState> {
     NewSkillEvent event,
   ) async* {
     
-    if (event is InsertNewSkillEvent) {
-      yield NewSkillInsertingState();
-      final failureOrNewId =
-          await insertNewSkillUC(InsertParams(skill: event.newSkill));
-      yield failureOrNewId.fold(
-          (failure) => NewSkillErrorState(CACHE_FAILURE_MESSAGE),
-          (newId) => NewSkillInsertedState(newId));
-    } else if (event is UpdateNewSkillEvent) {
+    // if (event is InsertNewSkillEvent) {
+    //   yield NewSkillInsertingState();
+    //   final failureOrNewId =
+    //       await insertNewSkillUC(SkillInsertOrUpdateParams(skill: event.newSkill));
+    //   yield failureOrNewId.fold(
+    //       (failure) => NewSkillErrorState(CACHE_FAILURE_MESSAGE),
+    //       // (newId) => NewSkillInsertedState(newId));
+    // } else if (event is UpdateNewSkillEvent) {
       
-      final failureOrUpdates = await updateSkill(SkillUpdateParams(
-          skillId: event.skillId, changeMap: event.changeMap));
-      yield failureOrUpdates.fold(
-          (failure) => NewSkillErrorState(CACHE_FAILURE_MESSAGE),
-          (updates) => NewSkillUpdatedState(updates));
-    }
+    //   // final failureOrUpdates = await updateSkill(SkillInsertOrUpdateParams(
+    //   //     skill: event));
+    //   // yield failureOrUpdates.fold(
+    //   //     (failure) => NewSkillErrorState(CACHE_FAILURE_MESSAGE),
+    //   //     (updates) => NewSkillUpdatedState(updates));
+    // }
   }
 }

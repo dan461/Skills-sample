@@ -3,6 +3,7 @@ import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
+import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'getAllSkills_test.dart';
 
 void main() {
@@ -22,7 +23,7 @@ void main() {
     () async {
       when(mockSkillsRepo.insertNewSkill(testSkill))
           .thenAnswer((_) async => Right(newId));
-      final result = await useCase(InsertParams(skill: testSkill));
+      final result = await useCase(SkillInsertOrUpdateParams(skill: testSkill));
       expect(result, Right(newId));
       verify(mockSkillsRepo.insertNewSkill(testSkill));
       verifyNoMoreInteractions(mockSkillsRepo);

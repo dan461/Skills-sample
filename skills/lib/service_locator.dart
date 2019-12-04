@@ -14,6 +14,7 @@ import 'features/skills/domain/usecases/insertNewSkill.dart';
 import 'features/skills/domain/usecases/updateGoal.dart';
 import 'features/skills/domain/usecases/updateSkill.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goalEditor_bloc.dart';
+import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
 final locator = GetIt.instance;
 
@@ -23,7 +24,8 @@ void init() {
   // TODO - remove insertNewSkill parameter from SkillsBloc
   locator.registerFactory(
       () => SkillsBloc(getAllSkills: locator(), insertNewSkill: locator()));
-  locator.registerFactory(() => NewSkillBloc(insertNewSkillUC: locator()));
+  // locator.registerFactory(() => NewSkillBloc(insertNewSkillUC: locator(), updateSkill: locator()));
+  locator.registerFactory(() => SkillEditorBloc(insertNewSkillUC: locator(), updateSkill: locator()));
   locator.registerFactory(() => GoaleditorBloc(
       insertNewGoalUC: locator(),
       updateGoalUC: locator(),

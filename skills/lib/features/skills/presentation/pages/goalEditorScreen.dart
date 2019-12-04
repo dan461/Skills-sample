@@ -9,8 +9,9 @@ import 'package:skills/service_locator.dart';
 
 class GoalCreationScreen extends StatefulWidget {
   final int skillId;
+  final String skillName;
 
-  const GoalCreationScreen({Key key, @required this.skillId}) : super(key: key);
+  const GoalCreationScreen({Key key, @required this.skillId, @required this.skillName}) : super(key: key);
   @override
   _GoalCreationScreenState createState() => _GoalCreationScreenState();
 }
@@ -18,7 +19,7 @@ class GoalCreationScreen extends StatefulWidget {
 class _GoalCreationScreenState extends State<GoalCreationScreen> {
   GoaleditorBloc _bloc;
   int _goalType;
-  
+
   bool _doneEnabled;
   String _goalTranslation;
 
@@ -71,15 +72,17 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   }
 
   void _insertNewGoal() async {
-    Goal newGoal = Goal(
-      fromDate: _startDate.millisecondsSinceEpoch,
-      toDate: _endDate.millisecondsSinceEpoch,
-      isComplete: false,
-      timeBased: _isTimeBased,
-      goalTime: _goalMinutes,
-    );
-    _bloc.add(InsertNewGoalEvent(newGoal));
-    _goalTranslation = _bloc.translateGoal(newGoal);
+    _bloc.insertNewGoal(_startDate.millisecondsSinceEpoch,
+        _endDate.millisecondsSinceEpoch, _isTimeBased, _goalMinutes);
+    // Goal newGoal = Goal(
+    //   fromDate: _startDate.millisecondsSinceEpoch,
+    //   toDate: _endDate.millisecondsSinceEpoch,
+    //   isComplete: false,
+    //   timeBased: _isTimeBased,
+    //   goalTime: _goalMinutes,
+    // );
+    // _bloc.add(InsertNewGoalEvent(newGoal));
+    // _goalTranslation = _bloc.translateGoal(newGoal);
   }
 
   void _selectStartDate() async {
@@ -225,10 +228,6 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
           if (state is NewGoalInsertedState) {
             _bloc.add(AddGoalToSkillEvent(
                 goalId: state.newGoalId, skillId: widget.skillId));
-          } 
-          else if (state is GoalAddedToSkillState) {
-            
-            Navigator.pop(context, _goalTranslation);
           }
           return Container(
             child: GestureDetector(

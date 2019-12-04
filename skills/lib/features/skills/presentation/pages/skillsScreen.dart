@@ -4,6 +4,7 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
+import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
 import 'package:skills/service_locator.dart';
 import 'newSkillScreen.dart';
 
@@ -24,7 +25,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
   void addSkill() async {
     bool skillAdded = false;
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return NewSkillScreen();
+      return SkillEditorScreen();
     }));
     // if (result != null) {
     // var insert = locator.get<InsertNewSkill>();

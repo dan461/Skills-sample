@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class GoalEditorState extends Equatable {
   const GoalEditorState();
@@ -48,7 +49,8 @@ class AddingGoalToSkillState extends GoalEditorState {
 
 class GoalAddedToSkillState extends GoalEditorState {
   final int newId;
-  GoalAddedToSkillState(this.newId);
+  final String goalText;
+  GoalAddedToSkillState({@required this.newId, @required this.goalText});
 
   @override
   List<Object> get props => [];

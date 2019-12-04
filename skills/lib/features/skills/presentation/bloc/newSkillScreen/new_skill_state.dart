@@ -15,12 +15,12 @@ class NewSkillInsertingState extends NewSkillState {
   List<Object> get props => [];
 }
 
-class NewSkillInsertedState extends NewSkillState {
-  final int newSkillId;
-  NewSkillInsertedState(this.newSkillId);
-  @override
-  List<Object> get props => [newSkillId];
-}
+// class NewSkillInsertedState extends NewSkillState {
+//   final int newSkillId;
+//   NewSkillInsertedState(this.newSkillId);
+//   @override
+//   List<Object> get props => [newSkillId];
+// }
 
 class NewSkillUpdatedState extends NewSkillState {
   final int updates;

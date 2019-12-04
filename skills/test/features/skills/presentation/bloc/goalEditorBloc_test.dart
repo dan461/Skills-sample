@@ -88,7 +88,7 @@ void main() {
       final expected = [
         EmptyGoalEditorState(),
         AddingGoalToSkillState(),
-        GoalAddedToSkillState(1)
+        GoalAddedToSkillState(newId: 1, goalText: 'none')
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(AddGoalToSkillEvent());

@@ -16,6 +16,8 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   final InsertNewGoal insertNewGoalUC;
   final UpdateGoal updateGoalUC;
   final AddGoalToSkill addGoalToSkill;
+  Goal goal;
+  String goalTranslation = 'none';
 
   GoaleditorBloc(
       {this.insertNewGoalUC, this.updateGoalUC, this.addGoalToSkill});
@@ -40,8 +42,22 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
           AddGoalToSkillParams(skillId: event.skillId, goalId: event.goalId));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
-          (newId) => GoalAddedToSkillState(newId));
+          (newId) =>
+              GoalAddedToSkillState(newId: newId, goalText: goalTranslation));
     }
+  }
+
+  void insertNewGoal(
+      int startDate, int endDate, bool timeBased, int goalMinutes) async {
+    Goal newGoal = Goal(
+      fromDate: startDate,
+      toDate: endDate,
+      isComplete: false,
+      timeBased: timeBased,
+      goalTime: goalMinutes,
+    );
+    add(InsertNewGoalEvent(newGoal));
+    goalTranslation = translateGoal(newGoal);
   }
 
   String translateGoal(Goal goal) {

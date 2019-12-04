@@ -5,10 +5,13 @@ import 'dart:convert';
 import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
-  final sut = SkillModel(
-      id: 1, name: 'test', source: 'testing', startDate: 1, totalTime: 1);
 
-  setUp(() {});
+  SkillModel sut; 
+
+  setUp(() {
+    sut = SkillModel(
+      id: 1, name: 'test', source: 'testing', startDate: 1, totalTime: 1, currentGoalId: 1, goalText: "none");
+  });
 
   test(
     'should be a subclass of Skill',
@@ -37,7 +40,9 @@ void main() {
         'name': 'test',
         'source': 'testing',
         'startDate': 1,
-        'totalTime': 1
+        'totalTime': 1,
+        'currentGoalId': 1,
+        'goalText': 'none'
       };
       expect(result, expectedMap);
     });
