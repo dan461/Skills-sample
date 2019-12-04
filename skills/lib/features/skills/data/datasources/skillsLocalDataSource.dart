@@ -1,4 +1,3 @@
-import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
@@ -65,7 +64,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
-    await db.execute(_createSkillsGoalsJoinTable);
+    // await db.execute(_createSkillsGoalsJoinTable);
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
   }
@@ -83,11 +82,12 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, currentGoalId $integer, goalText TEXT)";
 
   final String _createGoalTable = "$createTable goals($idKey "
-      "fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
-      "goalTime $integer, timeRemaining $integer, desc TEXT)";
+      "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
+      "goalTime $integer, timeRemaining $integer, desc TEXT, "
+      "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(id) ON DELETE CASCADE)";
 
-  final String _createSkillsGoalsJoinTable = "$createTable skills_goals($idKey"
-      "skill_id $integer, goal_id $integer)";
+  // final String _createSkillsGoalsJoinTable = "$createTable skills_goals($idKey"
+  //     "skill_id $integer, goal_id $integer)";
 
   // final String _createSessionsTable = "$createTable sessions($idKey"
   //     "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
@@ -183,6 +183,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> insertNewGoal(Goal goal) async {
     final Database db = await database;
     final GoalModel goalModel = GoalModel(
+        skillId: goal.skillId,
         fromDate: goal.fromDate,
         toDate: goal.toDate,
         timeBased: goal.timeBased,

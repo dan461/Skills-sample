@@ -8,7 +8,6 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_ev
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
 import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
 import 'package:skills/service_locator.dart';
-import 'newSkillScreen.dart';
 
 class SkillsScreen extends StatefulWidget {
   @override

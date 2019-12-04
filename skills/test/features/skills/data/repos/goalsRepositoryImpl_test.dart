@@ -1,7 +1,5 @@
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:skills/core/error/exceptions.dart';
-import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/data/repos/goalsRepositoryImpl.dart';
@@ -32,6 +30,7 @@ void main() {
     mockNetworkInfo = MockNetworkInfo();
     testGoalModel = GoalModel(
         id: 1,
+        skillId: 1,
         fromDate: todayInt,
         toDate: tomorrowInt,
         isComplete: false,

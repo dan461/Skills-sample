@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
@@ -33,6 +32,7 @@ void main() {
         addGoalToSkill: mockAddGoalToSkill);
 
     testGoal = Goal(
+        skillId: 1,
         fromDate: DateTime.now().millisecondsSinceEpoch,
         toDate: DateTime.now().millisecondsSinceEpoch,
         isComplete: false,
@@ -103,6 +103,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 04);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,
@@ -122,6 +123,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 04);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,
@@ -141,6 +143,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 04);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,
@@ -160,6 +163,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 04);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,
@@ -179,6 +183,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 02);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,
@@ -198,6 +203,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 04);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,
@@ -219,6 +225,7 @@ void main() {
       DateTime to = DateTime(2019, 07, 02);
 
       final testTimeGoal = Goal(
+          skillId: 1,
           fromDate: from.millisecondsSinceEpoch,
           toDate: to.millisecondsSinceEpoch,
           isComplete: false,

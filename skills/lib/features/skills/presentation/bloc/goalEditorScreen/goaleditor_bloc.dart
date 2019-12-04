@@ -48,8 +48,9 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   }
 
   void insertNewGoal(
-      int startDate, int endDate, bool timeBased, int goalMinutes) async {
+      int startDate, int endDate, bool timeBased, int goalMinutes, int skillId) async {
     Goal newGoal = Goal(
+      skillId: skillId,
       fromDate: startDate,
       toDate: endDate,
       isComplete: false,

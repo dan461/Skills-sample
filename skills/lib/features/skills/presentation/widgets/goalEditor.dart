@@ -17,7 +17,7 @@ class _GoalEditorState extends State<GoalEditor> {
   int _goalType;
 
   bool _doneEnabled;
-  String _goalTranslation;
+  // String _goalTranslation;
 
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _GoalEditorState extends State<GoalEditor> {
     _bloc = locator<GoaleditorBloc>();
     _goalType = 0;
     _doneEnabled = false;
-    _goalTranslation = '';
+    // _goalTranslation = '';
   }
 
   TextEditingController _hoursTextController = TextEditingController();
@@ -69,6 +69,7 @@ class _GoalEditorState extends State<GoalEditor> {
 
   void _insertNewGoal() async {
     Goal newGoal = Goal(
+
       fromDate: _startDate.millisecondsSinceEpoch,
       toDate: _endDate.millisecondsSinceEpoch,
       isComplete: false,
@@ -76,7 +77,7 @@ class _GoalEditorState extends State<GoalEditor> {
       goalTime: _goalMinutes,
     );
     _bloc.add(InsertNewGoalEvent(newGoal));
-    _goalTranslation = _bloc.translateGoal(newGoal);
+    // _goalTranslation = _bloc.translateGoal(newGoal);
   }
 
   void _selectStartDate() async {

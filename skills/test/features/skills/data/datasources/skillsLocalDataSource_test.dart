@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
-import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class MockDatabase extends Mock implements Database{}
@@ -28,7 +27,7 @@ void main() {
 
   group('insertNewGoal', (){
 
-    final testGoalModel = GoalModel(id: 1, fromDate: todayInt, toDate: tomorrowInt, isComplete: false,
+    final testGoalModel = GoalModel(id: 1, skillId: 1, fromDate: todayInt, toDate: tomorrowInt, isComplete: false,
     timeBased: true, goalTime: 60, timeRemaining: 60);
 
     // test('should call insertNewGoal to cache goal', () async {

@@ -10,6 +10,8 @@ import './bloc.dart';
 class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
   final InsertNewSkill insertNewSkillUC;
   final UpdateSkill updateSkill;
+  // TODO may not be needed
+  int skillId;
 
   SkillEditorBloc(
       {@required this.insertNewSkillUC, @required this.updateSkill});
@@ -25,13 +27,18 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
       yield NewSkillInsertingState();
       final failureOrNewId = await insertNewSkillUC(
           SkillInsertOrUpdateParams(skill: event.newSkill));
-      yield failureOrNewId.fold(
-          (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (newId) => NewSkillInsertedState(newId));
+      yield failureOrNewId
+          .fold((failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
+              // (newId) => NewSkillInsertedState(newId));
+              (newId) {
+        skillId = newId;
+        return NewSkillInsertedState(newId);
+      });
     } else if (event is CreateSkillEvent) {
       yield CreatingNewSkillState();
     } else if (event is EditSkillEvent) {
       yield EditingSkillState(event.skill);
+      skillId = event.skill.id;
     }
   }
 }

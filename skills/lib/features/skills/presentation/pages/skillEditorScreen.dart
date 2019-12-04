@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_state.dart';
 // import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
 // import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
@@ -238,7 +237,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             child: Padding(
                 padding: const EdgeInsets.only(top: 4, bottom: 4),
                 child: Text(
-                  _skill.goalText,
+                  'fix this',
                   style: Theme.of(context).textTheme.subhead,
                   maxLines: 2,
                   textAlign: TextAlign.start,

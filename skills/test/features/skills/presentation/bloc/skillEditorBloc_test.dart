@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:skills/core/error/failures.dart' show CacheFailure;
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -47,10 +45,12 @@ void main() {
     test(
         'test for bloc emiting [EditingSkillState] in response to a EditSkillEvent',
         () async {
-      final expected = [InitialSkillEditorState(), EditingSkillState(testSkill)];
+      final expected = [
+        InitialSkillEditorState(),
+        EditingSkillState(testSkill)
+      ];
       prefix0.expectLater(sut, emitsInOrder(expected));
       sut.add(EditSkillEvent(testSkill));
-      
     });
   });
 
