@@ -21,15 +21,17 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
   Stream<SkillEditorState> mapEventToState(
     SkillEditorEvent event,
   ) async* {
-    if (event is InsertNewSkillEvent){
+    if (event is InsertNewSkillEvent) {
       yield NewSkillInsertingState();
-      final failureOrNewId =
-          await insertNewSkillUC(SkillInsertOrUpdateParams(skill: event.newSkill));
-       yield failureOrNewId.fold(
+      final failureOrNewId = await insertNewSkillUC(
+          SkillInsertOrUpdateParams(skill: event.newSkill));
+      yield failureOrNewId.fold(
           (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (newId) => NewSkillInsertedState(newId));   
-    } else if (event is UpdateSkillEvent){
-
+          (newId) => NewSkillInsertedState(newId));
+    } else if (event is CreateSkillEvent) {
+      yield CreatingNewSkillState();
+    } else if (event is EditSkillEvent) {
+      yield EditingSkillState(event.skill);
     }
   }
 }

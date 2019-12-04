@@ -15,28 +15,33 @@ import 'package:skills/service_locator.dart';
 import 'goalEditorScreen.dart';
 
 class SkillEditorScreen extends StatefulWidget {
+  final SkillEditorBloc skillEditorBloc;
+
+  const SkillEditorScreen({Key key, @required this.skillEditorBloc})
+      : super(key: key);
   @override
-  _SkillEditorScreenState createState() => _SkillEditorScreenState();
+  _SkillEditorScreenState createState() =>
+      _SkillEditorScreenState(skillEditorBloc: skillEditorBloc);
 }
 
 class _SkillEditorScreenState extends State<SkillEditorScreen> {
-  SkillEditorBloc _skillEditorBloc;
+  final SkillEditorBloc skillEditorBloc;
   GoaleditorBloc _goalEditorBloc;
-  // bool _goalAdded;
-  // bool _showGoalEditor;
+  Skill _skill;
   String goalDesc;
   Container goalArea;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _sourceController = TextEditingController();
   bool _doneEnabled = false;
 
+  _SkillEditorScreenState({@required this.skillEditorBloc});
+
   @override
   void initState() {
     super.initState();
-    _skillEditorBloc = locator<SkillEditorBloc>();
+    // skillEditorBloc = locator<SkillEditorBloc>();
     _goalEditorBloc = locator<GoaleditorBloc>();
-    // _goalAdded = false;
-    // _showGoalEditor = false;
+
     goalDesc = 'Goal: none';
     goalArea = Container();
   }
@@ -51,14 +56,14 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   void _insertNewSkill() async {
     Skill newSkill =
         Skill(name: _nameController.text, source: _sourceController.text);
-    _skillEditorBloc.add(InsertNewSkillEvent(newSkill));
+    skillEditorBloc.add(InsertNewSkillEvent(newSkill));
 
     // Navigator.of(context).pop();
   }
 
   void _goToGoalEditor(int skillId) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalCreationScreen(skillId: skillId, skillName: );
+      return GoalCreationScreen(skillId: skillId, skillName: 'dkdkd');
     }));
   }
 
@@ -173,6 +178,52 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     );
   }
 
+  Container _skillEditingArea(Skill skill) {
+    _nameController.text = skill.name;
+    _sourceController.text = skill.source;
+
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: TextField(
+                onChanged: (_) {
+                  setDoneButtonEnabled();
+                },
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: TextField(
+                onChanged: (_) {
+                  setDoneButtonEnabled();
+                },
+                controller: _sourceController,
+                decoration: InputDecoration(labelText: 'Source'),
+              ),
+            ),
+            _goalDescriptionArea(true, skill.id),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: RaisedButton(
+                  child: Text('Done!'),
+                  onPressed: _doneEnabled
+                      ? () {
+                          _insertNewSkill();
+                        }
+                      : null),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Container _goalDescriptionArea(bool withGoal, int skillId) {
     Widget body;
     if (withGoal) {
@@ -205,7 +256,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     return MultiBlocProvider(
       providers: <BlocProvider>[
         BlocProvider<SkillEditorBloc>(
-            builder: (BuildContext context) => _skillEditorBloc),
+            builder: (BuildContext context) => skillEditorBloc),
         BlocProvider<GoaleditorBloc>(
             builder: (BuildContext context) => _goalEditorBloc),
       ],
@@ -219,8 +270,12 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
           builder: (context, state) {
             Widget body;
 
-            if (state is InitialSkillEditorState) {
+            if (state is InitialSkillEditorState ||
+                state is CreatingNewSkillState) {
               body = _newSkillAreaBuilder();
+            } else if (state is EditingSkillState) {
+              _skill = state.skill;
+              body = _skillEditingArea(_skill);
             } else if (state is NewSkillInsertedState) {
               body = _skillUpdateArea(state.newId);
             }

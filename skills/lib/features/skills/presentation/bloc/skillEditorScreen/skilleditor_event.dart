@@ -5,6 +5,19 @@ abstract class SkillEditorEvent extends Equatable {
   const SkillEditorEvent();
 }
 
+class EditSkillEvent extends SkillEditorEvent {
+  final Skill skill;
+
+  EditSkillEvent(this.skill);
+  @override
+  List<Object> get props => [skill];
+}
+
+class CreateSkillEvent extends SkillEditorEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class InsertNewSkillEvent extends SkillEditorEvent {
   final Skill newSkill;
 

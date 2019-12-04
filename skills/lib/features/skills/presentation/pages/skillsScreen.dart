@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
@@ -25,13 +27,24 @@ class _SkillsScreenState extends State<SkillsScreen> {
   void addSkill() async {
     bool skillAdded = false;
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return SkillEditorScreen();
+      SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
+      editorBloc.add(CreateSkillEvent());
+      return SkillEditorScreen(skillEditorBloc: editorBloc,);
     }));
     // if (result != null) {
     // var insert = locator.get<InsertNewSkill>();
     // await insert(InsertParams(skill: newSkill));
     bloc.add(GetAllSkillsEvent());
     // }
+  }
+
+  void editSkill(Skill skill) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
+      editorBloc.add(EditSkillEvent(skill));
+      return SkillEditorScreen(skillEditorBloc: editorBloc,);
+    }));
+    
   }
 
   @override
@@ -66,7 +79,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
               );
             } else if (state is AllSkillsLoaded) {
               body = Container(
-                child: SkillsList(skills: state.skills),
+                child: SkillsList(skills: state.skills, callback: editSkill,),
               );
             } else {
               // TODO - not great, deal with error better
@@ -86,9 +99,10 @@ class _SkillsScreenState extends State<SkillsScreen> {
 
 class SkillsList extends StatefulWidget {
   final List<Skill> skills;
+  final Function callback;
   const SkillsList({
     Key key,
-    this.skills,
+    this.skills, this.callback,
   }) : super(key: key);
 
   @override
@@ -113,6 +127,7 @@ class _SkillsListState extends State<SkillsList> {
               itemBuilder: (context, index) {
                 return SkillCell(
                   skill: widget.skills[index],
+                  callback: widget.callback,
                 );
               },
               itemCount: widget.skills.length,
@@ -126,60 +141,66 @@ class _SkillsListState extends State<SkillsList> {
 
 class SkillCell extends StatelessWidget {
   final Skill skill;
-  SkillCell({this.skill});
+  Function callback;
+  SkillCell({this.skill, this.callback});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-      ),
-      padding: EdgeInsets.all(4),
-      height: 70,
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      skill.name,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(skill.source,
-                        style: Theme.of(context).textTheme.subtitle),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Goal: 4hrs.',
-                        style: Theme.of(context).textTheme.subtitle)
-                  ],
-                )
-              ],
+    return GestureDetector(
+      onTap: (){
+        callback(skill);
+      },
+          child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        ),
+        padding: EdgeInsets.all(4),
+        height: 70,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        skill.name,
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(skill.source,
+                          style: Theme.of(context).textTheme.subtitle),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Goal: 4hrs.',
+                          style: Theme.of(context).textTheme.subtitle)
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: <Widget>[
-                Text('Last Practiced',
-                    style: Theme.of(context).textTheme.subtitle),
-                Text('10/10/19', style: Theme.of(context).textTheme.subtitle)
-              ],
-            ),
-          )
-        ],
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: <Widget>[
+                  Text('Last Practiced',
+                      style: Theme.of(context).textTheme.subtitle),
+                  Text('10/10/19', style: Theme.of(context).textTheme.subtitle)
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
