@@ -39,7 +39,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   @override
   void initState() {
     super.initState();
-    // skillEditorBloc = locator<SkillEditorBloc>();
+
     _goalEditorBloc = locator<GoaleditorBloc>();
 
     goalDesc = 'Goal: none';
@@ -228,20 +228,23 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     Widget body;
     if (withGoal) {
       body = Container(
-        color: Colors.grey[100],
         child: InkWell(
           onTap: () {
             _goToGoalEditor(skillId);
           },
-          child: Padding(
-              padding: const EdgeInsets.only(top: 4, bottom: 4),
-              child: Text(
-                goalDesc,
-                style: Theme.of(context).textTheme.subhead,
-                maxLines: 2,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-              )),
+          child: Container(
+            color: Colors.grey[100],
+            alignment: Alignment.centerLeft,
+            child: Padding(
+                padding: const EdgeInsets.only(top: 4, bottom: 4),
+                child: Text(
+                  _skill.goalText,
+                  style: Theme.of(context).textTheme.subhead,
+                  maxLines: 2,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                )),
+          ),
         ),
       );
     } else {
@@ -275,6 +278,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
               body = _newSkillAreaBuilder();
             } else if (state is EditingSkillState) {
               _skill = state.skill;
+
               body = _skillEditingArea(_skill);
             } else if (state is NewSkillInsertedState) {
               body = _skillUpdateArea(state.newId);

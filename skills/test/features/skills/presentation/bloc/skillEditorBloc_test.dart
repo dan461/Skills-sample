@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:skills/core/error/failures.dart' show CacheFailure;
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,31 +13,54 @@ import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 
 class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
+
 class MockUpdateSkillUC extends Mock implements UpdateSkill {}
 
-void main(){
+void main() {
   SkillEditorBloc sut;
   MockInsertNewSkillUC mockInsertNewSkillUC;
   MockUpdateSkillUC mockUpdateSkillUC;
+  Skill testSkill;
 
   setUp(() {
     mockInsertNewSkillUC = MockInsertNewSkillUC();
     mockUpdateSkillUC = MockUpdateSkillUC();
-    sut = SkillEditorBloc(insertNewSkillUC: mockInsertNewSkillUC, updateSkill: mockUpdateSkillUC);
-
+    sut = SkillEditorBloc(
+        insertNewSkillUC: mockInsertNewSkillUC, updateSkill: mockUpdateSkillUC);
+    testSkill = Skill(name: 'test', source: 'test');
   });
 
   test('test bloc initial state is correct', () {
     expect(sut.initialState, equals(InitialSkillEditorState()));
   });
 
-  group('InsertNewSkill', () {
-    final testSkill = Skill(name: 'test', source: 'test');
+  group('test that bloc is in correct mode for creating or editing a skill',
+      () {
+    test(
+        'test for bloc emiting [CreatingNewSkillState] in response to a CreateSkillEvent',
+        () async {
+      final expected = [InitialSkillEditorState(), CreatingNewSkillState()];
+      prefix0.expectLater(sut, emitsInOrder(expected));
+      sut.add(CreateSkillEvent());
+    });
 
+    test(
+        'test for bloc emiting [EditingSkillState] in response to a EditSkillEvent',
+        () async {
+      final expected = [InitialSkillEditorState(), EditingSkillState(testSkill)];
+      prefix0.expectLater(sut, emitsInOrder(expected));
+      sut.add(EditSkillEvent(testSkill));
+      
+    });
+  });
+
+  group('InsertNewSkill', () {
     test('test for InsertNewSkill called', () async {
-      when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill))).thenAnswer((_) async => Right(1));
+      when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+          .thenAnswer((_) async => Right(1));
       sut.add(InsertNewSkillEvent(testSkill));
-      await untilCalled(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)));
+      await untilCalled(
+          mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)));
       verify(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)));
     });
 
@@ -69,8 +95,5 @@ void main(){
     });
   });
 
-  group('UpdateSkill', (){
-    
-  });
-
+  group('UpdateSkill', () {});
 }
