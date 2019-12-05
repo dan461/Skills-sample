@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
@@ -11,11 +12,15 @@ import './bloc.dart';
 class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
   final InsertNewSkill insertNewSkillUC;
   final UpdateSkill updateSkill;
+  final DeleteSkillWithId deleteSkillWithId;
+
   // TODO may not be needed
   int skillId;
 
   SkillEditorBloc(
-      {@required this.insertNewSkillUC, @required this.updateSkill});
+      {@required this.insertNewSkillUC,
+      @required this.updateSkill,
+      @required this.deleteSkillWithId});
 
   @override
   SkillEditorState get initialState => InitialSkillEditorState();
@@ -47,6 +52,13 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
       yield failureOrUpdates.fold(
           (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
           (updates) => UpdatedSkillState());
+    } else if (event is DeleteSkillWithIdEvent) {
+      yield DeletingSkillWithIdState();
+      final failureOrResponse =
+          await deleteSkillWithId(SkillDeleteParams(skillId: event.skillId));
+      yield failureOrResponse.fold(
+          (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
+          (response) => DeletedSkillWithIdState());
     }
   }
 }

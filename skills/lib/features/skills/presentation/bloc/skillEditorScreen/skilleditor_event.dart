@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
 abstract class SkillEditorEvent extends Equatable {
   const SkillEditorEvent();
@@ -25,6 +26,15 @@ class InsertNewSkillEvent extends SkillEditorEvent {
 
   @override
   List<Object> get props => [newSkill];
+}
+
+class DeleteSkillWithIdEvent extends SkillEditorEvent {
+  final int skillId;
+
+  DeleteSkillWithIdEvent(this.skillId);
+
+  @override
+  List<Object> get props => [skillId];
 }
 
 class UpdateSkillEvent extends SkillEditorEvent {

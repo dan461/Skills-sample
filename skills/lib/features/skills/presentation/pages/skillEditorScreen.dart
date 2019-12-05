@@ -31,8 +31,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   Container goalArea;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _sourceController = TextEditingController();
-  bool _doneEnabled = false;
 
+  final _formKey = GlobalKey<FormState>();
   _SkillEditorScreenState({@required this.skillEditorBloc});
 
   @override
@@ -45,18 +45,35 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     goalArea = Container();
   }
 
+  bool get _doneEnabled {
+    bool shouldEnable;
+    if (skillEditorBloc.state is EditingSkillState) {
+      shouldEnable = _nameController.text != _skill.name ||
+          _sourceController.text != _skill.source;
+    } else if (skillEditorBloc.state is CreatingNewSkillState) {
+      shouldEnable =
+          _nameController.text.isNotEmpty && _sourceController.text.isNotEmpty;
+    }
+    //  return shouldEnable;
+
+    return true;
+  }
+
   void setDoneButtonEnabled() {
-    // if (skillEditorBloc.state is EditingSkillState) {
-    //   setState(() {
-    //     _doneEnabled = _nameController.text != _skill.name ||
-    //         _sourceController.text != _skill.source;
-    //   });
-    // } else if (skillEditorBloc.state is CreatingNewSkillState) {
+    bool shouldEnable;
+    if (skillEditorBloc.state is EditingSkillState) {
+      shouldEnable = _nameController.text != _skill.name ||
+          _sourceController.text != _skill.source;
+    } else if (skillEditorBloc.state is CreatingNewSkillState) {
+      shouldEnable =
+          _nameController.text.isNotEmpty && _sourceController.text.isNotEmpty;
+    }
+
+    if (_doneEnabled != shouldEnable) {
       setState(() {
-        _doneEnabled = _nameController.text.isNotEmpty &&
-            _sourceController.text.isNotEmpty;
+        // _doneEnabled = shouldEnable;
       });
-    // }
+    }
   }
 
   void _doneTapped() {
@@ -65,6 +82,40 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     } else if (skillEditorBloc.state is CreatingNewSkillState) {
       _insertNewSkill();
     }
+  }
+
+  void _deleteTapped() async {
+    await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Delete this Skill?'),
+            content: Text(
+              'Deleting this Skill will also delete any goals associated with it. Any past events of this Skill will remain.',
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Delete'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _deleteSkill();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _deleteSkill() async {
+
+    skillEditorBloc.add(DeleteSkillWithIdEvent(_skill.id));
   }
 
   void _updateSkill() async {
@@ -84,8 +135,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     Skill newSkill =
         Skill(name: _nameController.text, source: _sourceController.text);
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
-
-    // Navigator.of(context).pop();
   }
 
   void _goToGoalEditor(int skillId) async {
@@ -93,12 +142,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
       return GoalCreationScreen(skillId: skillId, skillName: 'dkdkd');
     }));
   }
-
-  // void _showGoalTapped() {
-  //   setState(() {
-  //     _showGoalEditor = !_showGoalEditor;
-  //   });
-  // }
 
   Container _skillUpdateArea(int skillId) {
     return Container(
@@ -160,51 +203,110 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     );
   }
 
-  Container _newSkillAreaBuilder() {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-              child: TextField(
-                onChanged: (_) {
-                  setDoneButtonEnabled();
-                },
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-              ),
+  Form _skillEditFormBuilder(Key formKey) {
+    return Form(
+      autovalidate: true,
+      key: formKey,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+              onChanged: (_) {
+                setDoneButtonEnabled();
+              },
+              validator: (value) {
+                // _doneEnabled =
+                //     value.isNotEmpty && _sourceController.text.isNotEmpty;
+                if (value.isEmpty) {
+                  // _doneEnabled = false;
+                  return 'Name Required';
+                } else
+                  return null;
+              },
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-              child: TextField(
-                onChanged: (_) {
-                  setDoneButtonEnabled();
-                },
-                controller: _sourceController,
-                decoration: InputDecoration(labelText: 'Source'),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _sourceController,
+              decoration: InputDecoration(labelText: 'Source'),
+              onChanged: (_) {
+                setDoneButtonEnabled();
+              },
+              validator: (value) {
+                // _doneEnabled =
+                //     value.isNotEmpty && _nameController.text.isNotEmpty;
+                if (value.isEmpty) {
+                  return 'Source Required';
+                } else
+                  return null;
+              },
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-              child: RaisedButton(
-                  child: Text('Done!'),
-                  onPressed: _doneEnabled
-                      ? () {
-                          _insertNewSkill();
-                        }
-                      : null),
-            ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+            child: RaisedButton(
+                child: Text('Done!'),
+                onPressed: _doneEnabled
+                    ? () {
+                        _doneTapped();
+                      }
+                    : null),
+          ),
+        ],
       ),
     );
   }
 
+  Container _newSkillAreaBuilder() {
+    return Container(
+      child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+          child: _skillEditFormBuilder(_formKey)
+          // Column(
+          //   children: <Widget>[
+          //     Padding(
+          //       padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+          //       child: TextField(
+          //         onChanged: (_) {
+          //           setDoneButtonEnabled();
+          //         },
+          //         controller: _nameController,
+          //         decoration: InputDecoration(labelText: 'Name'),
+          //       ),
+          //     ),
+          //     Padding(
+          //       padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+          //       child: TextField(
+          //         onChanged: (_) {
+          //           setDoneButtonEnabled();
+          //         },
+          //         controller: _sourceController,
+          //         decoration: InputDecoration(labelText: 'Source'),
+          //       ),
+          //     ),
+          //     Padding(
+          //       padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+          //       child: RaisedButton(
+          //           child: Text('Done!'),
+          //           onPressed: _doneEnabled
+          //               ? () {
+          //                   _insertNewSkill();
+          //                 }
+          //               : null),
+          //     ),
+          //   ],
+          // ),
+          ),
+    );
+  }
+
   Container _skillEditingArea(Skill skill) {
-    _nameController.text = skill.name;
-    _sourceController.text = skill.source;
+    // _nameController.text = skill.name;
+    // _sourceController.text = skill.source;
 
     return Container(
       child: Padding(
@@ -214,11 +316,19 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: TextField(
+                autocorrect: false,
                 onChanged: (text) {
                   _nameController.text = text;
-                  setDoneButtonEnabled();
+                  // setDoneButtonEnabled();
+                  // print('Text: $text');
                 },
-                controller: _nameController,
+                controller: TextEditingController.fromValue(
+                  TextEditingValue(
+                    text: _nameController.text,
+                    selection: TextSelection.collapsed(
+                        offset: _nameController.text.length),
+                  ),
+                ),
                 decoration: InputDecoration(labelText: 'Name'),
               ),
             ),
@@ -227,9 +337,15 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
               child: TextField(
                 onChanged: (text) {
                   _sourceController.text = text;
-                  setDoneButtonEnabled();
+                  // setDoneButtonEnabled();
                 },
-                controller: _sourceController,
+                controller: TextEditingController.fromValue(
+                  TextEditingValue(
+                    text: _sourceController.text,
+                    selection: TextSelection.collapsed(
+                        offset: _sourceController.text.length),
+                  ),
+                ),
                 decoration: InputDecoration(labelText: 'Source'),
               ),
             ),
@@ -237,12 +353,21 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: RaisedButton(
-                child: Text('Done!'),
+                child: Text('Done'),
                 onPressed: _doneEnabled
                     ? () {
                         _doneTapped();
                       }
                     : null,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: 8.0),
+              child: RaisedButton(
+                child: Text('Delete'),
+                onPressed: () {
+                  _deleteTapped();
+                },
               ),
             ),
           ],
@@ -305,16 +430,20 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
               body = _newSkillAreaBuilder();
             } else if (state is EditingSkillState) {
               _skill = state.skill;
+              _nameController.text = _skill.name;
+              _sourceController.text = _skill.source;
               body = _skillEditingArea(_skill);
             } else if (state is NewSkillInsertedState) {
               body = _skillUpdateArea(state.newId);
-            } else if (state is UpdatedSkillState) {
+            } else if (state is UpdatedSkillState ||
+                state is DeletedSkillWithIdState) {
               body = Center(
                 child: CircularProgressIndicator(),
               );
               Navigator.of(context).pop();
             } else if (state is NewSkillInsertingState ||
-                state is UpdatingSkillState) {
+                state is UpdatingSkillState ||
+                state is DeletingSkillWithIdState) {
               body = Center(
                 child: CircularProgressIndicator(),
               );

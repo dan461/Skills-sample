@@ -7,6 +7,7 @@ import 'features/skills/data/repos/goalsRepositoryImpl.dart';
 import 'features/skills/data/repos/skillsRepositoryImpl.dart';
 import 'features/skills/domain/repos/skill_repo.dart';
 import 'features/skills/domain/usecases/addGoalToSkill.dart';
+import 'features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'features/skills/domain/usecases/getAllSkills.dart';
 import 'features/skills/domain/usecases/getSkillById.dart';
 import 'features/skills/domain/usecases/insertNewGoal.dart';
@@ -25,7 +26,7 @@ void init() {
   locator.registerFactory(
       () => SkillsBloc(getAllSkills: locator(), insertNewSkill: locator()));
   // locator.registerFactory(() => NewSkillBloc(insertNewSkillUC: locator(), updateSkill: locator()));
-  locator.registerFactory(() => SkillEditorBloc(insertNewSkillUC: locator(), updateSkill: locator()));
+  locator.registerFactory(() => SkillEditorBloc(insertNewSkillUC: locator(), updateSkill: locator(), deleteSkillWithId: locator()));
   locator.registerFactory(() => GoaleditorBloc(
       insertNewGoalUC: locator(),
       updateGoalUC: locator(),
@@ -39,6 +40,7 @@ void init() {
   locator.registerLazySingleton(() => UpdateGoal(locator()));
   locator.registerLazySingleton(() => AddGoalToSkill(locator()));
   locator.registerLazySingleton(() => UpdateSkill(locator()));
+  locator.registerLazySingleton(() => DeleteSkillWithId(locator()));
 
   // Repositories
   locator.registerLazySingleton<SkillRepository>(

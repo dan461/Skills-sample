@@ -1,3 +1,4 @@
+import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/core/error/exceptions.dart';
@@ -81,6 +82,13 @@ void main() {
       final result = await repositoryImpl.insertNewSkill(tSkill);
 
       verify(mockLocalDataSource.insertNewSkill(tSkill));
+      expect(result, equals(Right(1)));
+    });
+
+    test('deleteSkillWithId - returns int of number of row changes, should be 1', () async {
+      when(mockLocalDataSource.deleteSkillWithId(1)).thenAnswer((_) async => 1);
+      final result = await repositoryImpl.deleteSkillWithId(1);
+      verify(mockLocalDataSource.deleteSkillWithId(1));
       expect(result, equals(Right(1)));
     });
 

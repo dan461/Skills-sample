@@ -26,6 +26,15 @@ class SkillInsertOrUpdateParams extends Params {
   List<Object> get props => [skill];
 }
 
+class SkillDeleteParams extends Params {
+  final int skillId;
+
+  SkillDeleteParams({@required this.skillId});
+
+  @override
+  List<Object> get props => [skillId];
+}
+
 class SkillUpdateParams extends Params {
   final int skillId;
   final Map changeMap;
