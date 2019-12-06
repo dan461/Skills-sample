@@ -10,7 +10,7 @@ void main() {
 
   setUp(() {
     sut = SkillModel(
-      id: 1, name: 'test', source: 'testing', startDate: 1, totalTime: 1, currentGoalId: 1, goalText: "none");
+      id: 1, name: 'test', source: 'testing', startDate: 1, totalTime: 1, lastPracDate: 0, currentGoalId: 1, goalText: "none");
   });
 
   test(
@@ -36,11 +36,12 @@ void main() {
     test('should return a valid Map from a SkillModel', () async {
       final result = sut.toMap();
       final expectedMap = {
-        'id': 1,
+        'skillId': 1,
         'name': 'test',
         'source': 'testing',
         'startDate': 1,
         'totalTime': 1,
+        'lastPracDate': 0,
         'currentGoalId': 1,
         'goalText': 'none'
       };
