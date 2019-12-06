@@ -77,15 +77,18 @@ void main() {
 
     test('insertNewSkill - returns an ID after inserting a SkillModel',
         () async {
+      Skill newSkill = Skill(name: 'new', source: 'new');
       when(mockLocalDataSource.insertNewSkill(tSkill))
-          .thenAnswer((_) async => 1);
+          .thenAnswer((_) async => newSkill);
       final result = await repositoryImpl.insertNewSkill(tSkill);
 
       verify(mockLocalDataSource.insertNewSkill(tSkill));
-      expect(result, equals(Right(1)));
+      expect(result, equals(Right(newSkill)));
     });
 
-    test('deleteSkillWithId - returns int of number of row changes, should be 1', () async {
+    test(
+        'deleteSkillWithId - returns int of number of row changes, should be 1',
+        () async {
       when(mockLocalDataSource.deleteSkillWithId(1)).thenAnswer((_) async => 1);
       final result = await repositoryImpl.deleteSkillWithId(1);
       verify(mockLocalDataSource.deleteSkillWithId(1));

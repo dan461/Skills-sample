@@ -56,13 +56,13 @@ void main() {
     });
 
     test(
-        'test that bloc emits [NewGoalInsertingState, NewGoalInsertedState] on successful insert',
+        'test that bloc emits [GoalCrudInProgressState, NewGoalInsertedState] on successful insert',
         () async {
       when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => Right(1));
       final expected = [
         EmptyGoalEditorState(),
-        NewGoalInsertingState(),
+        GoalCrudInProgressState(),
         NewGoalInsertedState(1)
       ];
       expectLater(sut, emitsInOrder(expected));
@@ -72,26 +72,26 @@ void main() {
 
   group('AddGoalToSkill', () {
     test('test that AddGoalToSkill is called', () async {
-      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)))
+      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
           .thenAnswer((_) async => Right(1));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1));
+      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
       await untilCalled(
-          mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)));
-      verify(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)));
+          mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
+      verify(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
     });
 
     test(
-        'test that bloc emits [AddingGoalToSkillState, GoalAddedToSkillState] on successful add',
+        'test that bloc emits [GoalCrudInProgressState, GoalAddedToSkillState] on successful add',
         () async {
-      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)))
+      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
           .thenAnswer((_) async => Right(1));
       final expected = [
         EmptyGoalEditorState(),
-        AddingGoalToSkillState(),
+        GoalCrudInProgressState(),
         GoalAddedToSkillState(newId: 1, goalText: 'none')
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(AddGoalToSkillEvent());
+      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
     });
   });
 

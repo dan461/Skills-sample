@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:skills/features/skills/domain/repos/goal_repo.dart';
-import 'package:skills/features/skills/presentation/bloc/newSkillScreen/new_skill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'features/skills/data/repos/goalsRepositoryImpl.dart';
@@ -22,11 +21,13 @@ final locator = GetIt.instance;
 void init() {
   //// Features - Skills
   // Blocs
-  // TODO - remove insertNewSkill parameter from SkillsBloc
-  locator.registerFactory(
-      () => SkillsBloc(getAllSkills: locator(), insertNewSkill: locator()));
-  // locator.registerFactory(() => NewSkillBloc(insertNewSkillUC: locator(), updateSkill: locator()));
-  locator.registerFactory(() => SkillEditorBloc(insertNewSkillUC: locator(), updateSkill: locator(), deleteSkillWithId: locator()));
+
+  locator.registerFactory(() => SkillsBloc(getAllSkills: locator()));
+  locator.registerFactory(() => SkillEditorBloc(
+      insertNewSkillUC: locator(),
+      updateSkill: locator(),
+      getSkillById: locator(),
+      deleteSkillWithId: locator()));
   locator.registerFactory(() => GoaleditorBloc(
       insertNewGoalUC: locator(),
       updateGoalUC: locator(),

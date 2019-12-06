@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/usecases/deleteSkillWithId.dart';
+import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
@@ -14,21 +15,29 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bl
 class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
 
 class MockUpdateSkillUC extends Mock implements UpdateSkill {}
+
 class MockDeleteSkillUC extends Mock implements DeleteSkillWithId {}
+
+class MockGetSkillByIdUC extends Mock implements GetSkillById {}
 
 void main() {
   SkillEditorBloc sut;
   MockInsertNewSkillUC mockInsertNewSkillUC;
   MockUpdateSkillUC mockUpdateSkillUC;
   MockDeleteSkillUC mockDeleteSkillUC;
+  MockGetSkillByIdUC mockGetSkillByIdUC;
   Skill testSkill;
 
   setUp(() {
     mockInsertNewSkillUC = MockInsertNewSkillUC();
     mockUpdateSkillUC = MockUpdateSkillUC();
     mockDeleteSkillUC = MockDeleteSkillUC();
+    mockGetSkillByIdUC = MockGetSkillByIdUC();
     sut = SkillEditorBloc(
-        insertNewSkillUC: mockInsertNewSkillUC, updateSkill: mockUpdateSkillUC, deleteSkillWithId: mockDeleteSkillUC);
+        insertNewSkillUC: mockInsertNewSkillUC,
+        updateSkill: mockUpdateSkillUC,
+        getSkillById: mockGetSkillByIdUC,
+        deleteSkillWithId: mockDeleteSkillUC);
     testSkill = Skill(name: 'test', source: 'test');
   });
 
@@ -59,9 +68,11 @@ void main() {
   });
 
   group('InsertNewSkill', () {
+Skill newSkill = Skill(name: 'new', source: 'new');
+
     test('test for InsertNewSkill called', () async {
       when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
-          .thenAnswer((_) async => Right(1));
+          .thenAnswer((_) async => Right(newSkill));
       sut.add(InsertNewSkillEvent(testSkill));
       await untilCalled(
           mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)));
@@ -69,14 +80,14 @@ void main() {
     });
 
     test(
-        'test that bloc emits [NewSkillInsertingState, NewSkillInsertedState] on successful insert',
+        'test that bloc emits [NewSkillInsertingState, EditingSkillState] on successful insert',
         () async {
       when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
-          .thenAnswer((_) async => Right(1));
+          .thenAnswer((_) async => Right(newSkill));
       final expected = [
         InitialSkillEditorState(),
         NewSkillInsertingState(),
-        NewSkillInsertedState(1)
+        EditingSkillState(newSkill)
       ];
       // assert before act due to possibility of act event completing too quickly
       expectLater(sut, emitsInOrder(expected));
@@ -99,6 +110,49 @@ void main() {
     });
   });
 
+  group('GetSkillById', () {
+    test(
+      'test for GetSkillById being called',
+      () async {
+        when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
+            .thenAnswer((_) async => Right(testSkill));
+        sut.add(GetSkillByIdEvent(id: 1));
+        await untilCalled(mockGetSkillByIdUC(GetSkillParams(id: 1)));
+        verify(mockGetSkillByIdUC(GetSkillParams(id: 1)));
+      },
+    );
+
+    test(
+      'test that bloc emits [SkillEditorCrudInProgressState, SkillRetrievedForEditingState] upon success',
+      () async {
+        when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
+            .thenAnswer((_) async => Right(testSkill));
+        final expected = [
+          InitialSkillEditorState(),
+          SkillEditorCrudInProgressState(),
+          SkillRetrievedForEditingState(testSkill)
+        ];
+        expectLater(sut, emitsInOrder(expected));
+        sut.add(GetSkillByIdEvent(id: 1));
+      },
+    );
+
+    test(
+      'test that bloc emits [SkillEditorCrudInProgressState, SkillEditorErrorState] upon failure',
+      () async {
+        when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
+            .thenAnswer((_) async => Left(CacheFailure()));
+        final expected = [
+          InitialSkillEditorState(),
+          SkillEditorCrudInProgressState(),
+          SkillEditorErrorState(CACHE_FAILURE_MESSAGE)
+        ];
+        expectLater(sut, emitsInOrder(expected));
+        sut.add(GetSkillByIdEvent(id: 1));
+      },
+    );
+  });
+
   group('UpdateSkill', () {
     test(
         'test that bloc emits [UpdatingSkillState, UpdatedSkillState on successful update',
@@ -111,7 +165,7 @@ void main() {
         UpdatedSkillState()
       ];
       prefix0.expectLater(sut, emitsInOrder(expected));
-      sut.add(UpdateSkillEvent(testSkill));
+      sut.add(UpdateSkillEvent(skill: testSkill));
     });
 
     test(
@@ -126,14 +180,15 @@ void main() {
       ];
       // assert before act due to possibility of act event completing too quickly
       expectLater(sut, emitsInOrder(expected));
-      sut.add(UpdateSkillEvent(testSkill));
+      sut.add(UpdateSkillEvent(skill: testSkill));
     });
   });
 
-  group('DeleteSkillWithId', (){
+  group('DeleteSkillWithId', () {
     prefix0.test('test that DeleteSkillWithId is called', () async {
-      when(mockDeleteSkillUC(SkillDeleteParams(skillId: 1))).thenAnswer((_) async => Right(1));
-      sut.add(DeleteSkillWithIdEvent(1));
+      when(mockDeleteSkillUC(SkillDeleteParams(skillId: 1)))
+          .thenAnswer((_) async => Right(1));
+      sut.add(DeleteSkillWithIdEvent(skillId: 1));
       await untilCalled(mockDeleteSkillUC(SkillDeleteParams(skillId: 1)));
       verify(mockDeleteSkillUC(SkillDeleteParams(skillId: 1)));
     });

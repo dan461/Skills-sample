@@ -114,8 +114,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   }
 
   void _deleteSkill() async {
-
-    skillEditorBloc.add(DeleteSkillWithIdEvent(_skill.id));
+    skillEditorBloc.add(DeleteSkillWithIdEvent(skillId: _skill.id));
   }
 
   void _updateSkill() async {
@@ -128,7 +127,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
         currentGoalId: _skill.currentGoalId,
         goalText: _skill.goalText);
 
-    skillEditorBloc.add(UpdateSkillEvent(updatedSkill));
+    skillEditorBloc.add(UpdateSkillEvent(skill: updatedSkill));
   }
 
   void _insertNewSkill() async {
@@ -137,10 +136,12 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
   }
 
-  void _goToGoalEditor(int skillId) async {
+  void _goToGoalEditor(int skillId, String skillName) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalCreationScreen(skillId: skillId, skillName: 'dkdkd');
+      return GoalCreationScreen(skillId: skillId, skillName: skillName);
     }));
+
+    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
   }
 
   Container _skillUpdateArea(int skillId) {
@@ -178,7 +179,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
                   RaisedButton(
                     child: Text('Add goal'),
                     onPressed: () {
-                      _goToGoalEditor(skillId);
+                      _goToGoalEditor(skillId, _skill.name);
                     },
                   ),
                   RaisedButton(
@@ -265,42 +266,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     return Container(
       child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-          child: _skillEditFormBuilder(_formKey)
-          // Column(
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-          //       child: TextField(
-          //         onChanged: (_) {
-          //           setDoneButtonEnabled();
-          //         },
-          //         controller: _nameController,
-          //         decoration: InputDecoration(labelText: 'Name'),
-          //       ),
-          //     ),
-          //     Padding(
-          //       padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-          //       child: TextField(
-          //         onChanged: (_) {
-          //           setDoneButtonEnabled();
-          //         },
-          //         controller: _sourceController,
-          //         decoration: InputDecoration(labelText: 'Source'),
-          //       ),
-          //     ),
-          //     Padding(
-          //       padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-          //       child: RaisedButton(
-          //           child: Text('Done!'),
-          //           onPressed: _doneEnabled
-          //               ? () {
-          //                   _insertNewSkill();
-          //                 }
-          //               : null),
-          //     ),
-          //   ],
-          // ),
-          ),
+          child: _skillEditFormBuilder(_formKey)),
     );
   }
 
@@ -382,7 +348,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
       body = Container(
         child: InkWell(
           onTap: () {
-            _goToGoalEditor(skillId);
+            _goToGoalEditor(skillId, _skill.name);
           },
           child: Container(
             color: Colors.grey[100],
@@ -390,7 +356,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             child: Padding(
                 padding: const EdgeInsets.only(top: 4, bottom: 4),
                 child: Text(
-                  'fix this',
+                  _skill.goalText,
                   style: Theme.of(context).textTheme.subhead,
                   maxLines: 2,
                   textAlign: TextAlign.start,
@@ -428,19 +394,23 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             if (state is InitialSkillEditorState ||
                 state is CreatingNewSkillState) {
               body = _newSkillAreaBuilder();
+              // Editing
             } else if (state is EditingSkillState) {
               _skill = state.skill;
               _nameController.text = _skill.name;
               _sourceController.text = _skill.source;
               body = _skillEditingArea(_skill);
-            } else if (state is NewSkillInsertedState) {
-              body = _skillUpdateArea(state.newId);
+            } else if (state is SkillRetrievedForEditingState) {
+              _skill = state.skill;
+              body = _skillEditingArea(_skill);
+              // Skill updated
             } else if (state is UpdatedSkillState ||
                 state is DeletedSkillWithIdState) {
               body = Center(
                 child: CircularProgressIndicator(),
               );
               Navigator.of(context).pop();
+              // Procressing
             } else if (state is NewSkillInsertingState ||
                 state is UpdatingSkillState ||
                 state is DeletingSkillWithIdState) {
@@ -448,7 +418,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-
             return body;
           },
         ),

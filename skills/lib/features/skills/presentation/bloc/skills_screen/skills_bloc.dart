@@ -15,13 +15,8 @@ const String SERVER_FAILURE_MESSAGE = 'Server Failure';
 class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
   // UseCases
   final GetAllSkills getAllSkills;
-  final InsertNewSkill insertNewSkill;
 
-  SkillsBloc(
-      {
-      // @required this.repository,
-      @required this.getAllSkills,
-      @required this.insertNewSkill});
+  SkillsBloc({@required this.getAllSkills});
 
   @override
   SkillsState get initialState => InitialSkillsState();

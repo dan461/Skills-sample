@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
 abstract class SkillEditorEvent extends Equatable {
   const SkillEditorEvent();
@@ -19,6 +19,15 @@ class CreateSkillEvent extends SkillEditorEvent {
   List<Object> get props => [];
 }
 
+class GetSkillByIdEvent extends SkillEditorEvent {
+  final int id;
+
+  GetSkillByIdEvent({@required this.id});
+
+  @override
+  List<Object> get props => [id];
+}
+
 class InsertNewSkillEvent extends SkillEditorEvent {
   final Skill newSkill;
 
@@ -31,7 +40,7 @@ class InsertNewSkillEvent extends SkillEditorEvent {
 class DeleteSkillWithIdEvent extends SkillEditorEvent {
   final int skillId;
 
-  DeleteSkillWithIdEvent(this.skillId);
+  DeleteSkillWithIdEvent({@required this.skillId});
 
   @override
   List<Object> get props => [skillId];
@@ -40,7 +49,7 @@ class DeleteSkillWithIdEvent extends SkillEditorEvent {
 class UpdateSkillEvent extends SkillEditorEvent {
   final Skill skill;
 
-  UpdateSkillEvent(this.skill);
+  UpdateSkillEvent({@required this.skill});
 
   @override
   List<Object> get props => [skill];

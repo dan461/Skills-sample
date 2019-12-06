@@ -189,22 +189,19 @@ class SkillCell extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('Goal: 4hrs.',
+                      Text(skill.goalText,
                           style: Theme.of(context).textTheme.subtitle)
                     ],
                   )
                 ],
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: <Widget>[
-                  Text('Last Practiced',
-                      style: Theme.of(context).textTheme.subtitle),
-                  Text('10/10/19', style: Theme.of(context).textTheme.subtitle)
-                ],
-              ),
+            Column(
+              children: <Widget>[
+                Text('Last Practiced',
+                    style: Theme.of(context).textTheme.subtitle),
+                Text('10/10/19', style: Theme.of(context).textTheme.subtitle)
+              ],
             )
           ],
         ),

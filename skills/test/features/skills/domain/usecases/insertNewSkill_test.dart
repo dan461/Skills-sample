@@ -19,12 +19,13 @@ void main() {
   final int newId = -1;
 
   test(
-    'should insert new skill and return the skill id',
+    'should insert new skill and return the new skill',
     () async {
+      Skill newSkill = Skill(name: 'new', source: 'new');
       when(mockSkillsRepo.insertNewSkill(testSkill))
-          .thenAnswer((_) async => Right(newId));
+          .thenAnswer((_) async => Right(newSkill));
       final result = await useCase(SkillInsertOrUpdateParams(skill: testSkill));
-      expect(result, Right(newId));
+      expect(result, Right(newSkill));
       verify(mockSkillsRepo.insertNewSkill(testSkill));
       verifyNoMoreInteractions(mockSkillsRepo);
     },

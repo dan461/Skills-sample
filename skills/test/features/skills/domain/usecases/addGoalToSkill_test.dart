@@ -19,11 +19,11 @@ void main() {
 
   test('should add a goal to a skill and return a new id for the join row',
       () async {
-    when(mockGoalRepo.addGoalToSkill(1, 1))
+    when(mockGoalRepo.addGoalToSkill(1, 1, 'goal'))
         .thenAnswer((_) async => Right(newId));
-    final result = await sut(AddGoalToSkillParams(skillId: 1, goalId: 1));
+    final result = await sut(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal'));
     expect(result, Right(newId));
-    verify(mockGoalRepo.addGoalToSkill(1, 1));
+    verify(mockGoalRepo.addGoalToSkill(1, 1, 'goal'));
     verifyNoMoreInteractions(mockGoalRepo);
   });
 }

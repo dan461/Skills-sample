@@ -10,6 +10,11 @@ class EmptyGoalEditorState extends GoalEditorState {
   List<Object> get props => [];
 }
 
+class GoalCrudInProgressState extends GoalEditorState {
+  @override
+  List<Object> get props => [];
+}
+
 class NewGoalInsertingState extends GoalEditorState {
   @override
   List<Object> get props => [];

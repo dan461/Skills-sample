@@ -309,7 +309,15 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
               body = _goalEditArea();
             } else if (state is NewGoalInsertedState) {
               // Need to update skill with currentGoalId and goalText
-              body = _goalEditArea();
+              _bloc.add(AddGoalToSkillEvent(
+                  skillId: widget.skillId,
+                  goalId: state.newGoalId,
+                  goalText: _bloc.goalTranslation));
+              body = Center(child: CircularProgressIndicator(),);
+            } else if (state is GoalAddedToSkillState){
+              Navigator.of(context).pop();
+            } else if (state is GoalCrudInProgressState) {
+              body = Center(child: CircularProgressIndicator(),);
             }
             return body;
           },

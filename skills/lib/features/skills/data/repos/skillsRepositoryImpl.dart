@@ -29,9 +29,14 @@ class SkillsRepositoryImpl implements SkillRepository {
   }
 
   @override
-  Future<Either<Failure, int>> insertNewSkill(Skill skill) async {
+  Future<Either<Failure, Skill>> insertNewSkill(Skill skill) async {
     return Right(await localDataSource.insertNewSkill(skill));
   }
+
+  // @override
+  // Future<Either<Failure, int>> insertNewSkill(Skill skill) async {
+  //   return Right(await localDataSource.insertNewSkill(skill));
+  // }
 
   @override
   Future<Either<Failure, int>> deleteSkillWithId(int skillId) async {

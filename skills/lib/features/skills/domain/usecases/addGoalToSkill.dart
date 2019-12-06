@@ -11,6 +11,7 @@ class AddGoalToSkill extends UseCase<int, AddGoalToSkillParams> {
 
   @override
   Future<Either<Failure, int>> call(AddGoalToSkillParams params) async {
-    return await repo.addGoalToSkill(params.skillId, params.goalId);
+    return await repo.addGoalToSkill(
+        params.skillId, params.goalId, params.goalText);
   }
 }

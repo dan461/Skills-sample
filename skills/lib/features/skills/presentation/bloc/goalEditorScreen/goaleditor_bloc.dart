@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
@@ -30,16 +29,18 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
     GoalEditorEvent event,
   ) async* {
     if (event is InsertNewGoalEvent) {
-      yield NewGoalInsertingState();
+      yield GoalCrudInProgressState();
+      // yield NewGoalInsertingState();
       final failureOrNewId =
           await insertNewGoalUC(GoalCrudParams(goal: event.newGoal));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newId) => NewGoalInsertedState(newId));
     } else if (event is AddGoalToSkillEvent) {
-      yield AddingGoalToSkillState();
+      yield GoalCrudInProgressState();
+      // yield AddingGoalToSkillState();
       final failureOrNewId = await addGoalToSkill(
-          AddGoalToSkillParams(skillId: event.skillId, goalId: event.goalId));
+          AddGoalToSkillParams(skillId: event.skillId, goalId: event.goalId, goalText: event.goalText));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newId) =>

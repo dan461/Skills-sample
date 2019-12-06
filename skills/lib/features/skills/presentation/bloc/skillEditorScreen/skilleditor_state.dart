@@ -10,6 +10,11 @@ class InitialSkillEditorState extends SkillEditorState {
   List<Object> get props => [];
 }
 
+class SkillEditorCrudInProgressState extends SkillEditorState {
+  @override
+  List<Object> get props => [];
+}
+
 class CreatingNewSkillState extends SkillEditorState {
   @override
   List<Object> get props => [];
@@ -23,18 +28,27 @@ class EditingSkillState extends SkillEditorState {
   List<Object> get props => [skill];
 }
 
+class SkillRetrievedForEditingState extends SkillEditorState {
+  final Skill skill;
+
+  SkillRetrievedForEditingState(this.skill);
+
+  @override
+  List<Object> get props => [skill];
+}
+
 class NewSkillInsertingState extends SkillEditorState {
   @override
   List<Object> get props => [];
 }
 
-class NewSkillInsertedState extends SkillEditorState {
-  final int newId;
+// class NewSkillInsertedState extends SkillEditorState {
+//   final int newId;
 
-  NewSkillInsertedState(this.newId);
-  @override
-  List<Object> get props => [newId];
-}
+//   NewSkillInsertedState(this.newId);
+//   @override
+//   List<Object> get props => [newId];
+// }
 
 class DeletingSkillWithIdState extends SkillEditorState {
   @override

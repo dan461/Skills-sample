@@ -13,14 +13,16 @@ abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
   Future<SkillModel> getSkillById(int id);
-  Future<int> insertNewSkill(Skill skill);
+  // Future<int> insertNewSkill(Skill skill);
+  Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
   Future<int> updateSkill(Skill skill);
   Future<GoalModel> getGoalById(int id);
   Future<int> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
-  Future<int> addGoalToSkill(int skillId, int goalId);
+  Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
+  // Future<int> addGoalToSkill(int skillId, int goalId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -121,7 +123,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> insertNewSkill(Skill skill) async {
+  Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
     DateTime today =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -131,18 +133,40 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         startDate: today.millisecondsSinceEpoch,
         totalTime: 0,
         currentGoalId: 0,
-        goalText: "none");
+        goalText: "Goal: none");
 
     int id = await db.insert(skillsTable, skillModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
 
-    return id;
+    Skill newSkill = await getSkillById(id);
+
+    return newSkill;
   }
+  
+  // @override
+  // Future<int> insertNewSkill(Skill skill) async {
+  //   final Database db = await database;
+  //   DateTime today =
+  //       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  //   final SkillModel skillModel = SkillModel(
+  //       name: skill.name,
+  //       source: skill.source,
+  //       startDate: today.millisecondsSinceEpoch,
+  //       totalTime: 0,
+  //       currentGoalId: 0,
+  //       goalText: "Goal: none");
+
+  //   int id = await db.insert(skillsTable, skillModel.toMap(),
+  //       conflictAlgorithm: ConflictAlgorithm.replace);
+
+  //   return id;
+  // }
 
   @override
   Future<int> deleteSkillWithId(int skillId) async {
     final Database db = await database;
-    int result = await db.delete(skillsTable, where: '$columnId = ?', whereArgs: [skillId]);
+    int result = await db
+        .delete(skillsTable, where: '$columnId = ?', whereArgs: [skillId]);
     return result;
   }
 
@@ -207,19 +231,30 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> addGoalToSkill(int skillId, int goalId) async {
+  Future<int> addGoalToSkill(int skillId, int goalId, String goalText) async {
     final Database db = await database;
-    int newId;
-    await db.transaction((txn) async {
-      newId = await txn.rawInsert(
-          'INSERT INTO $skillsGoalsTable(skill_id, goal_id) VALUES ($skillId, $goalId)');
-    });
-
-    // Skill skill = await getSkillById(skillId);
-    // int updates = await update
-
-    return newId;
+    Map<String, dynamic> changeMap = {
+      'currentGoalId': goalId,
+      'goalText': goalText
+    };
+    int updates = await db.update(skillsTable, changeMap,
+        where: '$columnId = ?', whereArgs: [skillId]);
+    return updates;
   }
 
-  
+  // @override
+  // Future<int> addGoalToSkill(int skillId, int goalId) async {
+  //   final Database db = await database;
+  //   int newId;
+  //   await db.transaction((txn) async {
+  //     newId = await txn.rawInsert(
+  //         'INSERT INTO $skillsGoalsTable(skill_id, goal_id) VALUES ($skillId, $goalId)');
+  //   });
+
+  //   // Skill skill = await getSkillById(skillId);
+  //   // int updates = await update
+
+  //   return newId;
+  // }
+
 }
