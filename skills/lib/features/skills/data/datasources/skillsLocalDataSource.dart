@@ -13,7 +13,6 @@ abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
   Future<SkillModel> getSkillById(int id);
-  // Future<int> insertNewSkill(Skill skill);
   Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
   Future<int> updateSkill(Skill skill);
@@ -22,7 +21,6 @@ abstract class SkillsLocalDataSource {
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
-  // Future<int> addGoalToSkill(int skillId, int goalId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -66,7 +64,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
-    // await db.execute(_createSkillsGoalsJoinTable);
+    
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
   }
@@ -80,16 +78,15 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // table creation
-  final String _createSkillTable = "$createTable skills($idKey "
+  final String _createSkillTable = "$createTable skills(skillId INTEGER PRIMARY KEY, "
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, currentGoalId $integer, goalText TEXT)";
 
   final String _createGoalTable = "$createTable goals($idKey "
       "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
       "goalTime $integer, timeRemaining $integer, desc TEXT, "
-      "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(id) ON DELETE CASCADE)";
+      "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
-  // final String _createSkillsGoalsJoinTable = "$createTable skills_goals($idKey"
-  //     "skill_id $integer, goal_id $integer)";
+  
 
   // final String _createSessionsTable = "$createTable sessions($idKey"
   //     "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
@@ -115,7 +112,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<SkillModel> getSkillById(int id) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillsTable,
-        columns: null, where: '$columnId = ?', whereArgs: [id]);
+        columns: null, where: 'skillId = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return SkillModel.fromMap(maps.first);
     }
@@ -142,31 +139,12 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
     return newSkill;
   }
-  
-  // @override
-  // Future<int> insertNewSkill(Skill skill) async {
-  //   final Database db = await database;
-  //   DateTime today =
-  //       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-  //   final SkillModel skillModel = SkillModel(
-  //       name: skill.name,
-  //       source: skill.source,
-  //       startDate: today.millisecondsSinceEpoch,
-  //       totalTime: 0,
-  //       currentGoalId: 0,
-  //       goalText: "Goal: none");
-
-  //   int id = await db.insert(skillsTable, skillModel.toMap(),
-  //       conflictAlgorithm: ConflictAlgorithm.replace);
-
-  //   return id;
-  // }
 
   @override
   Future<int> deleteSkillWithId(int skillId) async {
     final Database db = await database;
     int result = await db
-        .delete(skillsTable, where: '$columnId = ?', whereArgs: [skillId]);
+        .delete(skillsTable, where: 'skillId = ?', whereArgs: [skillId]);
     return result;
   }
 
@@ -182,7 +160,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         currentGoalId: skill.currentGoalId,
         goalText: skill.goalText);
     int updates = await db.update(skillsTable, skillModel.toMap(),
-        where: '$columnId = ?', whereArgs: [skillModel.id]);
+        where: 'skillId = ?', whereArgs: [skillModel.id]);
     return updates;
   }
 
@@ -238,7 +216,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       'goalText': goalText
     };
     int updates = await db.update(skillsTable, changeMap,
-        where: '$columnId = ?', whereArgs: [skillId]);
+        where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 

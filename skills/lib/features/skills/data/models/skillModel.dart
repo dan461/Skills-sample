@@ -27,7 +27,7 @@ class SkillModel extends Skill {
 
   factory SkillModel.fromMap(Map<String, dynamic> map) {
     return SkillModel(
-        id: map['id'],
+        id: map['skillId'],
         name: map['name'],
         source: map['source'],
         startDate: map['startDate'],
@@ -38,7 +38,7 @@ class SkillModel extends Skill {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'skillId': id,
       'name': name,
       'source': source,
       'startDate': startDate,
