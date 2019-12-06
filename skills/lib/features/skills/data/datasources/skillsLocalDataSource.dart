@@ -79,7 +79,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   // table creation
   final String _createSkillTable = "$createTable skills(skillId INTEGER PRIMARY KEY, "
-      "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, currentGoalId $integer, goalText TEXT)";
+      "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, currentGoalId $integer, goalText TEXT)";
 
   final String _createGoalTable = "$createTable goals($idKey "
       "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
@@ -129,6 +129,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         source: skill.source,
         startDate: today.millisecondsSinceEpoch,
         totalTime: 0,
+        lastPracDate: 0,
         currentGoalId: 0,
         goalText: "Goal: none");
 
@@ -157,6 +158,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         source: skill.source,
         startDate: skill.startDate,
         totalTime: skill.totalTime,
+        lastPracDate: skill.lastPracDate,
         currentGoalId: skill.currentGoalId,
         goalText: skill.goalText);
     int updates = await db.update(skillsTable, skillModel.toMap(),

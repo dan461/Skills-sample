@@ -14,6 +14,7 @@ class SkillModel extends Skill {
     @required String source,
     int startDate,
     int totalTime,
+    int lastPracDate,
     int currentGoalId,
     String goalText,
   }) : super(
@@ -22,6 +23,7 @@ class SkillModel extends Skill {
             source: source,
             startDate: startDate,
             totalTime: totalTime,
+            lastPracDate: lastPracDate,
             currentGoalId: currentGoalId,
             goalText: goalText);
 
@@ -32,6 +34,7 @@ class SkillModel extends Skill {
         source: map['source'],
         startDate: map['startDate'],
         totalTime: map['totalTime'],
+        lastPracDate: map['lastPracDate'],
         currentGoalId: map['currentGoalId'],
         goalText: map['goalText']);
   }
@@ -43,11 +46,12 @@ class SkillModel extends Skill {
       'source': source,
       'startDate': startDate,
       'totalTime': totalTime,
+      'lastPracDate': lastPracDate,
       'currentGoalId': currentGoalId,
       'goalText': goalText
     };
   }
 
   @override
-  List<Object> get props => [id, name, source, startDate, totalTime, currentGoalId, goalText];
+  List<Object> get props => [id, name, source, startDate, totalTime, lastPracDate, currentGoalId, goalText];
 }
