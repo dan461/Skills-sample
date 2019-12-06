@@ -1,8 +1,5 @@
-import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:skills/core/error/exceptions.dart';
-import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/data/repos/skillsRepositoryImpl.dart';
@@ -33,25 +30,25 @@ void main() {
         networkInfo: mockNetworkInfo);
   });
 
-  void runTestsOnline(Function body) {
-    group('device is online', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenThrow((_) async => true);
-      });
+  // void runTestsOnline(Function body) {
+  //   group('device is online', () {
+  //     setUp(() {
+  //       when(mockNetworkInfo.isConnected).thenThrow((_) async => true);
+  //     });
 
-      body();
-    });
-  }
+  //     body();
+  //   });
+  // }
 
-  void runTestsOffline(Function body) {
-    group('device is offline', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenThrow((_) async => false);
-      });
+  // void runTestsOffline(Function body) {
+  //   group('device is offline', () {
+  //     setUp(() {
+  //       when(mockNetworkInfo.isConnected).thenThrow((_) async => false);
+  //     });
 
-      body();
-    });
-  }
+  //     body();
+  //   });
+  // }
 
   group('Skills CRUD tests', () {
     final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
@@ -104,29 +101,28 @@ void main() {
     });
   });
 
-  /* TODO only implementing to follow the course. No Remote source yet
-  */
+  
 
-  group('downloadAllSkills', () {
-    test('test for connection', () async {
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      repositoryImpl.downloadAllSkills();
-      verify(mockNetworkInfo.isConnected);
-    });
+  // group('downloadAllSkills', () {
+  //   test('test for connection', () async {
+  //     when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+  //     repositoryImpl.downloadAllSkills();
+  //     verify(mockNetworkInfo.isConnected);
+  //   });
 
-    test(
-        'should return failure when call to remote data source is unsuccessful',
-        () async {
-      // TODO remove this after adding else to downloadAllSkills to repo impl
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockRemoteDataSource.downloadAllSkills())
-          .thenThrow(ServerException());
+  //   test(
+  //       'should return failure when call to remote data source is unsuccessful',
+  //       () async {
+  //     // TODO remove this after adding else to downloadAllSkills to repo impl
+  //     when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+  //     when(mockRemoteDataSource.downloadAllSkills())
+  //         .thenThrow(ServerException());
 
-      final result = await repositoryImpl.downloadAllSkills();
+  //     final result = await repositoryImpl.downloadAllSkills();
 
-      verify(mockRemoteDataSource.downloadAllSkills());
-      expect(result, equals(Left(ServerFailure())));
-      verifyZeroInteractions(mockLocalDataSource);
-    });
-  });
+  //     verify(mockRemoteDataSource.downloadAllSkills());
+  //     expect(result, equals(Left(ServerFailure())));
+  //     verifyZeroInteractions(mockLocalDataSource);
+  //   });
+  // });
 }

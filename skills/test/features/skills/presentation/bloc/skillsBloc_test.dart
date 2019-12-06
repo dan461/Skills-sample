@@ -18,11 +18,9 @@ class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
 void main() {
   SkillsBloc sut;
   MockGetAllSkillsUC mockGetAllSkillsUC;
-  MockGetSkillById mockGetSkillByIdUC;
 
   setUp(() {
     mockGetAllSkillsUC = MockGetAllSkillsUC();
-    mockGetSkillByIdUC = MockGetSkillById();
 
     sut = SkillsBloc(
       getAllSkills: mockGetAllSkillsUC,

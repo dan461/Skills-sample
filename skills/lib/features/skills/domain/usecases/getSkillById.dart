@@ -21,6 +21,5 @@ class GetSkillParams extends Params {
   GetSkillParams({@required this.id}) : super();
 
   @override
-  // TODO: implement props
   List<Object> get props => [id];
 }

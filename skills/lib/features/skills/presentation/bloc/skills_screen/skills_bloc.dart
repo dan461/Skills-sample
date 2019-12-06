@@ -6,7 +6,6 @@ import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import './bloc.dart';
 
 const String CACHE_FAILURE_MESSAGE = 'Cache Failure';

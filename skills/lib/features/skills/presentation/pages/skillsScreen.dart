@@ -23,11 +23,18 @@ class _SkillsScreenState extends State<SkillsScreen> {
     bloc.add(GetAllSkillsEvent());
   }
 
+  @override
+  dispose() {
+    super.dispose();
+
+  }
+
   void addSkill() async {
-    bool skillAdded = false;
+    
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
       editorBloc.add(CreateSkillEvent());
+      editorBloc.close();
       return SkillEditorScreen(
         skillEditorBloc: editorBloc,
       );
@@ -36,6 +43,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
     // var insert = locator.get<InsertNewSkill>();
     // await insert(InsertParams(skill: newSkill));
     bloc.add(GetAllSkillsEvent());
+    
     // }
   }
 
@@ -43,6 +51,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
       editorBloc.add(EditSkillEvent(skill));
+      editorBloc.close();
       return SkillEditorScreen(
         skillEditorBloc: editorBloc,
       );

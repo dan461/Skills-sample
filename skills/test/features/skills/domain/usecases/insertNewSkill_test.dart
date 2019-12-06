@@ -16,7 +16,6 @@ void main() {
   });
 
   final testSkill = Skill(name: 'test', source: 'test');
-  final int newId = -1;
 
   test(
     'should insert new skill and return the new skill',

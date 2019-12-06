@@ -64,7 +64,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
-    
+
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
   }
@@ -78,15 +78,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // table creation
-  final String _createSkillTable = "$createTable skills(skillId INTEGER PRIMARY KEY, "
+  final String _createSkillTable =
+      "$createTable skills(skillId INTEGER PRIMARY KEY, "
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, currentGoalId $integer, goalText TEXT)";
 
   final String _createGoalTable = "$createTable goals($idKey "
       "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
       "goalTime $integer, timeRemaining $integer, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
-
-  
 
   // final String _createSessionsTable = "$createTable sessions($idKey"
   //     "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
@@ -205,8 +204,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> updateGoal(Goal goal) async {
     final Database db = await database;
     final GoalModel goalModel = goal;
-    // TODO - any WHERE needed? or conflict alg?
-    int updates = await db.update(goalsTable, goalModel.toMap());
+    int updates = await db.update(goalsTable, goalModel.toMap(),
+        where: 'id = ?', whereArgs: [goal.id]);
     return updates;
   }
 

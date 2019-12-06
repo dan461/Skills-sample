@@ -39,8 +39,10 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
     } else if (event is AddGoalToSkillEvent) {
       yield GoalCrudInProgressState();
       // yield AddingGoalToSkillState();
-      final failureOrNewId = await addGoalToSkill(
-          AddGoalToSkillParams(skillId: event.skillId, goalId: event.goalId, goalText: event.goalText));
+      final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams(
+          skillId: event.skillId,
+          goalId: event.goalId,
+          goalText: event.goalText));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newId) =>
@@ -49,15 +51,20 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   }
 
   void insertNewGoal(
-      int startDate, int endDate, bool timeBased, int goalMinutes, int skillId) async {
+      {int startDate,
+      int endDate,
+      bool timeBased,
+      int goalMinutes,
+      int skillId,
+      String desc}) async {
     Goal newGoal = Goal(
-      skillId: skillId,
-      fromDate: startDate,
-      toDate: endDate,
-      isComplete: false,
-      timeBased: timeBased,
-      goalTime: goalMinutes,
-    );
+        skillId: skillId,
+        fromDate: startDate,
+        toDate: endDate,
+        isComplete: false,
+        timeBased: timeBased,
+        goalTime: goalMinutes,
+        desc: desc);
     add(InsertNewGoalEvent(newGoal));
     goalTranslation = translateGoal(newGoal);
   }
@@ -70,8 +77,7 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
       final timeString = createGoalTimeString(goal.goalTime);
       translation = 'Goal: $timeString $durationString.';
     } else {
-      // TODO shouldn't be able to have an empty goal description
-      var desc = goal.desc != null ? goal.desc : "n/a";
+      var desc = goal.desc;
       translation = 'Goal: $desc $durationString.';
     }
 

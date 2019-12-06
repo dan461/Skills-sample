@@ -18,8 +18,6 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
   final DeleteSkillWithId deleteSkillWithId;
 
   Skill skill;
-  // TODO may not be needed
-  int skillId;
 
   SkillEditorBloc(
       {@required this.insertNewSkillUC,
@@ -39,7 +37,6 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
     } else if (event is EditSkillEvent) {
       skill = event.skill;
       yield EditingSkillState(event.skill);
-      skillId = event.skill.id;
     } else if (event is InsertNewSkillEvent) {
       yield NewSkillInsertingState();
       final failureOrNewId = await insertNewSkillUC(

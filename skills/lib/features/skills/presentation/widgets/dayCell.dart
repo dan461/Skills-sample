@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 class DayCell extends StatelessWidget {
-  DateTime date;
-  // double cellHeight;
-  int displayedMonth;
+  final DateTime date;
 
-  DayCell({DateTime date, int month}) {
-    // this.cellHeight = height;
-    this.date = date;
-    this.displayedMonth = month;
-  }
+  final int displayedMonth;
+
+  DayCell({this.date, this.displayedMonth});
 
   void dayTapped() {
     print(date);

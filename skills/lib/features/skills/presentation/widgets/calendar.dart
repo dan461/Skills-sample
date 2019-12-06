@@ -151,7 +151,7 @@ class _CalendarState extends State<Calendar> {
         thisDay = sunday.add(Duration(days: i));
       }
 
-      days.add(DayCell(date: thisDay, month: activeMonth.month));
+      days.add(DayCell(date: thisDay, displayedMonth: activeMonth.month));
     }
 
     return Expanded(

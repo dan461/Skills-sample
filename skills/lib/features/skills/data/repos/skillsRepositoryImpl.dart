@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:skills/core/error/exceptions.dart';
 import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/domain/repos/skill_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -54,18 +53,18 @@ class SkillsRepositoryImpl implements SkillRepository {
   //   return Right(await localDataSource.updateSkill(skillId, changeMap));
   // }
 
-  // TODO only added to follow course, no remote source yet
-  @override
-  Future<Either<Failure, List<Skill>>> downloadAllSkills() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteSkills = await remoteDataSource.downloadAllSkills();
-        return Right(remoteSkills);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-    }
-  }
+  
+  // @override
+  // Future<Either<Failure, List<Skill>>> downloadAllSkills() async {
+  //   if (await networkInfo.isConnected) {
+  //     try {
+  //       final remoteSkills = await remoteDataSource.downloadAllSkills();
+  //       return Right(remoteSkills);
+  //     } on ServerException {
+  //       return Left(ServerFailure());
+  //     }
+  //   }
+  // }
 
   
 }

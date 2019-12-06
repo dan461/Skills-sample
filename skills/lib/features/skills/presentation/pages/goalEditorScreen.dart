@@ -22,7 +22,6 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   int _goalType;
 
   bool _doneEnabled;
-  String _goalTranslation;
 
   @override
   void initState() {
@@ -30,7 +29,6 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     _bloc = locator<GoaleditorBloc>();
     _goalType = 0;
     _doneEnabled = false;
-    _goalTranslation = '';
   }
 
   TextEditingController _hoursTextController = TextEditingController();
@@ -74,11 +72,12 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
 
   void _insertNewGoal() async {
     _bloc.insertNewGoal(
-        _startDate.millisecondsSinceEpoch,
-        _endDate.millisecondsSinceEpoch,
-        _isTimeBased,
-        _goalMinutes,
-        widget.skillId);
+        startDate: _startDate.millisecondsSinceEpoch,
+        endDate: _endDate.millisecondsSinceEpoch,
+        timeBased: _isTimeBased,
+        goalMinutes: _goalMinutes,
+        skillId: widget.skillId,
+        desc: _isTimeBased ? "none" : _goalDescTextController.text);
   }
 
   void _selectStartDate() async {
