@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SessionEditor extends StatefulWidget {
   @override
@@ -26,7 +25,9 @@ class _SessionEditorState extends State<SessionEditor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('New Session'),),
+      appBar: AppBar(
+        title: Text('New Session'),
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -49,16 +50,15 @@ class _SessionEditorState extends State<SessionEditor> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _timeSelectionBox(
-                        'Start: ', _startTimeString, _selectStartTime)),
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _timeSelectionBox(
-                        'Finish: ', _finishTimeString, _selectFinishTime)),
+                        padding: const EdgeInsets.all(8.0),
+                        child: _timeSelectionBox(
+                            'Start: ', _startTimeString, _selectStartTime)),
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _timeSelectionBox(
+                            'Finish: ', _finishTimeString, _selectFinishTime)),
                   ],
                 ),
-                
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -66,7 +66,7 @@ class _SessionEditorState extends State<SessionEditor> {
                     children: <Widget>[
                       Text('Duration: 30 min.',
                           style: Theme.of(context).textTheme.subhead),
-                          Text('Available: 30 min.',
+                      Text('Available: 30 min.',
                           style: Theme.of(context).textTheme.subhead)
                     ],
                   ),
@@ -120,8 +120,7 @@ class _SessionEditorState extends State<SessionEditor> {
                 children: <Widget>[
                   Text('Bouree in E minor',
                       style: Theme.of(context).textTheme.subhead),
-                      Text('30 min',
-                      style: Theme.of(context).textTheme.subhead),
+                  Text('30 min', style: Theme.of(context).textTheme.subhead),
                 ],
               ),
               Row(
@@ -130,16 +129,18 @@ class _SessionEditorState extends State<SessionEditor> {
                 ],
               ),
               Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Goal: 1 hr 30 min by 11/30', style: Theme.of(context).textTheme.body1),
-                    Text('30 min completed', style: Theme.of(context).textTheme.body1)
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Goal: 1 hr 30 min by 11/30',
+                          style: Theme.of(context).textTheme.body1),
+                      Text('30 min completed',
+                          style: Theme.of(context).textTheme.body1)
+                    ],
+                  ),
                 ),
-                              ),
               )
             ],
           ),
@@ -148,7 +149,8 @@ class _SessionEditorState extends State<SessionEditor> {
     );
   }
 
-  Container _timeSelectionBox(String descText, String timeText, Function callback) {
+  Container _timeSelectionBox(
+      String descText, String timeText, Function callback) {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

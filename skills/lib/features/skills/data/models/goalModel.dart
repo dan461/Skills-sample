@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 
 class GoalModel extends Goal {
   GoalModel(
       {int id,
+      @required int skillId,
       @required int fromDate,
       @required int toDate,
       @required bool timeBased,
@@ -13,6 +13,8 @@ class GoalModel extends Goal {
       int timeRemaining,
       String desc})
       : super(
+            id: id,
+            skillId: skillId,
             fromDate: fromDate,
             toDate: toDate,
             isComplete: isComplete,
@@ -22,6 +24,8 @@ class GoalModel extends Goal {
 
   factory GoalModel.fromMap(Map<String, dynamic> map) {
     return GoalModel(
+        id: map['id'],
+        skillId: map['skillId'],
         fromDate: map['fromDate'],
         toDate: map['toDate'],
         isComplete: map['isComplete'],
@@ -33,16 +37,28 @@ class GoalModel extends Goal {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
+      'skillId': skillId,
       'fromDate': fromDate,
       'toDate': toDate,
-      'isComplete' : isComplete,
+      'isComplete': isComplete,
       'timeBased': timeBased,
-      'goalTime' : goalTime,
-      'timeRemaining' : timeRemaining,
+      'goalTime': goalTime,
+      'timeRemaining': timeRemaining,
       'desc': desc
     };
   }
 
   @override
-  List<Object> get props => [id, fromDate, toDate, isComplete, timeBased, goalTime, timeRemaining, desc];
+  List<Object> get props => [
+        id,
+        skillId,
+        fromDate,
+        toDate,
+        isComplete,
+        timeBased,
+        goalTime,
+        timeRemaining,
+        desc
+      ];
 }

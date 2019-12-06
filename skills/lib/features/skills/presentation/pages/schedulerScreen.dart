@@ -10,16 +10,11 @@ class SchedulerScreen extends StatefulWidget {
 class _SchedulerScreenState extends State<SchedulerScreen> {
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-
     return Column(
       children: <Widget>[
         Expanded(flex: 2, child: Calendar()),
         // Day Detail
-        Expanded(
-          flex: 1,
-          child: DayDetails()
-        ),
+        Expanded(flex: 1, child: DayDetails()),
       ],
     );
   }

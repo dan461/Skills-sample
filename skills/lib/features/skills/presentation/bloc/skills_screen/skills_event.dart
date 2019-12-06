@@ -12,14 +12,14 @@ class GetAllSkillsEvent extends SkillsEvent {
   
 }
 
-class GetSkillByIdEvent extends SkillsEvent {
-  final int id;
+// class GetSkillByIdEvent extends SkillsEvent {
+//   final int id;
 
-  GetSkillByIdEvent({@required this.id});
+//   GetSkillByIdEvent({@required this.id});
 
-  @override
-  List<Object> get props => [id];
-}
+//   @override
+//   List<Object> get props => [id];
+// }
 
 // class InsertNewSkillEvent extends SkillsEvent {
 //   @override

@@ -8,39 +8,50 @@ class SkillModel extends Skill {
 //  int startDate;
 //  int totalTime;
 
-  SkillModel(
-      {int id,
-      @required String name,
-      @required String source,
-      int startDate,
-      int totalTime})
-      : super(
+  SkillModel({
+    int id,
+    @required String name,
+    @required String source,
+    int startDate,
+    int totalTime,
+    int lastPracDate,
+    int currentGoalId,
+    String goalText,
+  }) : super(
             id: id,
             name: name,
             source: source,
             startDate: startDate,
-            totalTime: totalTime);
+            totalTime: totalTime,
+            lastPracDate: lastPracDate,
+            currentGoalId: currentGoalId,
+            goalText: goalText);
 
   factory SkillModel.fromMap(Map<String, dynamic> map) {
     return SkillModel(
-        id: map['id'],
+        id: map['skillId'],
         name: map['name'],
         source: map['source'],
         startDate: map['startDate'],
-        totalTime: map['totalTime']);
+        totalTime: map['totalTime'],
+        lastPracDate: map['lastPracDate'],
+        currentGoalId: map['currentGoalId'],
+        goalText: map['goalText']);
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'skillId': id,
       'name': name,
       'source': source,
       'startDate': startDate,
-      'totalTime': totalTime
+      'totalTime': totalTime,
+      'lastPracDate': lastPracDate,
+      'currentGoalId': currentGoalId,
+      'goalText': goalText
     };
   }
 
   @override
-  // TODO: implement props
-  List<Object> get props => [id,name,source,startDate,totalTime];
+  List<Object> get props => [id, name, source, startDate, totalTime, lastPracDate, currentGoalId, goalText];
 }

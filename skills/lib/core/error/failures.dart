@@ -6,12 +6,12 @@ abstract class Failure extends Equatable {
 
 class CacheFailure extends Failure {
   @override
-  // TODO: implement props
+  
   List<Object> get props => null;
 }
 
 class ServerFailure extends Failure {
   @override
-  // TODO: implement props
+  
   List<Object> get props => null;
 }
