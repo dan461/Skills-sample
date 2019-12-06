@@ -313,11 +313,18 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                   skillId: widget.skillId,
                   goalId: state.newGoalId,
                   goalText: _bloc.goalTranslation));
-              body = Center(child: CircularProgressIndicator(),);
-            } else if (state is GoalAddedToSkillState){
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is GoalAddedToSkillState) {
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
               Navigator.of(context).pop();
             } else if (state is GoalCrudInProgressState) {
-              body = Center(child: CircularProgressIndicator(),);
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
             }
             return body;
           },

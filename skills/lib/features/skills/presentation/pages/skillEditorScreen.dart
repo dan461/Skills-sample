@@ -413,7 +413,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
               // Procressing
             } else if (state is NewSkillInsertingState ||
                 state is UpdatingSkillState ||
-                state is DeletingSkillWithIdState) {
+                state is DeletingSkillWithIdState ||
+                state is SkillEditorCrudInProgressState) {
               body = Center(
                 child: CircularProgressIndicator(),
               );
