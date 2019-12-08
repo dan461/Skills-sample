@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_state.dart';
+import 'package:skills/service_locator.dart';
 import 'goalEditorScreen.dart';
 
 class SkillEditorScreen extends StatefulWidget {
@@ -133,9 +135,13 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
   }
 
-  void _goToGoalEditor(int skillId, String skillName) async {
+  void _goToGoalEditor(int skillId, String skillName, int goalId) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalCreationScreen(skillId: skillId, skillName: skillName);
+      return GoalCreationScreen(
+        skillId: skillId,
+        skillName: skillName,
+        goalId: goalId,
+      );
     }));
 
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
@@ -345,7 +351,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
       body = Container(
         child: InkWell(
           onTap: () {
-            _goToGoalEditor(skillId, _skill.name);
+            _goToGoalEditor(skillId, _skill.name, _skill.currentGoalId);
           },
           child: Container(
             color: Colors.grey[100],

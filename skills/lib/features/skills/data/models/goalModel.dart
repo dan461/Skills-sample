@@ -20,6 +20,7 @@ class GoalModel extends Goal {
             isComplete: isComplete,
             timeBased: timeBased,
             goalTime: goalTime,
+            timeRemaining: timeRemaining,
             desc: desc);
 
   factory GoalModel.fromMap(Map<String, dynamic> map) {
@@ -28,8 +29,8 @@ class GoalModel extends Goal {
         skillId: map['skillId'],
         fromDate: map['fromDate'],
         toDate: map['toDate'],
-        isComplete: map['isComplete'],
-        timeBased: map['timeBased'],
+        isComplete: map['isComplete'] == 0 ? false : true,
+        timeBased: map['timeBased'] == 0 ? false : true,
         goalTime: map['goalTime'],
         timeRemaining: map['timeRemaining'],
         desc: map['desc']);

@@ -1,11 +1,13 @@
 import 'package:get_it/get_it.dart';
 import 'package:skills/features/skills/domain/repos/goal_repo.dart';
+import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'features/skills/data/repos/goalsRepositoryImpl.dart';
 import 'features/skills/data/repos/skillsRepositoryImpl.dart';
 import 'features/skills/domain/repos/skill_repo.dart';
 import 'features/skills/domain/usecases/addGoalToSkill.dart';
+import 'features/skills/domain/usecases/deleteGoalWithId.dart';
 import 'features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'features/skills/domain/usecases/getAllSkills.dart';
 import 'features/skills/domain/usecases/getSkillById.dart';
@@ -31,17 +33,22 @@ void init() {
   locator.registerFactory(() => GoaleditorBloc(
       insertNewGoalUC: locator(),
       updateGoalUC: locator(),
-      addGoalToSkill: locator()));
+      addGoalToSkill: locator(),
+      deleteGoalWithId: locator(),
+      getGoalById: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
   locator.registerLazySingleton(() => GetSkillById(locator()));
   locator.registerLazySingleton(() => InsertNewSkill(locator()));
+  locator.registerLazySingleton(() => UpdateSkill(locator()));
+  locator.registerLazySingleton(() => DeleteSkillWithId(locator()));
+
   locator.registerLazySingleton(() => InsertNewGoal(locator()));
   locator.registerLazySingleton(() => UpdateGoal(locator()));
   locator.registerLazySingleton(() => AddGoalToSkill(locator()));
-  locator.registerLazySingleton(() => UpdateSkill(locator()));
-  locator.registerLazySingleton(() => DeleteSkillWithId(locator()));
+  locator.registerLazySingleton(() => GetGoalById(locator()));
+  locator.registerLazySingleton(() => DeleteGoalWithId(locator()));
 
   // Repositories
   locator.registerLazySingleton<SkillRepository>(

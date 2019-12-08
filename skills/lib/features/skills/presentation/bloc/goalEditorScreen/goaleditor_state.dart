@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 
 abstract class GoalEditorState extends Equatable {
   const GoalEditorState();
@@ -8,6 +9,19 @@ abstract class GoalEditorState extends Equatable {
 class EmptyGoalEditorState extends GoalEditorState {
   @override
   List<Object> get props => [];
+}
+
+class GoalEditorCreatingState extends GoalEditorState {
+  @override
+  List<Object> get props => [];
+}
+
+class GoalEditorEditingState extends GoalEditorState {
+  final Goal goal;
+
+  GoalEditorEditingState({@required this.goal});
+  @override
+  List<Object> get props => [goal];
 }
 
 class GoalCrudInProgressState extends GoalEditorState {
@@ -21,16 +35,16 @@ class NewGoalInsertingState extends GoalEditorState {
 }
 
 class NewGoalInsertedState extends GoalEditorState {
-  final int newGoalId;
-  NewGoalInsertedState(this.newGoalId);
+  final Goal newGoal;
+  NewGoalInsertedState(this.newGoal);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [newGoal];
 }
 
-class NewGoalErrorState extends GoalEditorState {
+class GoalEditorErrorState extends GoalEditorState {
   final String message;
 
-  NewGoalErrorState(this.message);
+  GoalEditorErrorState(this.message);
   @override
   List<Object> get props => [message];
 }
@@ -45,6 +59,13 @@ class GoalUpdatedState extends GoalEditorState {
   GoalUpdatedState(this.updates);
   @override
   List<Object> get props => [];
+}
+
+class GoalDeletedState extends GoalEditorState {
+  final int result;
+  GoalDeletedState(this.result);
+  @override
+  List<Object> get props => [result];
 }
 
 class AddingGoalToSkillState extends GoalEditorState {

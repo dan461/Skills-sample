@@ -4,29 +4,40 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
-import 'package:skills/service_locator.dart';
+
+import '../../../../service_locator.dart';
 
 class GoalCreationScreen extends StatefulWidget {
   final int skillId;
+  final int goalId;
   final String skillName;
 
   const GoalCreationScreen(
-      {Key key, @required this.skillId, @required this.skillName})
+      {Key key, @required this.skillId, @required this.skillName, @required this.goalId} )
       : super(key: key);
   @override
-  _GoalCreationScreenState createState() => _GoalCreationScreenState();
+  _GoalCreationScreenState createState() =>
+      _GoalCreationScreenState(skillId: skillId, skillName: skillName, editedGoalId: goalId);
 }
 
 class _GoalCreationScreenState extends State<GoalCreationScreen> {
-  GoaleditorBloc _bloc;
+  final int skillId;
+  final int editedGoalId;
+  final String skillName;
+  GoaleditorBloc _goalEditorBloc;
   int _goalType;
 
   bool _doneEnabled;
 
+  _GoalCreationScreenState({@required this.editedGoalId, @required this.skillId, @required this.skillName});
+
   @override
   void initState() {
     super.initState();
-    _bloc = locator<GoaleditorBloc>();
+    _goalEditorBloc = locator<GoaleditorBloc>();
+    if (editedGoalId != 0){
+      _goalEditorBloc.add(EditGoalEvent(goalId: editedGoalId));
+    }
     _goalType = 0;
     _doneEnabled = false;
   }
@@ -34,6 +45,9 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   TextEditingController _hoursTextController = TextEditingController();
   TextEditingController _minTextController = TextEditingController();
   TextEditingController _goalDescTextController = TextEditingController();
+
+  DateTime _startDate;
+  DateTime _endDate;
 
   String get _startDateString {
     return _startDate == null
@@ -57,9 +71,6 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     return minutes;
   }
 
-  DateTime _startDate;
-  DateTime _endDate;
-
   void _setDoneButtonEnabled() {
     bool timeOrTaskSet;
     if (_isTimeBased)
@@ -71,7 +82,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   }
 
   void _insertNewGoal() async {
-    _bloc.insertNewGoal(
+    _goalEditorBloc.insertNewGoal(
         startDate: _startDate.millisecondsSinceEpoch,
         endDate: _endDate.millisecondsSinceEpoch,
         timeBased: _isTimeBased,
@@ -226,7 +237,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Bouree in E Minor',
+                    widget.skillName,
                     style: Theme.of(context).textTheme.title,
                     textAlign: TextAlign.left,
                   ),
@@ -297,21 +308,27 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (_) => _bloc,
+      builder: (_) => _goalEditorBloc,
       child: Scaffold(
         appBar: AppBar(),
         body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
           builder: (context, state) {
             Widget body;
 
-            if (state is EmptyGoalEditorState) {
+            if (state is EmptyGoalEditorState ||
+                state is GoalEditorCreatingState) {
               body = _goalEditArea();
+            } else if (state is GoalEditorEditingState) {
+              body = _goalEditArea();
+              _startDate =
+                  DateTime.fromMicrosecondsSinceEpoch(state.goal.fromDate);
+              _endDate = DateTime.fromMicrosecondsSinceEpoch(state.goal.toDate);
             } else if (state is NewGoalInsertedState) {
               // Need to update skill with currentGoalId and goalText
-              _bloc.add(AddGoalToSkillEvent(
+              _goalEditorBloc.add(AddGoalToSkillEvent(
                   skillId: widget.skillId,
-                  goalId: state.newGoalId,
-                  goalText: _bloc.goalTranslation));
+                  goalId: state.newGoal.id,
+                  goalText: _goalEditorBloc.goalTranslation));
               body = Center(
                 child: CircularProgressIndicator(),
               );
