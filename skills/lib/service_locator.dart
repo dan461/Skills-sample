@@ -16,6 +16,7 @@ import 'features/skills/domain/usecases/insertNewSkill.dart';
 import 'features/skills/domain/usecases/updateGoal.dart';
 import 'features/skills/domain/usecases/updateSkill.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goalEditor_bloc.dart';
+import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
 final locator = GetIt.instance;
@@ -25,17 +26,22 @@ void init() {
   // Blocs
 
   locator.registerFactory(() => SkillsBloc(getAllSkills: locator()));
+
   locator.registerFactory(() => SkillEditorBloc(
       insertNewSkillUC: locator(),
       updateSkill: locator(),
       getSkillById: locator(),
       deleteSkillWithId: locator()));
+
   locator.registerFactory(() => GoaleditorBloc(
-      insertNewGoalUC: locator(),
       updateGoalUC: locator(),
-      addGoalToSkill: locator(),
       deleteGoalWithId: locator(),
       getGoalById: locator()));
+
+  locator.registerFactory(() => NewgoalBloc(
+        insertNewGoalUC: locator(),
+        addGoalToSkill: locator(),
+      ));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
@@ -44,11 +50,12 @@ void init() {
   locator.registerLazySingleton(() => UpdateSkill(locator()));
   locator.registerLazySingleton(() => DeleteSkillWithId(locator()));
 
-  locator.registerLazySingleton(() => InsertNewGoal(locator()));
   locator.registerLazySingleton(() => UpdateGoal(locator()));
-  locator.registerLazySingleton(() => AddGoalToSkill(locator()));
   locator.registerLazySingleton(() => GetGoalById(locator()));
   locator.registerLazySingleton(() => DeleteGoalWithId(locator()));
+
+  locator.registerLazySingleton(() => InsertNewGoal(locator()));
+  locator.registerLazySingleton(() => AddGoalToSkill(locator()));
 
   // Repositories
   locator.registerLazySingleton<SkillRepository>(

@@ -19,14 +19,14 @@ class EditGoalEvent extends GoalEditorEvent {
   List<Object> get props => [goalId];
 }
 
-class InsertNewGoalEvent extends GoalEditorEvent {
-  final Goal newGoal;
+// class InsertNewGoalEvent extends GoalEditorEvent {
+//   final Goal newGoal;
 
-  InsertNewGoalEvent(this.newGoal);
+//   InsertNewGoalEvent(this.newGoal);
 
-  @override
-  List<Object> get props => [newGoal];
-}
+//   @override
+//   List<Object> get props => [newGoal];
+// }
 
 class UpdateGoalEvent extends GoalEditorEvent {
   final Goal newGoal;
@@ -46,17 +46,17 @@ class DeleteGoalEvent extends GoalEditorEvent {
   List<Object> get props => [goalId];
 }
 
-class AddGoalToSkillEvent extends GoalEditorEvent {
-  final int goalId;
-  final int skillId;
-  final String goalText;
+// class AddGoalToSkillEvent extends GoalEditorEvent {
+//   final int goalId;
+//   final int skillId;
+//   final String goalText;
 
-  AddGoalToSkillEvent(
-      {@required this.goalText, @required this.goalId, @required this.skillId});
+//   AddGoalToSkillEvent(
+//       {@required this.goalText, @required this.goalId, @required this.skillId});
 
-  @override
-  List<Object> get props => [goalId, skillId];
-}
+//   @override
+//   List<Object> get props => [goalId, skillId];
+// }
 
 class RemoveGoalFromSkillAfterDeleteEvent extends GoalEditorEvent {
   final int skillId;

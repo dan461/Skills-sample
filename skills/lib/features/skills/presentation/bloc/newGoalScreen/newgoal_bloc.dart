@@ -3,55 +3,66 @@ import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
-import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
-import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
+import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
+import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
-import 'goalEditor_event.dart';
-import 'goalEditor_state.dart';
 
-class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
-  final UpdateGoal updateGoalUC;
-  final DeleteGoalWithId deleteGoalWithId;
-  final GetGoalById getGoalById;
-  Goal goal;
+class NewgoalBloc extends Bloc<NewgoalEvent, NewgoalState> {
+final InsertNewGoal insertNewGoalUC;
+final AddGoalToSkill addGoalToSkill;
+
+Goal goal;
   String goalTranslation = 'none';
 
-  GoaleditorBloc({this.updateGoalUC, this.deleteGoalWithId, this.getGoalById});
+  NewgoalBloc({this.insertNewGoalUC, this.addGoalToSkill});
+
 
   @override
-  GoalEditorState get initialState => EmptyGoalEditorState();
+  NewgoalState get initialState => InitialNewgoalState();
 
   @override
-  Stream<GoalEditorState> mapEventToState(
-    GoalEditorEvent event,
+  Stream<NewgoalState> mapEventToState(
+    NewgoalEvent event,
   ) async* {
-    if (event is EditGoalEvent) {
-      yield GoalCrudInProgressState();
-      final failureOrGoal = await getGoalById(GoalCrudParams(id: event.goalId));
-      yield failureOrGoal.fold(
-          (failure) => GoalEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (goal) => GoalEditorEditingState(goal: goal));
+    if (event is InsertNewGoalEvent){
+      yield NewGoalInsertingState();
+      final failureOrNewGoal =
+          await insertNewGoalUC(GoalCrudParams(goal: event.newGoal));
+      yield failureOrNewGoal.fold(
+          (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
+          (newGoal) => NewGoalInsertedState(newGoal));
+    } else if (event is AddGoalToSkillEvent){
+      yield AddingGoalToSkillState();
+      final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams(
+          skillId: event.skillId,
+          goalId: event.goalId,
+          goalText: event.goalText));
+      yield failureOrNewId.fold(
+          (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
+          (newId) =>
+              GoalAddedToSkillState(newId: newId, goalText: goalTranslation));
+    }
+    
+  }
 
-      // Update Goal
-    } else if (event is UpdateGoalEvent) {
-      yield GoalCrudInProgressState();
-      final failureOrResult =
-          await updateGoalUC(GoalCrudParams(goal: event.newGoal));
-      yield failureOrResult.fold(
-          (failure) => GoalEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (updates) => GoalUpdatedState(updates));
-    }
-    // Delete goal
-    else if (event is DeleteGoalEvent) {
-      yield GoalCrudInProgressState();
-      final failureOrSuccess =
-          await deleteGoalWithId(GoalCrudParams(id: event.goalId));
-      yield failureOrSuccess.fold(
-          (failure) => GoalEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (success) => GoalDeletedState(success));
-    }
+  void insertNewGoal(
+      {int startDate,
+      int endDate,
+      bool timeBased,
+      int goalMinutes,
+      int skillId,
+      String desc}) async {
+    Goal newGoal = Goal(
+        skillId: skillId,
+        fromDate: startDate,
+        toDate: endDate,
+        isComplete: false,
+        timeBased: timeBased,
+        goalTime: goalMinutes,
+        desc: desc);
+    add(InsertNewGoalEvent(newGoal));
+    goalTranslation = translateGoal(newGoal);
   }
 
   String translateGoal(Goal goal) {

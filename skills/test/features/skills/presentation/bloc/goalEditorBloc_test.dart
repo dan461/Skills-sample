@@ -13,33 +13,30 @@ import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 
-class MockInsertNewGoalUC extends Mock implements InsertNewGoal {}
+// class MockInsertNewGoalUC extends Mock implements InsertNewGoal {}
 
 class MockUpdateGoalUC extends Mock implements UpdateGoal {}
 
-class MockAddGoalToSkill extends Mock implements AddGoalToSkill {}
+// class MockAddGoalToSkill extends Mock implements AddGoalToSkill {}
 
 class MockDeleteGoalWithId extends Mock implements DeleteGoalWithId {}
 
 void main() {
   GoaleditorBloc sut;
-  MockInsertNewGoalUC mockInsertNewGoalUC;
+  // MockInsertNewGoalUC mockInsertNewGoalUC;
   MockUpdateGoalUC mockUpdateGoalUC;
-  MockAddGoalToSkill mockAddGoalToSkill;
+  // MockAddGoalToSkill mockAddGoalToSkill;
   MockDeleteGoalWithId mockDeleteGoalWithId;
   Goal testGoal;
   Goal newGoal;
 
   setUp(() {
-    mockInsertNewGoalUC = MockInsertNewGoalUC();
+    // mockInsertNewGoalUC = MockInsertNewGoalUC();
     mockUpdateGoalUC = MockUpdateGoalUC();
-    mockAddGoalToSkill = MockAddGoalToSkill();
+    // mockAddGoalToSkill = MockAddGoalToSkill();
     mockDeleteGoalWithId = MockDeleteGoalWithId();
     sut = GoaleditorBloc(
-        insertNewGoalUC: mockInsertNewGoalUC,
-        updateGoalUC: mockUpdateGoalUC,
-        addGoalToSkill: mockAddGoalToSkill,
-        deleteGoalWithId: mockDeleteGoalWithId);
+        updateGoalUC: mockUpdateGoalUC, deleteGoalWithId: mockDeleteGoalWithId);
 
     testGoal = Goal(
         skillId: 1,
@@ -76,93 +73,96 @@ void main() {
     test(
         'test for bloc emitting [GoalEditorEditingState] in response to an EditGoalEvent',
         () async {
-      final expected = [EmptyGoalEditorState(), GoalEditorEditingState(goal: testGoal)];
+      final expected = [
+        EmptyGoalEditorState(),
+        GoalEditorEditingState(goal: testGoal)
+      ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(EditGoalEvent(goalId: 1));
     });
   });
 
-  group('InsertNewGoal', () {
-    test('test that InsertNewGoal usecase called', () async {
-      when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
-          .thenAnswer((_) async => Right(newGoal));
-      sut.add(InsertNewGoalEvent(testGoal));
-      await untilCalled(
-          mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)));
-      verify(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)));
-    });
+  // group('InsertNewGoal', () {
+  //   test('test that InsertNewGoal usecase called', () async {
+  //     when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
+  //         .thenAnswer((_) async => Right(newGoal));
+  //     sut.add(InsertNewGoalEvent(testGoal));
+  //     await untilCalled(
+  //         mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)));
+  //     verify(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)));
+  //   });
 
-    test(
-        'test that bloc emits [GoalCrudInProgressState, NewGoalInsertedState] on successful insert',
-        () async {
-      when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
-          .thenAnswer((_) async => Right(newGoal));
-      final expected = [
-        EmptyGoalEditorState(),
-        GoalCrudInProgressState(),
-        NewGoalInsertedState(newGoal)
-      ];
-      expectLater(sut, emitsInOrder(expected));
-      sut.add(InsertNewGoalEvent(testGoal));
-    });
+  //   test(
+  //       'test that bloc emits [GoalCrudInProgressState, NewGoalInsertedState] on successful insert',
+  //       () async {
+  //     when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
+  //         .thenAnswer((_) async => Right(newGoal));
+  //     final expected = [
+  //       EmptyGoalEditorState(),
+  //       GoalCrudInProgressState(),
+  //       NewGoalInsertedState(newGoal)
+  //     ];
+  //     expectLater(sut, emitsInOrder(expected));
+  //     sut.add(InsertNewGoalEvent(testGoal));
+  //   });
 
-    test(
-        'test that bloc emits [GoalCrudInProgressState, GoalEditorErrorState] upon unsuccessful insert',
-        () async {
-      when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
-          .thenAnswer((_) async => prefix1.Left(CacheFailure()));
-      final expected = [
-        EmptyGoalEditorState(),
-        GoalCrudInProgressState(),
-        GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
-      ];
-      expectLater(sut, emitsInOrder(expected));
-      sut.add(InsertNewGoalEvent(testGoal));
-    });
-  });
+  //   test(
+  //       'test that bloc emits [GoalCrudInProgressState, GoalEditorErrorState] upon unsuccessful insert',
+  //       () async {
+  //     when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
+  //         .thenAnswer((_) async => prefix1.Left(CacheFailure()));
+  //     final expected = [
+  //       EmptyGoalEditorState(),
+  //       GoalCrudInProgressState(),
+  //       GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
+  //     ];
+  //     expectLater(sut, emitsInOrder(expected));
+  //     sut.add(InsertNewGoalEvent(testGoal));
+  //   });
+  // });
 
-  group('AddGoalToSkill', () {
-    test('test that AddGoalToSkill is called', () async {
-      when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
-          .thenAnswer((_) async => Right(1));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
-      await untilCalled(mockAddGoalToSkill(
-          AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
-      verify(mockAddGoalToSkill(
-          AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
-    });
+  // group('AddGoalToSkill', () {
+  //   test('test that AddGoalToSkill is called', () async {
+  //     when(mockAddGoalToSkill(
+  //             AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+  //         .thenAnswer((_) async => Right(1));
+  //     sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+  //     await untilCalled(mockAddGoalToSkill(
+  //         AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
+  //     verify(mockAddGoalToSkill(
+  //         AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
+  //   });
 
-    test(
-        'test that bloc emits [GoalCrudInProgressState, GoalAddedToSkillState] on successful add',
-        () async {
-      when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
-          .thenAnswer((_) async => Right(1));
-      final expected = [
-        EmptyGoalEditorState(),
-        GoalCrudInProgressState(),
-        GoalAddedToSkillState(newId: 1, goalText: 'none')
-      ];
-      expectLater(sut, emitsInOrder(expected));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
-    });
+  //   test(
+  //       'test that bloc emits [GoalCrudInProgressState, GoalAddedToSkillState] on successful add',
+  //       () async {
+  //     when(mockAddGoalToSkill(
+  //             AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+  //         .thenAnswer((_) async => Right(1));
+  //     final expected = [
+  //       EmptyGoalEditorState(),
+  //       GoalCrudInProgressState(),
+  //       GoalAddedToSkillState(newId: 1, goalText: 'none')
+  //     ];
+  //     expectLater(sut, emitsInOrder(expected));
+  //     sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+  //   });
 
-    test(
-        'test that bloc emits [GoalCrudInProgressState, GoalEditorErrorState] upon unsuccessful add',
-        () async {
-      when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
-          .thenAnswer((_) async => prefix1.Left(CacheFailure()));
-      final expected = [
-        EmptyGoalEditorState(),
-        GoalCrudInProgressState(),
-        GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
-      ];
-      expectLater(sut, emitsInOrder(expected));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
-    });
-  });
+  //   test(
+  //       'test that bloc emits [GoalCrudInProgressState, GoalEditorErrorState] upon unsuccessful add',
+  //       () async {
+  //     when(mockAddGoalToSkill(
+  //             AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+  //         .thenAnswer((_) async => prefix1.Left(CacheFailure()));
+  //     final expected = [
+  //       EmptyGoalEditorState(),
+  //       GoalCrudInProgressState(),
+  //       GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
+  //     ];
+  //     expectLater(sut, emitsInOrder(expected));
+  //     sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+  //   });
+  // });
 
   group('DeleteGoalWithId', () {
     test('test that DeleteGoalWithId is called', () async {

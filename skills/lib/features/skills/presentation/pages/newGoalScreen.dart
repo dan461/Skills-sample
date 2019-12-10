@@ -4,49 +4,39 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_event.dart';
+import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_state.dart';
 
 import '../../../../service_locator.dart';
 
-class GoalCreationScreen extends StatefulWidget {
+class NewGoalScreen extends StatefulWidget {
   final int skillId;
-  final int goalId;
   final String skillName;
 
-  const GoalCreationScreen(
-      {Key key,
-      @required this.skillId,
-      @required this.skillName,
-      @required this.goalId})
+  const NewGoalScreen(
+      {Key key, @required this.skillId, @required this.skillName})
       : super(key: key);
   @override
-  _GoalCreationScreenState createState() => _GoalCreationScreenState(
-      skillId: skillId, skillName: skillName, editedGoalId: goalId);
+  _NewGoalScreenState createState() => _NewGoalScreenState(skillId, skillName);
 }
 
-class _GoalCreationScreenState extends State<GoalCreationScreen> {
+class _NewGoalScreenState extends State<NewGoalScreen> {
   final int skillId;
-  final int editedGoalId;
   final String skillName;
-  GoaleditorBloc _goalEditorBloc;
   int _goalType;
-
   bool _doneEnabled;
+  String _goalTranslation;
 
-  _GoalCreationScreenState(
-      {@required this.editedGoalId,
-      @required this.skillId,
-      @required this.skillName});
+  _NewGoalScreenState(this.skillId, this.skillName);
 
   @override
   void initState() {
     super.initState();
-    _goalEditorBloc = locator<GoaleditorBloc>();
-    if (editedGoalId != 0) {
-      _goalEditorBloc.add(EditGoalEvent(goalId: editedGoalId));
-    }
+
     _goalType = 0;
-    _doneEnabled = false;
+    _doneEnabled = true;
+    _goalTranslation = '';
   }
 
   TextEditingController _hoursTextController = TextEditingController();
@@ -79,16 +69,14 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   }
 
   void _setDoneButtonEnabled() {
-    bool timeOrTaskSet;
-    if (_isTimeBased)
-      timeOrTaskSet = _goalMinutes > 0;
-    else
-      timeOrTaskSet = _goalDescTextController.text != null;
+    // bool timeOrTaskSet;
+    // if (_isTimeBased)
+    //   timeOrTaskSet = _goalMinutes > 0;
+    // else
+    //   timeOrTaskSet = _goalDescTextController.text != null;
 
-    _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+    // _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
   }
-
-  void _updateGoal() async {}
 
   void _selectStartDate() async {
     DateTime pickedDate = await showDatePicker(
@@ -118,6 +106,21 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     }
   }
 
+  void _insertNewGoal(BuildContext context) async {
+    Goal newGoal = Goal(
+        skillId: skillId,
+        fromDate: _startDate.millisecondsSinceEpoch,
+        toDate: _endDate.millisecondsSinceEpoch,
+        timeBased: _isTimeBased,
+        goalTime: _goalMinutes,
+        timeRemaining: _goalMinutes,
+        isComplete: false,
+        desc: _isTimeBased ? "none" : _goalDescTextController.text);
+    _goalTranslation =
+        BlocProvider.of<NewgoalBloc>(context).translateGoal(newGoal);
+    BlocProvider.of<NewgoalBloc>(context).add(InsertNewGoalEvent(newGoal));
+  }
+
   Widget _goalDetailAreaBuilder() {
     Widget area;
     if (_isTimeBased)
@@ -137,7 +140,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
       keyboardType: TextInputType.text,
       controller: _goalDescTextController,
       onChanged: (_) {
-        _setDoneButtonEnabled();
+        // _setDoneButtonEnabled();
       },
     );
   }
@@ -222,15 +225,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     );
   }
 
-  Container _goalEditArea(Goal goal) {
-    // if (goal != null) {
-    //   _goalType = goal.timeBased == true ? 0 : 1;
-    //   _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
-    //   _endDate = DateTime.fromMillisecondsSinceEpoch(goal.toDate);
-    //   _hoursTextController.text = (goal.goalTime / 60).floor().toString();
-    //   _minTextController.text = (goal.goalTime % 60).toString();
-    // }
-
+  Container _goalEditArea(BuildContext blocContext) {
     return Container(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -298,7 +293,11 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                   ),
                   RaisedButton(
                       child: Text('Done'),
-                      onPressed: _doneEnabled ? () {} : null),
+                      onPressed: _doneEnabled
+                          ? () {
+                              _insertNewGoal(blocContext);
+                            }
+                          : null),
                 ],
               ),
             )
@@ -310,28 +309,38 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => _goalEditorBloc,
+    return BlocProvider<NewgoalBloc>(
+      builder: (_) => locator<NewgoalBloc>(),
       child: Scaffold(
-        appBar: AppBar(),
-        body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
-          builder: (context, state) {
-            Widget body;
+          appBar: AppBar(),
+          body: BlocBuilder<NewgoalBloc, NewgoalState>(
+            builder: (context, state) {
+              Widget body;
+              if (state is InitialNewgoalState) {
+                body = _goalEditArea(context);
+              } else if (state is NewGoalInsertingState ||
+                  state is AddingGoalToSkillState) {
+                body = Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is NewGoalInsertedState) {
+                // Need to update skill with currentGoalId and goalText
+                BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
+                    skillId: widget.skillId,
+                    goalId: state.newGoal.id,
+                    goalText: _goalTranslation));
+                body = Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is GoalAddedToSkillState) {
+                body = Center(child: CircularProgressIndicator());
+                
+                Navigator.of(context).pop();
+              }
 
-            if (state is EmptyGoalEditorState ||
-                state is GoalEditorCreatingState) {
-              body = _goalEditArea(null);
-            } else if (state is GoalEditorEditingState) {
-              body = _goalEditArea(state.goal);
-            } else if (state is GoalCrudInProgressState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return body;
-          },
-        ),
-      ),
+              return body;
+            },
+          )),
     );
   }
 }

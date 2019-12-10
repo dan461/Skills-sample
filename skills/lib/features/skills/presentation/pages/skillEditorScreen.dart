@@ -8,6 +8,7 @@ import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skill
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_state.dart';
 import 'package:skills/service_locator.dart';
 import 'goalEditorScreen.dart';
+import 'newGoalScreen.dart';
 
 class SkillEditorScreen extends StatefulWidget {
   final SkillEditorBloc skillEditorBloc;
@@ -133,6 +134,22 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     Skill newSkill =
         Skill(name: _nameController.text, source: _sourceController.text);
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
+  }
+
+  void _createOrEditGoal(){
+    if (_skill.currentGoalId == 0){
+      _goToNewGoalScreen(_skill.id, _skill.name);
+    } else {
+      _goToGoalEditor(_skill.id, _skill.name, _skill.currentGoalId);
+    }
+  }
+
+  void _goToNewGoalScreen(int skillId, String skillName) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      return NewGoalScreen(skillId: skillId, skillName: skillName,);
+    }));
+
+    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
   }
 
   void _goToGoalEditor(int skillId, String skillName, int goalId) async {
@@ -351,7 +368,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
       body = Container(
         child: InkWell(
           onTap: () {
-            _goToGoalEditor(skillId, _skill.name, _skill.currentGoalId);
+            _createOrEditGoal();
+            // _goToGoalEditor(skillId, _skill.name, _skill.currentGoalId);
           },
           child: Container(
             color: Colors.grey[100],
