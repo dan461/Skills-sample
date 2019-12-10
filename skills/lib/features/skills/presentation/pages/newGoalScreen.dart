@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -35,7 +37,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     super.initState();
 
     _goalType = 0;
-    _doneEnabled = true;
+    _doneEnabled = false;
     _goalTranslation = '';
   }
 
@@ -63,27 +65,43 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   }
 
   int get _goalMinutes {
-    int minutes = (int.parse(_hoursTextController.text) * 60) +
-        int.parse(_minTextController.text);
-    return minutes;
+    int hours = _hoursTextController.text.isNotEmpty
+        ? int.parse(_hoursTextController.text)
+        : 0;
+    int minutes = _minTextController.text.isNotEmpty
+        ? int.parse(_minTextController.text)
+        : 0;
+
+    int totalMinutes = (hours * 60) + minutes;
+    return totalMinutes;
   }
 
   void _setDoneButtonEnabled() {
-    // bool timeOrTaskSet;
-    // if (_isTimeBased)
-    //   timeOrTaskSet = _goalMinutes > 0;
-    // else
-    //   timeOrTaskSet = _goalDescTextController.text != null;
+    bool timeOrTaskSet;
+    if (_isTimeBased)
+      timeOrTaskSet = _goalMinutes > 0;
+    else
+      timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
 
-    // _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+    setState(() {
+      _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+    });
+    
+    // _doneEnabled = _startDate != null && _endDate != null;
   }
 
   void _selectStartDate() async {
+    DateTime lastDate =
+        _endDate == null ? DateTime.now().add(Duration(days: 365)) : _endDate;
+    DateTime initialDate =
+        DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
+            ? DateTime.now()
+            : lastDate;
     DateTime pickedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: initialDate,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
-        lastDate: DateTime.now().add(Duration(days: 365)));
+        lastDate: lastDate);
 
     if (pickedDate != null) {
       setState(() {
@@ -93,10 +111,19 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   }
 
   void _selectEndDate() async {
+    DateTime firstDate = _startDate == null
+        ? DateTime.now().subtract(Duration(days: 365))
+        : _startDate;
+
+    DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
+            firstDate.millisecondsSinceEpoch
+        ? DateTime.now()
+        : _startDate;
+
     DateTime pickedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
+        initialDate: initialDate,
+        firstDate: firstDate,
         lastDate: DateTime.now().add(Duration(days: 365)));
 
     if (pickedDate != null) {
@@ -140,7 +167,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
       keyboardType: TextInputType.text,
       controller: _goalDescTextController,
       onChanged: (_) {
-        // _setDoneButtonEnabled();
+        _setDoneButtonEnabled();
       },
     );
   }
@@ -334,7 +361,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                 );
               } else if (state is GoalAddedToSkillState) {
                 body = Center(child: CircularProgressIndicator());
-                
+
                 Navigator.of(context).pop();
               }
 
