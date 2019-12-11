@@ -8,8 +8,9 @@ import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
 import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
-import 'goalEditor_event.dart';
-import 'goalEditor_state.dart';
+// import 'goalEditor_event.dart';
+// import 'goalEditor_state.dart';
+// import 'goaleditor_event.dart';
 
 class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   final UpdateGoal updateGoalUC;
@@ -27,15 +28,20 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   Stream<GoalEditorState> mapEventToState(
     GoalEditorEvent event,
   ) async* {
-    if (event is EditGoalEvent) {
+    // get goal
+    if (event is GetGoalEvent) {
       yield GoalCrudInProgressState();
       final failureOrGoal = await getGoalById(GoalCrudParams(id: event.goalId));
       yield failureOrGoal.fold(
           (failure) => GoalEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (goal) => GoalEditorEditingState(goal: goal));
+          (goal) => GoalEditorGoalReturnedState(goal: goal));
 
-      // Update Goal
-    } else if (event is UpdateGoalEvent) {
+      // edit Goal
+    } else if (event is EditGoalEvent) {
+      yield GoalEditorEditingState(goal: goal);
+    }
+    // update goal
+    else if (event is UpdateGoalEvent) {
       yield GoalCrudInProgressState();
       final failureOrResult =
           await updateGoalUC(GoalCrudParams(goal: event.newGoal));

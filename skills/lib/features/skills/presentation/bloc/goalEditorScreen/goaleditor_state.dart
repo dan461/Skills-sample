@@ -11,9 +11,12 @@ class EmptyGoalEditorState extends GoalEditorState {
   List<Object> get props => [];
 }
 
-class GoalEditorCreatingState extends GoalEditorState {
+class GoalEditorGoalReturnedState extends GoalEditorState {
+  final Goal goal;
+
+  GoalEditorGoalReturnedState({@required this.goal});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [goal];
 }
 
 class GoalEditorEditingState extends GoalEditorState {

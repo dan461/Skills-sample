@@ -154,7 +154,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
 
   void _goToGoalEditor(int skillId, String skillName, int goalId) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalCreationScreen(
+      return GoalEditorScreen(
         skillId: skillId,
         skillName: skillName,
         goalId: goalId,

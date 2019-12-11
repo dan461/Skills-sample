@@ -11,12 +11,20 @@ class CreateNewGoalEvent extends GoalEditorEvent {
   List<Object> get props => [];
 }
 
-class EditGoalEvent extends GoalEditorEvent {
+class GetGoalEvent extends GoalEditorEvent {
   final int goalId;
 
-  EditGoalEvent({@required this.goalId});
+  GetGoalEvent({@required this.goalId});
   @override
   List<Object> get props => [goalId];
+}
+
+class EditGoalEvent extends GoalEditorEvent {
+  // final Goal goal;
+
+  EditGoalEvent();
+  @override
+  List<Object> get props => [];
 }
 
 // class InsertNewGoalEvent extends GoalEditorEvent {

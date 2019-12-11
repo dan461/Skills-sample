@@ -8,23 +8,23 @@ import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.d
 
 import '../../../../service_locator.dart';
 
-class GoalCreationScreen extends StatefulWidget {
+class GoalEditorScreen extends StatefulWidget {
   final int skillId;
   final int goalId;
   final String skillName;
 
-  const GoalCreationScreen(
+  const GoalEditorScreen(
       {Key key,
       @required this.skillId,
       @required this.skillName,
       @required this.goalId})
       : super(key: key);
   @override
-  _GoalCreationScreenState createState() => _GoalCreationScreenState(
+  _GoalEditorScreenState createState() => _GoalEditorScreenState(
       skillId: skillId, skillName: skillName, editedGoalId: goalId);
 }
 
-class _GoalCreationScreenState extends State<GoalCreationScreen> {
+class _GoalEditorScreenState extends State<GoalEditorScreen> {
   final int skillId;
   final int editedGoalId;
   final String skillName;
@@ -33,7 +33,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
 
   bool _doneEnabled;
 
-  _GoalCreationScreenState(
+  _GoalEditorScreenState(
       {@required this.editedGoalId,
       @required this.skillId,
       @required this.skillName});
@@ -43,7 +43,7 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     super.initState();
     _goalEditorBloc = locator<GoaleditorBloc>();
     if (editedGoalId != 0) {
-      _goalEditorBloc.add(EditGoalEvent(goalId: editedGoalId));
+      _goalEditorBloc.add(GetGoalEvent(goalId: editedGoalId));
     }
     _goalType = 0;
     _doneEnabled = false;
@@ -73,9 +73,15 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   }
 
   int get _goalMinutes {
-    int minutes = (int.parse(_hoursTextController.text) * 60) +
-        int.parse(_minTextController.text);
-    return minutes;
+    int hours = _hoursTextController.text.isNotEmpty
+        ? int.parse(_hoursTextController.text)
+        : 0;
+    int minutes = _minTextController.text.isNotEmpty
+        ? int.parse(_minTextController.text)
+        : 0;
+
+    int totalMinutes = (hours * 60) + minutes;
+    return totalMinutes;
   }
 
   void _setDoneButtonEnabled() {
@@ -83,19 +89,40 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     if (_isTimeBased)
       timeOrTaskSet = _goalMinutes > 0;
     else
-      timeOrTaskSet = _goalDescTextController.text != null;
+      timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
 
     _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
   }
 
-  void _updateGoal() async {}
+  void _updateGoal() async {
+
+    // TODO - finish this
+    Goal updatedGoal = Goal(
+      skillId: _goalEditorBloc.goal.skillId,
+      fromDate: _startDate.millisecondsSinceEpoch,
+        toDate: _endDate.millisecondsSinceEpoch,
+        timeBased: _isTimeBased,
+        goalTime: _goalMinutes,
+        timeRemaining: _goalMinutes,
+        isComplete: false,
+        desc: _isTimeBased ? "none" : _goalDescTextController.text
+    );
+  }
 
   void _selectStartDate() async {
+    DateTime lastDate =
+        _endDate == null ? DateTime.now().add(Duration(days: 365)) : _endDate;
+
+    DateTime initialDate =
+        DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
+            ? DateTime.now()
+            : lastDate;
+
     DateTime pickedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: initialDate,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
-        lastDate: DateTime.now().add(Duration(days: 365)));
+        lastDate: lastDate);
 
     if (pickedDate != null) {
       setState(() {
@@ -105,10 +132,19 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
   }
 
   void _selectEndDate() async {
+    DateTime firstDate = _startDate == null
+        ? DateTime.now().subtract(Duration(days: 365))
+        : _startDate;
+
+    DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
+            firstDate.millisecondsSinceEpoch
+        ? DateTime.now()
+        : _startDate;
+
     DateTime pickedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
+        initialDate: initialDate,
+        firstDate: firstDate,
         lastDate: DateTime.now().add(Duration(days: 365)));
 
     if (pickedDate != null) {
@@ -222,7 +258,12 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
     );
   }
 
-  Container _goalEditArea(Goal goal) {
+  Container _goalEditArea() {
+    // _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
+    // _endDate = DateTime.fromMillisecondsSinceEpoch(goal.toDate);
+    // _goalType = goal.timeBased == true ? 0 : 1;
+    // _hoursTextController.text = (goal.goalTime / 60).floor().toString();
+    // _minTextController.text = (goal.goalTime % 60).toString();
     // if (goal != null) {
     //   _goalType = goal.timeBased == true ? 0 : 1;
     //   _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
@@ -298,7 +339,9 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
                   ),
                   RaisedButton(
                       child: Text('Done'),
-                      onPressed: _doneEnabled ? () {} : null),
+                      onPressed: _doneEnabled ? () {
+                        _updateGoal();
+                      } : null),
                 ],
               ),
             )
@@ -318,11 +361,25 @@ class _GoalCreationScreenState extends State<GoalCreationScreen> {
           builder: (context, state) {
             Widget body;
 
-            if (state is EmptyGoalEditorState ||
-                state is GoalEditorCreatingState) {
-              body = _goalEditArea(null);
+            if (state is EmptyGoalEditorState) {
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is GoalEditorGoalReturnedState) {
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
+              _startDate =
+                  DateTime.fromMillisecondsSinceEpoch(state.goal.fromDate);
+              _endDate = DateTime.fromMillisecondsSinceEpoch(state.goal.toDate);
+              _goalType = state.goal.timeBased == true ? 0 : 1;
+              _hoursTextController.text =
+                  (state.goal.goalTime / 60).floor().toString();
+              _minTextController.text = (state.goal.goalTime % 60).toString();
+              _goalEditorBloc.goal = state.goal;
+              _goalEditorBloc.add(EditGoalEvent());
             } else if (state is GoalEditorEditingState) {
-              body = _goalEditArea(state.goal);
+              body = _goalEditArea();
             } else if (state is GoalCrudInProgressState) {
               body = Center(
                 child: CircularProgressIndicator(),
