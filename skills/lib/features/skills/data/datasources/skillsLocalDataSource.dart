@@ -17,7 +17,7 @@ abstract class SkillsLocalDataSource {
   Future<int> deleteSkillWithId(int skillId);
   Future<int> updateSkill(Skill skill);
   Future<GoalModel> getGoalById(int id);
-  Future<int> insertNewGoal(Goal goal);
+  Future<Goal> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
@@ -185,7 +185,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> insertNewGoal(Goal goal) async {
+  Future<Goal> insertNewGoal(Goal goal) async {
     final Database db = await database;
     final GoalModel goalModel = GoalModel(
         skillId: goal.skillId,
@@ -194,10 +194,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeBased: goal.timeBased,
         isComplete: false,
         goalTime: goal.goalTime,
+        timeRemaining: goal.goalTime,
         desc: goal.desc != null ? goal.desc : "");
+
     int id = await db.insert(goalsTable, goalModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    return id;
+
+    Goal newGoal = await getGoalById(id);
+    return newGoal;
   }
 
   @override

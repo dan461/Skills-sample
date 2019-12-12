@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_state.dart';
+import 'package:skills/service_locator.dart';
 import 'goalEditorScreen.dart';
+import 'newGoalScreen.dart';
 
 class SkillEditorScreen extends StatefulWidget {
   final SkillEditorBloc skillEditorBloc;
@@ -133,73 +136,35 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
   }
 
-  void _goToGoalEditor(int skillId, String skillName) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalCreationScreen(skillId: skillId, skillName: skillName);
+  void _createOrEditGoal(){
+    if (_skill.currentGoalId == 0){
+      _goToNewGoalScreen(_skill.id, _skill.name);
+    } else {
+      _goToGoalEditor(_skill.id, _skill.name, _skill.currentGoalId);
+    }
+  }
+
+  void _goToNewGoalScreen(int skillId, String skillName) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      return NewGoalScreen(skillId: skillId, skillName: skillName,);
     }));
 
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
   }
 
-  // Container _skillUpdateArea(int skillId) {
-  //   return Container(
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-  //       child: Column(
-  //         children: <Widget>[
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: TextField(
-  //               onChanged: (_) {
-  //                 setDoneButtonEnabled();
-  //               },
-  //               controller: _nameController,
-  //               decoration: InputDecoration(labelText: 'Name'),
-  //             ),
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: TextField(
-  //               onChanged: (_) {
-  //                 setDoneButtonEnabled();
-  //               },
-  //               controller: _sourceController,
-  //               decoration: InputDecoration(labelText: 'Source'),
-  //             ),
-  //           ),
-  //           _goalDescriptionArea(true, skillId),
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: ButtonBar(
-  //               alignment: MainAxisAlignment.spaceEvenly,
-  //               children: <Widget>[
-  //                 RaisedButton(
-  //                   child: Text('Add goal'),
-  //                   onPressed: () {
-  //                     _goToGoalEditor(skillId, _skill.name);
-  //                   },
-  //                 ),
-  //                 RaisedButton(
-  //                   child: Text('Schedule'),
-  //                   onPressed: () {},
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: RaisedButton(
-  //               child: Text('Done'),
-  //               onPressed: () {
-  //                 // update skill with goal description and id of current goal
-  //               },
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  void _goToGoalEditor(int skillId, String skillName, int goalId) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return GoalEditorScreen(
+        skillId: skillId,
+        skillName: skillName,
+        goalId: goalId,
+      );
+    }));
+
+    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
+  }
+
+  
 
   Form _skillEditFormBuilder(Key formKey) {
     return Form(
@@ -345,7 +310,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
       body = Container(
         child: InkWell(
           onTap: () {
-            _goToGoalEditor(skillId, _skill.name);
+            _createOrEditGoal();
+            // _goToGoalEditor(skillId, _skill.name, _skill.currentGoalId);
           },
           child: Container(
             color: Colors.grey[100],

@@ -51,6 +51,7 @@ void main() {
   });
 
   group('getGoalById', () {
+    
     test('returns a specific GoalModel', () async {
       when(mockLocalDataSource.getGoalById(1))
           .thenAnswer((_) async => testGoalModel);
@@ -61,12 +62,13 @@ void main() {
   });
 
   group('insertNewGoal', () {
+    Goal newGoal = testGoalModel;
     test('returns an ID after inserting a GoalModel', () async {
       when(mockLocalDataSource.insertNewGoal(testGoal))
-          .thenAnswer((_) async => 1);
+          .thenAnswer((_) async => newGoal);
       final result = await sut_goalRepoImpl.insertNewGoal(testGoal);
       verify(mockLocalDataSource.insertNewGoal(testGoal));
-      expect(result, equals(Right(1)));
+      expect(result, equals(Right(newGoal)));
     });
   });
 

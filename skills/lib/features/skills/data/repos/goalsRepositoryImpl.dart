@@ -28,7 +28,7 @@ class GoalsRepositoryImpl implements GoalRepository {
   }
 
   @override
-  Future<Either<Failure, int>> insertNewGoal(Goal goal) async {
+  Future<Either<Failure, Goal>> insertNewGoal(Goal goal) async {
     return Right(await localDataSource.insertNewGoal(goal));
   }
 

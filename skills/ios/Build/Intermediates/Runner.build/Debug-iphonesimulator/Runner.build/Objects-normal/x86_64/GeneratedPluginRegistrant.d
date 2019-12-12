@@ -4,7 +4,6 @@ dependencies: \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Modules/module.modulemap \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterTexture.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterPlugin.h \
-  /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterMacros.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterEngine.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterDartProject.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterBinaryMessenger.h \
@@ -12,9 +11,10 @@ dependencies: \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterPluginAppLifeCycleDelegate.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterPlatformViews.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterHeadlessDartRunner.h \
-  /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterCodecs.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterChannels.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterCallbackCache.h \
+  /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterCodecs.h \
+  /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterMacros.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/FlutterAppDelegate.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/.symlinks/flutter/ios/Flutter.framework/Headers/Flutter.h \
   /Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/build/ios/Debug-iphonesimulator/path_provider/path_provider.framework/Modules/module.modulemap \

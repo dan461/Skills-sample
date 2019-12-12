@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 
 abstract class GoalEditorState extends Equatable {
   const GoalEditorState();
@@ -10,27 +11,43 @@ class EmptyGoalEditorState extends GoalEditorState {
   List<Object> get props => [];
 }
 
+class GoalEditorGoalReturnedState extends GoalEditorState {
+  final Goal goal;
+
+  GoalEditorGoalReturnedState({@required this.goal});
+  @override
+  List<Object> get props => [goal];
+}
+
+class GoalEditorEditingState extends GoalEditorState {
+  final Goal goal;
+
+  GoalEditorEditingState({@required this.goal});
+  @override
+  List<Object> get props => [goal];
+}
+
 class GoalCrudInProgressState extends GoalEditorState {
   @override
   List<Object> get props => [];
 }
 
-class NewGoalInsertingState extends GoalEditorState {
-  @override
-  List<Object> get props => [];
-}
+// class NewGoalInsertingState extends GoalEditorState {
+//   @override
+//   List<Object> get props => [];
+// }
 
-class NewGoalInsertedState extends GoalEditorState {
-  final int newGoalId;
-  NewGoalInsertedState(this.newGoalId);
-  @override
-  List<Object> get props => [];
-}
+// class NewGoalInsertedState extends GoalEditorState {
+//   final Goal newGoal;
+//   NewGoalInsertedState(this.newGoal);
+//   @override
+//   List<Object> get props => [newGoal];
+// }
 
-class NewGoalErrorState extends GoalEditorState {
+class GoalEditorErrorState extends GoalEditorState {
   final String message;
 
-  NewGoalErrorState(this.message);
+  GoalEditorErrorState(this.message);
   @override
   List<Object> get props => [message];
 }
@@ -47,18 +64,25 @@ class GoalUpdatedState extends GoalEditorState {
   List<Object> get props => [];
 }
 
-class AddingGoalToSkillState extends GoalEditorState {
+class GoalDeletedState extends GoalEditorState {
+  final int result;
+  GoalDeletedState(this.result);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [result];
 }
 
-class GoalAddedToSkillState extends GoalEditorState {
-  final int newId;
-  final String goalText;
-  GoalAddedToSkillState({@required this.newId, @required this.goalText});
+// class AddingGoalToSkillState extends GoalEditorState {
+//   @override
+//   List<Object> get props => [];
+// }
 
-  @override
-  List<Object> get props => [];
-}
+// class GoalAddedToSkillState extends GoalEditorState {
+//   final int newId;
+//   final String goalText;
+//   GoalAddedToSkillState({@required this.newId, @required this.goalText});
+
+//   @override
+//   List<Object> get props => [];
+// }
 
 // inserting, updating, adding to skill, finished

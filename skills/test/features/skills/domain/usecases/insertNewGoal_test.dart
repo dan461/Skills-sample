@@ -18,7 +18,7 @@ void main() {
   });
 
   final testGoal = Goal(
-    skillId: 1,
+      skillId: 1,
       fromDate: DateTime.now().millisecondsSinceEpoch,
       toDate: DateTime.now().millisecondsSinceEpoch,
       isComplete: false,
@@ -26,13 +26,20 @@ void main() {
       timeRemaining: 0,
       goalTime: 0);
 
-  final int newId = -1;
-
   test('should insert new goal and return goal id', () async {
+    Goal newGoal = Goal(
+        skillId: 1,
+        fromDate: DateTime.now().millisecondsSinceEpoch,
+        toDate: DateTime.now().millisecondsSinceEpoch,
+        isComplete: false,
+        timeBased: false,
+        timeRemaining: 0,
+        goalTime: 1);
+
     when(mockGoalRepo.insertNewGoal(testGoal))
-        .thenAnswer((_) async => Right(newId));
+        .thenAnswer((_) async => Right(newGoal));
     final result = await sut(GoalCrudParams(id: null, goal: testGoal));
-    expect(result, Right(newId));
+    expect(result, Right(newGoal));
     verify(mockGoalRepo.insertNewGoal(testGoal));
     verifyNoMoreInteractions(mockGoalRepo);
   });

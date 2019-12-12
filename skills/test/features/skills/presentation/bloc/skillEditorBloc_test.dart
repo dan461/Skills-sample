@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart' as prefix0;
+import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart' show CacheFailure;
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +11,6 @@ import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 
 class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
 

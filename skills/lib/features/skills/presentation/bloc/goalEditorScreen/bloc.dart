@@ -1,3 +1,3 @@
-export 'goalEditor_bloc.dart';
-export 'goalEditor_event.dart';
-export 'goalEditor_state.dart';
+export 'goaleditor_bloc.dart';
+export 'goaleditor_event.dart';
+export 'goaleditor_state.dart';

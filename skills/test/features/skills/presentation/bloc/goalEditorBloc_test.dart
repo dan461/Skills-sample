@@ -1,35 +1,44 @@
 import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' as prefix1;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
+import 'package:skills/core/constants.dart';
+import 'package:skills/core/error/failures.dart';
+import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
+import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
 import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goalEditor_state.dart';
 
-class MockInsertNewGoalUC extends Mock implements InsertNewGoal {}
+// class MockInsertNewGoalUC extends Mock implements InsertNewGoal {}
 
 class MockUpdateGoalUC extends Mock implements UpdateGoal {}
 
-class MockAddGoalToSkill extends Mock implements AddGoalToSkill {}
+// class MockAddGoalToSkill extends Mock implements AddGoalToSkill {}
+
+class MockDeleteGoalWithId extends Mock implements DeleteGoalWithId {}
 
 void main() {
   GoaleditorBloc sut;
-  MockInsertNewGoalUC mockInsertNewGoalUC;
+  // MockInsertNewGoalUC mockInsertNewGoalUC;
   MockUpdateGoalUC mockUpdateGoalUC;
-  MockAddGoalToSkill mockAddGoalToSkill;
+  // MockAddGoalToSkill mockAddGoalToSkill;
+  MockDeleteGoalWithId mockDeleteGoalWithId;
   Goal testGoal;
+  Goal newGoal;
+  GoalModel testModel;
 
   setUp(() {
-    mockInsertNewGoalUC = MockInsertNewGoalUC();
+    // mockInsertNewGoalUC = MockInsertNewGoalUC();
     mockUpdateGoalUC = MockUpdateGoalUC();
-    mockAddGoalToSkill = MockAddGoalToSkill();
+    // mockAddGoalToSkill = MockAddGoalToSkill();
+    mockDeleteGoalWithId = MockDeleteGoalWithId();
     sut = GoaleditorBloc(
-        insertNewGoalUC: mockInsertNewGoalUC,
-        updateGoalUC: mockUpdateGoalUC,
-        addGoalToSkill: mockAddGoalToSkill);
+        updateGoalUC: mockUpdateGoalUC, deleteGoalWithId: mockDeleteGoalWithId);
 
     testGoal = Goal(
         skillId: 1,
@@ -39,59 +48,138 @@ void main() {
         timeBased: true,
         timeRemaining: 0,
         goalTime: 0);
+
+    newGoal = Goal(
+        skillId: 1,
+        fromDate: DateTime.now().millisecondsSinceEpoch,
+        toDate: DateTime.now().millisecondsSinceEpoch,
+        isComplete: false,
+        timeBased: true,
+        timeRemaining: 0,
+        goalTime: 0);
+
+    testModel = GoalModel(
+        skillId: testGoal.skillId,
+        fromDate: testGoal.fromDate,
+        toDate: testGoal.toDate,
+        timeBased: true,
+        isComplete: false,
+        goalTime: 60,
+        timeRemaining: 60,
+        desc: testGoal.desc != null ? testGoal.desc : "");
   });
 
   test('test bloc initial state is correct', () {
     expect(sut.initialState, equals(EmptyGoalEditorState()));
   });
 
-  group('InsertNewGoal', () {
-    test('test that InsertNewGoal usecase called', () async {
-      when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
-          .thenAnswer((_) async => Right(1));
-      sut.add(InsertNewGoalEvent(testGoal));
-      await untilCalled(
-          mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)));
-      verify(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)));
+  test(
+      'test for bloc emitting [GoalEditorEditingState] in response to an EditGoalEvent',
+      () async {
+    final expected = [
+      EmptyGoalEditorState(),
+      GoalEditorEditingState(goal: testGoal)
+    ];
+    sut.theGoal = testGoal;
+    sut.add(EditGoalEvent());
+    expect(sut, emitsInOrder(expected));
+    // sut.add(EditGoalEvent());
+  });
+
+  group('DeleteGoalWithId', () {
+    test('test that DeleteGoalWithId is called', () async {
+      when(mockDeleteGoalWithId(GoalCrudParams(id: 1)))
+          .thenAnswer((_) async => Right(0));
+      sut.add(DeleteGoalEvent(1));
+      await untilCalled(mockDeleteGoalWithId(GoalCrudParams(id: 1)));
+      verify(mockDeleteGoalWithId(GoalCrudParams(id: 1)));
     });
 
     test(
-        'test that bloc emits [GoalCrudInProgressState, NewGoalInsertedState] on successful insert',
+        'test that bloc emits [GoalCrudInProgressState, GoalDeletedState] on successful delete',
         () async {
-      when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
-          .thenAnswer((_) async => Right(1));
+      when(mockDeleteGoalWithId(GoalCrudParams(id: 1)))
+          .thenAnswer((_) async => Right(0));
       final expected = [
         EmptyGoalEditorState(),
         GoalCrudInProgressState(),
-        NewGoalInsertedState(1)
+        GoalDeletedState(0)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(InsertNewGoalEvent(testGoal));
+      sut.add(DeleteGoalEvent(1));
+    });
+
+    test(
+        'test that bloc emits [GoalCrudInProgressState, GoalEditorErrorState] upon unsuccessful delete',
+        () async {
+      when(mockDeleteGoalWithId(GoalCrudParams(id: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        EmptyGoalEditorState(),
+        GoalCrudInProgressState(),
+        GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteGoalEvent(1));
     });
   });
 
-  group('AddGoalToSkill', () {
-    test('test that AddGoalToSkill is called', () async {
-      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+  prefix0.group('UpdateGoal', () {
+    test('test that UpdateGoal is called', () async {
+      when(mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => Right(1));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+      sut.add(UpdateGoalEvent(testGoal));
       await untilCalled(
-          mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
-      verify(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
+          mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)));
+      verify(mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)));
     });
 
     test(
-        'test that bloc emits [GoalCrudInProgressState, GoalAddedToSkillState] on successful add',
+        'test that bloc emits [GoalCrudInProgressState, GoalUpdatedState] upon successful update',
         () async {
-      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+      when(mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => Right(1));
       final expected = [
         EmptyGoalEditorState(),
         GoalCrudInProgressState(),
-        GoalAddedToSkillState(newId: 1, goalText: 'none')
+        GoalUpdatedState(1)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+      sut.add(UpdateGoalEvent(testGoal));
+    });
+
+    test(
+        'test that bloc emits [GoalCrudInProgressState, GoalEditorErrorState] upon unsuccessful update',
+        () async {
+      when(mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        EmptyGoalEditorState(),
+        GoalCrudInProgressState(),
+        GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateGoalEvent(testGoal));
+    });
+  });
+
+  group(
+      'test comparing user inputs to existing goal to detect changes to be updated: ',
+      () {
+    test('test that goalIsChanged returns true when user makes a change',
+        () async {
+      sut.goalModel = testModel;
+      Map testMap = {'fromDate': 0};
+      bool response = sut.goalIsChanged(testMap);
+      expect(response, true);
+    });
+
+    test('test that goalIsChanged returns false when user inputs match current goal values, or goal has not been changed',
+        () async {
+      sut.goalModel = testModel;
+      Map testMap = {'fromDate': testModel.fromDate};
+      bool response = sut.goalIsChanged(testMap);
+      expect(response, false);
     });
   });
 

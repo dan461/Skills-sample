@@ -2,14 +2,12 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
+import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
 import './bloc.dart';
-
-const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
-const String SERVER_FAILURE_MESSAGE = 'Server Failure';
 
 class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
   // UseCases

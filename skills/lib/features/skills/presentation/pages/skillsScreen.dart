@@ -34,7 +34,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
       editorBloc.add(CreateSkillEvent());
-      editorBloc.close();
+      // editorBloc.close();
       return SkillEditorScreen(
         skillEditorBloc: editorBloc,
       );
@@ -51,7 +51,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
       editorBloc.add(EditSkillEvent(skill));
-      editorBloc.close();
+      // editorBloc.close();
       return SkillEditorScreen(
         skillEditorBloc: editorBloc,
       );
