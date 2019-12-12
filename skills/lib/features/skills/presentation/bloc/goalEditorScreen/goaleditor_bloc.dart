@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/core/constants.dart';
+import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
 import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
@@ -16,13 +17,26 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   final UpdateGoal updateGoalUC;
   final DeleteGoalWithId deleteGoalWithId;
   final GetGoalById getGoalById;
-  Goal goal;
+  Goal theGoal;
+  GoalModel goalModel;
   String goalTranslation = 'none';
 
   GoaleditorBloc({this.updateGoalUC, this.deleteGoalWithId, this.getGoalById});
 
   @override
   GoalEditorState get initialState => EmptyGoalEditorState();
+
+  bool goalIsChanged(Map changeMap) {
+    bool response = false;
+    Map goalMap = goalModel.toMap();
+    changeMap.forEach((key, value) {
+      if (value != goalMap[key]) {
+        response = true;
+      } 
+    });
+
+    return response;
+  }
 
   @override
   Stream<GoalEditorState> mapEventToState(
@@ -33,12 +47,23 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
       yield GoalCrudInProgressState();
       final failureOrGoal = await getGoalById(GoalCrudParams(id: event.goalId));
       yield failureOrGoal.fold(
-          (failure) => GoalEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (goal) => GoalEditorGoalReturnedState(goal: goal));
+          (failure) => GoalEditorErrorState(CACHE_FAILURE_MESSAGE), (goal) {
+        theGoal = goal;
+        goalModel = GoalModel(
+            skillId: goal.skillId,
+            fromDate: goal.fromDate,
+            toDate: goal.toDate,
+            timeBased: goal.timeBased,
+            isComplete: false,
+            goalTime: goal.goalTime,
+            timeRemaining: goal.goalTime,
+            desc: goal.desc != null ? goal.desc : "");
+        return GoalEditorGoalReturnedState(goal: goal);
+      });
 
       // edit Goal
     } else if (event is EditGoalEvent) {
-      yield GoalEditorEditingState(goal: goal);
+      yield GoalEditorEditingState(goal: theGoal);
     }
     // update goal
     else if (event is UpdateGoalEvent) {

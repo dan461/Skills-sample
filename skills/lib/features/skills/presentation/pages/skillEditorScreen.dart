@@ -164,65 +164,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
   }
 
-  // Container _skillUpdateArea(int skillId) {
-  //   return Container(
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-  //       child: Column(
-  //         children: <Widget>[
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: TextField(
-  //               onChanged: (_) {
-  //                 setDoneButtonEnabled();
-  //               },
-  //               controller: _nameController,
-  //               decoration: InputDecoration(labelText: 'Name'),
-  //             ),
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: TextField(
-  //               onChanged: (_) {
-  //                 setDoneButtonEnabled();
-  //               },
-  //               controller: _sourceController,
-  //               decoration: InputDecoration(labelText: 'Source'),
-  //             ),
-  //           ),
-  //           _goalDescriptionArea(true, skillId),
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: ButtonBar(
-  //               alignment: MainAxisAlignment.spaceEvenly,
-  //               children: <Widget>[
-  //                 RaisedButton(
-  //                   child: Text('Add goal'),
-  //                   onPressed: () {
-  //                     _goToGoalEditor(skillId, _skill.name);
-  //                   },
-  //                 ),
-  //                 RaisedButton(
-  //                   child: Text('Schedule'),
-  //                   onPressed: () {},
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-  //             child: RaisedButton(
-  //               child: Text('Done'),
-  //               onPressed: () {
-  //                 // update skill with goal description and id of current goal
-  //               },
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  
 
   Form _skillEditFormBuilder(Key formKey) {
     return Form(

@@ -33,6 +33,8 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
 
   bool _doneEnabled;
 
+  FocusNode _focusNode = new FocusNode();
+
   _GoalEditorScreenState(
       {@required this.editedGoalId,
       @required this.skillId,
@@ -45,6 +47,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     if (editedGoalId != 0) {
       _goalEditorBloc.add(GetGoalEvent(goalId: editedGoalId));
     }
+    _focusNode.addListener(_focusNodeListener);
     _goalType = 0;
     _doneEnabled = false;
   }
@@ -84,6 +87,19 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     return totalMinutes;
   }
 
+  void _focusNodeListener(){
+    if (_focusNode.hasFocus){
+      print('focus');
+
+    } else print('no focus');
+  }
+
+  void goalIsChanged(String key, dynamic value){
+    Map changeMap = Map.from(_goalEditorBloc.goalModel.toMap());
+    changeMap.update(key, (_){return value;});
+    bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
+  }
+
   void _setDoneButtonEnabled() {
     bool timeOrTaskSet;
     if (_isTimeBased)
@@ -95,18 +111,16 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   }
 
   void _updateGoal() async {
-
     // TODO - finish this
-    Goal updatedGoal = Goal(
-      skillId: _goalEditorBloc.goal.skillId,
-      fromDate: _startDate.millisecondsSinceEpoch,
-        toDate: _endDate.millisecondsSinceEpoch,
-        timeBased: _isTimeBased,
-        goalTime: _goalMinutes,
-        timeRemaining: _goalMinutes,
-        isComplete: false,
-        desc: _isTimeBased ? "none" : _goalDescTextController.text
-    );
+    // Goal updatedGoal = Goal(
+    //     skillId: _goalEditorBloc.goal.skillId,
+    //     fromDate: _startDate.millisecondsSinceEpoch,
+    //     toDate: _endDate.millisecondsSinceEpoch,
+    //     timeBased: _isTimeBased,
+    //     goalTime: _goalMinutes,
+    //     timeRemaining: _goalMinutes,
+    //     isComplete: false,
+    //     desc: _isTimeBased ? "none" : _goalDescTextController.text);
   }
 
   void _selectStartDate() async {
@@ -125,8 +139,9 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
         lastDate: lastDate);
 
     if (pickedDate != null) {
+      goalIsChanged('fromDate', pickedDate.millisecondsSinceEpoch);
       setState(() {
-        _startDate = pickedDate;
+        _startDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }
@@ -148,10 +163,15 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
         lastDate: DateTime.now().add(Duration(days: 365)));
 
     if (pickedDate != null) {
+      
       setState(() {
-        _endDate = pickedDate;
+        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
+  }
+
+  DateTime dayMonthYearFromDateTime(DateTime date){
+    return DateTime(date.year, date.month, date.day);
   }
 
   Widget _goalDetailAreaBuilder() {
@@ -199,6 +219,8 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                   onChanged: (_) {
                     _setDoneButtonEnabled();
                   },
+                  focusNode: _focusNode,
+                  
                 ),
               )
             ],
@@ -259,19 +281,6 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   }
 
   Container _goalEditArea() {
-    // _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
-    // _endDate = DateTime.fromMillisecondsSinceEpoch(goal.toDate);
-    // _goalType = goal.timeBased == true ? 0 : 1;
-    // _hoursTextController.text = (goal.goalTime / 60).floor().toString();
-    // _minTextController.text = (goal.goalTime % 60).toString();
-    // if (goal != null) {
-    //   _goalType = goal.timeBased == true ? 0 : 1;
-    //   _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
-    //   _endDate = DateTime.fromMillisecondsSinceEpoch(goal.toDate);
-    //   _hoursTextController.text = (goal.goalTime / 60).floor().toString();
-    //   _minTextController.text = (goal.goalTime % 60).toString();
-    // }
-
     return Container(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -339,9 +348,11 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                   ),
                   RaisedButton(
                       child: Text('Done'),
-                      onPressed: _doneEnabled ? () {
-                        _updateGoal();
-                      } : null),
+                      onPressed: _doneEnabled
+                          ? () {
+                              _updateGoal();
+                            }
+                          : null),
                 ],
               ),
             )
@@ -361,7 +372,8 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
           builder: (context, state) {
             Widget body;
 
-            if (state is EmptyGoalEditorState) {
+            if (state is EmptyGoalEditorState ||
+                state is GoalCrudInProgressState) {
               body = Center(
                 child: CircularProgressIndicator(),
               );
@@ -369,26 +381,24 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
               body = Center(
                 child: CircularProgressIndicator(),
               );
-              _startDate =
-                  DateTime.fromMillisecondsSinceEpoch(state.goal.fromDate);
-              _endDate = DateTime.fromMillisecondsSinceEpoch(state.goal.toDate);
-              _goalType = state.goal.timeBased == true ? 0 : 1;
-              _hoursTextController.text =
-                  (state.goal.goalTime / 60).floor().toString();
-              _minTextController.text = (state.goal.goalTime % 60).toString();
-              _goalEditorBloc.goal = state.goal;
+              _setScreenValues(state.goal);
+              // _goalEditorBloc.goal = state.goal;
               _goalEditorBloc.add(EditGoalEvent());
             } else if (state is GoalEditorEditingState) {
               body = _goalEditArea();
-            } else if (state is GoalCrudInProgressState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
             }
             return body;
           },
         ),
       ),
     );
+  }
+
+  void _setScreenValues(Goal goal) {
+    _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
+    _endDate = DateTime.fromMillisecondsSinceEpoch(goal.toDate);
+    _goalType = goal.timeBased == true ? 0 : 1;
+    _hoursTextController.text = (goal.goalTime / 60).floor().toString();
+    _minTextController.text = (goal.goalTime % 60).toString();
   }
 }

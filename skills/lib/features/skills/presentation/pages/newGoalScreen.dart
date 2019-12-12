@@ -105,7 +105,8 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
     if (pickedDate != null) {
       setState(() {
-        _startDate = pickedDate;
+        _startDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+        print(_startDate);
       });
     }
   }
@@ -128,7 +129,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
     if (pickedDate != null) {
       setState(() {
-        _endDate = pickedDate;
+        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }
