@@ -9,7 +9,7 @@ import './bloc.dart';
 class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   final InsertNewSession insertNewSession;
 
-  NewSessionBloc(this.insertNewSession);
+  NewSessionBloc({this.insertNewSession});
 
   @override
   NewSessionState get initialState => InitialNewSessionState();
