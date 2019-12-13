@@ -53,3 +53,11 @@ class SessionInsertOrUpdateParams extends Params {
   @override
   List<Object> get props => [session];
 }
+
+class SessionDeleteParams extends Params {
+  final int sessionId;
+
+  SessionDeleteParams({@required this.sessionId});
+  @override
+  List<Object> get props => [sessionId];
+}
