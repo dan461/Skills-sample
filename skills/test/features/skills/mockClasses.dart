@@ -7,10 +7,13 @@ import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/repos/skill_repo.dart';
 import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
 import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
+import 'package:skills/features/skills/domain/usecases/deleteSessionWithId.dart';
 import 'package:skills/features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
+import 'package:skills/features/skills/domain/usecases/getSessionWithId.dart';
 import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
+import 'package:skills/features/skills/domain/usecases/insertNewSession.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
@@ -47,3 +50,8 @@ class MockGetAllSkillsUC extends Mock implements GetAllSkills {}
 
 class MockGetSkillById extends Mock implements GetSkillById {}
 
+class MockInsertNewSessionUC extends Mock implements InsertNewSession {}
+
+class MockGetSessionWithIdUC extends Mock implements GetSessionWithId {}
+
+class MockDeleteSessionWithIdUC extends Mock implements DeleteSessionWithId {}
