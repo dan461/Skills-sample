@@ -64,6 +64,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
+    await db.execute(_createSessionsTable);
 
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
@@ -73,13 +74,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     await deleteDatabase();
   }
 
-  static final String idKey = "id INTEGER PRIMARY KEY, ";
+  static final String primaryKey = "INTEGER PRIMARY KEY";
+  static final String idKey = "id $primaryKey, ";
   static final String integer = "INTEGER";
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // table creation
-  final String _createSkillTable =
-      "$createTable skills(skillId INTEGER PRIMARY KEY, "
+  final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, currentGoalId $integer, goalText TEXT)";
 
   final String _createGoalTable = "$createTable goals($idKey "
@@ -87,9 +88,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "goalTime $integer, timeRemaining $integer, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
-  // final String _createSessionsTable = "$createTable sessions($idKey"
-  //     "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
-  //     "isScheduled INTEGER, isCompleted INTEGER, timeRemaining INTEGER)";
+  final String _createSessionsTable =
+      "$createTable sessions(sessionId $primaryKey, "
+      "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
+      "isScheduled INTEGER, isCompleted INTEGER)";
 
   // final String _createSessionSkillsJoinTable =
   //     "$createTable session_skills($idKey"
