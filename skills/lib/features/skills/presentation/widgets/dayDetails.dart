@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 
@@ -25,7 +26,9 @@ class _DayDetailsState extends State<DayDetails> {
 
   void _addSession() {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return NewSessionScreen();
+      return NewSessionScreen(
+        date: widget.date,
+      );
     }));
   }
 
@@ -61,7 +64,7 @@ class _DayDetailsState extends State<DayDetails> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'Nov. 22, 2019',
+              DateFormat.yMMMd().format(widget.date),
               style: Theme.of(context).textTheme.subhead,
             ),
             Text(

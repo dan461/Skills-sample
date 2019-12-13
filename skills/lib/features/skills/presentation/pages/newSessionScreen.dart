@@ -1,14 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 
 class NewSessionScreen extends StatefulWidget {
+  final DateTime date;
+
+  const NewSessionScreen({Key key, @required this.date}) : super(key: key);
   @override
-  _NewSessionScreenState createState() => _NewSessionScreenState();
+  _NewSessionScreenState createState() => _NewSessionScreenState(date);
 }
 
 class _NewSessionScreenState extends State<NewSessionScreen> {
+  final DateTime date;
   TimeOfDay _selectedStartTime;
   TimeOfDay _selectedFinishTime;
+
+  _NewSessionScreenState(this.date);
 
   String get _startTimeString {
     return _selectedStartTime == null
@@ -22,85 +31,115 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         : _selectedFinishTime.format(context);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('New Session'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Nov. 22, 2019',
-                        style: Theme.of(context).textTheme.title,
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _timeSelectionBox(
-                            'Start: ', _startTimeString, _selectStartTime)),
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _timeSelectionBox(
-                            'Finish: ', _finishTimeString, _selectFinishTime)),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  int get _duration {
+    int minutes;
+    if (_selectedStartTime == null || _selectedFinishTime == null)
+      minutes = 0;
+    else {
+      int hours = _selectedFinishTime.hour - _selectedStartTime.hour;
+      minutes =
+          _selectedFinishTime.minute - _selectedStartTime.minute + hours * 60;
+    }
+    return minutes;
+  }
+
+  Container _contentBuilder(){
+    return Container(
+      child: Column(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text('Duration: 30 min.',
-                          style: Theme.of(context).textTheme.subhead),
-                      Text('Available: 30 min.',
-                          style: Theme.of(context).textTheme.subhead)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          DateFormat.yMMMd().format(date),
+                          style: Theme.of(context).textTheme.title,
+                        ),
+                      )
                     ],
                   ),
-                )
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _timeSelectionBox(
+                              'Start: ', _startTimeString, _selectStartTime)),
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _timeSelectionBox('Finish: ',
+                              _finishTimeString, _selectFinishTime)),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Duration: 30 min.',
+                            style: Theme.of(context).textTheme.subhead),
+                        Text('Available: 30 min.',
+                            style: Theme.of(context).textTheme.subhead)
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: <Widget>[
-                Container(
-                    color: Colors.grey,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Activities',
-                              style: Theme.of(context).textTheme.subhead),
-                          Text('0 scheduled',
-                              style: Theme.of(context).textTheme.subhead),
-                          IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () {},
-                          )
-                        ],
-                      ),
-                    )),
-                _sessionActivityCard()
-              ],
-            ),
-          )
-        ],
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                      color: Colors.grey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text('Activities',
+                                style: Theme.of(context).textTheme.subhead),
+                            Text('0 scheduled',
+                                style: Theme.of(context).textTheme.subhead),
+                            IconButton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {},
+                            )
+                          ],
+                        ),
+                      )),
+                  _sessionActivityCard()
+                ],
+              ),
+            )
+          ],
+        ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => NewSessionBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('New Session'),
+        ),
+        body: BlocBuilder<NewSessionBloc, NewSessionState>(
+          builder: (context, state){
+            Widget body;
+            if (state is InitialNewSessionState){
+              body = _contentBuilder();
+            }
+
+            return body;
+          },
+        )
       ),
     );
   }
