@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SessionEditor extends StatefulWidget {
+class NewSessionScreen extends StatefulWidget {
   @override
-  _SessionEditorState createState() => _SessionEditorState();
+  _NewSessionScreenState createState() => _NewSessionScreenState();
 }
 
-class _SessionEditorState extends State<SessionEditor> {
+class _NewSessionScreenState extends State<NewSessionScreen> {
   TimeOfDay _selectedStartTime;
   TimeOfDay _selectedFinishTime;
 
