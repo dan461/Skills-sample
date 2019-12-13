@@ -1,18 +1,13 @@
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
-import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/data/repos/skillsRepositoryImpl.dart';
-import 'package:skills/core/network/networkInfo.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:dartz/dartz.dart';
 
-class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
+import '../../mockClasses.dart';
 
-class MockRemoteDataSource extends Mock implements SkillsRemoteDataSource {}
 
-class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
   SkillsRepositoryImpl repositoryImpl;
@@ -72,9 +67,9 @@ void main() {
       expect(result, equals(Right(tSkill)));
     });
 
-    test('insertNewSkill - returns an ID after inserting a SkillModel',
+    test('insertNewSkill - returns a new Skill with an id after inserting a SkillModel',
         () async {
-      Skill newSkill = Skill(name: 'new', source: 'new');
+      Skill newSkill = Skill(id: 1, name: 'new', source: 'new');
       when(mockLocalDataSource.insertNewSkill(tSkill))
           .thenAnswer((_) async => newSkill);
       final result = await repositoryImpl.insertNewSkill(tSkill);
