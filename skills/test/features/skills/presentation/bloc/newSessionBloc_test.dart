@@ -18,7 +18,7 @@ void main() {
   setUp(() {
     mockSessionRepo = MockSessionRepo();
     mockInsertNewSessionUC = MockInsertNewSessionUC();
-    sut = NewSessionBloc(mockInsertNewSessionUC);
+    sut = NewSessionBloc(insertNewSession: mockInsertNewSessionUC);
     testSession = Session(
         date: 1,
         startTime: 1,

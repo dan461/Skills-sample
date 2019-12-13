@@ -7,7 +7,7 @@ import 'package:skills/features/skills/domain/repos/session_repo.dart';
 class SessionsRepositoryImpl extends SessionRepository {
   final SkillsLocalDataSource localDataSource;
 
-  SessionsRepositoryImpl(this.localDataSource);
+  SessionsRepositoryImpl({this.localDataSource});
 
   @override
   Future<Either<Failure, int>> deleteSessionById(int id) async {

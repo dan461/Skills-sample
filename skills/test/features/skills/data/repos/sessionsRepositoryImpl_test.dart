@@ -15,7 +15,7 @@ void main() {
 
   setUp(() {
     mockLocalDataSource = MockLocalDataSource();
-    sut = SessionsRepositoryImpl(mockLocalDataSource);
+    sut = SessionsRepositoryImpl(localDataSource: mockLocalDataSource);
     testSessionModel = SessionModel(
         date: 1,
         startTime: 1,
