@@ -13,6 +13,9 @@ List<Session> sessions;
   Stream<SchedulerState> mapEventToState(
     SchedulerEvent event,
   ) async* {
-    // TODO: Add Logic
+    if (event is DaySelectedEvent){
+      sessions = [];
+      yield DaySelectedState(date: event.date, sessions: sessions);
+    }
   }
 }

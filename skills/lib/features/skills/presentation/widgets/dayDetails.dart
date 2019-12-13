@@ -4,8 +4,10 @@ import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart'
 
 class DayDetails extends StatefulWidget {
   final List<Session> sessions;
+  final DateTime date;
 
-  const DayDetails({Key key, this.sessions}) : super(key: key);
+  const DayDetails({Key key, this.sessions, @required this.date})
+      : super(key: key);
   @override
   _DayDetailsState createState() => _DayDetailsState(sessions);
 }
@@ -28,7 +30,7 @@ class _DayDetailsState extends State<DayDetails> {
   }
 
   Widget _showContentForSession() {
-    if (sessions != null) {
+    if (sessions == null) {
       return ListView.builder(
         itemBuilder: (context, index) {
           return SessionCard();
