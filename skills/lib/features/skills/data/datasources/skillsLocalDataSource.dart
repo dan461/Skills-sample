@@ -1,6 +1,8 @@
 import 'package:skills/features/skills/data/models/goalModel.dart';
+import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'dart:async';
 import 'dart:io';
@@ -21,6 +23,8 @@ abstract class SkillsLocalDataSource {
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
+  Future<Session> insertNewSession(Session session);
+  Future<SessionModel> getSessionById(int id);
 }
 
 // Singleton class for providing access to sqlite database
@@ -225,6 +229,27 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int updates = await db.update(skillsTable, changeMap,
         where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
+  }
+
+  @override
+  Future<Session> insertNewSession(Session session) async {
+    final Database db = await database;
+    SessionModel sessionModel;
+    int id = await db.insert(sessionsTable, sessionModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    Session newSession = await getSessionById(id);
+
+    return newSession;
+  }
+
+  Future<SessionModel> getSessionById(int id) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(sessionsTable,
+        columns: null, where: 'sessionId = ?', whereArgs: [id]);
+    if (maps.length > 0) {
+      return SessionModel.fromMap(maps.first);
+    }
+    return null;
   }
 
   // @override
