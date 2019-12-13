@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 
 class DayDetails extends StatefulWidget {
+  final List<Session> sessions;
+
+  const DayDetails({Key key, this.sessions}) : super(key: key);
   @override
-  _DayDetailsState createState() => _DayDetailsState();
+  _DayDetailsState createState() => _DayDetailsState(sessions);
 }
 
 class _DayDetailsState extends State<DayDetails> {
-  bool hasSession = false;
+  List<Session> sessions;
+  bool hasSession = true;
+
+  _DayDetailsState(this.sessions);
 
   @override
   void initState() {
@@ -16,12 +23,12 @@ class _DayDetailsState extends State<DayDetails> {
 
   void _addSession() {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return SessionEditor();
+      return NewSessionScreen();
     }));
   }
 
   Widget _showContentForSession() {
-    if (hasSession) {
+    if (sessions != null) {
       return ListView.builder(
         itemBuilder: (context, index) {
           return SessionCard();
@@ -68,7 +75,7 @@ class _DayDetailsState extends State<DayDetails> {
   @override
   Widget build(BuildContext context) {
     // TODO test only
-    hasSession = false;
+    hasSession = true;
 
     return Column(
       children: <Widget>[

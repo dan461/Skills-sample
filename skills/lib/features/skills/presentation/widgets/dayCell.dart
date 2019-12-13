@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 class DayCell extends StatelessWidget {
   final DateTime date;
+  final Function tapCallback;
 
   final int displayedMonth;
 
-  DayCell({this.date, this.displayedMonth});
+  DayCell({this.date, this.displayedMonth, this.tapCallback});
 
   void dayTapped() {
     print(date);
@@ -16,7 +17,9 @@ class DayCell extends StatelessWidget {
     return Expanded(
       flex: 1,
       child: GestureDetector(
-        onTap: dayTapped,
+        onTap: () {
+          tapCallback(date);
+        },
         child: Container(
           // height: cellHeight,
           decoration: BoxDecoration(

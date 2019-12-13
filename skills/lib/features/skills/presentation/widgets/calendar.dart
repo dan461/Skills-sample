@@ -3,23 +3,27 @@ import 'daysRow.dart';
 import 'dayCell.dart';
 
 class Calendar extends StatefulWidget {
+  final Function tapCallback;
 //  int displayedMonth;
 //  int displayedYear;
 //  final DateTime displayDate;
 
-  Calendar() {
+  Calendar({@required this.tapCallback}) {
 //    this.displayedMonth = month;
 //    this.displayedYear = year;
 //    this.displayDate = date;
   }
 
   @override
-  _CalendarState createState() => _CalendarState();
+  _CalendarState createState() => _CalendarState(tapCallback);
 }
 
 class _CalendarState extends State<Calendar> {
   double monthHeight;
   DateTime activeMonth = DateTime.now();
+  final Function tapCallback;
+
+  _CalendarState(this.tapCallback);
 
   String monthString(int month) {
     String monthString = '';
@@ -151,7 +155,11 @@ class _CalendarState extends State<Calendar> {
         thisDay = sunday.add(Duration(days: i));
       }
 
-      days.add(DayCell(date: thisDay, displayedMonth: activeMonth.month));
+      days.add(DayCell(
+        date: thisDay,
+        displayedMonth: activeMonth.month,
+        tapCallback: tapCallback,
+      ));
     }
 
     return Expanded(
@@ -173,9 +181,9 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
-  DayCell buildDayCell() {
-    return DayCell(date: DateTime.now());
-  }
+  // DayCell buildDayCell() {
+  //   return DayCell(date: DateTime.now(), tapCallback: tapCallback);
+  // }
 
   Container headerBuilder() {
     return Container(
