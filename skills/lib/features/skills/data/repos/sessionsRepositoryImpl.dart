@@ -10,15 +10,13 @@ class SessionsRepositoryImpl extends SessionRepository {
   SessionsRepositoryImpl(this.localDataSource);
 
   @override
-  Future<Either<Failure, int>> deleteSessionById(int id) {
-    // TODO: implement deleteSessionById
-    return null;
+  Future<Either<Failure, int>> deleteSessionById(int id) async {
+    return Right(await localDataSource.deleteSessionWithId(id));
   }
 
   @override
-  Future<Either<Failure, Session>> getSessionById(int id) {
-    // TODO: implement getSessionById
-    return null;
+  Future<Either<Failure, Session>> getSessionById(int id) async {
+    return Right(await localDataSource.getSessionById(id));
   }
 
   @override

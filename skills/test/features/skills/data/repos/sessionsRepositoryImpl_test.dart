@@ -52,5 +52,21 @@ void main() {
       verify(mockLocalDataSource.insertNewSession(testSession));
       expect(result, equals(Right(newSession)));
     });
+
+    test('getSessionWithId - returns a SessionModel', () async {
+      when(mockLocalDataSource.getSessionById(1))
+          .thenAnswer((_) async => testSessionModel);
+      final result = await sut.getSessionById(1);
+      verify(mockLocalDataSource.getSessionById(1));
+      expect(result, equals(Right(testSessionModel)));
+    });
+
+    test('deleteSessionWithId returns 0 for successful deletion', () async {
+      when(mockLocalDataSource.deleteSessionWithId(1))
+          .thenAnswer((_) async => 0);
+      final result = await sut.deleteSessionById(1);
+      verify(mockLocalDataSource.deleteSessionWithId(1));
+      expect(result, equals(Right(0)));
+    });
   });
 }

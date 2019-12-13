@@ -25,6 +25,7 @@ abstract class SkillsLocalDataSource {
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
   Future<Session> insertNewSession(Session session);
   Future<SessionModel> getSessionById(int id);
+  Future<int> deleteSessionWithId(int id);
 }
 
 // Singleton class for providing access to sqlite database
@@ -250,6 +251,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       return SessionModel.fromMap(maps.first);
     }
     return null;
+  }
+
+  Future<int> deleteSessionWithId(int id) async {
+    
   }
 
   // @override
