@@ -16,8 +16,11 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
   TimeOfDay _selectedStartTime;
   TimeOfDay _selectedFinishTime;
+  bool _doneButtonEnabled = false;
 
   _NewSessionScreenState(this.date);
+
+
 
   String get _startTimeString {
     return _selectedStartTime == null
@@ -29,6 +32,11 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     return _selectedFinishTime == null
         ? 'Select Time'
         : _selectedFinishTime.format(context);
+  }
+
+  String get _durationString {
+    String minutes = _duration.toString();
+    return 'Duration: $minutes min.';
   }
 
   int get _duration {
@@ -43,82 +51,113 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     return minutes;
   }
 
-  Container _contentBuilder(){
+  void _setDoneBtnStatus() {
+    setState(() {
+      _doneButtonEnabled =
+          _selectedStartTime != null && _selectedFinishTime != null;
+    });
+  }
+
+  void _doneTapped() {
+    print('done');
+  }
+
+  void _cancelTapped() {
+    print('cancel');
+  }
+
+  Container _contentBuilder() {
     return Container(
       child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        DateFormat.yMMMd().format(date),
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          DateFormat.yMMMd().format(date),
-                          style: Theme.of(context).textTheme.title,
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
+                        child: _timeSelectionBox(
+                            'Start: ', _startTimeString, _selectStartTime)),
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _timeSelectionBox(
+                            'Finish: ', _finishTimeString, _selectFinishTime)),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: _timeSelectionBox(
-                              'Start: ', _startTimeString, _selectStartTime)),
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: _timeSelectionBox('Finish: ',
-                              _finishTimeString, _selectFinishTime)),
+                      Text(_durationString,
+                          style: Theme.of(context).textTheme.subhead),
+                      Text('Available: 30 min.',
+                          style: Theme.of(context).textTheme.subhead)
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Duration: 30 min.',
-                            style: Theme.of(context).textTheme.subhead),
-                        Text('Available: 30 min.',
-                            style: Theme.of(context).textTheme.subhead)
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      color: Colors.grey,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('Activities',
-                                style: Theme.of(context).textTheme.subhead),
-                            Text('0 scheduled',
-                                style: Theme.of(context).textTheme.subhead),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: () {},
-                            )
-                          ],
-                        ),
-                      )),
-                  _sessionActivityCard()
-                ],
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              children: <Widget>[
+                Container(
+                    color: Colors.grey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Activities',
+                              style: Theme.of(context).textTheme.subhead),
+                          Text('0 scheduled',
+                              style: Theme.of(context).textTheme.subhead),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {},
+                          )
+                        ],
+                      ),
+                    )),
+                _sessionActivityCard(),
+              ],
+            ),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  _cancelTapped();
+                },
               ),
-            )
-          ],
-        ),
+              RaisedButton(
+                  child: Text('Done'),
+                  onPressed: _doneButtonEnabled ? () {
+                    _doneTapped();
+                  } : null),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -127,20 +166,19 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     return BlocProvider(
       builder: (_) => NewSessionBloc(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('New Session'),
-        ),
-        body: BlocBuilder<NewSessionBloc, NewSessionState>(
-          builder: (context, state){
-            Widget body;
-            if (state is InitialNewSessionState){
-              body = _contentBuilder();
-            }
+          appBar: AppBar(
+            title: Text('New Session'),
+          ),
+          body: BlocBuilder<NewSessionBloc, NewSessionState>(
+            builder: (context, state) {
+              Widget body;
+              if (state is InitialNewSessionState) {
+                body = _contentBuilder();
+              }
 
-            return body;
-          },
-        )
-      ),
+              return body;
+            },
+          )),
     );
   }
 
@@ -199,6 +237,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             child: Text(timeText, style: Theme.of(context).textTheme.subhead),
             onTap: () {
               callback();
+              _setDoneBtnStatus();
             },
           )
         ],
