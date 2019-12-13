@@ -254,7 +254,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   Future<int> deleteSessionWithId(int id) async {
-    
+    final Database db = await database;
+    int result =
+        await db.delete(sessionsTable, where: '$columnId = ?', whereArgs: [id]);
+    return result;
   }
 
   // @override
