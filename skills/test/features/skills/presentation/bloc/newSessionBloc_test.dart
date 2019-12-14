@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/core/constants.dart';
@@ -36,6 +39,12 @@ void main() {
 
   test('test bloc initial state is correct', () {
     expect(sut.initialState, equals(InitialNewSessionState()));
+  });
+
+  test('test that duration integer is correct', (){
+    sut.selectedStartTime = TimeOfDay(hour: 12, minute: 0);
+    sut.selectedFinishTime = TimeOfDay(hour: 13, minute: 0);
+    expect(sut.duration, 60);
   });
 
   group('InsertNewSession', () {

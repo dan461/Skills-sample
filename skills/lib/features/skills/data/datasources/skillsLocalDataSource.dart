@@ -235,7 +235,15 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<Session> insertNewSession(Session session) async {
     final Database db = await database;
-    SessionModel sessionModel;
+    SessionModel sessionModel = SessionModel(
+      date: session.date,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      duration: session.duration,
+      timeRemaining: session.timeRemaining,
+      isCompleted: session.isCompleted,
+      isScheduled: session.isScheduled,
+    );
     int id = await db.insert(sessionsTable, sessionModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     Session newSession = await getSessionById(id);

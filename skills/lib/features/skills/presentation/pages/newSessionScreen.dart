@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
+import 'package:skills/service_locator.dart';
 
 class NewSessionScreen extends StatefulWidget {
   final DateTime date;
@@ -14,52 +15,58 @@ class NewSessionScreen extends StatefulWidget {
 
 class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
-  TimeOfDay _selectedStartTime;
-  TimeOfDay _selectedFinishTime;
+  // TimeOfDay _selectedStartTime;
+  // TimeOfDay _selectedFinishTime;
   bool _doneButtonEnabled = false;
+  NewSessionBloc _bloc;
 
   _NewSessionScreenState(this.date);
 
-
+  @override
+  void initState() {
+    super.initState();
+    _bloc = locator<NewSessionBloc>();
+    _bloc.sessionDate = date;
+  }
 
   String get _startTimeString {
-    return _selectedStartTime == null
+    return _bloc.selectedStartTime == null
         ? 'Select Time'
-        : _selectedStartTime.format(context);
+        : _bloc.selectedStartTime.format(context);
   }
 
   String get _finishTimeString {
-    return _selectedFinishTime == null
+    return _bloc.selectedFinishTime == null
         ? 'Select Time'
-        : _selectedFinishTime.format(context);
+        : _bloc.selectedFinishTime.format(context);
   }
 
   String get _durationString {
-    String minutes = _duration.toString();
+    String minutes = _bloc.duration.toString();
     return 'Duration: $minutes min.';
   }
 
-  int get _duration {
-    int minutes;
-    if (_selectedStartTime == null || _selectedFinishTime == null)
-      minutes = 0;
-    else {
-      int hours = _selectedFinishTime.hour - _selectedStartTime.hour;
-      minutes =
-          _selectedFinishTime.minute - _selectedStartTime.minute + hours * 60;
-    }
-    return minutes;
-  }
+  // int get _duration {
+  //   int minutes;
+  //   if (_selectedStartTime == null || _selectedFinishTime == null)
+  //     minutes = 0;
+  //   else {
+  //     int hours = _selectedFinishTime.hour - _selectedStartTime.hour;
+  //     minutes =
+  //         _selectedFinishTime.minute - _selectedStartTime.minute + hours * 60;
+  //   }
+  //   return minutes;
+  // }
 
   void _setDoneBtnStatus() {
     setState(() {
       _doneButtonEnabled =
-          _selectedStartTime != null && _selectedFinishTime != null;
+          _bloc.selectedStartTime != null && _bloc.selectedFinishTime != null;
     });
   }
 
   void _doneTapped() {
-    print('done');
+    _bloc.createSession(date);
   }
 
   void _cancelTapped() {
@@ -151,9 +158,11 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               ),
               RaisedButton(
                   child: Text('Done'),
-                  onPressed: _doneButtonEnabled ? () {
-                    _doneTapped();
-                  } : null),
+                  onPressed: _doneButtonEnabled
+                      ? () {
+                          _doneTapped();
+                        }
+                      : null),
             ],
           ),
         ],
@@ -164,7 +173,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (_) => NewSessionBloc(),
+      builder: (_) => _bloc,
       child: Scaffold(
           appBar: AppBar(
             title: Text('New Session'),
@@ -174,6 +183,11 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               Widget body;
               if (state is InitialNewSessionState) {
                 body = _contentBuilder();
+              } else if (state is NewSessionInsertingState){
+                body = Center(child: CircularProgressIndicator(),);
+              } else if (state is NewSessionInsertedState){
+                body = SizedBox();
+                Navigator.of(context).pop();
               }
 
               return body;
@@ -253,9 +267,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
     if (selectedTime != null) {
       setState(() {
-        _selectedStartTime = selectedTime;
+        _bloc.selectedStartTime = selectedTime;
       });
     }
+    _setDoneBtnStatus();
   }
 
   void _selectFinishTime() async {
@@ -264,8 +279,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
     if (selectedTime != null) {
       setState(() {
-        _selectedFinishTime = selectedTime;
+        _bloc.selectedFinishTime = selectedTime;
       });
     }
+    _setDoneBtnStatus();
   }
 }
