@@ -33,7 +33,7 @@ class _DayDetailsState extends State<DayDetails> {
   }
 
   Widget _showContentForSession() {
-    if (sessions == null) {
+    if (sessions != null) {
       return ListView.builder(
         itemBuilder: (context, index) {
           return SessionCard();

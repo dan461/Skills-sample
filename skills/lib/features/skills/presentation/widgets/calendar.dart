@@ -159,6 +159,7 @@ class _CalendarState extends State<Calendar> {
         date: thisDay,
         displayedMonth: activeMonth.month,
         tapCallback: tapCallback,
+        hasSession: true,
       ));
     }
 
