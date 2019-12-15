@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ void main() {
     expect(sut.initialState, equals(InitialNewSessionState()));
   });
 
-  test('test that duration integer is correct', (){
+  test('test that duration integer is correct', () {
     sut.selectedStartTime = TimeOfDay(hour: 12, minute: 0);
     sut.selectedFinishTime = TimeOfDay(hour: 13, minute: 0);
     expect(sut.duration, 60);

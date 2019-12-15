@@ -6,31 +6,29 @@ import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart'
 class DayDetails extends StatefulWidget {
   final List<Session> sessions;
   final DateTime date;
+  final Function newSessionCallback;
 
-  const DayDetails({Key key, this.sessions, @required this.date})
+  const DayDetails({Key key, this.sessions, @required this.date, @required this.newSessionCallback})
       : super(key: key);
   @override
-  _DayDetailsState createState() => _DayDetailsState(sessions);
+  _DayDetailsState createState() => _DayDetailsState(sessions, newSessionCallback);
 }
 
 class _DayDetailsState extends State<DayDetails> {
   List<Session> sessions;
   bool hasSession = true;
+  final Function newSessionCallback;
 
-  _DayDetailsState(this.sessions);
+  _DayDetailsState(this.sessions, this.newSessionCallback);
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _addSession() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return NewSessionScreen(
-        date: widget.date,
-      );
-    }));
-  }
+  // void _addSession() {
+   
+  // }
 
   Widget _showContentForSession() {
     if (sessions == null) {
@@ -46,7 +44,7 @@ class _DayDetailsState extends State<DayDetails> {
           child: RaisedButton(
             child: Text('Add a Session'),
             onPressed: () {
-              _addSession();
+              newSessionCallback(widget.date);
             },
           ),
         ),
