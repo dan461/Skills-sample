@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
@@ -27,5 +29,10 @@ class SessionsRepositoryImpl extends SessionRepository {
   @override
   Future<Either<Failure, int>> updateSession(Session session) async {
     return null;
+  }
+
+  @override
+  Future<Either<Failure, List<Session>>> getSessionsInMonth(DateTime month) async {
+    return Right(await localDataSource.getSessionsInMonth(month));
   }
 }

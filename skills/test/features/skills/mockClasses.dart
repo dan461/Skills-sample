@@ -15,6 +15,7 @@ import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSession.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
+import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
 
@@ -55,3 +56,5 @@ class MockInsertNewSessionUC extends Mock implements InsertNewSession {}
 class MockGetSessionWithIdUC extends Mock implements GetSessionWithId {}
 
 class MockDeleteSessionWithIdUC extends Mock implements DeleteSessionWithId {}
+
+class MockGetSessionsInMonthUC extends Mock implements GetSessionsInMonth {}

@@ -12,3 +12,12 @@ class DaySelectedEvent extends SchedulerEvent {
   @override
   List<Object> get props => [date];
 }
+
+class MonthSelectedEvent extends SchedulerEvent {
+  final DateTime month;
+
+  MonthSelectedEvent(this.month);
+
+  @override
+  List<Object> get props => [month];
+}

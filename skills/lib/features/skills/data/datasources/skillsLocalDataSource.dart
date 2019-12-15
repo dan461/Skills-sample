@@ -26,6 +26,7 @@ abstract class SkillsLocalDataSource {
   Future<Session> insertNewSession(Session session);
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
+  Future<List<Session>> getSessionsInMonth(DateTime month);
 }
 
 // Singleton class for providing access to sqlite database
@@ -266,6 +267,20 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int result =
         await db.delete(sessionsTable, where: '$columnId = ?', whereArgs: [id]);
     return result;
+  }
+
+  Future<List<Session>> getSessionsInMonth(DateTime month) async {
+    final nextMonth = DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
+    final Database db = await database;
+    List<Map> maps = await db.query(sessionsTable, columns: null, where: 'date BETWEEN ? AND ?', whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
+    List<Session> sessionsList = [];
+    if (maps.isNotEmpty){
+      for (var map in maps){
+        Session session = SessionModel.fromMap(map);
+        sessionsList.add(session);
+      }
+    }
+    return sessionsList;
   }
 
   // @override

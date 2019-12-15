@@ -19,3 +19,26 @@ class DaySelectedState extends SchedulerState {
   @override
   List<Object> get props => [date];
 }
+
+class GettingSessionForMonthState extends SchedulerState {
+  @override
+  List<Object> get props => [null];
+}
+
+class SessionsForMonthReturnedState extends SchedulerState {
+  final List<Session> sessionsList;
+
+  SessionsForMonthReturnedState(this.sessionsList);
+
+  @override
+  List<Object> get props => [sessionsList];
+}
+
+class SchedulerErrorState extends SchedulerState {
+  final String message;
+
+  SchedulerErrorState(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

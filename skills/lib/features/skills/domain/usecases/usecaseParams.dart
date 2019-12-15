@@ -62,6 +62,14 @@ class SessionByIdParams extends Params {
   List<Object> get props => [sessionId];
 }
 
+class SessionInMonthParams extends Params {
+  final DateTime month;
+
+  SessionInMonthParams(this.month);
+  @override
+  List<Object> get props => [month];
+}
+
 class SessionDeleteParams extends Params {
   final int sessionId;
 

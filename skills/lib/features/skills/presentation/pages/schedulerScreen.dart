@@ -8,13 +8,15 @@ import 'package:skills/features/skills/presentation/widgets/calendar.dart';
 import 'package:skills/features/skills/presentation/widgets/dayDetails.dart';
 import 'package:skills/service_locator.dart';
 
+import 'newSessionScreen.dart';
+
 class SchedulerScreen extends StatefulWidget {
   @override
   _SchedulerScreenState createState() => _SchedulerScreenState();
 }
 
 class _SchedulerScreenState extends State<SchedulerScreen> {
-  List<Session> sessions;
+  List<Session> sessionsForMonth;
 
   SchedulerBloc _bloc;
 
@@ -32,9 +34,20 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
         builder: (context, state) {
           Widget body;
           if (state is InitialSchedulerState) {
-            body = _noContentBuilder();
+            body = Center(
+              child: CircularProgressIndicator(),
+            );
+            _bloc.add(MonthSelectedEvent(
+                DateTime(DateTime.now().year, DateTime.now().month)));
           } else if (state is DaySelectedState) {
             body = _contentBuilder(state.date, state.sessions);
+          } else if (state is GettingSessionForMonthState) {
+            body = Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is SessionsForMonthReturnedState) {
+            body = _contentBuilder(null, null);
+            sessionsForMonth = state.sessionsList;
           }
           return body;
         },
@@ -49,6 +62,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             flex: 2,
             child: Calendar(
               tapCallback: _dateSelected,
+              monthChangeCallback: _calendarMonthChanged,
             )),
         Expanded(
             flex: 1,
@@ -59,7 +73,9 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     );
   }
 
-  Container _contentBuilder(DateTime date, List<Session> sessions) {
+  Container _contentBuilder(DateTime selectedDate, List<Session> daysSessions) {
+    final today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return Container(
       child: Column(
         children: <Widget>[
@@ -67,12 +83,15 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
               flex: 2,
               child: Calendar(
                 tapCallback: _dateSelected,
+                monthChangeCallback: _calendarMonthChanged,
+                sessionDates: _bloc.sessionDates,
               )),
           Expanded(
             flex: 1,
             child: DayDetails(
-              date: date,
-              sessions: sessions,
+              date: selectedDate != null ? selectedDate : today,
+              sessions: daysSessions,
+              newSessionCallback: _showNewSessionScreen,
             ),
           ),
         ],
@@ -80,11 +99,25 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     );
   }
 
-  DayDetails _dayDetailsBuilder(DateTime date, List<Session> sessions) {
-    return DayDetails(
-      date: date,
-      sessions: sessions,
-    );
+  // DayDetails _dayDetailsBuilder(DateTime date, List<Session> sessions) {
+  //   return DayDetails(
+  //     date: date,
+  //     sessions: sessions,
+  //   );
+  // }
+
+  void _showNewSessionScreen(DateTime date) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewSessionScreen(
+        date: date,
+      );
+    }));
+
+    // _bloc
+  }
+
+  void _calendarMonthChanged(DateTime month) {
+    _bloc.add(MonthSelectedEvent(month));
   }
 
   void _dateSelected(DateTime selectedDate) {

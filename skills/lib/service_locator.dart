@@ -15,8 +15,8 @@ import 'features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'features/skills/domain/usecases/getAllSkills.dart';
 import 'features/skills/domain/usecases/getSkillById.dart';
 import 'features/skills/domain/usecases/insertNewGoal.dart';
-import 'features/skills/domain/usecases/insertNewSession.dart';
 import 'features/skills/domain/usecases/insertNewSkill.dart';
+import 'features/skills/domain/usecases/sessionsUseCases.dart';
 import 'features/skills/domain/usecases/updateGoal.dart';
 import 'features/skills/domain/usecases/updateSkill.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
@@ -50,7 +50,7 @@ void init() {
 
   locator.registerFactory(() => NewSessionBloc(insertNewSession: locator()));
 
-  locator.registerFactory(() => SchedulerBloc());
+  locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
@@ -67,6 +67,7 @@ void init() {
   locator.registerLazySingleton(() => AddGoalToSkill(locator()));
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
+  locator.registerLazySingleton(() => GetSessionsInMonth(locator()));
 
   // Repositories
   locator.registerLazySingleton<SkillRepository>(

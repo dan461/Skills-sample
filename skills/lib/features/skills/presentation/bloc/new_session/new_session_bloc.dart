@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
-import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSession.dart';
+import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 
@@ -28,6 +27,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
 
   NewSessionBloc({this.insertNewSession});
 
+// TODO - should entities and models use DateTime and TimeOfDay and convert to/from ints in toMap/fromMap?
   int timeToInt(DateTime date, TimeOfDay timeOfDay) {
     return DateTime(
             date.year, date.month, date.day, timeOfDay.hour, timeOfDay.minute)

@@ -4,26 +4,32 @@ import 'dayCell.dart';
 
 class Calendar extends StatefulWidget {
   final Function tapCallback;
-//  int displayedMonth;
-//  int displayedYear;
-//  final DateTime displayDate;
+  final Function monthChangeCallback;
+  final List<DateTime> sessionDates;
 
-  Calendar({@required this.tapCallback}) {
-//    this.displayedMonth = month;
-//    this.displayedYear = year;
-//    this.displayDate = date;
-  }
+  const Calendar(
+      {Key key, this.tapCallback, this.monthChangeCallback, this.sessionDates})
+      : super(key: key);
 
   @override
-  _CalendarState createState() => _CalendarState(tapCallback);
+  _CalendarState createState() =>
+      _CalendarState(tapCallback, monthChangeCallback, sessionDates);
 }
 
 class _CalendarState extends State<Calendar> {
+  final List<DateTime> sessionDates;
   double monthHeight;
-  DateTime activeMonth = DateTime.now();
+  DateTime activeMonth;
   final Function tapCallback;
+  final Function monthChangeCallback;
 
-  _CalendarState(this.tapCallback);
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.sessionDates);
+
+  @override
+  initState() {
+    super.initState();
+    activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
+  }
 
   String monthString(int month) {
     String monthString = '';
@@ -148,18 +154,20 @@ class _CalendarState extends State<Calendar> {
 
     for (var i = 0; i < 7; i++) {
       // make day cell
-      DateTime thisDay;
-      if (i == 0) {
-        thisDay = sunday;
-      } else {
+      DateTime thisDay = sunday;
+
+      if (i > 0) {
         thisDay = sunday.add(Duration(days: i));
       }
-
+      // else {
+      //   thisDay = sunday.add(Duration(days: i));
+      // }
+      bool hasSession = sessionDates.indexOf(thisDay) != -1;
       days.add(DayCell(
         date: thisDay,
         displayedMonth: activeMonth.month,
         tapCallback: tapCallback,
-        hasSession: true,
+        hasSession: hasSession,
       ));
     }
 
@@ -179,6 +187,7 @@ class _CalendarState extends State<Calendar> {
   void changeMonth(int change) {
     setState(() {
       activeMonth = DateTime(activeMonth.year, activeMonth.month + change);
+      monthChangeCallback(activeMonth);
     });
   }
 
