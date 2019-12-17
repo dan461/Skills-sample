@@ -6,9 +6,11 @@ class Calendar extends StatefulWidget {
   final Function tapCallback;
   final Function monthChangeCallback;
   final List<DateTime> sessionDates;
+  final DateTime activeMonth;
 
   const Calendar({
     Key key,
+    this.activeMonth,
     @required this.tapCallback,
     @required this.monthChangeCallback,
     this.sessionDates,
@@ -16,23 +18,24 @@ class Calendar extends StatefulWidget {
 
   @override
   _CalendarState createState() =>
-      _CalendarState(tapCallback, monthChangeCallback, sessionDates);
+      _CalendarState(tapCallback, monthChangeCallback, sessionDates, activeMonth);
 }
 
 class _CalendarState extends State<Calendar> {
   final List<DateTime> sessionDates;
   double monthHeight;
+  final DateTime activeMonth;
 
   final Function tapCallback;
   final Function monthChangeCallback;
-  DateTime _activeMonth;
+  // DateTime _activeMonth;
 
-  _CalendarState(this.tapCallback, this.monthChangeCallback, this.sessionDates);
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.sessionDates, this.activeMonth);
 
   @override
   initState() {
     super.initState();
-    _activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
+    // activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
   }
 
   String monthString(int month) {
@@ -124,7 +127,7 @@ class _CalendarState extends State<Calendar> {
               right: BorderSide(width: 1.0, color: Colors.grey[300]))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: buildMonth(month: _activeMonth.month, year: _activeMonth.year),
+        children: buildMonth(month: activeMonth.month, year: activeMonth.year),
       ),
     );
   }
@@ -169,7 +172,7 @@ class _CalendarState extends State<Calendar> {
       bool hasSession = sessionDates.indexOf(thisDay) != -1;
       days.add(DayCell(
         date: thisDay,
-        displayedMonth: _activeMonth.month,
+        displayedMonth: activeMonth.month,
         tapCallback: tapCallback,
         hasSession: hasSession,
       ));
@@ -190,9 +193,9 @@ class _CalendarState extends State<Calendar> {
 
   void changeMonth(int change) {
     setState(() {
-    _activeMonth = DateTime(_activeMonth.year, _activeMonth.month + change);
-    // monthChangeCallback(change);
+      // activeMonth = DateTime(activeMonth.year, activeMonth.month + change);
     });
+    monthChangeCallback(change);
   }
 
   // DayCell buildDayCell() {
@@ -212,9 +215,9 @@ class _CalendarState extends State<Calendar> {
           ),
           Center(
             child: Text(
-              monthString(_activeMonth.month) +
+              monthString(activeMonth.month) +
                   ' ' +
-                  _activeMonth.year.toString(),
+                  activeMonth.year.toString(),
               textAlign: TextAlign.left,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),

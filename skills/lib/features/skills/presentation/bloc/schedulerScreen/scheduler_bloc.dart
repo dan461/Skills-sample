@@ -9,7 +9,8 @@ import './bloc.dart';
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   // List<Session> sessions;
   final GetSessionsInMonth getSessionInMonth;
-  List<Session> daysSessions;
+  List<Session> daysSessions = [];
+  DateTime activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
 
   SchedulerBloc({this.getSessionInMonth});
   // List<Session> sessionsList;
@@ -45,7 +46,10 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     SchedulerEvent event,
   ) async* {
     if (event is MonthSelectedEvent) {
-      yield GettingSessionForMonthState();
+     yield GettingSessionForMonthState();
+     if (state is GettingSessionForMonthState){
+       print('STATE: $state');
+     }
       final failureOrSessions =
           await getSessionInMonth(SessionInMonthParams(event.month));
       yield failureOrSessions.fold(

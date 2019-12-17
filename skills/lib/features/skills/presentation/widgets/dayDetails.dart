@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 
 class DayDetails extends StatefulWidget {
   final List<Session> sessions;
   final DateTime date;
   final Function newSessionCallback;
+  final SchedulerBloc bloc;
 
-  const DayDetails({Key key, this.sessions, @required this.date, @required this.newSessionCallback})
+  const DayDetails({Key key, this.sessions, @required this.date, @required this.newSessionCallback, this.bloc})
       : super(key: key);
   @override
-  _DayDetailsState createState() => _DayDetailsState(sessions, newSessionCallback);
+  _DayDetailsState createState() => _DayDetailsState(sessions, newSessionCallback, bloc);
 }
 
 class _DayDetailsState extends State<DayDetails> {
   List<Session> sessions;
   bool hasSession = true;
   final Function newSessionCallback;
+  final SchedulerBloc bloc;
 
-  _DayDetailsState(this.sessions, this.newSessionCallback);
+  _DayDetailsState(this.sessions, this.newSessionCallback, this.bloc);
 
   @override
   void initState() {
     super.initState();
+    sessions = bloc.daysSessions;
   }
 
   // void _addSession() {
@@ -31,7 +35,7 @@ class _DayDetailsState extends State<DayDetails> {
   // }
 
   Widget _showContentForSession() {
-    if (sessions == null) {
+    if (bloc.daysSessions.isNotEmpty) {
       return ListView.builder(
         itemBuilder: (context, index) {
           return SessionCard();

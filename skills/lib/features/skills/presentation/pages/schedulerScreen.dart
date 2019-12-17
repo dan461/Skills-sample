@@ -16,7 +16,7 @@ class SchedulerScreen extends StatefulWidget {
 }
 
 class _SchedulerScreenState extends State<SchedulerScreen> {
-  List<Session> sessionsForMonth;
+  DateTime _activeMonth;
 
   SchedulerBloc _bloc;
 
@@ -24,6 +24,8 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   void initState() {
     super.initState();
     _bloc = locator<SchedulerBloc>();
+    _activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
+    _bloc.add(MonthSelectedEvent(_activeMonth));
   }
 
   @override
@@ -37,43 +39,45 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             body = Center(
               child: CircularProgressIndicator(),
             );
-            _bloc.add(MonthSelectedEvent(
-                DateTime(DateTime.now().year, DateTime.now().month)));
+            // _bloc.add(MonthSelectedEvent(
+            //     DateTime(DateTime.now().year, DateTime.now().month)));
           } else if (state is DaySelectedState) {
-            body = _contentBuilder(state.date, state.sessions);
+            body = _contentBuilder(state.date, _activeMonth);
           } else if (state is GettingSessionForMonthState) {
             body = Center(
               child: CircularProgressIndicator(),
             );
           } else if (state is SessionsForMonthReturnedState) {
-            body = _contentBuilder(null, null);
-            sessionsForMonth = state.sessionsList;
+            body = _contentBuilder(null, _activeMonth);
           }
+
           return body;
         },
       ),
     );
   }
 
-  Column _noContentBuilder() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-            flex: 2,
-            child: Calendar(
-              tapCallback: _dateSelected,
-              monthChangeCallback: _calendarMonthChanged,
-            )),
-        Expanded(
-            flex: 1,
-            child: Center(
-              child: Text('No Selection'),
-            )),
-      ],
-    );
-  }
+  // Column _noContentBuilder() {
+  //   return Column(
+  //     children: <Widget>[
+  //       Expanded(
+  //           flex: 2,
+  //           child: Calendar(
+  //             activeMonth: _activeMonth,
+  //             tapCallback: _dateSelected,
+  //             monthChangeCallback: _calendarMonthChanged,
+  //           )),
+  //       Expanded(
+  //           flex: 1,
+  //           child: Center(
+  //             child: Text('No Selection'),
+  //           )),
+  //     ],
+  //   );
+  // }
 
-  Container _contentBuilder(DateTime selectedDate, List<Session> daysSessions) {
+  Container _contentBuilder(
+      DateTime selectedDate, DateTime month) {
     final today =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return Container(
@@ -82,6 +86,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
           Expanded(
               flex: 2,
               child: Calendar(
+                activeMonth: _bloc.activeMonth,
                 tapCallback: _dateSelected,
                 monthChangeCallback: _calendarMonthChanged,
                 sessionDates: _bloc.sessionDates,
@@ -89,8 +94,9 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
           Expanded(
             flex: 1,
             child: DayDetails(
+              bloc: _bloc,
               date: selectedDate != null ? selectedDate : today,
-              sessions: daysSessions,
+              sessions: _bloc.daysSessions,
               newSessionCallback: _showNewSessionScreen,
             ),
           ),
@@ -99,28 +105,26 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     );
   }
 
-  // DayDetails _dayDetailsBuilder(DateTime date, List<Session> sessions) {
-  //   return DayDetails(
-  //     date: date,
-  //     sessions: sessions,
-  //   );
-  // }
-
   void _showNewSessionScreen(DateTime date) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return NewSessionScreen(
         date: date,
       );
     }));
-
-    // _bloc
   }
 
-  void _calendarMonthChanged(DateTime month) {
-    _bloc.add(MonthSelectedEvent(month));
+  void _calendarMonthChanged(int change) {
+    setState(() {
+      _bloc.activeMonth = DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
+    });
+    // _activeMonth = DateTime(_activeMonth.year, _activeMonth.month + change);
+    _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
   }
 
   void _dateSelected(DateTime selectedDate) {
-    _bloc.add(DaySelectedEvent(selectedDate));
+    setState(() {
+      _bloc.add(DaySelectedEvent(selectedDate));
+    });
+    
   }
 }
