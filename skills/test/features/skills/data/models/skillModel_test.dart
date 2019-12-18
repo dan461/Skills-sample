@@ -5,12 +5,18 @@ import 'dart:convert';
 import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
-
-  SkillModel sut; 
+  SkillModel sut;
 
   setUp(() {
     sut = SkillModel(
-      id: 1, name: 'test', source: 'testing', startDate: 1, totalTime: 1, lastPracDate: 0, currentGoalId: 1, goalText: "none");
+        id: 1,
+        name: 'test',
+        source: 'testing',
+        startDate: 1,
+        totalTime: 1,
+        lastPracDate: 0,
+        currentGoalId: 1,
+        goalText: "none");
   });
 
   test(

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:dartz/dartz.dart' as prefix1;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
@@ -7,20 +6,10 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
-import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
-import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 
-// class MockInsertNewGoalUC extends Mock implements InsertNewGoal {}
-
-class MockUpdateGoalUC extends Mock implements UpdateGoal {}
-
-// class MockAddGoalToSkill extends Mock implements AddGoalToSkill {}
-
-class MockDeleteGoalWithId extends Mock implements DeleteGoalWithId {}
+import '../../mockClasses.dart';
 
 void main() {
   GoaleditorBloc sut;
@@ -174,7 +163,8 @@ void main() {
       expect(response, true);
     });
 
-    test('test that goalIsChanged returns false when user inputs match current goal values, or goal has not been changed',
+    test(
+        'test that goalIsChanged returns false when user inputs match current goal values, or goal has not been changed',
         () async {
       sut.goalModel = testModel;
       Map testMap = {'fromDate': testModel.fromDate};

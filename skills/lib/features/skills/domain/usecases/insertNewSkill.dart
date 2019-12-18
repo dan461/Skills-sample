@@ -10,12 +10,7 @@ class InsertNewSkill extends UseCase<Skill, SkillInsertOrUpdateParams> {
 
   InsertNewSkill(this.repo);
 
-  // Future<Either<Failure, int>> call(SkillInsertOrUpdateParams params) async {
-  //   return await repo.insertNewSkill(params.skill);
-  // }
   Future<Either<Failure, Skill>> call(SkillInsertOrUpdateParams params) async {
     return await repo.insertNewSkill(params.skill);
   }
 }
-
-

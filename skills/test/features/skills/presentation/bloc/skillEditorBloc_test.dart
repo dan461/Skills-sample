@@ -5,20 +5,11 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
-import 'package:skills/features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
-import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
 
-class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
-
-class MockUpdateSkillUC extends Mock implements UpdateSkill {}
-
-class MockDeleteSkillUC extends Mock implements DeleteSkillWithId {}
-
-class MockGetSkillByIdUC extends Mock implements GetSkillById {}
+import '../../mockClasses.dart';
 
 void main() {
   SkillEditorBloc sut;
@@ -68,7 +59,7 @@ void main() {
   });
 
   group('InsertNewSkill', () {
-Skill newSkill = Skill(name: 'new', source: 'new');
+    Skill newSkill = Skill(name: 'new', source: 'new');
 
     test('test for InsertNewSkill called', () async {
       when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))

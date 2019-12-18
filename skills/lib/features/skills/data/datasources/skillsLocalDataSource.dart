@@ -1,6 +1,8 @@
 import 'package:skills/features/skills/data/models/goalModel.dart';
+import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'dart:async';
 import 'dart:io';
@@ -21,6 +23,10 @@ abstract class SkillsLocalDataSource {
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
+  Future<Session> insertNewSession(Session session);
+  Future<SessionModel> getSessionById(int id);
+  Future<int> deleteSessionWithId(int id);
+  Future<List<Session>> getSessionsInMonth(DateTime month);
 }
 
 // Singleton class for providing access to sqlite database
@@ -64,6 +70,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   void _onCreate(Database db, int version) async {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
+    await db.execute(_createSessionsTable);
 
     // await db.execute(_createSessionsTable);
     // await db.execute(_createSessionSkillsJoinTable);
@@ -73,13 +80,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     await deleteDatabase();
   }
 
-  static final String idKey = "id INTEGER PRIMARY KEY, ";
+  static final String primaryKey = "INTEGER PRIMARY KEY";
+  static final String idKey = "id $primaryKey, ";
   static final String integer = "INTEGER";
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // table creation
-  final String _createSkillTable =
-      "$createTable skills(skillId INTEGER PRIMARY KEY, "
+  final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, currentGoalId $integer, goalText TEXT)";
 
   final String _createGoalTable = "$createTable goals($idKey "
@@ -87,9 +94,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "goalTime $integer, timeRemaining $integer, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
-  // final String _createSessionsTable = "$createTable sessions($idKey"
-  //     "name TEXT, duration INTEGER, fromTime INTEGER, toTime INTEGER, "
-  //     "isScheduled INTEGER, isCompleted INTEGER, timeRemaining INTEGER)";
+  final String _createSessionsTable =
+      "$createTable sessions(sessionId $primaryKey, "
+      "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
+      "isScheduled INTEGER, isCompleted INTEGER)";
 
   // final String _createSessionSkillsJoinTable =
   //     "$createTable session_skills($idKey"
@@ -223,6 +231,56 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int updates = await db.update(skillsTable, changeMap,
         where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
+  }
+
+  @override
+  Future<Session> insertNewSession(Session session) async {
+    final Database db = await database;
+    SessionModel sessionModel = SessionModel(
+      date: session.date,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      duration: session.duration,
+      timeRemaining: session.timeRemaining,
+      isCompleted: session.isCompleted,
+      isScheduled: session.isScheduled,
+    );
+    int id = await db.insert(sessionsTable, sessionModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    Session newSession = await getSessionById(id);
+
+    return newSession;
+  }
+
+  Future<SessionModel> getSessionById(int id) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(sessionsTable,
+        columns: null, where: 'sessionId = ?', whereArgs: [id]);
+    if (maps.length > 0) {
+      return SessionModel.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<int> deleteSessionWithId(int id) async {
+    final Database db = await database;
+    int result =
+        await db.delete(sessionsTable, where: '$columnId = ?', whereArgs: [id]);
+    return result;
+  }
+
+  Future<List<Session>> getSessionsInMonth(DateTime month) async {
+    final nextMonth = DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
+    final Database db = await database;
+    List<Map> maps = await db.query(sessionsTable, columns: null, where: 'date BETWEEN ? AND ?', whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
+    List<Session> sessionsList = [];
+    if (maps.isNotEmpty){
+      for (var map in maps){
+        Session session = SessionModel.fromMap(map);
+        sessionsList.add(session);
+      }
+    }
+    return sessionsList;
   }
 
   // @override

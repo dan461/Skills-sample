@@ -1,34 +1,69 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
+import 'package:skills/service_locator.dart';
 
-class SessionEditor extends StatefulWidget {
+class NewSessionScreen extends StatefulWidget {
+  final DateTime date;
+
+  const NewSessionScreen({Key key, @required this.date}) : super(key: key);
   @override
-  _SessionEditorState createState() => _SessionEditorState();
+  _NewSessionScreenState createState() => _NewSessionScreenState(date);
 }
 
-class _SessionEditorState extends State<SessionEditor> {
-  TimeOfDay _selectedStartTime;
-  TimeOfDay _selectedFinishTime;
+class _NewSessionScreenState extends State<NewSessionScreen> {
+  final DateTime date;
+  // TimeOfDay _selectedStartTime;
+  // TimeOfDay _selectedFinishTime;
+  bool _doneButtonEnabled = false;
+  NewSessionBloc _bloc;
+
+  _NewSessionScreenState(this.date);
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = locator<NewSessionBloc>();
+    _bloc.sessionDate = date;
+  }
 
   String get _startTimeString {
-    return _selectedStartTime == null
+    return _bloc.selectedStartTime == null
         ? 'Select Time'
-        : _selectedStartTime.format(context);
+        : _bloc.selectedStartTime.format(context);
   }
 
   String get _finishTimeString {
-    return _selectedFinishTime == null
+    return _bloc.selectedFinishTime == null
         ? 'Select Time'
-        : _selectedFinishTime.format(context);
+        : _bloc.selectedFinishTime.format(context);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('New Session'),
-      ),
-      body: Column(
+  String get _durationString {
+    String minutes = _bloc.duration.toString();
+    return 'Duration: $minutes min.';
+  }
+
+  void _setDoneBtnStatus() {
+    setState(() {
+      _doneButtonEnabled =
+          _bloc.selectedStartTime != null && _bloc.selectedFinishTime != null;
+    });
+  }
+
+  void _doneTapped() {
+    _bloc.createSession(date);
+  }
+
+  void _cancelTapped() {
+    print('cancel');
+  }
+
+  Container _contentBuilder() {
+    return Container(
+      child: Column(
         children: <Widget>[
           Expanded(
             flex: 1,
@@ -40,7 +75,7 @@ class _SessionEditorState extends State<SessionEditor> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Nov. 22, 2019',
+                        DateFormat.yMMMd().format(date),
                         style: Theme.of(context).textTheme.title,
                       ),
                     )
@@ -64,7 +99,7 @@ class _SessionEditorState extends State<SessionEditor> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('Duration: 30 min.',
+                      Text(_durationString,
                           style: Theme.of(context).textTheme.subhead),
                       Text('Available: 30 min.',
                           style: Theme.of(context).textTheme.subhead)
@@ -96,12 +131,56 @@ class _SessionEditorState extends State<SessionEditor> {
                         ],
                       ),
                     )),
-                _sessionActivityCard()
+                _sessionActivityCard(),
               ],
             ),
-          )
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  _cancelTapped();
+                },
+              ),
+              RaisedButton(
+                  child: Text('Done'),
+                  onPressed: _doneButtonEnabled
+                      ? () {
+                          _doneTapped();
+                        }
+                      : null),
+            ],
+          ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => _bloc,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('New Session'),
+          ),
+          body: BlocBuilder<NewSessionBloc, NewSessionState>(
+            builder: (context, state) {
+              Widget body;
+              if (state is InitialNewSessionState) {
+                body = _contentBuilder();
+              } else if (state is NewSessionInsertingState){
+                body = Center(child: CircularProgressIndicator(),);
+              } else if (state is NewSessionInsertedState){
+                body = SizedBox();
+                Navigator.of(context).pop();
+              }
+
+              return body;
+            },
+          )),
     );
   }
 
@@ -160,6 +239,7 @@ class _SessionEditorState extends State<SessionEditor> {
             child: Text(timeText, style: Theme.of(context).textTheme.subhead),
             onTap: () {
               callback();
+              _setDoneBtnStatus();
             },
           )
         ],
@@ -175,9 +255,10 @@ class _SessionEditorState extends State<SessionEditor> {
 
     if (selectedTime != null) {
       setState(() {
-        _selectedStartTime = selectedTime;
+        _bloc.selectedStartTime = selectedTime;
       });
     }
+    _setDoneBtnStatus();
   }
 
   void _selectFinishTime() async {
@@ -186,8 +267,9 @@ class _SessionEditorState extends State<SessionEditor> {
 
     if (selectedTime != null) {
       setState(() {
-        _selectedFinishTime = selectedTime;
+        _bloc.selectedFinishTime = selectedTime;
       });
     }
+    _setDoneBtnStatus();
   }
 }

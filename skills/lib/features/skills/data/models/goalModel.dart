@@ -29,8 +29,8 @@ class GoalModel extends Goal {
         skillId: map['skillId'],
         fromDate: map['fromDate'],
         toDate: map['toDate'],
-        isComplete: map['isComplete'] == 0 ? false : true,
         timeBased: map['timeBased'] == 0 ? false : true,
+        isComplete: map['isComplete'] == 0 ? false : true,
         goalTime: map['goalTime'],
         timeRemaining: map['timeRemaining'],
         desc: map['desc']);

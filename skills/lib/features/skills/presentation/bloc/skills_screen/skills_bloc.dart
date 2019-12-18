@@ -23,6 +23,7 @@ class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
     SkillsEvent event,
   ) async* {
     if (event is GetAllSkillsEvent) {
+      
       yield AllSkillsLoading();
       final failureOrSkills = await getAllSkills(NoParams());
       yield* _eitherSkillsLoadedOrErrorState(failureOrSkills);

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
 class GoalCrudParams extends Params {
@@ -42,4 +43,37 @@ class SkillUpdateParams extends Params {
   final Map changeMap;
 
   SkillUpdateParams({this.skillId, this.changeMap});
+}
+
+class SessionInsertOrUpdateParams extends Params {
+  final Session session;
+
+  SessionInsertOrUpdateParams({@required this.session}) : super();
+
+  @override
+  List<Object> get props => [session];
+}
+
+class SessionByIdParams extends Params {
+  final int sessionId;
+
+  SessionByIdParams({@required this.sessionId});
+  @override
+  List<Object> get props => [sessionId];
+}
+
+class SessionInMonthParams extends Params {
+  final DateTime month;
+
+  SessionInMonthParams(this.month);
+  @override
+  List<Object> get props => [month];
+}
+
+class SessionDeleteParams extends Params {
+  final int sessionId;
+
+  SessionDeleteParams({@required this.sessionId});
+  @override
+  List<Object> get props => [sessionId];
 }

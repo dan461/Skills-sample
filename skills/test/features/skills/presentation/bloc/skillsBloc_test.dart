@@ -1,20 +1,13 @@
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/usecase.dart';
-import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/bloc.dart';
 
-class MockGetAllSkillsUC extends Mock implements GetAllSkills {}
-
-class MockGetSkillById extends Mock implements GetSkillById {}
-
-class MockInsertNewSkillUC extends Mock implements InsertNewSkill {}
+import '../../mockClasses.dart';
 
 void main() {
   SkillsBloc sut;

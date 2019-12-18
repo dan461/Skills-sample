@@ -6,10 +6,10 @@ abstract class NewgoalEvent extends Equatable {
   const NewgoalEvent();
 }
 
-class CreateNewGoalEvent extends NewgoalEvent {
-  @override
-  List<Object> get props => [];
-}
+// class CreateNewGoalEvent extends NewgoalEvent {
+//   @override
+//   List<Object> get props => [];
+// }
 
 class InsertNewGoalEvent extends NewgoalEvent {
   final Goal newGoal;

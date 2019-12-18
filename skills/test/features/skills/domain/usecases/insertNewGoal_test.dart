@@ -6,7 +6,9 @@ import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
-class MockGoalRepo extends Mock implements GoalRepository {}
+import '../../mockClasses.dart';
+
+
 
 void main() {
   InsertNewGoal sut;

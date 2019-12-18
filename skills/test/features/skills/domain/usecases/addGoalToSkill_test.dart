@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
+import '../../mockClasses.dart';
 import 'insertNewGoal_test.dart';
 
 void main() {

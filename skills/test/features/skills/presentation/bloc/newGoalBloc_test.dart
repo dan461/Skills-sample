@@ -5,18 +5,13 @@ import 'package:mockito/mockito.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
-import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/goaleditor_state.dart';
 
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_event.dart';
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_state.dart';
 
-class MockInsertNewGoalUC extends Mock implements InsertNewGoal {}
-
-class MockAddGoalToSkill extends Mock implements AddGoalToSkill {}
+import '../../mockClasses.dart';
 
 void main() {
   NewgoalBloc sut;
