@@ -34,7 +34,7 @@ class SkillModel extends Skill {
         source: map['source'],
         startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']) ,
         totalTime: map['totalTime'],
-        lastPracDate: DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']),
+        lastPracDate: map['lastPracDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']) : DateTime.fromMillisecondsSinceEpoch(map['startDate']),
         currentGoalId: map['currentGoalId'],
         goalText: map['goalText']);
   }
