@@ -13,8 +13,8 @@ void main() {
     sut = GoalModel(
         id: 1,
         skillId: 1,
-        fromDate: 1574899200,
-        toDate: 1574812800,
+        fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+        toDate: DateTime.fromMillisecondsSinceEpoch(0),
         timeBased: true,
         isComplete: false,
         goalTime: 60,
@@ -39,8 +39,8 @@ void main() {
     final expectedMap = {
       "id": 1,
       "skillId": 1,
-      "fromDate": 1574899200,
-      "toDate": 1574812800,
+      "fromDate": 0,
+      "toDate": 0,
       "timeBased": true,
       "isComplete": false,
       "goalTime": 60,

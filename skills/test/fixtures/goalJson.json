@@ -1,8 +1,8 @@
 {
   "id": 1,
   "skillId": 1,
-  "fromDate": 1574899200,
-  "toDate": 1574812800,
+  "fromDate": 0,
+  "toDate": 0,
   "timeBased": 1,
   "isComplete": 0,
   "goalTime": 60,

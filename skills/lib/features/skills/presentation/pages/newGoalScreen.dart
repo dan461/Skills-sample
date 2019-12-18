@@ -137,8 +137,8 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   void _insertNewGoal(BuildContext context) async {
     Goal newGoal = Goal(
         skillId: skillId,
-        fromDate: _startDate.millisecondsSinceEpoch,
-        toDate: _endDate.millisecondsSinceEpoch,
+        fromDate: _startDate,
+        toDate: _endDate,
         timeBased: _isTimeBased,
         goalTime: _goalMinutes,
         timeRemaining: _goalMinutes,

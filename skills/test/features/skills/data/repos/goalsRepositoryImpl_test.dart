@@ -21,8 +21,6 @@ void main() {
   MockRemoteDataSource mockRemoteDataSource;
   GoalModel testGoalModel;
   Goal testGoal;
-  int todayInt;
-  int tomorrowInt;
 
   setUp(() {
     mockLocalDataSource = MockLocalDataSource();
@@ -31,8 +29,8 @@ void main() {
     testGoalModel = GoalModel(
         id: 1,
         skillId: 1,
-        fromDate: todayInt,
-        toDate: tomorrowInt,
+        fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+        toDate: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         timeBased: true,
         goalTime: 60,
@@ -43,15 +41,9 @@ void main() {
         localDataSource: mockLocalDataSource,
         remoteDataSource: mockRemoteDataSource,
         networkInfo: mockNetworkInfo);
-
-    DateTime now = DateTime.now();
-    todayInt = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-    tomorrowInt =
-        DateTime(now.year, now.month, now.day + 1).millisecondsSinceEpoch;
   });
 
   group('getGoalById', () {
-    
     test('returns a specific GoalModel', () async {
       when(mockLocalDataSource.getGoalById(1))
           .thenAnswer((_) async => testGoalModel);
@@ -74,8 +66,7 @@ void main() {
 
   group('updateGoal', () {
     test('returns an integer after updating a GoalModel', () async {
-      when(mockLocalDataSource.updateGoal(testGoal))
-          .thenAnswer((_) async => 1);
+      when(mockLocalDataSource.updateGoal(testGoal)).thenAnswer((_) async => 1);
       final result = await sut_goalRepoImpl.updateGoal(testGoal);
       verify(mockLocalDataSource.updateGoal(testGoal));
       expect(result, equals(Right(1)));
@@ -84,17 +75,17 @@ void main() {
 
   group('deleteGoal', () {
     test('returns an integer after deleting a Goal', () async {
-      when(mockLocalDataSource.deleteGoalWithId(1))
-          .thenAnswer((_) async => 1);
+      when(mockLocalDataSource.deleteGoalWithId(1)).thenAnswer((_) async => 1);
       final result = await sut_goalRepoImpl.deleteGoalWithId(1);
       verify(mockLocalDataSource.deleteGoalWithId(1));
       expect(result, equals(Right(1)));
     });
   });
 
-  group('add goal to skill', (){
+  group('add goal to skill', () {
     test('testing adding a goal to a skill', () async {
-      when(mockLocalDataSource.addGoalToSkill(1, 1, 'goal')).thenAnswer((_) async => 1);
+      when(mockLocalDataSource.addGoalToSkill(1, 1, 'goal'))
+          .thenAnswer((_) async => 1);
       final result = await sut_goalRepoImpl.addGoalToSkill(1, 1, 'goal');
       verify(mockLocalDataSource.addGoalToSkill(1, 1, 'goal'));
       expect(result, equals(Right(1)));

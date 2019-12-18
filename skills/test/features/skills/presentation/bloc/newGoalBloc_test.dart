@@ -28,8 +28,8 @@ void main() {
         addGoalToSkill: mockAddGoalToSkill);
     testGoal = Goal(
         skillId: 1,
-        fromDate: DateTime.now().millisecondsSinceEpoch,
-        toDate: DateTime.now().millisecondsSinceEpoch,
+        fromDate: DateTime.now(),
+        toDate: DateTime.now(),
         isComplete: false,
         timeBased: true,
         timeRemaining: 0,
@@ -37,8 +37,8 @@ void main() {
 
     newGoal = Goal(
         skillId: 1,
-        fromDate: DateTime.now().millisecondsSinceEpoch,
-        toDate: DateTime.now().millisecondsSinceEpoch,
+        fromDate: DateTime.now(),
+        toDate: DateTime.now(),
         isComplete: false,
         timeBased: true,
         timeRemaining: 0,
