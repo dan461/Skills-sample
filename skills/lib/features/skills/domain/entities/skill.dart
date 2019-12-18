@@ -5,9 +5,9 @@ class Skill extends Equatable {
   final int id;
   final String name;
   final String source;
-  final int startDate;
+  final DateTime startDate;
   final int totalTime;
-  final int lastPracDate;
+  final DateTime lastPracDate;
   final int currentGoalId;
   final String goalText;
 

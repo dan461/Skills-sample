@@ -167,7 +167,7 @@ void main() {
         'test that goalIsChanged returns false when user inputs match current goal values, or goal has not been changed',
         () async {
       sut.goalModel = testModel;
-      Map testMap = {'fromDate': testModel.fromDate};
+      Map testMap = {'fromDate': testModel.fromDate.millisecondsSinceEpoch};
       bool response = sut.goalIsChanged(testMap);
       expect(response, false);
     });

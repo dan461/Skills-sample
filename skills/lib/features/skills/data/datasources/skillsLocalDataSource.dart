@@ -134,9 +134,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final SkillModel skillModel = SkillModel(
         name: skill.name,
         source: skill.source,
-        startDate: today.millisecondsSinceEpoch,
+        startDate: today,
         totalTime: 0,
-        lastPracDate: 0,
+        lastPracDate: today,
         currentGoalId: 0,
         goalText: "Goal: none");
 

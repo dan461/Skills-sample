@@ -12,9 +12,9 @@ void main() {
         id: 1,
         name: 'test',
         source: 'testing',
-        startDate: 1,
+        startDate: DateTime.fromMillisecondsSinceEpoch(0),
         totalTime: 1,
-        lastPracDate: 0,
+        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
         currentGoalId: 1,
         goalText: "none");
   });
@@ -45,7 +45,7 @@ void main() {
         'skillId': 1,
         'name': 'test',
         'source': 'testing',
-        'startDate': 1,
+        'startDate': 0,
         'totalTime': 1,
         'lastPracDate': 0,
         'currentGoalId': 1,
