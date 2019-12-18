@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,8 +17,7 @@ class NewSessionScreen extends StatefulWidget {
 
 class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
-  // TimeOfDay _selectedStartTime;
-  // TimeOfDay _selectedFinishTime;
+  
   bool _doneButtonEnabled = false;
   NewSessionBloc _bloc;
 
@@ -160,28 +161,32 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => _bloc,
+    Widget body = _contentBuilder();
+    return BlocListener<NewSessionBloc, NewSessionState>(
+      bloc: _bloc,
+      listener: (context, state) {
+        if (state is InitialNewSessionState) {
+          body = _contentBuilder();
+        } else if (state is NewSessionInsertingState) {
+          body = Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (state is NewSessionInsertedState) {
+          body = Center(
+            child: CircularProgressIndicator(),
+          );
+          Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
-          appBar: AppBar(
-            title: Text('New Session'),
-          ),
-          body: BlocBuilder<NewSessionBloc, NewSessionState>(
-            builder: (context, state) {
-              Widget body;
-              if (state is InitialNewSessionState) {
-                body = _contentBuilder();
-              } else if (state is NewSessionInsertingState){
-                body = Center(child: CircularProgressIndicator(),);
-              } else if (state is NewSessionInsertedState){
-                body = SizedBox();
-                Navigator.of(context).pop();
-              }
-
-              return body;
-            },
-          )),
+        appBar: AppBar(title: Text('New Session')),
+        body: body,
+      ),
     );
+  }
+
+  void noFlash() {
+    Navigator.of(context).pop();
   }
 
   Card _sessionActivityCard() {

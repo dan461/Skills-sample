@@ -63,7 +63,6 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
                 bloc: _bloc,
                 tapCallback: _dateSelected,
                 monthChangeCallback: _calendarMonthChanged,
-                
               )),
           Expanded(
             flex: 1,
@@ -94,7 +93,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       _bloc.activeMonth =
           DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
     });
-    
+
     _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
   }
 

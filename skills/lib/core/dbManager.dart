@@ -19,7 +19,7 @@ class _DbManagerState extends State<DbManager> {
         if (snapshot.hasData) {
           return SqfliteManager(
             database: snapshot.data,
-            enable: true,
+            enable: false,
             child: HomeScreen(),
           );
         } else {
