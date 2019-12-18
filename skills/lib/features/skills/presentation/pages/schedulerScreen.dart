@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
@@ -39,15 +38,10 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             body = Center(
               child: CircularProgressIndicator(),
             );
-            // _bloc.add(MonthSelectedEvent(
-            //     DateTime(DateTime.now().year, DateTime.now().month)));
           } else if (state is DaySelectedState) {
             body = _contentBuilder(state.date, _activeMonth);
-          } else if (state is GettingSessionForMonthState) {
-            body = Center(
-              child: CircularProgressIndicator(),
-            );
           } else if (state is SessionsForMonthReturnedState) {
+            _bloc.sessionsForMonth = state.sessionsList;
             body = _contentBuilder(null, _activeMonth);
           }
 
@@ -57,27 +51,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     );
   }
 
-  // Column _noContentBuilder() {
-  //   return Column(
-  //     children: <Widget>[
-  //       Expanded(
-  //           flex: 2,
-  //           child: Calendar(
-  //             activeMonth: _activeMonth,
-  //             tapCallback: _dateSelected,
-  //             monthChangeCallback: _calendarMonthChanged,
-  //           )),
-  //       Expanded(
-  //           flex: 1,
-  //           child: Center(
-  //             child: Text('No Selection'),
-  //           )),
-  //     ],
-  //   );
-  // }
-
-  Container _contentBuilder(
-      DateTime selectedDate, DateTime month) {
+  Container _contentBuilder(DateTime selectedDate, DateTime month) {
     final today =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return Container(
@@ -86,10 +60,10 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
           Expanded(
               flex: 2,
               child: Calendar(
-                activeMonth: _bloc.activeMonth,
+                bloc: _bloc,
                 tapCallback: _dateSelected,
                 monthChangeCallback: _calendarMonthChanged,
-                sessionDates: _bloc.sessionDates,
+                
               )),
           Expanded(
             flex: 1,
@@ -111,13 +85,16 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
         date: date,
       );
     }));
+
+    _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
   }
 
   void _calendarMonthChanged(int change) {
     setState(() {
-      _bloc.activeMonth = DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
+      _bloc.activeMonth =
+          DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
     });
-    // _activeMonth = DateTime(_activeMonth.year, _activeMonth.month + change);
+    
     _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
   }
 
@@ -125,6 +102,5 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     setState(() {
       _bloc.add(DaySelectedEvent(selectedDate));
     });
-    
   }
 }

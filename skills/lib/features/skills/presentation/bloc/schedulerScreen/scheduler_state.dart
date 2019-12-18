@@ -20,7 +20,7 @@ class DaySelectedState extends SchedulerState {
   List<Object> get props => [date];
 }
 
-class GettingSessionForMonthState extends SchedulerState {
+class GettingSessionsForMonthState extends SchedulerState {
   @override
   List<Object> get props => [null];
 }

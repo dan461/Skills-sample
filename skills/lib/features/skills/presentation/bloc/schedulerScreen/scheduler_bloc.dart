@@ -15,6 +15,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   SchedulerBloc({this.getSessionInMonth});
   // List<Session> sessionsList;
   List<Session> sessionsForMonth;
+  
 
   List<DateTime> get sessionDates {
     List<DateTime> dates = [];
@@ -41,15 +42,14 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     return found;
   }
 
+  
+
   @override
   Stream<SchedulerState> mapEventToState(
     SchedulerEvent event,
   ) async* {
     if (event is MonthSelectedEvent) {
-     yield GettingSessionForMonthState();
-     if (state is GettingSessionForMonthState){
-       print('STATE: $state');
-     }
+       yield GettingSessionsForMonthState();
       final failureOrSessions =
           await getSessionInMonth(SessionInMonthParams(event.month));
       yield failureOrSessions.fold(

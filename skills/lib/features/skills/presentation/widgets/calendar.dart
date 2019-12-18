@@ -1,41 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'daysRow.dart';
 import 'dayCell.dart';
 
 class Calendar extends StatefulWidget {
   final Function tapCallback;
   final Function monthChangeCallback;
-  final List<DateTime> sessionDates;
-  final DateTime activeMonth;
+  // final List<DateTime> sessionDates;
+  // final DateTime activeMonth;
+  final SchedulerBloc bloc;
 
   const Calendar({
     Key key,
-    this.activeMonth,
+    // this.activeMonth,
     @required this.tapCallback,
     @required this.monthChangeCallback,
-    this.sessionDates,
+    this.bloc,
   }) : super(key: key);
 
   @override
   _CalendarState createState() =>
-      _CalendarState(tapCallback, monthChangeCallback, sessionDates, activeMonth);
+      _CalendarState(tapCallback, monthChangeCallback, bloc);
 }
 
 class _CalendarState extends State<Calendar> {
-  final List<DateTime> sessionDates;
+  
   double monthHeight;
-  final DateTime activeMonth;
+  // final DateTime activeMonth;
+  final SchedulerBloc bloc;
 
   final Function tapCallback;
   final Function monthChangeCallback;
-  // DateTime _activeMonth;
+  DateTime _activeMonth;
 
-  _CalendarState(this.tapCallback, this.monthChangeCallback, this.sessionDates, this.activeMonth);
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.bloc);
 
   @override
   initState() {
     super.initState();
-    // activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
+    _activeMonth = bloc.activeMonth;
   }
 
   String monthString(int month) {
@@ -117,7 +120,7 @@ class _CalendarState extends State<Calendar> {
     return monthString;
   }
 
-  Container monthBuilder() {
+  Container monthBuilder(DateTime month) {
     return Container(
       height: monthHeight,
       decoration: BoxDecoration(
@@ -127,7 +130,7 @@ class _CalendarState extends State<Calendar> {
               right: BorderSide(width: 1.0, color: Colors.grey[300]))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: buildMonth(month: activeMonth.month, year: activeMonth.year),
+        children: buildMonth(month: bloc.activeMonth.month, year: bloc.activeMonth.year),
       ),
     );
   }
@@ -169,10 +172,10 @@ class _CalendarState extends State<Calendar> {
       // else {
       //   thisDay = sunday.add(Duration(days: i));
       // }
-      bool hasSession = sessionDates.indexOf(thisDay) != -1;
+      bool hasSession = bloc.sessionDates.indexOf(thisDay) != -1;
       days.add(DayCell(
         date: thisDay,
-        displayedMonth: activeMonth.month,
+        displayedMonth: bloc.activeMonth.month,
         tapCallback: tapCallback,
         hasSession: hasSession,
       ));
@@ -192,9 +195,10 @@ class _CalendarState extends State<Calendar> {
   }
 
   void changeMonth(int change) {
-    setState(() {
-      // activeMonth = DateTime(activeMonth.year, activeMonth.month + change);
-    });
+    
+    // setState(() {
+    //   _activeMonth = DateTime(_activeMonth.year, _activeMonth.month + change);
+    // });
     monthChangeCallback(change);
   }
 
@@ -215,9 +219,9 @@ class _CalendarState extends State<Calendar> {
           ),
           Center(
             child: Text(
-              monthString(activeMonth.month) +
+              monthString(bloc.activeMonth.month) +
                   ' ' +
-                  activeMonth.year.toString(),
+                  bloc.activeMonth.year.toString(),
               textAlign: TextAlign.left,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
@@ -235,6 +239,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    
     monthHeight = MediaQuery.of(context).size.height / 2.25;
     return Container(
       color: Colors.white,
@@ -247,10 +252,10 @@ class _CalendarState extends State<Calendar> {
               scrollDirection: Axis.horizontal,
               reverse: true,
               itemBuilder: (context, position) {
-                return monthBuilder();
+                return monthBuilder(_activeMonth);
               },
               onPageChanged: (index) {
-                changeMonth(1);
+                // changeMonth(index);
               },
             ),
           ),

@@ -46,18 +46,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     return 'Duration: $minutes min.';
   }
 
-  // int get _duration {
-  //   int minutes;
-  //   if (_selectedStartTime == null || _selectedFinishTime == null)
-  //     minutes = 0;
-  //   else {
-  //     int hours = _selectedFinishTime.hour - _selectedStartTime.hour;
-  //     minutes =
-  //         _selectedFinishTime.minute - _selectedStartTime.minute + hours * 60;
-  //   }
-  //   return minutes;
-  // }
-
   void _setDoneBtnStatus() {
     setState(() {
       _doneButtonEnabled =

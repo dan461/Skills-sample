@@ -21,3 +21,12 @@ class MonthSelectedEvent extends SchedulerEvent {
   @override
   List<Object> get props => [month];
 }
+
+class GetSessionsForMonthEvent extends SchedulerEvent {
+  final DateTime month;
+
+  GetSessionsForMonthEvent(this.month);
+
+  @override
+  List<Object> get props => [month];
+}

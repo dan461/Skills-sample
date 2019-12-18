@@ -68,11 +68,12 @@ void main() {
   });
 
   test('test that bloc emits [DaySelectedState] when DaySelectedEvent occurs',
-      () async {
+      () {
     // TODO - intentionally bad test, finish this
     final expected = [InitialSchedulerState(), DaySelectedState()];
-    expectLater(sut, emitsInOrder(expected));
     sut.add(DaySelectedEvent(DateTime.now()));
+    expect(sut, emitsInOrder(expected));
+    
   });
 
   group('GetSessionsInMonth', () {
@@ -95,7 +96,7 @@ void main() {
 
       final expected = [
         InitialSchedulerState(),
-        GettingSessionForMonthState(),
+        GettingSessionsForMonthState(),
         SessionsForMonthReturnedState(testList)
       ];
       expectLater(sut, emitsInOrder(expected));
