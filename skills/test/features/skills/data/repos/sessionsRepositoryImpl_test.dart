@@ -18,7 +18,7 @@ void main() {
     mockLocalDataSource = MockLocalDataSource();
     sut = SessionsRepositoryImpl(localDataSource: mockLocalDataSource);
     testSessionModel = SessionModel(
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         duration: 1,
@@ -27,7 +27,7 @@ void main() {
         isCompleted: false);
 
     testSession = Session(
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         duration: 1,
@@ -39,7 +39,7 @@ void main() {
   group('Sessions CRUD tests', () {
     Session newSession = Session(
         sessionId: 1,
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         duration: 1,

@@ -17,7 +17,7 @@ void main() {
 
   test('should return a session', () async {
 final newSession = Session(
-      sessionId: 1, date: 1, startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
+      sessionId: 1, date: DateTime.now(), startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
 
     when(mockSessionRepo.getSessionById(1))
         .thenAnswer((_) async => Right(newSession));

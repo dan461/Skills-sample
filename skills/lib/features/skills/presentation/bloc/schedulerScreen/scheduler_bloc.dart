@@ -20,9 +20,9 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   List<DateTime> get sessionDates {
     List<DateTime> dates = [];
     for (var session in sessionsForMonth) {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(session.date);
-      if (dates.indexOf(date) == -1) {
-        dates.add(date);
+      // DateTime date = DateTime.fromMillisecondsSinceEpoch(session.date);
+      if (dates.indexOf(session.date) == -1) {
+        dates.add(session.date);
       }
     }
 
@@ -35,7 +35,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   List<Session> findDaysSessions(DateTime day) {
     List<Session> found = [];
     for (var session in sessionsForMonth) {
-      if (session.date == day.millisecondsSinceEpoch) {
+      if (session.date == day) {
         found.add(session);
       }
     }

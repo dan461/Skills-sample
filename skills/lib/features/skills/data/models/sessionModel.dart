@@ -5,7 +5,7 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 class SessionModel extends Session {
   SessionModel(
       {int sessionId,
-      @required int date,
+      @required DateTime date,
       @required int startTime,
       @required int endTime,
       int duration,
@@ -25,7 +25,7 @@ class SessionModel extends Session {
   factory SessionModel.fromMap(Map<String, dynamic> map) {
     return SessionModel(
         sessionId: map['sessionId'],
-        date: map['date'],
+        date: DateTime.fromMillisecondsSinceEpoch(map['date']) ,
         startTime: map['startTime'],
         endTime: map['endTime'],
         duration: map['duration'],
@@ -37,7 +37,7 @@ class SessionModel extends Session {
   Map<String, dynamic> toMap(){
     return {
       'sessionId': sessionId,
-      'date' : date,
+      'date' : date.millisecondsSinceEpoch,
       'startTime' : startTime,
       'endTime' : endTime,
       'duration' : duration,

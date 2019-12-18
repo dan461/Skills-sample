@@ -21,28 +21,28 @@ void main() {
     mockGetSessionsInMonthUC = MockGetSessionsInMonthUC();
     sut = SchedulerBloc(getSessionInMonth: mockGetSessionsInMonthUC);
     testSession = Session(
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         isCompleted: false,
         isScheduled: true);
 
     testSession1 = Session(
-        date: DateTime(2019, 12, 1).millisecondsSinceEpoch,
+        date: DateTime(2019, 12, 1),
         startTime: 1,
         endTime: 1,
         isCompleted: false,
         isScheduled: true);
 
     testSession2 = Session(
-        date: DateTime(2019, 12, 2).millisecondsSinceEpoch,
+        date: DateTime(2019, 12, 2),
         startTime: 1,
         endTime: 1,
         isCompleted: false,
         isScheduled: true);
 
     testSession3 = Session(
-        date: DateTime(2019, 12, 2).millisecondsSinceEpoch,
+        date: DateTime(2019, 12, 2),
         startTime: 1,
         endTime: 1,
         isCompleted: false,
@@ -66,15 +66,15 @@ void main() {
     final result = sut.sessionDates;
     expect(result, matcher);
   });
-
-  test('test that bloc emits [DaySelectedState] when DaySelectedEvent occurs',
-      () {
-    // TODO - intentionally bad test, finish this
-    final expected = [InitialSchedulerState(), DaySelectedState()];
-    sut.add(DaySelectedEvent(DateTime.now()));
-    expect(sut, emitsInOrder(expected));
+  
+  // test('test that bloc emits [DaySelectedState] when DaySelectedEvent occurs',
+  //     () {
+  //   // TODO - intentionally bad test, finish this
+  //   final expected = [InitialSchedulerState(), DaySelectedState()];
+  //   sut.add(DaySelectedEvent(DateTime.now()));
+  //   expect(sut, emitsInOrder(expected));
     
-  });
+  // });
 
   group('GetSessionsInMonth', () {
     final testList = [testSession];

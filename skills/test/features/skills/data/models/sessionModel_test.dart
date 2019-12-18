@@ -14,7 +14,7 @@ void main() {
     // endTime is Wednesday, November 27, 2019 6:00:00 PM
     sut = SessionModel(
         sessionId: 1,
-        date: 1574812800,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
         startTime: 1574874000,
         endTime: 1574877600,
         duration: 60,
@@ -40,7 +40,7 @@ void main() {
     final result = sut.toMap();
     final expectedMap = {
       "sessionId" : 1,
-    "date" : 1574812800,
+    "date" : 0,
     "startTime" : 1574874000,
     "endTime" : 1574877600,
     "duration" : 60,

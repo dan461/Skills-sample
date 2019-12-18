@@ -22,14 +22,14 @@ void main() {
     mockInsertNewSessionUC = MockInsertNewSessionUC();
     sut = NewSessionBloc(insertNewSession: mockInsertNewSessionUC);
     testSession = Session(
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         isCompleted: false,
         isScheduled: true);
     newSession = Session(
         sessionId: 1,
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         isCompleted: false,

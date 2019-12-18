@@ -32,11 +32,12 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     return DateTime(
             date.year, date.month, date.day, timeOfDay.hour, timeOfDay.minute)
         .millisecondsSinceEpoch;
+        
   }
 
   void createSession(DateTime date) {
     Session newSession = Session(
-      date: date.millisecondsSinceEpoch,
+      date: date,
       startTime: timeToInt(date, selectedStartTime),
       endTime: timeToInt(date, selectedFinishTime),
       duration: duration,

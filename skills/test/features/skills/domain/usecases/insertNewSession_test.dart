@@ -19,9 +19,9 @@ void main() {
   });
 
   final testSession = Session(
-      date: 1, startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
+      date: DateTime.now(), startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
   final newSession = Session(
-      sessionId: 1, date: 1, startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
+      sessionId: 1, date: DateTime.now(), startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
 
   test('should insert a new session and return a session with an id',() async {
     when(mockSessionRepo.insertNewSession(testSession)).thenAnswer((_) async => Right(newSession));

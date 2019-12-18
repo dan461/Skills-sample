@@ -20,7 +20,7 @@ void main() {
       'UseCase should return a List<Session>',
       () async {
     final testSession = Session(
-        date: 1,
+        date: DateTime.now(),
         startTime: 1,
         endTime: 1,
         isCompleted: false,

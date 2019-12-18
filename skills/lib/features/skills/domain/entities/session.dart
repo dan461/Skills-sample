@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 
 class Session extends Equatable {
   final int sessionId;
-  final int date;
+  final DateTime date;
   final int startTime;
   final int endTime;
   final int duration;
