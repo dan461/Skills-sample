@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
@@ -15,8 +16,8 @@ void main() {
     sut = SessionModel(
         sessionId: 1,
         date: DateTime.fromMillisecondsSinceEpoch(0),
-        startTime: 1574874000,
-        endTime: 1574877600,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 13, minute: 0),
         duration: 60,
         timeRemaining: 60,
         isScheduled: true,
@@ -41,8 +42,8 @@ void main() {
     final expectedMap = {
       "sessionId" : 1,
     "date" : 0,
-    "startTime" : 1574874000,
-    "endTime" : 1574877600,
+    "startTime" : sut.timeToInt(DateTime.fromMillisecondsSinceEpoch(0), TimeOfDay(hour: 12, minute: 0)),
+    "endTime" : sut.timeToInt(DateTime.fromMillisecondsSinceEpoch(0), TimeOfDay(hour: 13, minute: 0)),
     "duration" : 60,
     "timeRemaining" : 60,
     "isScheduled" : true,

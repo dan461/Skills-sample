@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test/flutter_test.dart' as prefix0;
 import 'package:mockito/mockito.dart';
@@ -22,29 +23,29 @@ void main() {
     sut = SchedulerBloc(getSessionInMonth: mockGetSessionsInMonthUC);
     testSession = Session(
         date: DateTime.now(),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         isCompleted: false,
         isScheduled: true);
 
     testSession1 = Session(
         date: DateTime(2019, 12, 1),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         isCompleted: false,
         isScheduled: true);
 
     testSession2 = Session(
         date: DateTime(2019, 12, 2),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         isCompleted: false,
         isScheduled: true);
 
     testSession3 = Session(
         date: DateTime(2019, 12, 2),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         isCompleted: false,
         isScheduled: true);
   });

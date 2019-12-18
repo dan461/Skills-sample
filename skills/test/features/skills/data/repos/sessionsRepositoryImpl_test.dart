@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
@@ -19,8 +20,8 @@ void main() {
     sut = SessionsRepositoryImpl(localDataSource: mockLocalDataSource);
     testSessionModel = SessionModel(
         date: DateTime.now(),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isScheduled: false,
@@ -28,8 +29,8 @@ void main() {
 
     testSession = Session(
         date: DateTime.now(),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isCompleted: false,
@@ -40,8 +41,8 @@ void main() {
     Session newSession = Session(
         sessionId: 1,
         date: DateTime.now(),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isCompleted: false,

@@ -23,15 +23,15 @@ void main() {
     sut = NewSessionBloc(insertNewSession: mockInsertNewSessionUC);
     testSession = Session(
         date: DateTime.now(),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         isCompleted: false,
         isScheduled: true);
     newSession = Session(
         sessionId: 1,
         date: DateTime.now(),
-        startTime: 1,
-        endTime: 1,
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         isCompleted: false,
         isScheduled: true);
   });

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
@@ -19,9 +20,9 @@ void main() {
   });
 
   final testSession = Session(
-      date: DateTime.now(), startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
+      date: DateTime.now(), startTime: TimeOfDay(hour: 12, minute: 0), endTime: TimeOfDay(hour: 12, minute: 0), isCompleted: false, isScheduled: true);
   final newSession = Session(
-      sessionId: 1, date: DateTime.now(), startTime: 1, endTime: 1, isCompleted: false, isScheduled: true);
+      sessionId: 1, date: DateTime.now(), startTime: TimeOfDay(hour: 12, minute: 0), endTime: TimeOfDay(hour: 12, minute: 0), isCompleted: false, isScheduled: true);
 
   test('should insert a new session and return a session with an id',() async {
     when(mockSessionRepo.insertNewSession(testSession)).thenAnswer((_) async => Right(newSession));

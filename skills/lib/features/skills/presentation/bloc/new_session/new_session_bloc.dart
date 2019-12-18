@@ -38,8 +38,8 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   void createSession(DateTime date) {
     Session newSession = Session(
       date: date,
-      startTime: timeToInt(date, selectedStartTime),
-      endTime: timeToInt(date, selectedFinishTime),
+      startTime: selectedStartTime,
+      endTime: selectedFinishTime,
       duration: duration,
       timeRemaining: duration,
       isCompleted: false,
