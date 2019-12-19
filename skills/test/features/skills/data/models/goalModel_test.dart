@@ -8,6 +8,7 @@ import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
   GoalModel sut;
+  Map<String, dynamic> testMap;
 
   setUp(() {
     sut = GoalModel(
@@ -20,6 +21,18 @@ void main() {
         goalTime: 60,
         timeRemaining: 60,
         desc: "test");
+
+    testMap = {
+      'id': 1,
+      'skillId': 1,
+      'fromDate': 0,
+      'toDate': 0,
+      'timeBased': 1,
+      'isComplete': 0,
+      'goalTime': 60,
+      'timeRemaining': 60,
+      'desc': "test"
+    };
   });
   test(
     'should be subclass of Goal',
@@ -29,8 +42,7 @@ void main() {
   );
 
   test('fromMap should return a valid GoalModel', () async {
-    final Map<String, dynamic> jsonMap = json.decode(fixture('goalJson.json'));
-    final result = GoalModel.fromMap(jsonMap);
+    final result = GoalModel.fromMap(testMap);
     expect(result, sut);
   });
 

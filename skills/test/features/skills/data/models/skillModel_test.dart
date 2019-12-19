@@ -6,6 +6,7 @@ import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
   SkillModel sut;
+  Map<String, dynamic> testMap;
 
   setUp(() {
     sut = SkillModel(
@@ -17,6 +18,17 @@ void main() {
         lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
         currentGoalId: 1,
         goalText: "none");
+
+    testMap = {
+      'skillId': 1,
+      'name': "test",
+      'source': "testing",
+      'startDate': 0,
+      'totalTime': 1,
+      'lastPracDate': 0,
+      'currentGoalId': 1,
+      'goalText': "none"
+    };
   });
 
   test(
@@ -30,10 +42,10 @@ void main() {
     test(
       'should return a valid SkillModel from a Map',
       () async {
-        final Map<String, dynamic> jsonMap =
-            json.decode(fixture('skillJson.json'));
-        final result = SkillModel.fromMap(jsonMap);
-        expect(result, sut);
+        // final Map<String, dynamic> jsonMap =
+        //     json.decode(fixture('skillJson.json'));
+        final result = SkillModel.fromMap(testMap);
+        expect(sut, result);
       },
     );
   });
