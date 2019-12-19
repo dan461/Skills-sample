@@ -124,6 +124,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
         source: _sourceController.text,
         startDate: _skill.startDate,
         totalTime: _skill.totalTime,
+        lastPracDate: _skill.lastPracDate,
         currentGoalId: _skill.currentGoalId,
         goalText: _skill.goalText);
 

@@ -6,39 +6,40 @@ import 'dayCell.dart';
 class Calendar extends StatefulWidget {
   final Function tapCallback;
   final Function monthChangeCallback;
-  // final List<DateTime> sessionDates;
-  // final DateTime activeMonth;
-  final SchedulerBloc bloc;
+  final List<DateTime> eventDates;
+  final DateTime activeMonth;
+  
 
   const Calendar({
     Key key,
-    // this.activeMonth,
+    this.activeMonth,
     @required this.tapCallback,
     @required this.monthChangeCallback,
-    this.bloc,
+    this.eventDates,
   }) : super(key: key);
 
   @override
   _CalendarState createState() =>
-      _CalendarState(tapCallback, monthChangeCallback, bloc);
+      _CalendarState(tapCallback, monthChangeCallback, activeMonth, eventDates);
 }
 
 class _CalendarState extends State<Calendar> {
   
   double monthHeight;
-  // final DateTime activeMonth;
-  final SchedulerBloc bloc;
+  final DateTime activeMonth;
+  final List<DateTime> eventDates;
+  // final SchedulerBloc bloc;
 
   final Function tapCallback;
   final Function monthChangeCallback;
-  DateTime _activeMonth;
+ 
 
-  _CalendarState(this.tapCallback, this.monthChangeCallback, this.bloc);
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.activeMonth, this.eventDates);
 
   @override
   initState() {
     super.initState();
-    _activeMonth = bloc.activeMonth;
+    
   }
 
   String monthString(int month) {
@@ -130,7 +131,7 @@ class _CalendarState extends State<Calendar> {
               right: BorderSide(width: 1.0, color: Colors.grey[300]))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: buildMonth(month: bloc.activeMonth.month, year: bloc.activeMonth.year),
+        children: buildMonth(month: activeMonth.month, year: activeMonth.year),
       ),
     );
   }
@@ -172,10 +173,10 @@ class _CalendarState extends State<Calendar> {
       // else {
       //   thisDay = sunday.add(Duration(days: i));
       // }
-      bool hasSession = bloc.sessionDates.indexOf(thisDay) != -1;
+      bool hasSession = eventDates.indexOf(thisDay) != -1;
       days.add(DayCell(
         date: thisDay,
-        displayedMonth: bloc.activeMonth.month,
+        displayedMonth: activeMonth.month,
         tapCallback: tapCallback,
         hasSession: hasSession,
       ));
@@ -219,9 +220,9 @@ class _CalendarState extends State<Calendar> {
           ),
           Center(
             child: Text(
-              monthString(bloc.activeMonth.month) +
+              monthString(activeMonth.month) +
                   ' ' +
-                  bloc.activeMonth.year.toString(),
+                  activeMonth.year.toString(),
               textAlign: TextAlign.left,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
@@ -252,7 +253,7 @@ class _CalendarState extends State<Calendar> {
               scrollDirection: Axis.horizontal,
               reverse: true,
               itemBuilder: (context, position) {
-                return monthBuilder(_activeMonth);
+                return monthBuilder(activeMonth);
               },
               onPageChanged: (index) {
                 // changeMonth(index);

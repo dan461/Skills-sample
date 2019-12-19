@@ -54,11 +54,12 @@ void main() {
     expect(sut.initialState, equals(InitialSchedulerState()));
   });
 
-  test('test that findDaysSession() returns correct list of sessions', () {
+  test('test that daySession returns correct list of sessions', () {
     sut.sessionsForMonth = [testSession1, testSession2, testSession3];
-    final result = sut.findDaysSessions(DateTime(2019, 12, 2));
+    sut.selectedDay = testSession2.date;
+
     final matcher = [testSession2, testSession3];
-    expect(result, matcher);
+    expect(sut.daysSessions, matcher);
   });
 
   test('test that sessionDates returns correct list of DateTimes', () {
@@ -67,15 +68,27 @@ void main() {
     final result = sut.sessionDates;
     expect(result, matcher);
   });
-  
-  // test('test that bloc emits [DaySelectedState] when DaySelectedEvent occurs',
-  //     () {
-  //   // TODO - intentionally bad test, finish this
-  //   final expected = [InitialSchedulerState(), DaySelectedState()];
-  //   sut.add(DaySelectedEvent(DateTime.now()));
-  //   expect(sut, emitsInOrder(expected));
-    
-  // });
+
+  test(
+      'test that bloc emits [GettingSessionsForMonthState] when MonthSelectedEvent is added',
+      () async {
+    sut.add(MonthSelectedEvent(DateTime(2019, 12)));
+    final expected = [InitialSchedulerState(), GettingSessionsForMonthState()];
+    expect(sut, emitsInOrder(expected));
+  });
+
+  group('DaySelectedEvent', () {
+    test(
+        'test that bloc emits [DaySelectedState] when DaySelectedEvent is added',
+        () async {
+      final expected = [
+        InitialSchedulerState(),
+        DaySelectedState(date: testSession2.date, sessions: sut.daysSessions)
+      ];
+      sut.add(DaySelectedEvent(testSession2.date));
+      expect(sut, emitsInOrder(expected));
+    });
+  });
 
   group('GetSessionsInMonth', () {
     final testList = [testSession];
@@ -83,25 +96,24 @@ void main() {
     test('test that GetSessionsInMonth usecase is called', () async {
       when(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)))
           .thenAnswer((_) async => Right(testList));
-      sut.add(MonthSelectedEvent(testMonth));
+      sut.add(GetSessionsForMonthEvent(testMonth));
       await untilCalled(
           mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)));
       verify(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)));
     });
 
     test(
-        'test that bloc emits [GettingSessionForMonthState, SessionsForMonthReturnedState] when MonthSelectedEvent event occurs',
+        'test that bloc emits [SessionsForMonthReturnedState] when GetSessionsForMonthEvent event occurs',
         () async {
       when(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)))
           .thenAnswer((_) async => Right(testList));
 
       final expected = [
         InitialSchedulerState(),
-        GettingSessionsForMonthState(),
         SessionsForMonthReturnedState(testList)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(MonthSelectedEvent(testMonth));
+      sut.add(GetSessionsForMonthEvent(testMonth));
     });
   });
 }

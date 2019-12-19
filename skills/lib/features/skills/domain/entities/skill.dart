@@ -17,7 +17,7 @@ class Skill extends Equatable {
       @required this.source,
       this.startDate,
       this.totalTime,
-      this.lastPracDate,
+      @required this.lastPracDate,
       this.currentGoalId,
       this.goalText})
       : super();

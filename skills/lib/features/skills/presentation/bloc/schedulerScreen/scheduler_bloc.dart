@@ -7,20 +7,18 @@ import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
-  // List<Session> sessions;
   final GetSessionsInMonth getSessionInMonth;
-  List<Session> daysSessions = [];
+
   DateTime activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
 
   SchedulerBloc({this.getSessionInMonth});
-  // List<Session> sessionsList;
-  List<Session> sessionsForMonth;
-  
+
+  List<Session> sessionsForMonth = [];
+  DateTime selectedDay;
 
   List<DateTime> get sessionDates {
     List<DateTime> dates = [];
     for (var session in sessionsForMonth) {
-      // DateTime date = DateTime.fromMillisecondsSinceEpoch(session.date);
       if (dates.indexOf(session.date) == -1) {
         dates.add(session.date);
       }
@@ -29,27 +27,36 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     return dates;
   }
 
-  @override
-  SchedulerState get initialState => InitialSchedulerState();
-
-  List<Session> findDaysSessions(DateTime day) {
+  List<Session> get daysSessions {
     List<Session> found = [];
     for (var session in sessionsForMonth) {
-      if (session.date == day) {
+      if (session.date == selectedDay) {
         found.add(session);
       }
     }
     return found;
   }
 
-  
+  @override
+  SchedulerState get initialState => InitialSchedulerState();
+
+  @override
+  void onTransition(Transition<SchedulerEvent, SchedulerState> transition) {
+    print(transition);
+  }
+
+  @override
+  void onError(Object error, StackTrace stackTrace) {
+    print('$error, $stackTrace');
+  }
 
   @override
   Stream<SchedulerState> mapEventToState(
     SchedulerEvent event,
   ) async* {
     if (event is MonthSelectedEvent) {
-       yield GettingSessionsForMonthState();
+      yield GettingSessionsForMonthState();
+    } else if (event is GetSessionsForMonthEvent) {
       final failureOrSessions =
           await getSessionInMonth(SessionInMonthParams(event.month));
       yield failureOrSessions.fold(
@@ -58,7 +65,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
         return SessionsForMonthReturnedState(sessions);
       });
     } else if (event is DaySelectedEvent) {
-      daysSessions = findDaysSessions(event.date);
+      selectedDay = event.date;
       yield DaySelectedState(date: event.date, sessions: daysSessions);
     }
   }
