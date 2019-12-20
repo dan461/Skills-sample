@@ -1,9 +1,11 @@
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
+import 'package:skills/features/skills/data/models/skillEventModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:synchronized/synchronized.dart';
@@ -27,6 +29,10 @@ abstract class SkillsLocalDataSource {
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
+  Future<SkillEventModel> insertNewEvent(SkillEvent event);
+  Future<SkillEventModel>  getEventById(int id);
+  Future<int> updateEvent(SkillEvent event);
+  Future<int> deleteEventById(int id);
 }
 
 // Singleton class for providing access to sqlite database
@@ -281,6 +287,30 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       }
     }
     return sessionsList;
+  }
+
+  @override
+  Future<int> deleteEventById(int id) {
+    // TODO: implement deleteEventById
+    return null;
+  }
+
+  @override
+  Future<SkillEventModel> getEventById(int id) {
+    // TODO: implement getEventById
+    return null;
+  }
+
+  @override
+  Future<SkillEventModel> insertNewEvent(SkillEvent event) {
+    // TODO: implement insertNewEvent
+    return null;
+  }
+
+  @override
+  Future<int> updateEvent(SkillEvent event) {
+    // TODO: implement updateEvent
+    return null;
   }
 
   // @override
