@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
@@ -19,29 +20,25 @@ class InsertNewSkillEventUC
 }
 
 class GetEventByIdUC extends UseCase<SkillEvent, SkillEventGetOrDeleteParams> {
+  final SkillEventRepository repo;
 
-  final int eventId;
-
-  GetEventByIdUC(this.eventId);
+  GetEventByIdUC(this.repo);
   @override
   Future<Either<Failure, SkillEvent>> call(SkillEventGetOrDeleteParams params) {
-    // TODO: implement call
-    return null;
+    return repo.getEventById(params.eventId);
   }
-  
 }
 
-class DeleteEventByIdUC extends UseCase<SkillEvent, SkillEventGetOrDeleteParams> {
+class DeleteEventByIdUC
+    extends UseCase<SkillEvent, SkillEventGetOrDeleteParams> {
+  final SkillEventRepository repo;
 
-  final int eventId;
-
-  DeleteEventByIdUC(this.eventId);
+  DeleteEventByIdUC(this.repo);
   @override
   Future<Either<Failure, SkillEvent>> call(SkillEventGetOrDeleteParams params) {
     // TODO: implement call
     return null;
   }
-  
 }
 
 class UpdateSkillEventUC
