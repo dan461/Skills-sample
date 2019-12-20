@@ -3,6 +3,7 @@ import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
 class GoalCrudParams extends Params {
   final int id;
@@ -76,4 +77,20 @@ class SessionDeleteParams extends Params {
   SessionDeleteParams({@required this.sessionId});
   @override
   List<Object> get props => [sessionId];
+}
+
+class SkillEventInsertOrUpdateParams extends Params {
+  final SkillEvent event;
+
+  SkillEventInsertOrUpdateParams({@required this.event});
+  @override
+  List<Object> get props => [event];
+}
+
+class SkillEventGetOrDeleteParams extends Params {
+  final int eventId;
+
+  SkillEventGetOrDeleteParams({@required this.eventId});
+   @override
+  List<Object> get props => [eventId];
 }

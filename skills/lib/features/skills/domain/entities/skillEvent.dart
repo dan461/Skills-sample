@@ -11,7 +11,7 @@ class SkillEvent extends Equatable {
   final String skillString;
 
   SkillEvent(
-      {@required this.eventId,
+      {this.eventId,
       @required this.skillId,
       @required this.sessionId,
       @required this.date,
