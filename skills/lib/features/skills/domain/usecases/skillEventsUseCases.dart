@@ -14,8 +14,8 @@ class InsertNewSkillEventUC
 
   @override
   Future<Either<Failure, SkillEvent>> call(
-      SkillEventInsertOrUpdateParams params) {
-    return repo.insertNewEvent(params.event);
+      SkillEventInsertOrUpdateParams params) async {
+    return await repo.insertNewEvent(params.event);
   }
 }
 
@@ -24,32 +24,31 @@ class GetEventByIdUC extends UseCase<SkillEvent, SkillEventGetOrDeleteParams> {
 
   GetEventByIdUC(this.repo);
   @override
-  Future<Either<Failure, SkillEvent>> call(SkillEventGetOrDeleteParams params) {
-    return repo.getEventById(params.eventId);
+  Future<Either<Failure, SkillEvent>> call(SkillEventGetOrDeleteParams params) async {
+    return await repo.getEventById(params.eventId);
   }
 }
 
 class DeleteEventByIdUC
-    extends UseCase<SkillEvent, SkillEventGetOrDeleteParams> {
+    extends UseCase<int, SkillEventGetOrDeleteParams> {
   final SkillEventRepository repo;
 
   DeleteEventByIdUC(this.repo);
   @override
-  Future<Either<Failure, SkillEvent>> call(SkillEventGetOrDeleteParams params) {
-    // TODO: implement call
-    return null;
+  Future<Either<Failure, int>> call(SkillEventGetOrDeleteParams params) async {
+    return await repo.deleteEventById(params.eventId);
   }
 }
 
 class UpdateSkillEventUC
-    extends UseCase<SkillEvent, SkillEventInsertOrUpdateParams> {
+    extends UseCase<int, SkillEventInsertOrUpdateParams> {
   final SkillEventRepository repo;
 
   UpdateSkillEventUC(this.repo);
 
   @override
-  Future<Either<Failure, SkillEvent>> call(
-      SkillEventInsertOrUpdateParams params) {
-    return null;
+  Future<Either<Failure, int>> call(
+      SkillEventInsertOrUpdateParams params) async {
+    return await repo.updateEvent(params.event);
   }
 }
