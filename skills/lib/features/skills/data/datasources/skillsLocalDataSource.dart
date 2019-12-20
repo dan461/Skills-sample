@@ -30,7 +30,7 @@ abstract class SkillsLocalDataSource {
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
   Future<SkillEventModel> insertNewEvent(SkillEvent event);
-  Future<SkillEventModel>  getEventById(int id);
+  Future<SkillEventModel> getEventById(int id);
   Future<int> updateEvent(SkillEvent event);
   Future<int> deleteEventById(int id);
 }
@@ -276,12 +276,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   Future<List<Session>> getSessionsInMonth(DateTime month) async {
-    final nextMonth = DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
+    final nextMonth =
+        DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
     final Database db = await database;
-    List<Map> maps = await db.query(sessionsTable, columns: null, where: 'date BETWEEN ? AND ?', whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
+    List<Map> maps = await db.query(sessionsTable,
+        columns: null,
+        where: 'date BETWEEN ? AND ?',
+        whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
     List<Session> sessionsList = [];
-    if (maps.isNotEmpty){
-      for (var map in maps){
+    if (maps.isNotEmpty) {
+      for (var map in maps) {
         Session session = SessionModel.fromMap(map);
         sessionsList.add(session);
       }
@@ -312,20 +316,4 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     // TODO: implement updateEvent
     return null;
   }
-
-  // @override
-  // Future<int> addGoalToSkill(int skillId, int goalId) async {
-  //   final Database db = await database;
-  //   int newId;
-  //   await db.transaction((txn) async {
-  //     newId = await txn.rawInsert(
-  //         'INSERT INTO $skillsGoalsTable(skill_id, goal_id) VALUES ($skillId, $goalId)');
-  //   });
-
-  //   // Skill skill = await getSkillById(skillId);
-  //   // int updates = await update
-
-  //   return newId;
-  // }
-
 }

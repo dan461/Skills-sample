@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
-import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 
 class DayDetails extends StatefulWidget {
   final List<Session> sessions;

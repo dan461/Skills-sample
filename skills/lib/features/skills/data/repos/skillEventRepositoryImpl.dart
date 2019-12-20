@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skills/core/error/failures.dart';
-import 'package:skills/core/network/networkInfo.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
-import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 

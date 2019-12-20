@@ -27,7 +27,7 @@ void main() {
         skillString: 'test');
 
         final SkillEvent testEvent = testEventModel;
-        final List<SkillEventModel> testList = [testEventModel];
+        // final List<SkillEventModel> testList = [testEventModel];
 
         test('insertNewEvent - returns a new SkillEventModel with an id', () async {
           when(mockLocalDataSource.insertNewEvent(testEvent)).thenAnswer((_) async => testEventModel);

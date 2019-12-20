@@ -1,6 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';

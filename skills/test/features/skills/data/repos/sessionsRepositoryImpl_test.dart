@@ -5,7 +5,6 @@ import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/data/repos/sessionsRepositoryImpl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
 import 'goalsRepositoryImpl_test.dart';
 

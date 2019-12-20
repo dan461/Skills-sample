@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/core/dbManager.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/homeScreen.dart';
 import 'package:skills/service_locator.dart' as locatorPrefix;
-import 'package:skills/service_locator.dart';
 
 void main() {
   locatorPrefix.init();

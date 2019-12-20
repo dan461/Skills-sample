@@ -18,7 +18,7 @@ void main() {
   // MockAddGoalToSkill mockAddGoalToSkill;
   MockDeleteGoalWithId mockDeleteGoalWithId;
   Goal testGoal;
-  Goal newGoal;
+  
   GoalModel testModel;
 
   setUp(() {
@@ -38,14 +38,7 @@ void main() {
         timeRemaining: 0,
         goalTime: 0);
 
-    newGoal = Goal(
-        skillId: 1,
-        fromDate: DateTime.now(),
-        toDate: DateTime.now(),
-        isComplete: false,
-        timeBased: true,
-        timeRemaining: 0,
-        goalTime: 0);
+    
 
     testModel = GoalModel(
         skillId: testGoal.skillId,

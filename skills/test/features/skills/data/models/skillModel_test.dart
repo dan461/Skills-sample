@@ -1,8 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
-import 'dart:convert';
-import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
   SkillModel sut;

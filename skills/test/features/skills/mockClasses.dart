@@ -19,7 +19,6 @@ import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
 import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
-import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
 
 class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
 

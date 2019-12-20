@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'daysRow.dart';
 import 'dayCell.dart';
 

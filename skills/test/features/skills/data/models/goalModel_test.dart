@@ -1,10 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 
-import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
   GoalModel sut;
