@@ -17,6 +17,7 @@ import 'features/skills/domain/usecases/getSkillById.dart';
 import 'features/skills/domain/usecases/insertNewGoal.dart';
 import 'features/skills/domain/usecases/insertNewSkill.dart';
 import 'features/skills/domain/usecases/sessionsUseCases.dart';
+import 'features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'features/skills/domain/usecases/updateGoal.dart';
 import 'features/skills/domain/usecases/updateSkill.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
@@ -68,6 +69,11 @@ void init() {
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
   locator.registerLazySingleton(() => GetSessionsInMonth(locator()));
+
+  locator.registerLazySingleton(() => InsertNewSkillEventUC(locator()));
+  locator.registerLazySingleton(() => GetEventByIdUC(locator()));
+  locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
+  locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
 
   // Repositories
   locator.registerLazySingleton<SkillRepository>(
