@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/service_locator.dart';
@@ -253,9 +254,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     );
   }
 
-  void _showSkillsList() {
+  void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => SkillsScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) => SkillsScreen(callback: _selectSkill),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;
@@ -266,7 +267,12 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             child: child,
           );
         });
-    Navigator.of(context).push(routeBuilder);
+    var selectedSkill = await Navigator.of(context).push(routeBuilder);
+    print(selectedSkill);
+  }
+
+  void _selectSkill(Skill skill){
+    Navigator.of(context).pop(skill);
   }
 
   void _selectStartTime() async {
