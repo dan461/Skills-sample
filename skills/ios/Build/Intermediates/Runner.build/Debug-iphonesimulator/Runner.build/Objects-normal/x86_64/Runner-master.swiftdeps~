@@ -1,5 +1,5 @@
 version: "Apple Swift version 5.1.2 (swiftlang-1100.0.278 clang-1100.0.33.9)"
 options: "f91386f746a662435c04c12260b827bf"
-build_time: [1576776857, 569615000]
+build_time: [1576780478, 548933000]
 inputs:
   "/Users/danshriver/Developer/Flutter_Projects/skills_clean/skills/ios/Runner/AppDelegate.swift": [1570222912, 714636637]

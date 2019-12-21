@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
+import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/service_locator.dart';
 
 class NewSessionScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class NewSessionScreen extends StatefulWidget {
 
 class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
-  
+
   bool _doneButtonEnabled = false;
   NewSessionBloc _bloc;
 
@@ -126,7 +126,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                               style: Theme.of(context).textTheme.subhead),
                           IconButton(
                             icon: Icon(Icons.add),
-                            onPressed: () {},
+                            onPressed: () {
+                              _showSkillsList();
+                            },
                           )
                         ],
                       ),
@@ -249,6 +251,22 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         ],
       ),
     );
+  }
+
+  void _showSkillsList() {
+    var routeBuilder = PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SkillsScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(0.0, 1.0);
+          var end = Offset.zero;
+          var tween = Tween(begin: begin, end: end);
+          var offsetAnimation = animation.drive(tween);
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        });
+    Navigator.of(context).push(routeBuilder);
   }
 
   void _selectStartTime() async {
