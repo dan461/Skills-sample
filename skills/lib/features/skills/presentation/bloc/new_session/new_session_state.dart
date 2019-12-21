@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
 abstract class NewSessionState extends Equatable {
   const NewSessionState();
@@ -31,4 +34,25 @@ class NewSessionErrorState extends NewSessionState {
 
   @override
   List<Object> get props => [message];
+}
+
+class SkillSelectedForEventState extends NewSessionState {
+  final Skill skill;
+
+  SkillSelectedForEventState({@required this.skill});
+  @override
+  List<Object> get props => [skill];
+}
+
+class NewSessionCrudInProgressState extends NewSessionState {
+  @override
+  List<Object> get props => [];
+}
+
+class SkillEventCreatedState extends NewSessionState {
+  final SkillEvent event;
+
+  SkillEventCreatedState({@required this.event});
+  @override
+  List<Object> get props => [event];
 }

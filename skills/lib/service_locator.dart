@@ -49,7 +49,8 @@ void init() {
         addGoalToSkill: locator(),
       ));
 
-  locator.registerFactory(() => NewSessionBloc(insertNewSession: locator()));
+  locator.registerFactory(() => NewSessionBloc(
+      insertNewSession: locator(), insertNewSkillEventUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator()));
 
