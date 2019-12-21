@@ -9,18 +9,27 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_st
 import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
 import 'package:skills/service_locator.dart';
 
+typedef SelectionCallback(Skill skill);
+
 class SkillsScreen extends StatefulWidget {
+  final SelectionCallback callback;
+
+  const SkillsScreen({Key key, this.callback}) : super(key: key);
   @override
-  _SkillsScreenState createState() => _SkillsScreenState();
+  _SkillsScreenState createState() => _SkillsScreenState(callback);
 }
 
 class _SkillsScreenState extends State<SkillsScreen> {
+  final SelectionCallback callback;
   SkillsBloc bloc;
+
+  _SkillsScreenState(this.callback);
   @override
   void initState() {
     super.initState();
     bloc = locator<SkillsBloc>();
     bloc.add(GetAllSkillsEvent());
+    
   }
 
   @override
@@ -93,7 +102,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
               body = Container(
                 child: SkillsList(
                   skills: state.skills,
-                  callback: editSkill,
+                  callback: callback == null ? editSkill : callback,
                 ),
               );
             } else {
@@ -114,11 +123,11 @@ class _SkillsScreenState extends State<SkillsScreen> {
 
 class SkillsList extends StatefulWidget {
   final List<Skill> skills;
-  final Function callback;
+  final SelectionCallback callback;
   const SkillsList({
     Key key,
-    this.skills,
-    this.callback,
+    @required this.skills,
+    @required this.callback,
   }) : super(key: key);
 
   @override
@@ -157,8 +166,8 @@ class _SkillsListState extends State<SkillsList> {
 
 class SkillCell extends StatelessWidget {
   final Skill skill;
-  Function callback;
-  SkillCell({this.skill, this.callback});
+  final SelectionCallback callback;
+  SkillCell({@required this.skill, @required this.callback});
 
   @override
   Widget build(BuildContext context) {
