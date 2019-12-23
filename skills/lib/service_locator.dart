@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
+import 'package:skills/features/skills/data/repos/skillEventRepositoryImpl.dart';
 import 'package:skills/features/skills/domain/repos/goal_repo.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
+import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
@@ -83,6 +85,8 @@ void init() {
       () => GoalsRepositoryImpl(localDataSource: locator()));
   locator.registerLazySingleton<SessionRepository>(
       () => SessionsRepositoryImpl(localDataSource: locator()));
+  locator.registerLazySingleton<SkillEventRepository>(
+      () => SkillEventRepositoryImpl(localDataSource: locator()));
 
   // Data Sources
   locator.registerLazySingleton<SkillsLocalDataSource>(
