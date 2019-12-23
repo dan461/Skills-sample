@@ -20,7 +20,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   bool _doneButtonEnabled = false;
   NewSessionBloc _bloc;
-
+  Skill _selectedSkill;
   _NewSessionScreenState(this.date);
 
   @override
@@ -62,81 +62,84 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     print('cancel');
   }
 
-  Container _contentBuilder() {
+  void _cancelEventTapped() {
+    setState(() {
+      _selectedSkill == null;
+    });
+  }
+
+  Container _contentBuilder(Skill skill) {
     return Container(
       child: Column(
         children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        DateFormat.yMMMd().format(date),
-                        style: Theme.of(context).textTheme.title,
-                      ),
-                    )
-                  ],
-                ),
-                Row(
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                    child: Text(
+                      DateFormat.yMMMd().format(date),
+                      style: Theme.of(context).textTheme.title,
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
+                      child: _timeSelectionBox(
+                          'Start: ', _startTimeString, _selectStartTime)),
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
+                      child: _timeSelectionBox(
+                          'Finish: ', _finishTimeString, _selectFinishTime)),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 2, 8, 10),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _timeSelectionBox(
-                            'Start: ', _startTimeString, _selectStartTime)),
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _timeSelectionBox(
-                            'Finish: ', _finishTimeString, _selectFinishTime)),
+                    Text(_durationString,
+                        style: Theme.of(context).textTheme.subhead),
+                    Text('Available: 30 min.',
+                        style: Theme.of(context).textTheme.subhead)
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(_durationString,
-                          style: Theme.of(context).textTheme.subhead),
-                      Text('Available: 30 min.',
-                          style: Theme.of(context).textTheme.subhead)
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+              _eventCreator(skill),
+            ],
           ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: <Widget>[
-                Container(
-                    color: Colors.grey,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Activities',
-                              style: Theme.of(context).textTheme.subhead),
-                          Text('0 scheduled',
-                              style: Theme.of(context).textTheme.subhead),
-                          IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () {
-                              _showSkillsList();
-                            },
-                          )
-                        ],
-                      ),
-                    )),
-                _sessionActivityCard(),
-              ],
-            ),
+          Column(
+            children: <Widget>[
+              Container(
+                  height: 40,
+                  color: Colors.grey[200],
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Activities',
+                            style: Theme.of(context).textTheme.subhead),
+                        Text('0 scheduled',
+                            style: Theme.of(context).textTheme.subhead),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            _showSkillsList();
+                          },
+                        )
+                      ],
+                    ),
+                  )),
+              // _sessionActivityCard(),
+            ],
           ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
@@ -161,14 +164,93 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     );
   }
 
+  Row _eventCreator(Skill skill) {
+    Widget body;
+    if (skill == null) {
+      body = SizedBox();
+    } else {
+      body = Card(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6))),
+        child: Container(
+          width: MediaQuery.of(context).size.width - 10,
+          color: Colors.grey[200],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(skill.name, style: Theme.of(context).textTheme.subhead),
+                  Container(
+                    color: Colors.amber,
+                    height: 30,
+                    width: 100,
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Minutes: ',
+                          style: Theme.of(context).textTheme.subhead,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                                hintText: '00', border: InputBorder.none),
+                            keyboardType: TextInputType.number,
+                            // controller: _minTextController,
+                            onChanged: (_) {
+                              // _setDoneButtonEnabled();
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ButtonBar(
+                    buttonHeight: 30,
+                    alignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          _cancelEventTapped();
+                        },
+                      ),
+                      RaisedButton(
+                          child: Text('Add'),
+                          onPressed: _doneButtonEnabled
+                              ? () {
+                                  _doneTapped();
+                                }
+                              : null),
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[body],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget body = _contentBuilder();
+    Widget body = _contentBuilder(_selectedSkill);
     return BlocListener<NewSessionBloc, NewSessionState>(
       bloc: _bloc,
       listener: (context, state) {
         if (state is InitialNewSessionState) {
-          body = _contentBuilder();
+          body = _contentBuilder(null);
         } else if (state is NewSessionInsertingState) {
           body = Center(
             child: CircularProgressIndicator(),
@@ -178,6 +260,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             child: CircularProgressIndicator(),
           );
           Navigator.of(context).pop();
+        } else if (state is SkillSelectedForEventState) {
+          _selectedSkill = state.skill;
+          body = _contentBuilder(_selectedSkill);
         }
       },
       child: Scaffold(
@@ -256,7 +341,8 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => SkillsScreen(callback: _selectSkill),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SkillsScreen(callback: _selectSkill),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;
@@ -268,10 +354,15 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
           );
         });
     var selectedSkill = await Navigator.of(context).push(routeBuilder);
-    print(selectedSkill);
+    if (selectedSkill != null) {
+      setState(() {
+        _selectedSkill = selectedSkill;
+        _bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
+      });
+    }
   }
 
-  void _selectSkill(Skill skill){
+  void _selectSkill(Skill skill) {
     Navigator.of(context).pop(skill);
   }
 

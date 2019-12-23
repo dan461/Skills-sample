@@ -50,6 +50,12 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   }
 
   @override
+  void onTransition(Transition<NewSessionEvent, NewSessionState> transition) {
+    
+    super.onTransition(transition);
+  }
+
+  @override
   NewSessionState get initialState => InitialNewSessionState();
 
   @override
