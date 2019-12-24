@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/core/dbManager.dart';
 import 'package:skills/features/skills/presentation/pages/homeScreen.dart';
 import 'package:skills/service_locator.dart' as locatorPrefix;
 
@@ -17,7 +18,7 @@ class _SkillsAppState extends State<SkillsApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: DbManager(),
       theme: ThemeData(
         primaryColor: Colors.green,
         accentColor: Colors.lightGreenAccent,
