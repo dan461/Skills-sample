@@ -54,7 +54,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   final String goalsTable = 'goals';
   final String skillsGoalsTable = 'skills_goals';
   final String sessionsTable = 'sessions';
-  final String sessionSkillsTable = 'session_skills';
+  final String skillEventsTable = 'skillEvents';
+  // final String sessionSkillsTable = 'session_skills';
   final String columnId = 'id';
 
   Future<Database> get database async {
@@ -70,6 +71,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         }
       });
     }
+    
     return _database;
   }
 
@@ -77,9 +79,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
     await db.execute(_createSessionsTable);
-
-    // await db.execute(_createSessionsTable);
-    // await db.execute(_createSessionSkillsJoinTable);
+    await db.execute(_createSkillEventsTable);
   }
 
   Future<void> deleteDatabase() async {
@@ -105,9 +105,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
       "isScheduled INTEGER, isCompleted INTEGER)";
 
-  // final String _createSessionSkillsJoinTable =
-  //     "$createTable session_skills($idKey"
-  //     "skill_Id INTEGER, session_Id INTEGER)";
+  final String _createSkillEventsTable =
+      "$createTable skillEvents(eventId $primaryKey, "
+      "skillId $integer, sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
+      "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
   @override
   Future<List<SkillModel>> getAllSkills() async {
@@ -221,7 +222,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> updateGoal(Goal goal) async {
     final Database db = await database;
-    final GoalModel goalModel = goal;
+    final GoalModel goalModel = GoalModel(
+        id: goal.id,
+        skillId: goal.skillId,
+        fromDate: goal.fromDate,
+        toDate: goal.toDate,
+        timeBased: goal.timeBased,
+        isComplete: goal.isComplete,
+        goalTime: goal.goalTime,
+        timeRemaining: goal.timeRemaining,
+        desc: goal.desc);
     int updates = await db.update(goalsTable, goalModel.toMap(),
         where: 'id = ?', whereArgs: [goal.id]);
     return updates;
@@ -294,26 +304,55 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> deleteEventById(int id) {
-    // TODO: implement deleteEventById
+  Future<int> deleteEventById(int id) async {
+    final Database db = await database;
+    int result = await db
+        .delete(skillEventsTable, where: 'eventId = ?', whereArgs: [id]);
+    return result;
+  }
+
+  @override
+  Future<SkillEventModel> getEventById(int id) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(skillEventsTable,
+        columns: null, where: 'eventId = ?', whereArgs: [id]);
+    if (maps.length > 0) {
+      return SkillEventModel.fromMap(maps.first);
+    }
     return null;
   }
 
   @override
-  Future<SkillEventModel> getEventById(int id) {
-    // TODO: implement getEventById
-    return null;
+  Future<SkillEventModel> insertNewEvent(SkillEvent event) async {
+    final Database db = await database;
+    final model = SkillEventModel(
+        skillId: event.skillId,
+        sessionId: event.sessionId,
+        date: event.date,
+        duration: event.duration,
+        isComplete: event.isComplete,
+        skillString: event.skillString);
+    int id = await db.insert(skillEventsTable, model.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+
+    final newEvent = await getEventById(id);
+    return newEvent;
   }
 
   @override
-  Future<SkillEventModel> insertNewEvent(SkillEvent event) {
-    // TODO: implement insertNewEvent
-    return null;
-  }
+  Future<int> updateEvent(SkillEvent event) async {
+    final Database db = await database;
+    final model = SkillEventModel(
+        eventId: event.eventId,
+        skillId: event.skillId,
+        sessionId: event.sessionId,
+        date: event.date,
+        duration: event.duration,
+        isComplete: event.isComplete,
+        skillString: event.skillString);
 
-  @override
-  Future<int> updateEvent(SkillEvent event) {
-    // TODO: implement updateEvent
-    return null;
+    int updates = await db.update(skillEventsTable, model.toMap(),
+        where: 'eventId = ?', whereArgs: [event.eventId]);
+    return updates;
   }
 }
