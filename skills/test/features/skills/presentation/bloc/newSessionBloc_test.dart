@@ -15,6 +15,7 @@ void main() {
   NewSessionBloc sut;
   MockInsertNewSessionUC mockInsertNewSessionUC;
   MockInsertNewEventUC mockInsertNewEventUC;
+  MockInsertEventsForSessionUC mockInsertEventsForSessionUC;
   MockSessionRepo mockSessionRepo;
   Session testSession;
   Session newSession;
@@ -23,7 +24,7 @@ void main() {
     mockSessionRepo = MockSessionRepo();
     mockInsertNewSessionUC = MockInsertNewSessionUC();
     mockInsertNewEventUC = MockInsertNewEventUC();
-    sut = NewSessionBloc(insertNewSession: mockInsertNewSessionUC, insertNewSkillEventUC: mockInsertNewEventUC);
+    sut = NewSessionBloc(insertNewSession: mockInsertNewSessionUC, insertEventsForSessionUC: mockInsertEventsForSessionUC);
     testSession = Session(
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
@@ -43,10 +44,10 @@ void main() {
     expect(sut.initialState, equals(InitialNewSessionState()));
   });
 
-  test('test that duration integer is correct', () {
+  test('test that sessionDuration integer is correct', () {
     sut.selectedStartTime = TimeOfDay(hour: 12, minute: 0);
     sut.selectedFinishTime = TimeOfDay(hour: 13, minute: 0);
-    expect(sut.duration, 60);
+    expect(sut.sessionDuration, 60);
   });
 
   group('InsertNewSession', () {

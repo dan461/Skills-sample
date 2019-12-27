@@ -52,7 +52,7 @@ void init() {
       ));
 
   locator.registerFactory(() => NewSessionBloc(
-      insertNewSession: locator(), insertNewSkillEventUC: locator()));
+      insertNewSession: locator(), insertEventsForSessionUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator()));
 
@@ -74,6 +74,7 @@ void init() {
   locator.registerLazySingleton(() => GetSessionsInMonth(locator()));
 
   locator.registerLazySingleton(() => InsertNewSkillEventUC(locator()));
+  locator.registerLazySingleton(() => InsertEventsForSessionUC(locator()));
   locator.registerLazySingleton(() => GetEventByIdUC(locator()));
   locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
   locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));

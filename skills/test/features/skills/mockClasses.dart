@@ -70,5 +70,7 @@ class MockDeleteEventByIdUC extends Mock implements DeleteEventByIdUC {}
 
 class MockUpdateEventUC extends Mock implements UpdateSkillEventUC {}
 
+class MockInsertEventsForSessionUC extends Mock implements InsertEventsForSessionUC {}
+
 
 

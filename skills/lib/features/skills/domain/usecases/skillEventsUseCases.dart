@@ -18,6 +18,18 @@ class InsertNewSkillEventUC
   }
 }
 
+class InsertEventsForSessionUC extends UseCase<void, SkillEventMultiInsertParams> {
+  final SkillEventRepository repo;
+
+  InsertEventsForSessionUC(this.repo);
+  @override
+  Future<Either<Failure, void>> call(SkillEventMultiInsertParams params) {
+    
+    return repo.insertEvents(params.events, params.newSessionId);
+  }
+  
+}
+
 class GetEventByIdUC extends UseCase<SkillEvent, SkillEventGetOrDeleteParams> {
   final SkillEventRepository repo;
 

@@ -27,6 +27,11 @@ class SkillEventRepositoryImpl implements SkillEventRepository {
   }
 
   @override
+  Future<Either<Failure, void>> insertEvents(List<SkillEvent> events, int newSessionId) async {
+    return Right(await localDataSource.insertEvents(events, newSessionId));
+  }
+
+  @override
   Future<Either<Failure, int>> updateEvent(SkillEvent event) async {
     return Right(await localDataSource.updateEvent(event));
   }

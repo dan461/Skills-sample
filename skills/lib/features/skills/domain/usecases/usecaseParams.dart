@@ -94,3 +94,14 @@ class SkillEventGetOrDeleteParams extends Params {
    @override
   List<Object> get props => [eventId];
 }
+
+class SkillEventMultiInsertParams extends Params {
+  final List<SkillEvent> events;
+  final int newSessionId;
+
+  SkillEventMultiInsertParams({@required this.events, @required this.newSessionId});
+
+   @override
+  List<Object> get props => [events];
+  
+}
