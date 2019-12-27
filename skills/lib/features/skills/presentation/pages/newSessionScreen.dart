@@ -19,9 +19,12 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
 
   bool _doneButtonEnabled = false;
+  bool _eventCreateButtonEnabled = false;
   NewSessionBloc _bloc;
   Skill _selectedSkill;
   _NewSessionScreenState(this.date);
+
+  TextEditingController _eventDurationTextControl = TextEditingController();
 
   @override
   void initState() {
@@ -43,8 +46,15 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   String get _durationString {
-    String minutes = _bloc.duration.toString();
+    String minutes = _bloc.sessionDuration.toString();
     return 'Duration: $minutes min.';
+  }
+
+  int get _eventDuration {
+    int minutes = _eventDurationTextControl.text.isNotEmpty
+        ? int.parse(_eventDurationTextControl.text)
+        : 0;
+    return minutes;
   }
 
   void _setDoneBtnStatus() {
@@ -54,17 +64,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     });
   }
 
-  void _doneTapped() {
-    _bloc.createSession(date);
-  }
-
-  void _cancelTapped() {
-    print('cancel');
-  }
-
-  void _cancelEventTapped() {
+  void _setEventCreateButtonEnabled(){
     setState(() {
-      _selectedSkill == null;
+      _eventCreateButtonEnabled = _eventDuration > 0;
     });
   }
 
@@ -197,9 +199,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                             decoration: InputDecoration(
                                 hintText: '00', border: InputBorder.none),
                             keyboardType: TextInputType.number,
-                            // controller: _minTextController,
+                            controller: _eventDurationTextControl,
                             onChanged: (_) {
-                              // _setDoneButtonEnabled();
+                              _setEventCreateButtonEnabled();
                             },
                           ),
                         )
@@ -223,9 +225,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                       ),
                       RaisedButton(
                           child: Text('Add'),
-                          onPressed: _doneButtonEnabled
+                          onPressed: _eventCreateButtonEnabled
                               ? () {
-                                  _doneTapped();
+                                  _addEvent();
                                 }
                               : null),
                     ],
@@ -262,6 +264,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
           Navigator.of(context).pop();
         } else if (state is SkillSelectedForEventState) {
           _selectedSkill = state.skill;
+          body = _contentBuilder(_selectedSkill);
+        } else if (state is SkillEventCreatedState){
+          _selectedSkill = null;
           body = _contentBuilder(_selectedSkill);
         }
       },
@@ -337,6 +342,28 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         ],
       ),
     );
+  }
+
+  void _doneTapped() {
+    _bloc.createSession(date);
+  }
+
+  void _cancelTapped() {
+    print('cancel');
+  }
+
+  void _addEvent() {
+    _bloc.eventDuration = _eventDuration;
+    _bloc.createEvent(date);
+    setState(() {
+      _selectedSkill = null;
+    });
+  }
+
+  void _cancelEventTapped() {
+    setState(() {
+      _selectedSkill == null;
+    });
   }
 
   void _showSkillsList() async {

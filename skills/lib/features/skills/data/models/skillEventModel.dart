@@ -3,7 +3,7 @@ import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
 class SkillEventModel extends SkillEvent {
   SkillEventModel(
-      {@required int eventId,
+      {int eventId,
       @required int skillId,
       @required int sessionId,
       @required DateTime date,
