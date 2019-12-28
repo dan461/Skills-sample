@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
@@ -72,6 +73,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   Container _contentBuilder(Skill skill) {
+    String countString = _bloc.eventMaps.length.toString();
     return Container(
       child: Column(
         children: <Widget>[
@@ -130,7 +132,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                       children: <Widget>[
                         Text('Activities',
                             style: Theme.of(context).textTheme.subhead),
-                        Text('0 scheduled',
+                        Text('$countString scheduled',
                             style: Theme.of(context).textTheme.subhead),
                         IconButton(
                           icon: Icon(Icons.add),
@@ -141,7 +143,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                       ],
                     ),
                   )),
-              // Expanded(child: _eventsListBuilder()),
             ],
           ),
           _eventsListBuilder(),
@@ -168,11 +169,13 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     );
   }
 
-  ListView _eventsListBuilder(){
+  ListView _eventsListBuilder() {
     return ListView.builder(
       shrinkWrap: true,
-      itemBuilder: (context, index){
-        return SessionEventCard(map: _bloc.eventMaps[index],);
+      itemBuilder: (context, index) {
+        return SessionEventCard(
+          map: _bloc.eventMaps[index],
+        );
       },
       itemCount: _bloc.pendingEvents.length,
     );
@@ -406,17 +409,17 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             child: child,
           );
         });
-    var selectedSkill = await Navigator.of(context).push(routeBuilder);
-    if (selectedSkill != null) {
+    var selectedSkillId = await Navigator.of(context).push(routeBuilder);
+    if (selectedSkillId != null) {
       setState(() {
-        _selectedSkill = selectedSkill;
-        _bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
+        // _selectedSkill = selectedSkill;
+        _bloc.add(SkillSelectedForSessionEvent(skillId: selectedSkillId));
       });
     }
   }
 
   void _selectSkill(Skill skill) {
-    Navigator.of(context).pop(skill);
+    Navigator.of(context).pop(skill.id);
   }
 
   void _selectStartTime() async {
@@ -449,14 +452,46 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 class SessionEventCard extends StatelessWidget {
   final Map<String, dynamic> map;
   // final SkillEvent event;
-  
 
   const SessionEventCard({Key key, @required this.map}) : super(key: key);
 
+  Widget goalSectionBuilder(Goal goal, Skill skill, BuildContext context) {
+    Widget body = SizedBox();
+    if (goal != null) {
+      String goalTimeString = goal.timeRemaining.toString();
+      body = Card(
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(skill.goalText,
+                      style: Theme.of(context).textTheme.body1),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text('$goalTimeString min remaining',
+                      style: Theme.of(context).textTheme.body1)
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    return body;
+  }
+
   @override
   Widget build(BuildContext context) {
-    
     String durationString = map['event'].duration.toString();
+    Skill skill = map['skill'];
+    Goal goal = map['goal'];
+
     return Card(
       color: Colors.amber[300],
       shape: RoundedRectangleBorder(
@@ -469,30 +504,17 @@ class SessionEventCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(map['skill'].name,
+                  Text(skill.name, style: Theme.of(context).textTheme.subhead),
+                  Text('$durationString min.',
                       style: Theme.of(context).textTheme.subhead),
-                  Text('$durationString min.', style: Theme.of(context).textTheme.subhead),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  Text(map['skill'].source, style: Theme.of(context).textTheme.body1)
+                  Text(skill.source, style: Theme.of(context).textTheme.body1)
                 ],
               ),
-              // Card(
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(2.0),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       children: <Widget>[
-              //         Text('Goal: 1 hr 30 min by 11/30',
-              //             style: Theme.of(context).textTheme.body1),
-              //         Text('30 min completed',
-              //             style: Theme.of(context).textTheme.body1)
-              //       ],
-              //     ),
-              //   ),
-              // )
+              goalSectionBuilder(goal, skill, context)
             ],
           ),
         ),

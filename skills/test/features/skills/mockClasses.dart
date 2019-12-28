@@ -11,6 +11,7 @@ import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
 import 'package:skills/features/skills/domain/usecases/deleteSessionWithId.dart';
 import 'package:skills/features/skills/domain/usecases/deleteSkillWithId.dart';
 import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
+import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
 import 'package:skills/features/skills/domain/usecases/getSessionWithId.dart';
 import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
@@ -33,6 +34,8 @@ class MockGoalRepo extends Mock implements GoalRepository {}
 class MockSessionRepo extends Mock implements SessionRepository {}
 
 class MockUpdateGoalUC extends Mock implements UpdateGoal {}
+
+class MockGetGoalById extends Mock implements GetGoalById {}
 
 class MockDeleteGoalWithId extends Mock implements DeleteGoalWithId {}
 

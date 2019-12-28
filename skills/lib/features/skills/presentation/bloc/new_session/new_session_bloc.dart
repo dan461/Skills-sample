@@ -2,22 +2,28 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
+import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import 'package:skills/service_locator.dart';
 import './bloc.dart';
 
 class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   final InsertNewSession insertNewSession;
   // final InsertNewSkillEventUC insertNewSkillEventUC;
   final InsertEventsForSessionUC insertEventsForSessionUC;
+
   TimeOfDay selectedStartTime;
   TimeOfDay selectedFinishTime;
   DateTime sessionDate;
   Skill selectedSkill;
+  Goal currentGoal;
   Session _currentSession;
   List<SkillEvent> pendingEvents = [];
   List<Map> eventMaps = [];
@@ -68,7 +74,11 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
         skillString: selectedSkill.name);
 
     pendingEvents.add(newEvent);
-    Map<String, dynamic> map = {'event' : newEvent, 'skill': selectedSkill,};
+    Map<String, dynamic> map = {
+      'event': newEvent,
+      'skill': selectedSkill,
+      'goal' : currentGoal
+    };
     eventMaps.add(map);
   }
 
@@ -97,8 +107,16 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
       });
       //Skill selected
     } else if (event is SkillSelectedForSessionEvent) {
-      selectedSkill = event.skill;
-      yield SkillSelectedForEventState(skill: event.skill);
+      // selectedSkill = event.skill;
+      var getInfo = locator<GetSkillInfoForEvent>();
+      final infoOrFail = await getInfo(GetSkillParams(id: event.skillId));
+      yield infoOrFail.fold(
+          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (map) {
+        selectedSkill = map['skill'];
+        currentGoal = map['goal'];
+        return SkillSelectedForEventState(skill: selectedSkill);
+      });
+
       // Creating events after Session is created
     } else if (event is EventsForSessionCreationEvent) {
       yield NewSessionCrudInProgressState();

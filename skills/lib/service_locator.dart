@@ -78,6 +78,7 @@ void init() {
   locator.registerLazySingleton(() => GetEventByIdUC(locator()));
   locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
   locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
+  locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));
 
   // Repositories
   locator.registerLazySingleton<SkillRepository>(
