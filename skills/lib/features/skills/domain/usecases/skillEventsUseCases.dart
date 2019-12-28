@@ -23,7 +23,7 @@ class InsertEventsForSessionUC extends UseCase<void, SkillEventMultiInsertParams
 
   InsertEventsForSessionUC(this.repo);
   @override
-  Future<Either<Failure, void>> call(SkillEventMultiInsertParams params) {
+  Future<Either<Failure, List<int>>> call(SkillEventMultiInsertParams params) {
     
     return repo.insertEvents(params.events, params.newSessionId);
   }

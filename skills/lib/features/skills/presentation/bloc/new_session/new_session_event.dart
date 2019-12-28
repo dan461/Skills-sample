@@ -14,7 +14,6 @@ class InsertNewSessionEvent extends NewSessionEvent {
   InsertNewSessionEvent({@required this.newSession});
   @override
   List<Object> get props => [newSession];
-  
 }
 
 class GetSessionWithIdEvent extends NewSessionEvent {
@@ -44,6 +43,16 @@ class SkillSelectedForSessionEvent extends NewSessionEvent {
   List<Object> get props => null;
 }
 
+class EventsForSessionCreationEvent extends NewSessionEvent {
+  final List<SkillEvent> events;
+  final Session session;
+
+  EventsForSessionCreationEvent({@required this.events, this.session});
+
+  @override
+  List<Object> get props => [events, session];
+}
+
 class EventCreationEvent extends NewSessionEvent {
   final SkillEvent event;
 
@@ -52,5 +61,3 @@ class EventCreationEvent extends NewSessionEvent {
   @override
   List<Object> get props => [event];
 }
-
-

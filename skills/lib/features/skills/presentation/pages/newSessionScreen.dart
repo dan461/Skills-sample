@@ -64,7 +64,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     });
   }
 
-  void _setEventCreateButtonEnabled(){
+  void _setEventCreateButtonEnabled() {
     setState(() {
       _eventCreateButtonEnabled = _eventDuration > 0;
     });
@@ -253,7 +253,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       listener: (context, state) {
         if (state is InitialNewSessionState) {
           body = _contentBuilder(null);
-        } else if (state is NewSessionInsertingState) {
+        } else if (state is NewSessionCrudInProgressState ) {
           body = Center(
             child: CircularProgressIndicator(),
           );
@@ -261,14 +261,27 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
           body = Center(
             child: CircularProgressIndicator(),
           );
-          Navigator.of(context).pop();
+          // state returns events list if not empty, or pops
+          if (state.events.isNotEmpty) {
+            _bloc.add(EventsForSessionCreationEvent(
+                events: state.events, session: state.newSession));
+          } else {
+            Navigator.of(context).pop();
+          }
         } else if (state is SkillSelectedForEventState) {
           _selectedSkill = state.skill;
           body = _contentBuilder(_selectedSkill);
-        } else if (state is SkillEventCreatedState){
-          _selectedSkill = null;
-          body = _contentBuilder(_selectedSkill);
+        } else if (state is EventsCreatedForSessionState) {
+          body = Center(
+            child: CircularProgressIndicator(),
+          );
+          Navigator.of(context).pop();
         }
+        // TODO - probably don't need this, not creating events individually
+        // else if (state is SkillEventCreatedState) {
+        //   _selectedSkill = null;
+        //   body = _contentBuilder(_selectedSkill);
+        // }
       },
       child: Scaffold(
         appBar: AppBar(title: Text('New Session')),
@@ -357,6 +370,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     _bloc.createEvent(date);
     setState(() {
       _selectedSkill = null;
+      _eventDurationTextControl.text = null;
     });
   }
 

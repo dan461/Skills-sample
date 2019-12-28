@@ -69,8 +69,6 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     _pendingEvents.add(newEvent);
   }
 
-  
-
   @override
   void onTransition(Transition<NewSessionEvent, NewSessionState> transition) {
     super.onTransition(transition);
@@ -85,29 +83,37 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   ) async* {
     // New Session
     if (event is InsertNewSessionEvent) {
-      yield NewSessionInsertingState();
+      yield NewSessionCrudInProgressState();
       final failureOrNewSession = await insertNewSession(
           SessionInsertOrUpdateParams(session: event.newSession));
       yield failureOrNewSession.fold(
-          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), 
-          (session) {
+          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (session) {
         _currentSession = session;
-      insertEventsForSessionUC(SkillEventMultiInsertParams(events: _pendingEvents, newSessionId: session.sessionId));
-
-        return NewSessionInsertedState(session);
+        return NewSessionInsertedState(
+            newSession: session, events: _pendingEvents);
       });
       //Skill selected
     } else if (event is SkillSelectedForSessionEvent) {
       selectedSkill = event.skill;
       yield SkillSelectedForEventState(skill: event.skill);
-      // Event creation
-    } else if (event is EventCreationEvent) {
+      // Creating events after Session is created
+    } else if (event is EventsForSessionCreationEvent) {
       yield NewSessionCrudInProgressState();
-      // final failureOrNewEvent = await insertNewSkillEventUC(
-      //     SkillEventInsertOrUpdateParams(event: event.event));
-      // yield failureOrNewEvent.fold(
-      //     (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE),
-      //     (newEvent) => SkillEventCreatedState(event: newEvent));
+      final failureOrNewEvents = await insertEventsForSessionUC(
+          SkillEventMultiInsertParams(
+              events: event.events, newSessionId: event.session.sessionId));
+      yield failureOrNewEvents.fold(
+          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE),
+          (ints) => EventsCreatedForSessionState());
     }
+
+    // else if (event is EventCreationEvent) {
+    //   yield NewSessionCrudInProgressState();
+    //   // final failureOrNewEvent = await insertNewSkillEventUC(
+    //   //     SkillEventInsertOrUpdateParams(event: event.event));
+    //   // yield failureOrNewEvent.fold(
+    //   //     (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE),
+    //   //     (newEvent) => SkillEventCreatedState(event: newEvent));
+    // }
   }
 }

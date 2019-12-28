@@ -33,7 +33,7 @@ abstract class SkillsLocalDataSource {
   Future<SkillEventModel> getEventById(int id);
   Future<int> updateEvent(SkillEvent event);
   Future<int> deleteEventById(int id);
-  Future<void> insertEvents(List<SkillEvent> events, int newSessionId);
+  Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -341,7 +341,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<void> insertEvents(List<SkillEvent> events, int newSessionId) async {
+  Future<List<int>> insertEvents(
+      List<SkillEvent> events, int newSessionId) async {
     final Database db = await database;
     var insertBatch = db.batch();
     for (var event in events) {
@@ -354,7 +355,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
           skillString: event.skillString);
       insertBatch.insert(skillEventsTable, model.toMap());
     }
-    await insertBatch.commit(noResult: true);
+    final resultsList = await insertBatch.commit(noResult: true);
+    return resultsList;
   }
 
   @override

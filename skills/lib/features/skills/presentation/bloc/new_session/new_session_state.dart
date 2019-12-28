@@ -13,15 +13,22 @@ class InitialNewSessionState extends NewSessionState {
   List<Object> get props => [];
 }
 
-class NewSessionInsertingState extends NewSessionState {
+// class NewSessionInsertingState extends NewSessionState {
+//   @override
+//   List<Object> get props => [];
+// }
+
+class EventsCreatedForSessionState extends NewSessionState {
   @override
-  List<Object> get props => [];
+  List<Object> get props => [null];
+  
 }
 
 class NewSessionInsertedState extends NewSessionState {
   final Session newSession;
+  final List<SkillEvent> events;
 
-  NewSessionInsertedState(this.newSession);
+  NewSessionInsertedState({@required this.newSession, @required this.events});
 
   @override
   List<Object> get props => [newSession];
