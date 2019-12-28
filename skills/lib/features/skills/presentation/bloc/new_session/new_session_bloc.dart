@@ -19,7 +19,8 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   DateTime sessionDate;
   Skill selectedSkill;
   Session _currentSession;
-  List<SkillEvent> _pendingEvents = [];
+  List<SkillEvent> pendingEvents = [];
+  List<Map> eventMaps = [];
 
   int eventDuration;
 
@@ -66,7 +67,9 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
         isComplete: false,
         skillString: selectedSkill.name);
 
-    _pendingEvents.add(newEvent);
+    pendingEvents.add(newEvent);
+    Map<String, dynamic> map = {'event' : newEvent, 'skill': selectedSkill,};
+    eventMaps.add(map);
   }
 
   @override
@@ -90,7 +93,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
           (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (session) {
         _currentSession = session;
         return NewSessionInsertedState(
-            newSession: session, events: _pendingEvents);
+            newSession: session, events: pendingEvents);
       });
       //Skill selected
     } else if (event is SkillSelectedForSessionEvent) {

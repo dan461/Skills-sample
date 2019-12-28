@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/service_locator.dart';
@@ -140,9 +141,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                       ],
                     ),
                   )),
-              // _sessionActivityCard(),
+              // Expanded(child: _eventsListBuilder()),
             ],
           ),
+          _eventsListBuilder(),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -163,6 +165,16 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  ListView _eventsListBuilder(){
+    return ListView.builder(
+      shrinkWrap: true,
+      itemBuilder: (context, index){
+        return SessionEventCard(map: _bloc.eventMaps[index],);
+      },
+      itemCount: _bloc.pendingEvents.length,
     );
   }
 
@@ -253,7 +265,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       listener: (context, state) {
         if (state is InitialNewSessionState) {
           body = _contentBuilder(null);
-        } else if (state is NewSessionCrudInProgressState ) {
+        } else if (state is NewSessionCrudInProgressState) {
           body = Center(
             child: CircularProgressIndicator(),
           );
@@ -431,5 +443,60 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       });
     }
     _setDoneBtnStatus();
+  }
+}
+
+class SessionEventCard extends StatelessWidget {
+  final Map<String, dynamic> map;
+  // final SkillEvent event;
+  
+
+  const SessionEventCard({Key key, @required this.map}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    
+    String durationString = map['event'].duration.toString();
+    return Card(
+      color: Colors.amber[300],
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6))),
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(map['skill'].name,
+                      style: Theme.of(context).textTheme.subhead),
+                  Text('$durationString min.', style: Theme.of(context).textTheme.subhead),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text(map['skill'].source, style: Theme.of(context).textTheme.body1)
+                ],
+              ),
+              // Card(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(2.0),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: <Widget>[
+              //         Text('Goal: 1 hr 30 min by 11/30',
+              //             style: Theme.of(context).textTheme.body1),
+              //         Text('30 min completed',
+              //             style: Theme.of(context).textTheme.body1)
+              //       ],
+              //     ),
+              //   ),
+              // )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
