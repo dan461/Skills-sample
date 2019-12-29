@@ -6,6 +6,7 @@ import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
+import 'package:skills/features/skills/presentation/pages/sessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/service_locator.dart';
 
@@ -175,9 +176,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       itemBuilder: (context, index) {
         return SessionEventCard(
           map: _bloc.eventMaps[index],
+          callback: _eventTapped,
         );
       },
-      itemCount: _bloc.pendingEvents.length,
+      itemCount: _bloc.eventMaps.length,
     );
   }
 
@@ -309,50 +311,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     Navigator.of(context).pop();
   }
 
-  Card _sessionActivityCard() {
-    return Card(
-      color: Colors.amber[300],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6))),
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Bouree in E minor',
-                      style: Theme.of(context).textTheme.subhead),
-                  Text('30 min', style: Theme.of(context).textTheme.subhead),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text('J.S. Bach', style: Theme.of(context).textTheme.body1)
-                ],
-              ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('Goal: 1 hr 30 min by 11/30',
-                          style: Theme.of(context).textTheme.body1),
-                      Text('30 min completed',
-                          style: Theme.of(context).textTheme.body1)
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Container _timeSelectionBox(
       String descText, String timeText, Function callback) {
     return Container(
@@ -371,6 +329,71 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       ),
     );
   }
+
+  void _eventTapped(Map<String, dynamic> map) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            color: Color(0xFF737373),
+            height: 180,
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Text('Edit'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    title: Text('Delete'),
+                    onTap: () {
+                      _deleteEventTapped(map);
+                    },
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(10),
+                  topRight: const Radius.circular(10),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _deleteEventTapped(Map<String, dynamic> map) async {
+    await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Delete this Event?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Delete'),
+                onPressed: () {
+                  setState(() {
+                    _bloc.eventMaps.remove(map);
+                  });
+                  
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _deleteEvent() {}
 
   void _doneTapped() {
     _bloc.createSession(date);
@@ -449,11 +472,15 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 }
 
+typedef EventCardCallback(Map<String, dynamic> map);
+
 class SessionEventCard extends StatelessWidget {
   final Map<String, dynamic> map;
+  final EventCardCallback callback;
   // final SkillEvent event;
 
-  const SessionEventCard({Key key, @required this.map}) : super(key: key);
+  const SessionEventCard({Key key, @required this.map, @required this.callback})
+      : super(key: key);
 
   Widget goalSectionBuilder(Goal goal, Skill skill, BuildContext context) {
     Widget body = SizedBox();
@@ -492,30 +519,36 @@ class SessionEventCard extends StatelessWidget {
     Skill skill = map['skill'];
     Goal goal = map['goal'];
 
-    return Card(
-      color: Colors.amber[300],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6))),
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(skill.name, style: Theme.of(context).textTheme.subhead),
-                  Text('$durationString min.',
-                      style: Theme.of(context).textTheme.subhead),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text(skill.source, style: Theme.of(context).textTheme.body1)
-                ],
-              ),
-              goalSectionBuilder(goal, skill, context)
-            ],
+    return GestureDetector(
+      onTap: () {
+        callback(map);
+      },
+      child: Card(
+        color: Colors.amber[300],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6))),
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(skill.name,
+                        style: Theme.of(context).textTheme.subhead),
+                    Text('$durationString min.',
+                        style: Theme.of(context).textTheme.subhead),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(skill.source, style: Theme.of(context).textTheme.body1)
+                  ],
+                ),
+                goalSectionBuilder(goal, skill, context)
+              ],
+            ),
           ),
         ),
       ),
