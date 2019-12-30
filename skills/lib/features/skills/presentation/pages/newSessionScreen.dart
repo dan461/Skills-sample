@@ -26,7 +26,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     return _bloc.selectedSkill != null;
   }
 
-  var currentEventMap = <String, dynamic>{};
+  Map<String, dynamic> currentEventMap = {};
   // TODO - make bloc required?
   NewSessionBloc _bloc;
 
@@ -183,78 +183,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         'goal': _bloc.currentGoal
       };
       body = EventCreator(
-          eventMap: map,
+          eventMap: currentEventMap,
           addEventCallback: _addEvent,
           cancelEventCreateCallback: _cancelEventTapped);
-      // body = Card(
-      //   shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.all(Radius.circular(6))),
-      //   child: Container(
-      //     width: MediaQuery.of(context).size.width - 10,
-      //     color: Colors.grey[200],
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.center,
-      //       children: <Widget>[
-      //         Row(
-      //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //           children: <Widget>[
-      //             Text(_bloc.selectedSkill.name,
-      //                 style: Theme.of(context).textTheme.subhead),
-      //             Container(
-      //               color: Colors.amber,
-      //               height: 30,
-      //               width: 100,
-      //               child: Row(
-      //                 children: <Widget>[
-      //                   Text(
-      //                     'Minutes: ',
-      //                     style: Theme.of(context).textTheme.subhead,
-      //                   ),
-      //                   Expanded(
-      //                     child: TextField(
-      //                       decoration: InputDecoration(
-      //                           hintText: '00', border: InputBorder.none),
-      //                       keyboardType: TextInputType.number,
-      //                       controller: _eventDurationTextControl,
-      //                       onChanged: (_) {
-      //                         _setEventCreateButtonEnabled();
-      //                       },
-      //                     ),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //         Row(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: <Widget>[
-      //             ButtonBar(
-      //               buttonHeight: 30,
-      //               alignment: MainAxisAlignment.center,
-      //               children: <Widget>[
-      //                 RaisedButton(
-      //                   child: Text('Cancel'),
-      //                   onPressed: () {
-      //                     _bloc.selectedSkill = null;
-      //                     _cancelEventTapped();
-      //                   },
-      //                 ),
-      //                 RaisedButton(
-      //                     child: Text('Add'),
-      //                     onPressed: _eventCreateButtonEnabled
-      //                         ? () {
-      //                             _addEvent();
-      //                           }
-      //                         : null),
-      //               ],
-      //             ),
-      //           ],
-      //         )
-      //       ],
-      //     ),
-      //   ),
-      // );
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -287,7 +218,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
           }
         } else if (state is SkillSelectedForEventState) {
           _bloc.selectedSkill = state.skill;
-
+          currentEventMap = {
+            'skill': _bloc.selectedSkill,
+            'goal': _bloc.currentGoal
+          };
           body = _contentBuilder();
         } else if (state is EventsCreatedForSessionState) {
           body = Center(
@@ -337,8 +271,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               child: Column(
                 children: <Widget>[
                   ListTile(
-                    title: Text('Edit'),
-                    onTap: () {},
+                    title: Text('Edit (no function)'),
+                    onTap: () {
+                      _editEventTapped(map);
+                    },
                   ),
                   ListTile(
                     title: Text('Delete'),
@@ -358,6 +294,13 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             ),
           );
         });
+  }
+
+  void _editEventTapped(Map<String, dynamic> map) {
+    // setState(() {
+    //   _bloc.selectedSkill = map['skill'];
+    //   currentEventMap = map;
+    // });
   }
 
   void _deleteEventTapped(Map<String, dynamic> map) async {
@@ -438,30 +381,97 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   void _selectStartTime() async {
+    TimeOfDay initial = TimeOfDay.now();
+    if (_bloc.selectedFinishTime != null) {
+      initial = TimeOfDay(
+          hour: _bloc.selectedFinishTime.hour,
+          minute: _bloc.selectedFinishTime.minute - 5);
+    }
+
     TimeOfDay selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: initial,
     );
 
     if (selectedTime != null) {
-      setState(() {
-        _bloc.selectedStartTime = selectedTime;
-      });
+      if (timeIsValid(selectedTime, _bloc.selectedFinishTime, true)) {
+        setState(() {
+          _bloc.selectedStartTime = selectedTime;
+        });
+      } else {
+        _showInvalidTimeAlert();
+        setState(() {
+          _bloc.selectedStartTime = null;
+        });
+      }
+        
     }
     _setDoneBtnStatus();
   }
 
   void _selectFinishTime() async {
+    TimeOfDay initial = TimeOfDay.now();
+    if (_bloc.selectedStartTime != null) {
+      initial = TimeOfDay(
+          hour: _bloc.selectedStartTime.hour,
+          minute: _bloc.selectedStartTime.minute + 5);
+    }
     TimeOfDay selectedTime =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+        await showTimePicker(context: context, initialTime: initial);
 
     if (selectedTime != null) {
-      setState(() {
-        _bloc.selectedFinishTime = selectedTime;
-      });
+      if (timeIsValid(selectedTime, _bloc.selectedStartTime, false)) {
+        setState(() {
+          _bloc.selectedFinishTime = selectedTime;
+        });
+      } else {
+        _showInvalidTimeAlert();
+        setState(() {
+          _bloc.selectedFinishTime = null;
+        });
+      }
+        
     }
     _setDoneBtnStatus();
   }
+
+  void _showInvalidTimeAlert() async {
+    await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Invalid Time'),
+            content: Text(
+                'Check your time. The session must last at least five minutes, and the start time must be prior to the finish time.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+}
+
+bool timeIsValid(
+    TimeOfDay selectedTime, TimeOfDay controlTime, bool isStartTime) {
+  if (controlTime != null) {
+    if (isStartTime) {
+      return (selectedTime.hour < controlTime.hour ||
+          (selectedTime.hour == controlTime.hour &&
+              selectedTime.minute <= controlTime.minute - 5));
+    } else {
+      return (selectedTime.hour > controlTime.hour ||
+          (selectedTime.hour == controlTime.hour &&
+              selectedTime.minute >= controlTime.minute + 5));
+    }
+  } else
+    return true;
 }
 
 typedef EventCardCallback(Map<String, dynamic> map);
