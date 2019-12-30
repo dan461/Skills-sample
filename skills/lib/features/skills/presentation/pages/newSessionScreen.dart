@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
-import 'package:skills/features/skills/presentation/pages/sessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/service_locator.dart';
 
@@ -23,8 +21,13 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   bool _doneButtonEnabled = false;
   bool _eventCreateButtonEnabled = false;
+  bool get _showEventCreator {
+    return _bloc.selectedSkill != null;
+  }
+
+  // TODO - make bloc required?
   NewSessionBloc _bloc;
-  Skill _selectedSkill;
+
   _NewSessionScreenState(this.date);
 
   TextEditingController _eventDurationTextControl = TextEditingController();
@@ -73,8 +76,8 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     });
   }
 
-  Container _contentBuilder(Skill skill) {
-    String countString = _bloc.eventMaps.length.toString();
+  Container _contentBuilder() {
+    String countString = _bloc.eventMapsForListView.length.toString();
     return Container(
       child: Column(
         children: <Widget>[
@@ -117,7 +120,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                   ],
                 ),
               ),
-              _eventCreator(skill),
+              _eventCreator(),
             ],
           ),
           Column(
@@ -175,17 +178,18 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return SessionEventCard(
-          map: _bloc.eventMaps[index],
+          map: _bloc.eventMapsForListView[index],
           callback: _eventTapped,
         );
       },
-      itemCount: _bloc.eventMaps.length,
+      itemCount: _bloc.eventMapsForListView.length,
     );
   }
 
-  Row _eventCreator(Skill skill) {
+  Row _eventCreator() {
+    // _eventDurationTextControl.text = "";
     Widget body;
-    if (skill == null) {
+    if (!_showEventCreator) {
       body = SizedBox();
     } else {
       body = Card(
@@ -200,7 +204,8 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text(skill.name, style: Theme.of(context).textTheme.subhead),
+                  Text(_bloc.selectedSkill.name,
+                      style: Theme.of(context).textTheme.subhead),
                   Container(
                     color: Colors.amber,
                     height: 30,
@@ -237,6 +242,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                       RaisedButton(
                         child: Text('Cancel'),
                         onPressed: () {
+                          _bloc.selectedSkill = null;
                           _cancelEventTapped();
                         },
                       ),
@@ -264,12 +270,12 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body = _contentBuilder(_selectedSkill);
+    Widget body = _contentBuilder();
     return BlocListener<NewSessionBloc, NewSessionState>(
       bloc: _bloc,
       listener: (context, state) {
         if (state is InitialNewSessionState) {
-          body = _contentBuilder(null);
+          body = _contentBuilder();
         } else if (state is NewSessionCrudInProgressState) {
           body = Center(
             child: CircularProgressIndicator(),
@@ -286,19 +292,15 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             Navigator.of(context).pop();
           }
         } else if (state is SkillSelectedForEventState) {
-          _selectedSkill = state.skill;
-          body = _contentBuilder(_selectedSkill);
+          _bloc.selectedSkill = state.skill;
+
+          body = _contentBuilder();
         } else if (state is EventsCreatedForSessionState) {
           body = Center(
             child: CircularProgressIndicator(),
           );
           Navigator.of(context).pop();
         }
-        // TODO - probably don't need this, not creating events individually
-        // else if (state is SkillEventCreatedState) {
-        //   _selectedSkill = null;
-        //   body = _contentBuilder(_selectedSkill);
-        // }
       },
       child: Scaffold(
         appBar: AppBar(title: Text('New Session')),
@@ -382,9 +384,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                 child: Text('Delete'),
                 onPressed: () {
                   setState(() {
-                    _bloc.eventMaps.remove(map);
+                    _bloc.eventMapsForListView.remove(map);
                   });
-                  
+
                   Navigator.of(context).pop();
                 },
               )
@@ -392,8 +394,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
           );
         });
   }
-
-  void _deleteEvent() {}
 
   void _doneTapped() {
     _bloc.createSession(date);
@@ -407,14 +407,17 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     _bloc.eventDuration = _eventDuration;
     _bloc.createEvent(date);
     setState(() {
-      _selectedSkill = null;
-      _eventDurationTextControl.text = null;
+      _bloc.selectedSkill = null;
+      // _showEventCreator = false;
+      _eventDurationTextControl.text = "";
     });
   }
 
   void _cancelEventTapped() {
+    // _bloc.selectedSkill == null;
     setState(() {
-      _selectedSkill == null;
+      // _showEventCreator = false;
+      _eventDurationTextControl.text = "";
     });
   }
 
@@ -432,17 +435,16 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
             child: child,
           );
         });
-    var selectedSkillId = await Navigator.of(context).push(routeBuilder);
-    if (selectedSkillId != null) {
+    var selectedSkill = await Navigator.of(context).push(routeBuilder);
+    if (selectedSkill != null) {
       setState(() {
-        // _selectedSkill = selectedSkill;
-        _bloc.add(SkillSelectedForSessionEvent(skillId: selectedSkillId));
+        _bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
       });
     }
   }
 
   void _selectSkill(Skill skill) {
-    Navigator.of(context).pop(skill.id);
+    Navigator.of(context).pop(skill);
   }
 
   void _selectStartTime() async {

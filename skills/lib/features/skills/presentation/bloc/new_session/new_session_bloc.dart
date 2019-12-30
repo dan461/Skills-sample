@@ -7,7 +7,6 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
-import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
@@ -25,8 +24,8 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Skill selectedSkill;
   Goal currentGoal;
   Session _currentSession;
-  List<SkillEvent> pendingEvents = [];
-  List<Map> eventMaps = [];
+  var pendingEvents = <SkillEvent>[];
+  var eventMapsForListView = <Map>[];
 
   int eventDuration;
 
@@ -77,9 +76,9 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     Map<String, dynamic> map = {
       'event': newEvent,
       'skill': selectedSkill,
-      'goal' : currentGoal
+      'goal': currentGoal
     };
-    eventMaps.add(map);
+    eventMapsForListView.add(map);
   }
 
   @override
@@ -107,15 +106,18 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
       });
       //Skill selected
     } else if (event is SkillSelectedForSessionEvent) {
-      // selectedSkill = event.skill;
-      var getInfo = locator<GetSkillInfoForEvent>();
-      final infoOrFail = await getInfo(GetSkillParams(id: event.skillId));
-      yield infoOrFail.fold(
-          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (map) {
-        selectedSkill = map['skill'];
-        currentGoal = map['goal'];
-        return SkillSelectedForEventState(skill: selectedSkill);
-      });
+      selectedSkill = event.skill;
+      if (selectedSkill.currentGoalId != 0) {
+        var getGoal = locator<GetGoalById>();
+        final goalOrFail =
+            await getGoal(GoalCrudParams(id: selectedSkill.currentGoalId));
+        yield goalOrFail.fold(
+            (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (goal) {
+          currentGoal = goal;
+          return SkillSelectedForEventState(skill: selectedSkill);
+        });
+      } else
+        yield SkillSelectedForEventState(skill: selectedSkill);
 
       // Creating events after Session is created
     } else if (event is EventsForSessionCreationEvent) {
@@ -127,14 +129,5 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
           (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE),
           (ints) => EventsCreatedForSessionState());
     }
-
-    // else if (event is EventCreationEvent) {
-    //   yield NewSessionCrudInProgressState();
-    //   // final failureOrNewEvent = await insertNewSkillEventUC(
-    //   //     SkillEventInsertOrUpdateParams(event: event.event));
-    //   // yield failureOrNewEvent.fold(
-    //   //     (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE),
-    //   //     (newEvent) => SkillEventCreatedState(event: newEvent));
-    // }
   }
 }

@@ -35,10 +35,10 @@ class DeleteSessionWithIdEvent extends NewSessionEvent {
 }
 
 class SkillSelectedForSessionEvent extends NewSessionEvent {
-  // final Skill skill;
-  final int skillId;
+  final Skill skill;
+  
 
-  SkillSelectedForSessionEvent({@required this.skillId});
+  SkillSelectedForSessionEvent({@required this.skill});
 
   @override
   List<Object> get props => null;

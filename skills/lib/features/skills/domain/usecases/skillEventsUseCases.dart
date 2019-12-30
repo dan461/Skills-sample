@@ -4,9 +4,7 @@ import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
-import 'package:skills/features/skills/domain/repos/goal_repo.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
-import 'package:skills/features/skills/domain/repos/skill_repo.dart';
 import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
 import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
@@ -68,56 +66,32 @@ class UpdateSkillEventUC extends UseCase<int, SkillEventInsertOrUpdateParams> {
   }
 }
 
-class GetSkillInfoForEvent
-    extends UseCase<Map<String, dynamic>, GetSkillParams> {
-  final GetSkillById getSkillById;
-  final GetGoalById getGoalById;
+// class GetSkillInfoForEvent
+//     extends UseCase<Map<String, dynamic>, GetSkillParams> {
+//   final GetSkillById getSkillById;
+//   final GetGoalById getGoalById;
 
-  GetSkillInfoForEvent(this.getSkillById, this.getGoalById);
-  @override
-  Future<Either<Failure, Map<String, dynamic>>> call(
-      GetSkillParams params) async {
-    Skill theSkill;
-    Goal currentGoal;
-    final skillOrFail = await getSkillById(params);
-    skillOrFail.fold((failure) => CacheFailure(), (skill) {
-      theSkill = skill;
-    });
-
-    if (theSkill != null && theSkill.currentGoalId != 0) {
-      final goalOrFail =
-          await getGoalById(GoalCrudParams(id: theSkill.currentGoalId));
-      goalOrFail.fold((failure) => CacheFailure(), (goal) {
-        currentGoal = goal;
-      });
-    }
-
-    return Right({'skill': theSkill, 'goal': currentGoal});
-  }
-}
-
-// final SkillRepository skillRepo;
-// final GoalRepository goalRepo;
-
-// GetSkillInfoForEvent(this.skillRepo, this.goalRepo);
-// @override
-// Future<Either<Failure, Map<String, dynamic>>> call(
-//     GetSkillParams params) async {
-//   Skill thisSkill;
-//   Goal currentGoal;
-//   Either<Failure, Skill> skillEither =
-//       await skillRepo.getSkillById(params.id);
-//   skillEither.fold((failure) => CacheFailure(), (skill) {
-//     thisSkill = skill;
-//   });
-
-//   if (thisSkill != null && thisSkill.currentGoalId != 0) {
-//     Either<Failure, Goal> goalEither =
-//         await goalRepo.getGoalById(thisSkill.currentGoalId);
-//     goalEither.fold((failure) => CacheFailure(), (goal) {
-//       currentGoal = goal;
+//   GetSkillInfoForEvent(this.getSkillById, this.getGoalById);
+//   @override
+//   Future<Either<Failure, Map<String, dynamic>>> call(
+//       GetSkillParams params) async {
+//     Skill theSkill;
+//     Goal currentGoal;
+//     final skillOrFail = await getSkillById(params);
+//     skillOrFail.fold((failure) => CacheFailure(), (skill) {
+//       theSkill = skill;
 //     });
-//   }
 
-//   return Right({'skill' : thisSkill, 'goal' : currentGoal});
+//     if (theSkill != null && theSkill.currentGoalId != 0) {
+//       final goalOrFail =
+//           await getGoalById(GoalCrudParams(id: theSkill.currentGoalId));
+//       goalOrFail.fold((failure) => CacheFailure(), (goal) {
+//         currentGoal = goal;
+//       });
+//     }
+
+//     return Right({'skill': theSkill, 'goal': currentGoal});
+//   }
 // }
+
+
