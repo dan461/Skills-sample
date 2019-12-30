@@ -6,6 +6,7 @@ import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/service_locator.dart';
 
 class NewSessionScreen extends StatefulWidget {
@@ -20,17 +21,16 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
 
   bool _doneButtonEnabled = false;
-  bool _eventCreateButtonEnabled = false;
+
   bool get _showEventCreator {
     return _bloc.selectedSkill != null;
   }
 
+  var currentEventMap = <String, dynamic>{};
   // TODO - make bloc required?
   NewSessionBloc _bloc;
 
   _NewSessionScreenState(this.date);
-
-  TextEditingController _eventDurationTextControl = TextEditingController();
 
   @override
   void initState() {
@@ -56,23 +56,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     return 'Duration: $minutes min.';
   }
 
-  int get _eventDuration {
-    int minutes = _eventDurationTextControl.text.isNotEmpty
-        ? int.parse(_eventDurationTextControl.text)
-        : 0;
-    return minutes;
-  }
-
   void _setDoneBtnStatus() {
     setState(() {
       _doneButtonEnabled =
           _bloc.selectedStartTime != null && _bloc.selectedFinishTime != null;
-    });
-  }
-
-  void _setEventCreateButtonEnabled() {
-    setState(() {
-      _eventCreateButtonEnabled = _eventDuration > 0;
     });
   }
 
@@ -187,80 +174,87 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   Row _eventCreator() {
-    // _eventDurationTextControl.text = "";
     Widget body;
     if (!_showEventCreator) {
       body = SizedBox();
     } else {
-      body = Card(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(6))),
-        child: Container(
-          width: MediaQuery.of(context).size.width - 10,
-          color: Colors.grey[200],
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(_bloc.selectedSkill.name,
-                      style: Theme.of(context).textTheme.subhead),
-                  Container(
-                    color: Colors.amber,
-                    height: 30,
-                    width: 100,
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Minutes: ',
-                          style: Theme.of(context).textTheme.subhead,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                                hintText: '00', border: InputBorder.none),
-                            keyboardType: TextInputType.number,
-                            controller: _eventDurationTextControl,
-                            onChanged: (_) {
-                              _setEventCreateButtonEnabled();
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ButtonBar(
-                    buttonHeight: 30,
-                    alignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      RaisedButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          _bloc.selectedSkill = null;
-                          _cancelEventTapped();
-                        },
-                      ),
-                      RaisedButton(
-                          child: Text('Add'),
-                          onPressed: _eventCreateButtonEnabled
-                              ? () {
-                                  _addEvent();
-                                }
-                              : null),
-                    ],
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      );
+      Map<String, dynamic> map = {
+        'skill': _bloc.selectedSkill,
+        'goal': _bloc.currentGoal
+      };
+      body = EventCreator(
+          eventMap: map,
+          addEventCallback: _addEvent,
+          cancelEventCreateCallback: _cancelEventTapped);
+      // body = Card(
+      //   shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.all(Radius.circular(6))),
+      //   child: Container(
+      //     width: MediaQuery.of(context).size.width - 10,
+      //     color: Colors.grey[200],
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.center,
+      //       children: <Widget>[
+      //         Row(
+      //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //           children: <Widget>[
+      //             Text(_bloc.selectedSkill.name,
+      //                 style: Theme.of(context).textTheme.subhead),
+      //             Container(
+      //               color: Colors.amber,
+      //               height: 30,
+      //               width: 100,
+      //               child: Row(
+      //                 children: <Widget>[
+      //                   Text(
+      //                     'Minutes: ',
+      //                     style: Theme.of(context).textTheme.subhead,
+      //                   ),
+      //                   Expanded(
+      //                     child: TextField(
+      //                       decoration: InputDecoration(
+      //                           hintText: '00', border: InputBorder.none),
+      //                       keyboardType: TextInputType.number,
+      //                       controller: _eventDurationTextControl,
+      //                       onChanged: (_) {
+      //                         _setEventCreateButtonEnabled();
+      //                       },
+      //                     ),
+      //                   )
+      //                 ],
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //         Row(
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: <Widget>[
+      //             ButtonBar(
+      //               buttonHeight: 30,
+      //               alignment: MainAxisAlignment.center,
+      //               children: <Widget>[
+      //                 RaisedButton(
+      //                   child: Text('Cancel'),
+      //                   onPressed: () {
+      //                     _bloc.selectedSkill = null;
+      //                     _cancelEventTapped();
+      //                   },
+      //                 ),
+      //                 RaisedButton(
+      //                     child: Text('Add'),
+      //                     onPressed: _eventCreateButtonEnabled
+      //                         ? () {
+      //                             _addEvent();
+      //                           }
+      //                         : null),
+      //               ],
+      //             ),
+      //           ],
+      //         )
+      //       ],
+      //     ),
+      //   ),
+      // );
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -403,21 +397,17 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     print('cancel');
   }
 
-  void _addEvent() {
-    _bloc.eventDuration = _eventDuration;
+  void _addEvent(int eventDuration) {
+    _bloc.eventDuration = eventDuration;
     _bloc.createEvent(date);
     setState(() {
       _bloc.selectedSkill = null;
-      // _showEventCreator = false;
-      _eventDurationTextControl.text = "";
     });
   }
 
   void _cancelEventTapped() {
-    // _bloc.selectedSkill == null;
     setState(() {
-      // _showEventCreator = false;
-      _eventDurationTextControl.text = "";
+      _bloc.selectedSkill = null;
     });
   }
 
