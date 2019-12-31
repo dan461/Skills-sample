@@ -4,7 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import '../../mockClasses.dart';
-import 'getAllSkills_test.dart';
 
 void main(){
   GetSkillById sut;

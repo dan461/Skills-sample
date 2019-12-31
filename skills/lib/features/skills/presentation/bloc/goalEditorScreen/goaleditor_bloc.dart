@@ -122,16 +122,16 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
     return timeString;
   }
 
-  String createDurationString(int from, int to) {
+  String createDurationString(DateTime from, DateTime to) {
     String durationString;
 
-    final fromDate = DateTime.fromMillisecondsSinceEpoch(from);
-    final fromString = DateFormat.MMMd().format(fromDate);
+    // final fromDate = DateTime.fromMillisecondsSinceEpoch(from);
+    final fromString = DateFormat.MMMd().format(from);
     if (from == to) {
       durationString = 'on $fromString';
     } else {
-      final toDate = DateTime.fromMillisecondsSinceEpoch(to);
-      final toString = DateFormat.MMMd().format(toDate);
+      
+      final toString = DateFormat.MMMd().format(to);
       durationString = 'between $fromString and $toString';
     }
     return durationString;

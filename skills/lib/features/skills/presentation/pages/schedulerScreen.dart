@@ -34,11 +34,14 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       child: BlocBuilder<SchedulerBloc, SchedulerState>(
         builder: (context, state) {
           Widget body;
-          if (state is InitialSchedulerState) {
+          if (state is InitialSchedulerState || state is GettingSessionsForMonthState) {
             body = Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state is DaySelectedState) {
+            _bloc.add(GetSessionsForMonthEvent(_activeMonth));
+          }
+          
+          else if (state is DaySelectedState) {
             body = _contentBuilder(state.date, _activeMonth);
           } else if (state is SessionsForMonthReturnedState) {
             _bloc.sessionsForMonth = state.sessionsList;
@@ -60,10 +63,10 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
           Expanded(
               flex: 2,
               child: Calendar(
-                bloc: _bloc,
+                activeMonth: _bloc.activeMonth,
+                eventDates: _bloc.sessionDates,
                 tapCallback: _dateSelected,
                 monthChangeCallback: _calendarMonthChanged,
-                
               )),
           Expanded(
             flex: 1,
@@ -94,7 +97,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       _bloc.activeMonth =
           DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
     });
-    
+
     _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
   }
 

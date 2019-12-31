@@ -18,8 +18,8 @@ void main() {
 
   final testGoal = Goal(
       skillId: 1,
-      fromDate: DateTime.now().millisecondsSinceEpoch,
-      toDate: DateTime.now().millisecondsSinceEpoch,
+      fromDate: DateTime.now(),
+      toDate: DateTime.now(),
       isComplete: false,
       timeBased: true,
       timeRemaining: 0,

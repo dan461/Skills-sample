@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/data/repos/sessionsRepositoryImpl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
 import 'goalsRepositoryImpl_test.dart';
 
@@ -18,18 +18,18 @@ void main() {
     mockLocalDataSource = MockLocalDataSource();
     sut = SessionsRepositoryImpl(localDataSource: mockLocalDataSource);
     testSessionModel = SessionModel(
-        date: 1,
-        startTime: 1,
-        endTime: 1,
+        date: DateTime.now(),
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isScheduled: false,
         isCompleted: false);
 
     testSession = Session(
-        date: 1,
-        startTime: 1,
-        endTime: 1,
+        date: DateTime.now(),
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isCompleted: false,
@@ -39,9 +39,9 @@ void main() {
   group('Sessions CRUD tests', () {
     Session newSession = Session(
         sessionId: 1,
-        date: 1,
-        startTime: 1,
-        endTime: 1,
+        date: DateTime.now(),
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isCompleted: false,

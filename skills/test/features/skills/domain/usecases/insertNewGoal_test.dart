@@ -1,5 +1,4 @@
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/repos/goal_repo.dart';
 import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -21,8 +20,8 @@ void main() {
 
   final testGoal = Goal(
       skillId: 1,
-      fromDate: DateTime.now().millisecondsSinceEpoch,
-      toDate: DateTime.now().millisecondsSinceEpoch,
+      fromDate: DateTime.now(),
+      toDate: DateTime.now(),
       isComplete: false,
       timeBased: true,
       timeRemaining: 0,
@@ -31,8 +30,8 @@ void main() {
   test('should insert new goal and return goal id', () async {
     Goal newGoal = Goal(
         skillId: 1,
-        fromDate: DateTime.now().millisecondsSinceEpoch,
-        toDate: DateTime.now().millisecondsSinceEpoch,
+        fromDate: DateTime.now(),
+        toDate: DateTime.now(),
         isComplete: false,
         timeBased: false,
         timeRemaining: 0,

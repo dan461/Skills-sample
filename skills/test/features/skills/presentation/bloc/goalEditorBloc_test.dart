@@ -18,7 +18,7 @@ void main() {
   // MockAddGoalToSkill mockAddGoalToSkill;
   MockDeleteGoalWithId mockDeleteGoalWithId;
   Goal testGoal;
-  Goal newGoal;
+  
   GoalModel testModel;
 
   setUp(() {
@@ -31,21 +31,14 @@ void main() {
 
     testGoal = Goal(
         skillId: 1,
-        fromDate: DateTime.now().millisecondsSinceEpoch,
-        toDate: DateTime.now().millisecondsSinceEpoch,
+        fromDate: DateTime.now(),
+        toDate: DateTime.now(),
         isComplete: false,
         timeBased: true,
         timeRemaining: 0,
         goalTime: 0);
 
-    newGoal = Goal(
-        skillId: 1,
-        fromDate: DateTime.now().millisecondsSinceEpoch,
-        toDate: DateTime.now().millisecondsSinceEpoch,
-        isComplete: false,
-        timeBased: true,
-        timeRemaining: 0,
-        goalTime: 0);
+    
 
     testModel = GoalModel(
         skillId: testGoal.skillId,
@@ -158,7 +151,7 @@ void main() {
     test('test that goalIsChanged returns true when user makes a change',
         () async {
       sut.goalModel = testModel;
-      Map testMap = {'fromDate': 0};
+      Map testMap = {'fromDate': 1};
       bool response = sut.goalIsChanged(testMap);
       expect(response, true);
     });
@@ -167,7 +160,7 @@ void main() {
         'test that goalIsChanged returns false when user inputs match current goal values, or goal has not been changed',
         () async {
       sut.goalModel = testModel;
-      Map testMap = {'fromDate': testModel.fromDate};
+      Map testMap = {'fromDate': testModel.fromDate.millisecondsSinceEpoch};
       bool response = sut.goalIsChanged(testMap);
       expect(response, false);
     });
@@ -182,8 +175,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: true,
           goalTime: 330);
@@ -202,8 +195,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: true,
           goalTime: 60);
@@ -222,8 +215,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: true,
           goalTime: 15);
@@ -242,8 +235,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: true,
           goalTime: 120);
@@ -262,8 +255,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: true,
           goalTime: 90);
@@ -282,8 +275,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: false,
           goalTime: 0,
@@ -304,8 +297,8 @@ void main() {
 
       final testTimeGoal = Goal(
           skillId: 1,
-          fromDate: from.millisecondsSinceEpoch,
-          toDate: to.millisecondsSinceEpoch,
+          fromDate: from,
+          toDate: to,
           isComplete: false,
           timeBased: false,
           goalTime: 0,

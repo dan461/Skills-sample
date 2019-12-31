@@ -3,9 +3,9 @@ import 'package:equatable/equatable.dart';
 
 class Session extends Equatable {
   final int sessionId;
-  final int date;
-  final int startTime;
-  final int endTime;
+  final DateTime date;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
   final int duration;
   final int timeRemaining;
   final bool isScheduled;

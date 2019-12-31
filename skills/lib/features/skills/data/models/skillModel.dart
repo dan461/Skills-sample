@@ -12,9 +12,9 @@ class SkillModel extends Skill {
     int id,
     @required String name,
     @required String source,
-    int startDate,
+    DateTime startDate,
     int totalTime,
-    int lastPracDate,
+    DateTime lastPracDate,
     int currentGoalId,
     String goalText,
   }) : super(
@@ -32,9 +32,9 @@ class SkillModel extends Skill {
         id: map['skillId'],
         name: map['name'],
         source: map['source'],
-        startDate: map['startDate'],
+        startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']) ,
         totalTime: map['totalTime'],
-        lastPracDate: map['lastPracDate'],
+        lastPracDate: map['lastPracDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']) : DateTime.fromMillisecondsSinceEpoch(map['startDate']),
         currentGoalId: map['currentGoalId'],
         goalText: map['goalText']);
   }
@@ -44,9 +44,9 @@ class SkillModel extends Skill {
       'skillId': id,
       'name': name,
       'source': source,
-      'startDate': startDate,
+      'startDate': startDate.millisecondsSinceEpoch,
       'totalTime': totalTime,
-      'lastPracDate': lastPracDate,
+      'lastPracDate': lastPracDate.millisecondsSinceEpoch,
       'currentGoalId': currentGoalId,
       'goalText': goalText
     };

@@ -395,8 +395,8 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   }
 
   void _setScreenValues(Goal goal) {
-    _startDate = DateTime.fromMillisecondsSinceEpoch(goal.fromDate);
-    _endDate = DateTime.fromMillisecondsSinceEpoch(goal.toDate);
+    _startDate = goal.fromDate;
+    _endDate = goal.toDate;
     _goalType = goal.timeBased == true ? 0 : 1;
     _hoursTextController.text = (goal.goalTime / 60).floor().toString();
     _minTextController.text = (goal.goalTime % 60).toString();

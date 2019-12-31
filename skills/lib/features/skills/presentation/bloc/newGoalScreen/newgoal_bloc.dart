@@ -9,14 +9,13 @@ import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 
 class NewgoalBloc extends Bloc<NewgoalEvent, NewgoalState> {
-final InsertNewGoal insertNewGoalUC;
-final AddGoalToSkill addGoalToSkill;
+  final InsertNewGoal insertNewGoalUC;
+  final AddGoalToSkill addGoalToSkill;
 
-Goal goal;
+  Goal goal;
   String goalTranslation = 'none';
 
   NewgoalBloc({this.insertNewGoalUC, this.addGoalToSkill});
-
 
   @override
   NewgoalState get initialState => InitialNewgoalState();
@@ -25,14 +24,14 @@ Goal goal;
   Stream<NewgoalState> mapEventToState(
     NewgoalEvent event,
   ) async* {
-    if (event is InsertNewGoalEvent){
+    if (event is InsertNewGoalEvent) {
       yield NewGoalInsertingState();
       final failureOrNewGoal =
           await insertNewGoalUC(GoalCrudParams(goal: event.newGoal));
       yield failureOrNewGoal.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newGoal) => NewGoalInsertedState(newGoal));
-    } else if (event is AddGoalToSkillEvent){
+    } else if (event is AddGoalToSkillEvent) {
       yield AddingGoalToSkillState();
       final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams(
           skillId: event.skillId,
@@ -43,12 +42,11 @@ Goal goal;
           (newId) =>
               GoalAddedToSkillState(newId: newId, goalText: goalTranslation));
     }
-    
   }
 
   void insertNewGoal(
-      {int startDate,
-      int endDate,
+      {DateTime startDate,
+      DateTime endDate,
       bool timeBased,
       int goalMinutes,
       int skillId,
@@ -102,16 +100,14 @@ Goal goal;
     return timeString;
   }
 
-  String createDurationString(int from, int to) {
+  String createDurationString(DateTime from, DateTime to) {
     String durationString;
 
-    final fromDate = DateTime.fromMillisecondsSinceEpoch(from);
-    final fromString = DateFormat.MMMd().format(fromDate);
+    final fromString = DateFormat.MMMd().format(from);
     if (from == to) {
       durationString = 'on $fromString';
     } else {
-      final toDate = DateTime.fromMillisecondsSinceEpoch(to);
-      final toString = DateFormat.MMMd().format(toDate);
+      final toString = DateFormat.MMMd().format(to);
       durationString = 'between $fromString and $toString';
     }
     return durationString;
