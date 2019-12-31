@@ -1,12 +1,11 @@
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/repos/skill_repo.dart';
 import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/usecase.dart';
 
-class MockSkillsRepo extends Mock implements SkillRepository {}
+import '../../mockClasses.dart';
 
 void main() {
   GetAllSkills useCase;

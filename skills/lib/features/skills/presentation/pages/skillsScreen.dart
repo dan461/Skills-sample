@@ -1,38 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
+import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
 import 'package:skills/service_locator.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
 
-import 'newSkillScreen.dart';
+typedef SelectionCallback(Skill skill);
 
 class SkillsScreen extends StatefulWidget {
+  final SelectionCallback callback;
+
+  const SkillsScreen({Key key, this.callback}) : super(key: key);
   @override
-  _SkillsScreenState createState() => _SkillsScreenState();
+  _SkillsScreenState createState() => _SkillsScreenState(callback);
 }
 
 class _SkillsScreenState extends State<SkillsScreen> {
+  final SelectionCallback callback;
   SkillsBloc bloc;
+
+  _SkillsScreenState(this.callback);
   @override
   void initState() {
     super.initState();
     bloc = locator<SkillsBloc>();
     bloc.add(GetAllSkillsEvent());
+    
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+
   }
 
   void addSkill() async {
-    bool skillAdded = false;
+    
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return NewSkillScreen();
+      SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
+      editorBloc.add(CreateSkillEvent());
+      // editorBloc.close();
+      return SkillEditorScreen(
+        skillEditorBloc: editorBloc,
+      );
     }));
     // if (result != null) {
     // var insert = locator.get<InsertNewSkill>();
     // await insert(InsertParams(skill: newSkill));
     bloc.add(GetAllSkillsEvent());
+    
     // }
+  }
+
+  void editSkill(Skill skill) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      SkillEditorBloc editorBloc = locator<SkillEditorBloc>();
+      editorBloc.add(EditSkillEvent(skill));
+      // editorBloc.close();
+      return SkillEditorScreen(
+        skillEditorBloc: editorBloc,
+      );
+    }));
+    bloc.add(GetAllSkillsEvent());
   }
 
   @override
@@ -67,7 +100,10 @@ class _SkillsScreenState extends State<SkillsScreen> {
               );
             } else if (state is AllSkillsLoaded) {
               body = Container(
-                child: SkillsList(skills: state.skills),
+                child: SkillsList(
+                  skills: state.skills,
+                  callback: callback == null ? editSkill : callback,
+                ),
               );
             } else {
               // TODO - not great, deal with error better
@@ -87,9 +123,11 @@ class _SkillsScreenState extends State<SkillsScreen> {
 
 class SkillsList extends StatefulWidget {
   final List<Skill> skills;
+  final SelectionCallback callback;
   const SkillsList({
     Key key,
-    this.skills,
+    @required this.skills,
+    @required this.callback,
   }) : super(key: key);
 
   @override
@@ -114,6 +152,7 @@ class _SkillsListState extends State<SkillsList> {
               itemBuilder: (context, index) {
                 return SkillCell(
                   skill: widget.skills[index],
+                  callback: widget.callback,
                 );
               },
               itemCount: widget.skills.length,
@@ -127,60 +166,63 @@ class _SkillsListState extends State<SkillsList> {
 
 class SkillCell extends StatelessWidget {
   final Skill skill;
-  SkillCell({this.skill});
+  final SelectionCallback callback;
+  SkillCell({@required this.skill, @required this.callback});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-      ),
-      padding: EdgeInsets.all(4),
-      height: 70,
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      skill.name,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(skill.source,
-                        style: Theme.of(context).textTheme.subtitle),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Goal: 4hrs.',
-                        style: Theme.of(context).textTheme.subtitle)
-                  ],
-                )
-              ],
+    return GestureDetector(
+      onTap: () {
+        callback(skill);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        ),
+        padding: EdgeInsets.all(4),
+        height: 70,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        skill.name,
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(skill.source,
+                          style: Theme.of(context).textTheme.subtitle),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(skill.goalText,
+                          style: Theme.of(context).textTheme.subtitle)
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Column(
+            Column(
               children: <Widget>[
                 Text('Last Practiced',
                     style: Theme.of(context).textTheme.subtitle),
                 Text('10/10/19', style: Theme.of(context).textTheme.subtitle)
               ],
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

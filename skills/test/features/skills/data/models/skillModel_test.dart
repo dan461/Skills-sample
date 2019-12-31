@@ -1,14 +1,33 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
-import 'dart:convert';
-import '../../../../fixtures/jsonFixtureReader.dart';
 
 void main() {
-  final sut = SkillModel(
-      id: 1, name: 'test', source: 'testing', startDate: 1, totalTime: 1);
+  SkillModel sut;
+  Map<String, dynamic> testMap;
 
-  setUp(() {});
+  setUp(() {
+    sut = SkillModel(
+        id: 1,
+        name: 'test',
+        source: 'testing',
+        startDate: DateTime.fromMillisecondsSinceEpoch(0),
+        totalTime: 1,
+        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
+        currentGoalId: 1,
+        goalText: "none");
+
+    testMap = {
+      'skillId': 1,
+      'name': "test",
+      'source': "testing",
+      'startDate': 0,
+      'totalTime': 1,
+      'lastPracDate': 0,
+      'currentGoalId': 1,
+      'goalText': "none"
+    };
+  });
 
   test(
     'should be a subclass of Skill',
@@ -21,10 +40,10 @@ void main() {
     test(
       'should return a valid SkillModel from a Map',
       () async {
-        final Map<String, dynamic> jsonMap =
-            json.decode(fixture('skillJson.json'));
-        final result = SkillModel.fromMap(jsonMap);
-        expect(result, sut);
+        // final Map<String, dynamic> jsonMap =
+        //     json.decode(fixture('skillJson.json'));
+        final result = SkillModel.fromMap(testMap);
+        expect(sut, result);
       },
     );
   });
@@ -33,11 +52,14 @@ void main() {
     test('should return a valid Map from a SkillModel', () async {
       final result = sut.toMap();
       final expectedMap = {
-        'id': 1,
+        'skillId': 1,
         'name': 'test',
         'source': 'testing',
-        'startDate': 1,
-        'totalTime': 1
+        'startDate': 0,
+        'totalTime': 1,
+        'lastPracDate': 0,
+        'currentGoalId': 1,
+        'goalText': 'none'
       };
       expect(result, expectedMap);
     });

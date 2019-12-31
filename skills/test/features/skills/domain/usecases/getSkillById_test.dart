@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
-import 'getAllSkills_test.dart';
+import '../../mockClasses.dart';
 
 void main(){
   GetSkillById sut;

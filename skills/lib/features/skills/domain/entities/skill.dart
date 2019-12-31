@@ -5,23 +5,32 @@ class Skill extends Equatable {
   final int id;
   final String name;
   final String source;
-  final int startDate;
+  final DateTime startDate;
   final int totalTime;
+  final DateTime lastPracDate;
+  final int currentGoalId;
+  final String goalText;
 
-  Skill({
-    this.id,
-    @required this.name,
-    @required this.source,
-    this.startDate,
-    this.totalTime,
-  }) : super();
+  Skill(
+      {this.id,
+      @required this.name,
+      @required this.source,
+      this.startDate,
+      this.totalTime,
+      @required this.lastPracDate,
+      this.currentGoalId,
+      this.goalText})
+      : super();
 
   @override
-  List<Object> get props => [id,name,source,startDate,totalTime];
-
-//  Skill({int id, String name, String source}) {
-//    this.id = id;
-//    this.name = name;
-//    this.source = source;
-//  }
+  List<Object> get props => [
+        id,
+        name,
+        source,
+        startDate,
+        totalTime,
+        lastPracDate,
+        currentGoalId,
+        goalText
+      ];
 }

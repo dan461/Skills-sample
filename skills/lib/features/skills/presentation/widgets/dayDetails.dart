@@ -1,27 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
+import 'package:intl/intl.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 
 class DayDetails extends StatefulWidget {
+  final List<Session> sessions;
+  final DateTime date;
+  final Function newSessionCallback;
+  final SchedulerBloc bloc;
+
+  const DayDetails({Key key, this.sessions, @required this.date, @required this.newSessionCallback, this.bloc})
+      : super(key: key);
   @override
-  _DayDetailsState createState() => _DayDetailsState();
+  _DayDetailsState createState() => _DayDetailsState(sessions, newSessionCallback, bloc);
 }
 
 class _DayDetailsState extends State<DayDetails> {
-  bool hasSession = false;
+  List<Session> sessions;
+  bool hasSession = true;
+  final Function newSessionCallback;
+  final SchedulerBloc bloc;
+
+  _DayDetailsState(this.sessions, this.newSessionCallback, this.bloc);
 
   @override
   void initState() {
     super.initState();
+    sessions = bloc.daysSessions;
   }
 
-  void _addSession() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return SessionEditor();
-    }));
-  }
+  // void _addSession() {
+   
+  // }
 
   Widget _showContentForSession() {
-    if (hasSession) {
+    if (bloc.daysSessions.isNotEmpty) {
       return ListView.builder(
         itemBuilder: (context, index) {
           return SessionCard();
@@ -34,7 +47,7 @@ class _DayDetailsState extends State<DayDetails> {
           child: RaisedButton(
             child: Text('Add a Session'),
             onPressed: () {
-              _addSession();
+              newSessionCallback(widget.date);
             },
           ),
         ),
@@ -52,7 +65,7 @@ class _DayDetailsState extends State<DayDetails> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'Nov. 22, 2019',
+              DateFormat.yMMMd().format(widget.date),
               style: Theme.of(context).textTheme.subhead,
             ),
             Text(
@@ -68,7 +81,7 @@ class _DayDetailsState extends State<DayDetails> {
   @override
   Widget build(BuildContext context) {
     // TODO test only
-    hasSession = false;
+    hasSession = true;
 
     return Column(
       children: <Widget>[

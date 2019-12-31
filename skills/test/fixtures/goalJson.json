@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "skillId": 1,
+  "fromDate": 0,
+  "toDate": 0,
+  "timeBased": 1,
+  "isComplete": 0,
+  "goalTime": 60,
+  "timeRemaining": 60,
+  "desc": "test"
+}

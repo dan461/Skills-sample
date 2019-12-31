@@ -3,23 +3,43 @@ import 'daysRow.dart';
 import 'dayCell.dart';
 
 class Calendar extends StatefulWidget {
-//  int displayedMonth;
-//  int displayedYear;
-//  final DateTime displayDate;
+  final Function tapCallback;
+  final Function monthChangeCallback;
+  final List<DateTime> eventDates;
+  final DateTime activeMonth;
+  
 
-  Calendar() {
-//    this.displayedMonth = month;
-//    this.displayedYear = year;
-//    this.displayDate = date;
-  }
+  const Calendar({
+    Key key,
+    this.activeMonth,
+    @required this.tapCallback,
+    @required this.monthChangeCallback,
+    this.eventDates,
+  }) : super(key: key);
 
   @override
-  _CalendarState createState() => _CalendarState();
+  _CalendarState createState() =>
+      _CalendarState(tapCallback, monthChangeCallback, activeMonth, eventDates);
 }
 
 class _CalendarState extends State<Calendar> {
+  
   double monthHeight;
-  DateTime activeMonth = DateTime.now();
+  final DateTime activeMonth;
+  final List<DateTime> eventDates;
+  // final SchedulerBloc bloc;
+
+  final Function tapCallback;
+  final Function monthChangeCallback;
+ 
+
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.activeMonth, this.eventDates);
+
+  @override
+  initState() {
+    super.initState();
+    
+  }
 
   String monthString(int month) {
     String monthString = '';
@@ -100,7 +120,7 @@ class _CalendarState extends State<Calendar> {
     return monthString;
   }
 
-  Container monthBuilder() {
+  Container monthBuilder(DateTime month) {
     return Container(
       height: monthHeight,
       decoration: BoxDecoration(
@@ -144,14 +164,21 @@ class _CalendarState extends State<Calendar> {
 
     for (var i = 0; i < 7; i++) {
       // make day cell
-      DateTime thisDay;
-      if (i == 0) {
-        thisDay = sunday;
-      } else {
+      DateTime thisDay = sunday;
+
+      if (i > 0) {
         thisDay = sunday.add(Duration(days: i));
       }
-
-      days.add(DayCell(date: thisDay, month: activeMonth.month));
+      // else {
+      //   thisDay = sunday.add(Duration(days: i));
+      // }
+      bool hasSession = eventDates.indexOf(thisDay) != -1;
+      days.add(DayCell(
+        date: thisDay,
+        displayedMonth: activeMonth.month,
+        tapCallback: tapCallback,
+        hasSession: hasSession,
+      ));
     }
 
     return Expanded(
@@ -168,14 +195,16 @@ class _CalendarState extends State<Calendar> {
   }
 
   void changeMonth(int change) {
-    setState(() {
-      activeMonth = DateTime(activeMonth.year, activeMonth.month + change);
-    });
+    
+    // setState(() {
+    //   _activeMonth = DateTime(_activeMonth.year, _activeMonth.month + change);
+    // });
+    monthChangeCallback(change);
   }
 
-  DayCell buildDayCell() {
-    return DayCell(date: DateTime.now());
-  }
+  // DayCell buildDayCell() {
+  //   return DayCell(date: DateTime.now(), tapCallback: tapCallback);
+  // }
 
   Container headerBuilder() {
     return Container(
@@ -210,6 +239,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    
     monthHeight = MediaQuery.of(context).size.height / 2.25;
     return Container(
       color: Colors.white,
@@ -222,10 +252,10 @@ class _CalendarState extends State<Calendar> {
               scrollDirection: Axis.horizontal,
               reverse: true,
               itemBuilder: (context, position) {
-                return monthBuilder();
+                return monthBuilder(activeMonth);
               },
               onPageChanged: (index) {
-                changeMonth(1);
+                // changeMonth(index);
               },
             ),
           ),

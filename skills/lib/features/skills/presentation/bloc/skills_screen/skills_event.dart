@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 
 abstract class SkillsEvent extends Equatable {
   const SkillsEvent();
@@ -7,23 +6,21 @@ abstract class SkillsEvent extends Equatable {
 
 class GetAllSkillsEvent extends SkillsEvent {
   @override
-  // TODO: implement props
   List<Object> get props => null;
-  
 }
 
-class GetSkillByIdEvent extends SkillsEvent {
-  final int id;
+// class GetSkillByIdEvent extends SkillsEvent {
+//   final int id;
 
-  GetSkillByIdEvent({@required this.id});
+//   GetSkillByIdEvent({@required this.id});
 
-  @override
-  List<Object> get props => [id];
-}
+//   @override
+//   List<Object> get props => [id];
+// }
 
 // class InsertNewSkillEvent extends SkillsEvent {
 //   @override
 //   // TODO: implement props
 //   List<Object> get props => null;
-  
+
 // }
