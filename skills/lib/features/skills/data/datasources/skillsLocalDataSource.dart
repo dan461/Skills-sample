@@ -144,7 +144,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         source: skill.source,
         startDate: today,
         totalTime: 0,
-        lastPracDate: today,
+        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
         currentGoalId: 0,
         goalText: "Goal: none");
 
