@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dartz/dartz.dart';
@@ -73,6 +75,14 @@ void main() {
       final result = await sut.updateEvent(testEvent);
       verify(mockLocalDataSource.updateEvent(testEvent));
       expect(result, equals(Right(1)));
+    });
+
+    test('getEventsForSession - returns a list of SkillEvents', () async {
+      final eventsList = [testEvent];
+      when(mockLocalDataSource.getEventsForSession(1)).thenAnswer((_) async => eventsList);
+      final result = await sut.getEventsForSession(1);
+      verify(mockLocalDataSource.getEventsForSession(1));
+      expect(result, equals(Right(eventsList)));
     });
   });
 }

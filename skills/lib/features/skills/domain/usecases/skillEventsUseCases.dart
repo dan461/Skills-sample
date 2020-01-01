@@ -62,6 +62,17 @@ class UpdateSkillEventUC extends UseCase<int, SkillEventInsertOrUpdateParams> {
   }
 }
 
+class GetEventsForSession extends UseCase<List<SkillEvent>, SessionByIdParams> {
+  final SkillEventRepository repo;
+
+  GetEventsForSession(this.repo);
+  @override
+  Future<Either<Failure, List<SkillEvent>>> call(
+      SessionByIdParams params) async {
+    return await repo.getEventsForSession(params.sessionId);
+  }
+}
+
 // class GetSkillInfoForEvent
 //     extends UseCase<Map<String, dynamic>, GetSkillParams> {
 //   final GetSkillById getSkillById;
@@ -89,5 +100,3 @@ class UpdateSkillEventUC extends UseCase<int, SkillEventInsertOrUpdateParams> {
 //     return Right({'skill': theSkill, 'goal': currentGoal});
 //   }
 // }
-
-

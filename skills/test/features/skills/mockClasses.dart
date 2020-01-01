@@ -11,7 +11,6 @@ import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 
-
 class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
 
 class MockRemoteDataSource extends Mock implements SkillsRemoteDataSource {}
@@ -66,3 +65,5 @@ class MockUpdateEventUC extends Mock implements UpdateSkillEventUC {}
 
 class MockInsertEventsForSessionUC extends Mock
     implements InsertEventsForSessionUC {}
+
+class MockGetEventsForSessionUC extends Mock implements GetEventsForSession {}

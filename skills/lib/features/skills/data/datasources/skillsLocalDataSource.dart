@@ -34,6 +34,7 @@ abstract class SkillsLocalDataSource {
   Future<int> updateEvent(SkillEvent event);
   Future<int> deleteEventById(int id);
   Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
+  Future<List<SkillEvent>> getEventsForSession(int sessionId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -374,5 +375,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int updates = await db.update(skillEventsTable, model.toMap(),
         where: 'eventId = ?', whereArgs: [event.eventId]);
     return updates;
+  }
+
+  @override
+  Future<List<SkillEvent>> getEventsForSession(int sessionId) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(skillEventsTable, where: 'sessionId = ?', whereArgs: [sessionId]);
+    List<SkillEvent> events = [];
+    for (var map in maps){
+      events.add(SkillEventModel.fromMap(map));
+    }
+    return events;
   }
 }
