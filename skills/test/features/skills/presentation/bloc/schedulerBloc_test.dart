@@ -17,10 +17,12 @@ void main() {
   Session testSession1;
   Session testSession2;
   Session testSession3;
+  final testMonth = DateTime(2019, 12);
 
   setUp(() {
     mockGetSessionsInMonthUC = MockGetSessionsInMonthUC();
     sut = SchedulerBloc(getSessionInMonth: mockGetSessionsInMonthUC);
+    sut.activeMonth = testMonth;
     testSession = Session(
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
@@ -72,7 +74,8 @@ void main() {
   test(
       'test that bloc emits [GettingSessionsForMonthState] when MonthSelectedEvent is added',
       () async {
-    sut.add(MonthSelectedEvent(DateTime(2019, 12)));
+    sut.add(MonthSelectedEvent(change: 0));
+
     final expected = [InitialSchedulerState(), GettingSessionsForMonthState()];
     expect(sut, emitsInOrder(expected));
   });
@@ -92,11 +95,14 @@ void main() {
 
   group('GetSessionsInMonth', () {
     final testList = [testSession];
-    final testMonth = DateTime(2019, 12);
+    
+    
     test('test that GetSessionsInMonth usecase is called', () async {
+      
       when(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)))
           .thenAnswer((_) async => Right(testList));
-      sut.add(GetSessionsForMonthEvent(testMonth));
+      
+      sut.add(GetSessionsForMonthEvent());
       await untilCalled(
           mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)));
       verify(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)));
@@ -113,7 +119,7 @@ void main() {
         SessionsForMonthReturnedState(testList)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(GetSessionsForMonthEvent(testMonth));
+      sut.add(GetSessionsForMonthEvent());
     });
   });
 }
