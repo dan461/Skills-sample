@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class SchedulerEvent extends Equatable {
   const SchedulerEvent();
@@ -14,19 +15,20 @@ class DaySelectedEvent extends SchedulerEvent {
 }
 
 class MonthSelectedEvent extends SchedulerEvent {
-  final DateTime month;
+  // final DateTime month;
+  final int change;
 
-  MonthSelectedEvent(this.month);
+  MonthSelectedEvent({@required this.change});
 
   @override
-  List<Object> get props => [month];
+  List<Object> get props => [change];
 }
 
 class GetSessionsForMonthEvent extends SchedulerEvent {
-  final DateTime month;
+  // final DateTime month;
 
-  GetSessionsForMonthEvent(this.month);
+  GetSessionsForMonthEvent();
 
   @override
-  List<Object> get props => [month];
+  List<Object> get props => [];
 }

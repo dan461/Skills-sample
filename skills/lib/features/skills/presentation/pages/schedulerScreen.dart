@@ -15,7 +15,7 @@ class SchedulerScreen extends StatefulWidget {
 }
 
 class _SchedulerScreenState extends State<SchedulerScreen> {
-  DateTime _activeMonth;
+  // DateTime _activeMonth;
 
   SchedulerBloc _bloc;
 
@@ -23,8 +23,8 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   void initState() {
     super.initState();
     _bloc = locator<SchedulerBloc>();
-    _activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
-    _bloc.add(MonthSelectedEvent(_activeMonth));
+    
+    _bloc.add(MonthSelectedEvent(change: 0));
   }
 
   @override
@@ -38,14 +38,14 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             body = Center(
               child: CircularProgressIndicator(),
             );
-            _bloc.add(GetSessionsForMonthEvent(_activeMonth));
+            _bloc.add(GetSessionsForMonthEvent());
           }
           
           else if (state is DaySelectedState) {
-            body = _contentBuilder(state.date, _activeMonth);
+            body = _contentBuilder(state.date, _bloc.activeMonth);
           } else if (state is SessionsForMonthReturnedState) {
             _bloc.sessionsForMonth = state.sessionsList;
-            body = _contentBuilder(null, _activeMonth);
+            body = _contentBuilder(null, _bloc.activeMonth);
           }
 
           return body;
@@ -88,17 +88,19 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
         date: date,
       );
     }));
-
-    _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
+    
+    _bloc.add(MonthSelectedEvent(change: 0));
   }
 
   void _calendarMonthChanged(int change) {
     setState(() {
-      _bloc.activeMonth =
-          DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
+      // var newMonth = DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
+      // _bloc.activeMonth = null;
+      // _bloc.activeMonth = newMonth;
+          _bloc.add(MonthSelectedEvent(change: change));
     });
 
-    _bloc.add(MonthSelectedEvent(_bloc.activeMonth));
+    
   }
 
   void _dateSelected(DateTime selectedDate) {
