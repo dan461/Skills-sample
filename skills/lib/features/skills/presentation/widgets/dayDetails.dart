@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
+import '../../presentation/widgets/sessionCard.dart';
 
 class DayDetails extends StatefulWidget {
   final List<Session> sessions;
@@ -9,10 +10,16 @@ class DayDetails extends StatefulWidget {
   final Function newSessionCallback;
   final SchedulerBloc bloc;
 
-  const DayDetails({Key key, this.sessions, @required this.date, @required this.newSessionCallback, this.bloc})
+  const DayDetails(
+      {Key key,
+      this.sessions,
+      @required this.date,
+      @required this.newSessionCallback,
+      this.bloc})
       : super(key: key);
   @override
-  _DayDetailsState createState() => _DayDetailsState(sessions, newSessionCallback, bloc);
+  _DayDetailsState createState() =>
+      _DayDetailsState(sessions, newSessionCallback, bloc);
 }
 
 class _DayDetailsState extends State<DayDetails> {
@@ -26,20 +33,24 @@ class _DayDetailsState extends State<DayDetails> {
   @override
   void initState() {
     super.initState();
-    sessions = bloc.daysSessions;
+    // sessions = bloc.daysSessions;
   }
 
   // void _addSession() {
-   
+
   // }
 
   Widget _showContentForSession() {
-    if (bloc.daysSessions.isNotEmpty) {
-      return ListView.builder(
+    if (sessions.isNotEmpty) {
+      return new ListView.builder(
         itemBuilder: (context, index) {
-          return SessionCard();
+          var session = sessions[index];
+          return SessionCard(
+            key: Key(session.sessionId.toString()),
+            session: session,
+          );
         },
-        itemCount: 3,
+        itemCount: sessions.length,
       );
     } else {
       return Container(
@@ -55,8 +66,8 @@ class _DayDetailsState extends State<DayDetails> {
     }
   }
 
-// TODO - needs date and session count
   Container _headerBuilder() {
+    String count = sessions.length.toString();
     return Container(
       color: Colors.grey,
       child: Padding(
@@ -69,7 +80,7 @@ class _DayDetailsState extends State<DayDetails> {
               style: Theme.of(context).textTheme.subhead,
             ),
             Text(
-              '2 Sessions',
+              '$count Sessions',
               style: Theme.of(context).textTheme.subhead,
             )
           ],
@@ -81,96 +92,13 @@ class _DayDetailsState extends State<DayDetails> {
   @override
   Widget build(BuildContext context) {
     // TODO test only
-    hasSession = true;
-
+    // hasSession = true;
+    sessions = bloc.daysSessions;
     return Column(
       children: <Widget>[
         _headerBuilder(),
         Expanded(child: _showContentForSession())
       ],
-    );
-  }
-}
-
-// SessionCard
-class SessionCard extends StatefulWidget {
-  @override
-  _SessionCardState createState() => _SessionCardState();
-}
-
-class _SessionCardState extends State<SessionCard> {
-  Row _headingBuilder() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          '3 pm to 5pm, 2 hours. 4 skills',
-          style: Theme.of(context).textTheme.subhead,
-        ),
-        InkWell(
-          child: Icon(Icons.check_circle_outline, color: Colors.grey),
-          onTap: () {
-            _markSessionComplete();
-          },
-        )
-      ],
-    );
-  }
-
-  void _markSessionComplete() {}
-  void _showSessionDetails() {}
-
-  List<Widget> _contentBuilder() {
-    // take in list of strings? (for test) descriptions of skills
-    // create a Text() for each string, add each Text() to a list - textsList
-
-    List<Widget> rows = [];
-    List skills = [
-      'Segovia scales - Segovia',
-      'Bouree in E minor. J.S. Bach',
-      'Gigue - John Dowland',
-      'Anji - Davey Graham/Paul Simon'
-    ];
-    var pad = Padding(
-      padding: const EdgeInsets.fromLTRB(0, 4, 8, 6),
-      child: _headingBuilder(),
-    );
-
-    rows.add(pad);
-
-    for (var skill in skills) {
-      var text = Text(skill, style: Theme.of(context).textTheme.body2);
-      var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
-      var newRow = Row(
-        children: <Widget>[text, timeText],
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      );
-      rows.add(newRow);
-    }
-
-    return rows;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.amber[300],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6))),
-      child: GestureDetector(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-            child: Column(
-              children: _contentBuilder(),
-            ),
-          ),
-        ),
-        onTap: () {
-          _showSessionDetails();
-        },
-      ),
     );
   }
 }
