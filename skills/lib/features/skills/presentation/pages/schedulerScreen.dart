@@ -23,7 +23,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   void initState() {
     super.initState();
     _bloc = locator<SchedulerBloc>();
-    
+
     _bloc.add(MonthSelectedEvent(change: 0));
   }
 
@@ -34,14 +34,13 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       child: BlocBuilder<SchedulerBloc, SchedulerState>(
         builder: (context, state) {
           Widget body;
-          if (state is InitialSchedulerState || state is GettingSessionsForMonthState) {
+          if (state is InitialSchedulerState ||
+              state is GettingSessionsForMonthState) {
             body = Center(
               child: CircularProgressIndicator(),
             );
             _bloc.add(GetSessionsForMonthEvent());
-          }
-          
-          else if (state is DaySelectedState) {
+          } else if (state is DaySelectedState) {
             body = _contentBuilder(state.date, _bloc.activeMonth);
           } else if (state is SessionsForMonthReturnedState) {
             _bloc.sessionsForMonth = state.sessionsList;
@@ -88,7 +87,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
         date: date,
       );
     }));
-    
+
     _bloc.add(MonthSelectedEvent(change: 0));
   }
 
@@ -97,10 +96,8 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       // var newMonth = DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
       // _bloc.activeMonth = null;
       // _bloc.activeMonth = newMonth;
-          _bloc.add(MonthSelectedEvent(change: change));
+      _bloc.add(MonthSelectedEvent(change: change));
     });
-
-    
   }
 
   void _dateSelected(DateTime selectedDate) {

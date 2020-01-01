@@ -21,6 +21,15 @@ class AddGoalToSkillParams extends Params {
       {@required this.skillId, @required this.goalId, @required this.goalText});
 }
 
+class GetSkillParams extends Params {
+  final int id;
+
+  GetSkillParams({@required this.id}) : super();
+
+  @override
+  List<Object> get props => [id];
+}
+
 class SkillInsertOrUpdateParams extends Params {
   final Skill skill;
 

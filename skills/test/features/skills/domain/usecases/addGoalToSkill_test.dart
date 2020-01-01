@@ -1,4 +1,4 @@
-import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
+import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
@@ -21,7 +21,8 @@ void main() {
       () async {
     when(mockGoalRepo.addGoalToSkill(1, 1, 'goal'))
         .thenAnswer((_) async => Right(newId));
-    final result = await sut(AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal'));
+    final result = await sut(
+        AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal'));
     expect(result, Right(newId));
     verify(mockGoalRepo.addGoalToSkill(1, 1, 'goal'));
     verifyNoMoreInteractions(mockGoalRepo);

@@ -1,12 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
-import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
-import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
-import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
 class InsertNewSkillEventUC

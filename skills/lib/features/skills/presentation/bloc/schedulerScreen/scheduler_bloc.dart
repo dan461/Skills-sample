@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 import 'package:skills/core/aboutTime.dart';
@@ -57,7 +57,6 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   ) async* {
     if (event is MonthSelectedEvent) {
       activeMonth = AboutTime.changeMonth(activeMonth, event.change);
-      // _changeMonth(event.change);
       yield GettingSessionsForMonthState();
     } else if (event is GetSessionsForMonthEvent) {
       final failureOrSessions =

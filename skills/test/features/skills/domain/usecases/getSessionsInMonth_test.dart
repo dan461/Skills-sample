@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
 import '../../mockClasses.dart';
@@ -17,9 +17,7 @@ void main() {
     sut = GetSessionsInMonth(mockSessionRepo);
   });
 
-  test(
-      'UseCase should return a List<Session>',
-      () async {
+  test('UseCase should return a List<Session>', () async {
     final testSession = Session(
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),

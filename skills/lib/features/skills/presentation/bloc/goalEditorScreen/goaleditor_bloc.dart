@@ -4,9 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
-import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
-import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
+import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 // import 'goalEditor_event.dart';
@@ -32,7 +30,7 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
     changeMap.forEach((key, value) {
       if (value != goalMap[key]) {
         response = true;
-      } 
+      }
     });
 
     return response;
@@ -130,7 +128,6 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
     if (from == to) {
       durationString = 'on $fromString';
     } else {
-      
       final toString = DateFormat.MMMd().format(to);
       durationString = 'between $fromString and $toString';
     }

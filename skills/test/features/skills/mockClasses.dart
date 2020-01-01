@@ -6,20 +6,11 @@ import 'package:skills/features/skills/domain/repos/goal_repo.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 import 'package:skills/features/skills/domain/repos/skill_repo.dart';
-import 'package:skills/features/skills/domain/usecases/addGoalToSkill.dart';
-import 'package:skills/features/skills/domain/usecases/deleteGoalWithId.dart';
-import 'package:skills/features/skills/domain/usecases/deleteSessionWithId.dart';
-import 'package:skills/features/skills/domain/usecases/deleteSkillWithId.dart';
-import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
-import 'package:skills/features/skills/domain/usecases/getGoalById.dart';
-import 'package:skills/features/skills/domain/usecases/getSessionWithId.dart';
-import 'package:skills/features/skills/domain/usecases/getSkillById.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewSkill.dart';
-import 'package:skills/features/skills/domain/usecases/sessionsUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
-import 'package:skills/features/skills/domain/usecases/updateGoal.dart';
-import 'package:skills/features/skills/domain/usecases/updateSkill.dart';
+
 
 class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
 
@@ -73,7 +64,5 @@ class MockDeleteEventByIdUC extends Mock implements DeleteEventByIdUC {}
 
 class MockUpdateEventUC extends Mock implements UpdateSkillEventUC {}
 
-class MockInsertEventsForSessionUC extends Mock implements InsertEventsForSessionUC {}
-
-
-
+class MockInsertEventsForSessionUC extends Mock
+    implements InsertEventsForSessionUC {}

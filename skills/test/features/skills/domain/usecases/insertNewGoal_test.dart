@@ -1,13 +1,11 @@
 import 'package:skills/features/skills/domain/entities/goal.dart';
-import 'package:skills/features/skills/domain/usecases/insertNewGoal.dart';
+import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
 import '../../mockClasses.dart';
-
-
 
 void main() {
   InsertNewGoal sut;

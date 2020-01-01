@@ -6,7 +6,7 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/usecases/getAllSkills.dart';
+import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
 import './bloc.dart';
 
 class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
@@ -23,7 +23,6 @@ class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
     SkillsEvent event,
   ) async* {
     if (event is GetAllSkillsEvent) {
-      
       yield AllSkillsLoading();
       final failureOrSkills = await getAllSkills(NoParams());
       yield* _eitherSkillsLoadedOrErrorState(failureOrSkills);
