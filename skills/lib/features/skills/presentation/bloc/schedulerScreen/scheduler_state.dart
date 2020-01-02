@@ -13,8 +13,9 @@ class InitialSchedulerState extends SchedulerState {
 class DaySelectedState extends SchedulerState {
   final DateTime date;
   final List<Session> sessions;
+  final List<Map> maps;
 
-  DaySelectedState({this.date, this.sessions});
+  DaySelectedState({this.date, this.sessions, this.maps});
 
   @override
   List<Object> get props => [date];

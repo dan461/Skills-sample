@@ -5,7 +5,7 @@ import 'package:skills/features/skills/presentation/bloc/schedulerScreen/schedul
 import '../../presentation/widgets/sessionCard.dart';
 
 class DayDetails extends StatefulWidget {
-  final List<Session> sessions;
+  final List<Map> sessions;
   final DateTime date;
   final Function newSessionCallback;
   final SchedulerBloc bloc;
@@ -23,7 +23,7 @@ class DayDetails extends StatefulWidget {
 }
 
 class _DayDetailsState extends State<DayDetails> {
-  List<Session> sessions;
+  List<Map> sessions;
   bool hasSession = true;
   final Function newSessionCallback;
   final SchedulerBloc bloc;
@@ -44,10 +44,10 @@ class _DayDetailsState extends State<DayDetails> {
     if (sessions.isNotEmpty) {
       return new ListView.builder(
         itemBuilder: (context, index) {
-          var session = sessions[index];
+          var sessionMap = sessions[index];
           return SessionCard(
-            key: Key(session.sessionId.toString()),
-            session: session,
+            key: Key(sessionMap['session'].sessionId.toString()),
+            sessionMap: sessionMap,
           );
         },
         itemCount: sessions.length,
@@ -93,7 +93,7 @@ class _DayDetailsState extends State<DayDetails> {
   Widget build(BuildContext context) {
     // TODO test only
     // hasSession = true;
-    sessions = bloc.daysSessions;
+    
     return Column(
       children: <Widget>[
         _headerBuilder(),

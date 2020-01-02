@@ -2,17 +2,20 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 import 'package:skills/core/aboutTime.dart';
 
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   final GetSessionsInMonth getSessionInMonth;
+  final GetEventsForSession getEventsForSession;
 
   DateTime activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
 
-  SchedulerBloc({this.getSessionInMonth});
+  SchedulerBloc({this.getSessionInMonth, this.getEventsForSession});
 
   List<Session> sessionsForMonth = [];
   DateTime selectedDay;
@@ -68,7 +71,26 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
       });
     } else if (event is DaySelectedEvent) {
       selectedDay = event.date;
-      yield DaySelectedState(date: event.date, sessions: daysSessions);
+      List<Map> sessionMaps = await _makeSessionMaps(daysSessions);
+      yield DaySelectedState(
+          date: event.date, sessions: daysSessions, maps: sessionMaps);
     }
+  }
+
+  Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {
+    List<Map> sessionMaps = [];
+    for (var session in daysSessions) {
+      List<SkillEvent> events = [];
+      var eventsOrFail = await getEventsForSession(
+          SessionByIdParams(sessionId: session.sessionId));
+      eventsOrFail.fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
+          (result) {
+        events = result;
+      });
+      Map<String, dynamic> sessionMap = {'session': session, 'events': events};
+      sessionMaps.add(sessionMap);
+    }
+
+    return sessionMaps;
   }
 }

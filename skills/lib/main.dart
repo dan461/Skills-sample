@@ -4,9 +4,10 @@ import 'package:skills/service_locator.dart' as locatorPrefix;
 
 void main() {
   locatorPrefix.init();
-  runApp( SkillsApp(),
+  runApp(
+    SkillsApp(),
   );
-} 
+}
 
 class SkillsApp extends StatefulWidget {
   @override

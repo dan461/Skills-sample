@@ -46,7 +46,7 @@ void init() {
   locator.registerFactory(() => NewSessionBloc(
       insertNewSession: locator(), insertEventsForSessionUC: locator()));
 
-  locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator()));
+  locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator(), getEventsForSession: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
