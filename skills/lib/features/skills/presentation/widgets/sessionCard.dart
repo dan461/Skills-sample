@@ -1,40 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
 import '../../domain/entities/session.dart';
 
 class SessionCard extends StatefulWidget {
-  Session session;
+  Map<String, dynamic> sessionMap;
 
-  SessionCard({Key key, @required this.session}) : super(key: key);
+  SessionCard({Key key, @required this.sessionMap}) : super(key: key);
 
   @override
-  _SessionCardState createState() => _SessionCardState(session);
+  _SessionCardState createState() => _SessionCardState(sessionMap);
 }
 
 class _SessionCardState extends State<SessionCard> {
-  Session session;
-  _SessionCardState(this.session);
+  Map<String, dynamic> sessionMap;
+  _SessionCardState(this.sessionMap);
   @override
   void initState() {
     super.initState();
   }
 
   String get headerString {
-    String fromString = session.startTime.format(context);
+    String fromString = sessionMap['session'].startTime.format(context);
 
-    String timeString = createTimeString(session.duration);
+    String timeString = createTimeString(sessionMap['session'].duration);
     return '$fromString, $timeString';
   }
 
-  List events = [
-    'Segovia scales - Segovia',
-    'Bouree in E minor. J.S. Bach',
-    'Gigue - John Dowland',
-    'Anji - Davey Graham/Paul Simon'
-  ];
+  // List events = [
+  //   'Segovia scales - Segovia',
+  //   'Bouree in E minor. J.S. Bach',
+  //   'Gigue - John Dowland',
+  //   'Anji - Davey Graham/Paul Simon'
+  // ];
 
   @override
   Widget build(BuildContext context) {
+    var session = sessionMap['session'];
+    List<SkillEvent> events = sessionMap['events'];
+
     return Card(
       color: Colors.amber[300],
       shape: RoundedRectangleBorder(
@@ -42,12 +46,11 @@ class _SessionCardState extends State<SessionCard> {
       child: GestureDetector(
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+            padding: const EdgeInsets.fromLTRB(2, 0, 8, 0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _headingBuilder(),
-                _eventsSectionBuilder(events),
+                _headerBuilder(session.startTime, events.length, session.duration),
+                _eventsSectionBuilder(sessionMap['events']),
                 _footerBuilder(session.endTime)
               ],
             ),
@@ -82,60 +85,78 @@ class _SessionCardState extends State<SessionCard> {
     return timeString;
   }
 
-  Row _headingBuilder() {
+  Row _headerBuilder(TimeOfDay startTime, int count, int duration) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Text(
-          headerString,
+          startTime.format(context),
+          style: Theme.of(context).textTheme.body1,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          child: Text(
+            '$duration min.'
+          ),
+        ),
+        Text(
+          '$count events',
           style: Theme.of(context).textTheme.body2,
         ),
-        InkWell(
-          child: Icon(Icons.check_circle_outline, color: Colors.grey),
-          onTap: () {
-            _markSessionComplete();
-          },
-        )
+        // InkWell(
+        //   child: Icon(Icons.check_circle_outline, color: Colors.grey),
+        //   onTap: () {
+        //     _markSessionComplete();
+        //   },
+        // )
       ],
     );
   }
 
-  Widget _footerBuilder(TimeOfDay time) {
-    String endString = time.format(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 2, 2, 2),
-      child: Row(
-        children: <Widget>[
-          Text(
-            endString,
-            style: Theme.of(context).textTheme.body2,
-          ),
-        ],
-      ),
+  Row _footerBuilder(TimeOfDay endTime) {
+    return Row(
+      children: <Widget>[
+        Text(
+          endTime.format(context),
+          style: Theme.of(context).textTheme.body1,
+        ),
+      ],
     );
   }
 
-  Row _eventsSectionBuilder(List events) {
+  Row _eventsSectionBuilder(List<SkillEvent> events) {
     List<Widget> rows = [];
     for (var event in events) {
-      var text = Text(event, style: Theme.of(context).textTheme.body2);
+      var text =
+          Text(event.skillString, style: Theme.of(context).textTheme.body2);
       var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
       var newRow = Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
           child: Row(
-            children: <Widget>[text, timeText],
+            children: <Widget>[
+              text,
+              SizedBox(
+                width: 40,
+              ),
+              timeText
+            ],
             mainAxisAlignment: MainAxisAlignment.spaceAround,
           ));
 
       rows.add(newRow);
     }
     var eventsColumn = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: rows,
     );
     return Row(
-      children: <Widget>[eventsColumn],
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          width: 50,
+        ),
+        eventsColumn,
+      ],
     );
   }
 
@@ -178,5 +199,4 @@ class _SessionCardState extends State<SessionCard> {
   //   return rows;
   // }
 
-  
 }
