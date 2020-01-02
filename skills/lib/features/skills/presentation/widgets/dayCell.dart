@@ -21,8 +21,8 @@ class DayCell extends StatelessWidget {
           child: Material(
             color: Colors.green,
             child: SizedBox(
-              width: 15,
-              height: 15,
+              width: 10,
+              height: 10,
             ),
           ),
         ),
@@ -45,16 +45,16 @@ class DayCell extends StatelessWidget {
           decoration: BoxDecoration(
             color: date.weekday > 5 ? Colors.grey[100] : Colors.white,
             border: Border(
-                top: BorderSide(width: 0.0, color: Colors.grey[400]),
-                left: BorderSide(width: 0.0, color: Colors.grey[400])),
+                top: BorderSide(width: 0.0, color: Colors.grey[200]),
+                left: BorderSide.none),
           ),
-          child: Column(
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.fromLTRB(2, 6, 2, 2),
                     child: Text(
                       date.day.toString(),
                       textAlign: TextAlign.right,
@@ -66,12 +66,13 @@ class DayCell extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _indicatorBuilder()
-                ],
-              )
+              _indicatorBuilder(),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: <Widget>[
+              //     _indicatorBuilder()
+              //   ],
+              // )
             ],
           ),
         ),

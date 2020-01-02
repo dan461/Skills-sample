@@ -123,11 +123,11 @@ class _CalendarState extends State<Calendar> {
   Container monthBuilder(DateTime month) {
     return Container(
       height: monthHeight,
-      decoration: BoxDecoration(
-          color: Colors.red,
-          border: Border(
-              bottom: BorderSide(width: 1.0, color: Colors.grey[300]),
-              right: BorderSide(width: 1.0, color: Colors.grey[300]))),
+      // decoration: BoxDecoration(
+      //     color: Colors.red,
+      //     border: Border(
+      //         bottom: BorderSide(width: 1.0, color: Colors.grey[300]),
+      //         right: BorderSide(width: 1.0, color: Colors.grey[300]))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: buildMonth(month: activeMonth.month, year: activeMonth.year),
