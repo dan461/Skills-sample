@@ -15,6 +15,9 @@ class SessionCard extends StatefulWidget {
 class _SessionCardState extends State<SessionCard> {
   Map<String, dynamic> sessionMap;
   _SessionCardState(this.sessionMap);
+
+  // TODO - should probably get this value somewhere else, maybe add to Session entity
+  int openTime = 0;
   @override
   void initState() {
     super.initState();
@@ -27,17 +30,14 @@ class _SessionCardState extends State<SessionCard> {
     return '$fromString, $timeString';
   }
 
-  // List events = [
-  //   'Segovia scales - Segovia',
-  //   'Bouree in E minor. J.S. Bach',
-  //   'Gigue - John Dowland',
-  //   'Anji - Davey Graham/Paul Simon'
-  // ];
-
   @override
   Widget build(BuildContext context) {
-    var session = sessionMap['session'];
+    Session session = sessionMap['session'];
     List<SkillEvent> events = sessionMap['events'];
+    openTime = session.duration;
+    for (var event in events) {
+      openTime -= event.duration;
+    }
 
     return Card(
       color: Colors.amber[300],
@@ -46,13 +46,35 @@ class _SessionCardState extends State<SessionCard> {
       child: GestureDetector(
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(2, 0, 8, 0),
-            child: Column(
-              children: <Widget>[
-                _headerBuilder(session.startTime, events.length, session.duration),
-                _eventsSectionBuilder(sessionMap['events']),
-                _footerBuilder(session.endTime)
-              ],
+            padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+            child: IntrinsicHeight(
+              child: Row(
+                children: <Widget>[
+                  _timeSection(session.startTime, session.endTime),
+                  Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: _middleSectionBuilder(events)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      children: <Widget>[
+                        InkWell(
+                          child: Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.grey,
+                            size: 20,
+                          ),
+                          onTap: () {
+                            _markSessionComplete();
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -85,118 +107,93 @@ class _SessionCardState extends State<SessionCard> {
     return timeString;
   }
 
-  Row _headerBuilder(TimeOfDay startTime, int count, int duration) {
+  Row _headerBuilder(int count, int duration) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          startTime.format(context),
-          style: Theme.of(context).textTheme.body1,
-        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          child: Text(
-            '$duration min.'
-          ),
+          child: Text('$duration min.'),
         ),
         Text(
-          '$count events',
+          '$openTime min. open',
           style: Theme.of(context).textTheme.body2,
         ),
-        // InkWell(
-        //   child: Icon(Icons.check_circle_outline, color: Colors.grey),
-        //   onTap: () {
-        //     _markSessionComplete();
-        //   },
-        // )
       ],
     );
   }
 
-  Row _footerBuilder(TimeOfDay endTime) {
-    return Row(
-      children: <Widget>[
-        Text(
-          endTime.format(context),
-          style: Theme.of(context).textTheme.body1,
+  Container _timeSection(TimeOfDay startTime, TimeOfDay endTime) {
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(2, 1, 4, 1),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              startTime.format(context),
+              style: Theme.of(context).textTheme.body1,
+            ),
+            Text(
+              endTime.format(context),
+              style: Theme.of(context).textTheme.body1,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Row _eventsSectionBuilder(List<SkillEvent> events) {
+  List<Widget> _middleSectionBuilder(List<SkillEvent> events) {
     List<Widget> rows = [];
-    for (var event in events) {
-      var text =
-          Text(event.skillString, style: Theme.of(context).textTheme.body2);
-      var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
-      var newRow = Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
-          child: Row(
-            children: <Widget>[
-              text,
-              SizedBox(
-                width: 40,
-              ),
-              timeText
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-          ));
+    rows.add(
+      _headerBuilder(events.length, 60),
+    );
+    if (events.isEmpty) {
+      Row emptyRow = Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(height: 30, child: Text('No events')),
+        ],
+      );
+      rows.add(emptyRow);
+    } else {
+      for (var event in events) {
+        // create row for event
+        var text =
+            Text(event.skillString, style: Theme.of(context).textTheme.body2);
+        var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
+        var newRow = Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
+            child: Row(
+              children: <Widget>[
+                text,
+                SizedBox(
+                  width: 40,
+                ),
+                timeText
+              ],
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ));
 
-      rows.add(newRow);
+        rows.add(newRow);
+      }
+      Row emptyRow = Row(
+        children: <Widget>[
+          Container(
+            height: 10,
+            color: Colors.red,
+          ),
+        ],
+      );
+      rows.add(emptyRow);
     }
-    var eventsColumn = Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: rows,
-    );
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          width: 50,
-        ),
-        eventsColumn,
-      ],
-    );
+
+    return rows;
   }
 
   void _markSessionComplete() {}
   void _showSessionDetails() {}
-
-  // List<Widget> _contentBuilder() {
-  //   // take in list of strings? (for test) descriptions of skills
-  //   // create a Text() for each string, add each Text() to a list - textsList
-
-  //   List<Widget> rows = [];
-  //   List skills = [
-  //     'Segovia scales - Segovia',
-  //     'Bouree in E minor. J.S. Bach',
-  //     'Gigue - John Dowland',
-  //     'Anji - Davey Graham/Paul Simon'
-  //   ];
-  //   var header = Padding(
-  //     padding: const EdgeInsets.fromLTRB(0, 2, 8, 0),
-  //     child: _headingBuilder(),
-  //   );
-
-  //   rows.add(header);
-
-  //   for (var skill in skills) {
-  //     var text = Text(skill, style: Theme.of(context).textTheme.body2);
-  //     var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
-  //     var newRow = Padding(
-  //         padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
-  //         child: Row(
-  //           children: <Widget>[text, timeText],
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         ));
-
-  //     rows.add(newRow);
-  //   }
-
-  //   rows.add(_footerBuilder(session.endTime));
-
-  //   return rows;
-  // }
-
 }
