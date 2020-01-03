@@ -62,3 +62,12 @@ class EventCreationEvent extends NewSessionEvent {
   @override
   List<Object> get props => [event];
 }
+
+class BeginSessionEditingEvent extends NewSessionEvent {
+  final Session session;
+
+  BeginSessionEditingEvent({@required this.session});
+
+  @override
+  List<Object> get props => [session];
+}

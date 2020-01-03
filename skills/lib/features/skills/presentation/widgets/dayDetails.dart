@@ -1,13 +1,19 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import '../../presentation/widgets/sessionCard.dart';
 
+typedef ShowSessionEditorCallback(Session session);
+typedef GoToNewSessionScreenCallback(DateTime date);
+
 class DayDetails extends StatefulWidget {
   final List<Map> sessions;
   final DateTime date;
-  final Function newSessionCallback;
+  final GoToNewSessionScreenCallback newSessionCallback;
+  final ShowSessionEditorCallback editorCallback;
   final SchedulerBloc bloc;
 
   const DayDetails(
@@ -15,30 +21,28 @@ class DayDetails extends StatefulWidget {
       this.sessions,
       @required this.date,
       @required this.newSessionCallback,
+      @required this.editorCallback,
       this.bloc})
       : super(key: key);
   @override
   _DayDetailsState createState() =>
-      _DayDetailsState(sessions, newSessionCallback, bloc);
+      _DayDetailsState(sessions, newSessionCallback, editorCallback, bloc);
 }
 
 class _DayDetailsState extends State<DayDetails> {
   List<Map> sessions;
   bool hasSession = true;
-  final Function newSessionCallback;
+  final GoToNewSessionScreenCallback newSessionCallback;
+  final ShowSessionEditorCallback editorCallback;
   final SchedulerBloc bloc;
 
-  _DayDetailsState(this.sessions, this.newSessionCallback, this.bloc);
+  _DayDetailsState(
+      this.sessions, this.newSessionCallback, this.editorCallback, this.bloc);
 
   @override
   void initState() {
     super.initState();
-    // sessions = bloc.daysSessions;
   }
-
-  // void _addSession() {
-
-  // }
 
   Widget _showContentForSession() {
     if (sessions.isNotEmpty) {
@@ -48,6 +52,7 @@ class _DayDetailsState extends State<DayDetails> {
           return SessionCard(
             key: Key(sessionMap['session'].sessionId.toString()),
             sessionMap: sessionMap,
+            editorCallback: editorCallback,
           );
         },
         itemCount: sessions.length,
@@ -91,9 +96,6 @@ class _DayDetailsState extends State<DayDetails> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO test only
-    // hasSession = true;
-    
     return Column(
       children: <Widget>[
         _headerBuilder(),

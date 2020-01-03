@@ -23,7 +23,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   DateTime sessionDate;
   Skill selectedSkill;
   Goal currentGoal;
-  Session _currentSession;
+  Session _sessionForEdit;
   var pendingEvents = <SkillEvent>[];
   var eventMapsForListView = <Map>[];
 
@@ -93,14 +93,14 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Stream<NewSessionState> mapEventToState(
     NewSessionEvent event,
   ) async* {
-    // New Session
+    // Cache New Session
     if (event is InsertNewSessionEvent) {
       yield NewSessionCrudInProgressState();
       final failureOrNewSession = await insertNewSession(
           SessionInsertOrUpdateParams(session: event.newSession));
       yield failureOrNewSession.fold(
           (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (session) {
-        _currentSession = session;
+        // _currentSession = session;
         return NewSessionInsertedState(
             newSession: session, events: pendingEvents);
       });

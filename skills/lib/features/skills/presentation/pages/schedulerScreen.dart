@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
@@ -76,6 +77,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
               date: selectedDate != null ? selectedDate : today,
               sessions: sessionMaps,
               newSessionCallback: _showNewSessionScreen,
+              editorCallback: _showSessionEditor,
             ),
           ),
         ],
@@ -91,6 +93,10 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     }));
 
     _bloc.add(MonthSelectedEvent(change: 0));
+  }
+
+  void _showSessionEditor(Session session){
+    print(session);
   }
 
   void _calendarMonthChanged(int change) {

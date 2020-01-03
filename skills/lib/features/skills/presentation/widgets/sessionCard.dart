@@ -2,19 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
 import '../../domain/entities/session.dart';
+import 'dayDetails.dart';
 
 class SessionCard extends StatefulWidget {
-  Map<String, dynamic> sessionMap;
+  final Map<String, dynamic> sessionMap;
+  final ShowSessionEditorCallback editorCallback;
 
-  SessionCard({Key key, @required this.sessionMap}) : super(key: key);
+  SessionCard(
+      {Key key, @required this.sessionMap, @required this.editorCallback})
+      : super(key: key);
 
   @override
-  _SessionCardState createState() => _SessionCardState(sessionMap);
+  _SessionCardState createState() =>
+      _SessionCardState(sessionMap, editorCallback);
 }
 
 class _SessionCardState extends State<SessionCard> {
   Map<String, dynamic> sessionMap;
-  _SessionCardState(this.sessionMap);
+  final ShowSessionEditorCallback editorCallback;
+  _SessionCardState(this.sessionMap, this.editorCallback);
 
   // TODO - should probably get this value somewhere else, maybe add to Session entity
   int openTime = 0;
@@ -39,11 +45,14 @@ class _SessionCardState extends State<SessionCard> {
       openTime -= event.duration;
     }
 
-    return Card(
-      color: Colors.amber[300],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6))),
-      child: GestureDetector(
+    return GestureDetector(
+      onTap: () {
+        editorCallback(session);
+      },
+      child: Card(
+        color: Colors.amber[300],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6))),
         child: Container(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
@@ -78,9 +87,6 @@ class _SessionCardState extends State<SessionCard> {
             ),
           ),
         ),
-        onTap: () {
-          _showSessionDetails();
-        },
       ),
     );
   }
@@ -195,5 +201,4 @@ class _SessionCardState extends State<SessionCard> {
   }
 
   void _markSessionComplete() {}
-  void _showSessionDetails() {}
 }
