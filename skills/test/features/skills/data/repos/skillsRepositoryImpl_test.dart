@@ -7,8 +7,6 @@ import 'package:dartz/dartz.dart';
 
 import '../../mockClasses.dart';
 
-
-
 void main() {
   SkillsRepositoryImpl repositoryImpl;
   MockNetworkInfo mockNetworkInfo;
@@ -67,9 +65,14 @@ void main() {
       expect(result, equals(Right(tSkill)));
     });
 
-    test('insertNewSkill - returns a new Skill with an id after inserting a SkillModel',
+    test(
+        'insertNewSkill - returns a new Skill with an id after inserting a SkillModel',
         () async {
-      Skill newSkill = Skill(id: 1, name: 'new', source: 'new', lastPracDate: DateTime.fromMillisecondsSinceEpoch(0));
+      Skill newSkill = Skill(
+          skillId: 1,
+          name: 'new',
+          source: 'new',
+          lastPracDate: DateTime.fromMillisecondsSinceEpoch(0));
       when(mockLocalDataSource.insertNewSkill(tSkill))
           .thenAnswer((_) async => newSkill);
       final result = await repositoryImpl.insertNewSkill(tSkill);
@@ -95,8 +98,6 @@ void main() {
       expect(result, equals(Right(1)));
     });
   });
-
-  
 
   // group('downloadAllSkills', () {
   //   test('test for connection', () async {

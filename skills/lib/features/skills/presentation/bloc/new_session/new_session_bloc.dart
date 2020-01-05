@@ -70,7 +70,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
 
   void createEvent(DateTime date) {
     final newEvent = SkillEvent(
-        skillId: selectedSkill.id,
+        skillId: selectedSkill.skillId,
         sessionId: 0,
         date: date,
         duration: eventDuration,

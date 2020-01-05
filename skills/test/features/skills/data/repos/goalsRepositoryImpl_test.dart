@@ -27,7 +27,7 @@ void main() {
     mockRemoteDataSource = MockRemoteDataSource();
     mockNetworkInfo = MockNetworkInfo();
     testGoalModel = GoalModel(
-        id: 1,
+        goalId: 1,
         skillId: 1,
         fromDate: DateTime.fromMillisecondsSinceEpoch(0),
         toDate: DateTime.fromMillisecondsSinceEpoch(0),

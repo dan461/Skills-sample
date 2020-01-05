@@ -3,7 +3,7 @@ import 'package:skills/features/skills/domain/entities/goal.dart';
 
 class GoalModel extends Goal {
   GoalModel(
-      {int id,
+      {int goalId,
       @required int skillId,
       @required DateTime fromDate,
       @required DateTime toDate,
@@ -13,7 +13,7 @@ class GoalModel extends Goal {
       int timeRemaining,
       String desc})
       : super(
-            id: id,
+            goalId: goalId,
             skillId: skillId,
             fromDate: fromDate,
             toDate: toDate,
@@ -25,9 +25,9 @@ class GoalModel extends Goal {
 
   factory GoalModel.fromMap(Map<String, dynamic> map) {
     return GoalModel(
-        id: map['id'],
+        goalId: map['goalId'],
         skillId: map['skillId'],
-        fromDate: DateTime.fromMillisecondsSinceEpoch(map['fromDate']) ,
+        fromDate: DateTime.fromMillisecondsSinceEpoch(map['fromDate']),
         toDate: DateTime.fromMillisecondsSinceEpoch(map['toDate']),
         timeBased: map['timeBased'] == 0 ? false : true,
         isComplete: map['isComplete'] == 0 ? false : true,
@@ -38,7 +38,7 @@ class GoalModel extends Goal {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'goalId': goalId,
       'skillId': skillId,
       'fromDate': fromDate.millisecondsSinceEpoch,
       'toDate': toDate.millisecondsSinceEpoch,
@@ -52,7 +52,7 @@ class GoalModel extends Goal {
 
   @override
   List<Object> get props => [
-        id,
+        goalId,
         skillId,
         fromDate,
         toDate,

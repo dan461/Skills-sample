@@ -88,7 +88,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     setState(() {
       _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
     });
-    
+
     // _doneEnabled = _startDate != null && _endDate != null;
   }
 
@@ -107,7 +107,8 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
     if (pickedDate != null) {
       setState(() {
-        _startDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+        _startDate =
+            DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
         print(_startDate);
       });
     }
@@ -357,7 +358,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                 // Need to update skill with currentGoalId and goalText
                 BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
                     skillId: widget.skillId,
-                    goalId: state.newGoal.id,
+                    goalId: state.newGoal.goalId,
                     goalText: _goalTranslation));
                 body = Center(
                   child: CircularProgressIndicator(),
