@@ -21,7 +21,6 @@ class InitialNewSessionState extends NewSessionState {
 class EventsCreatedForSessionState extends NewSessionState {
   @override
   List<Object> get props => [null];
-  
 }
 
 class NewSessionInsertedState extends NewSessionState {
@@ -62,4 +61,12 @@ class SkillEventCreatedState extends NewSessionState {
   SkillEventCreatedState({@required this.event});
   @override
   List<Object> get props => [event];
+}
+
+class EditingSessionState extends NewSessionState {
+  final Session session;
+
+  EditingSessionState(this.session);
+  @override
+  List<Object> get props => [session];
 }

@@ -7,64 +7,73 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
-import 'package:skills/service_locator.dart';
 
 class NewSessionScreen extends StatefulWidget {
   final DateTime date;
+  final NewSessionBloc bloc;
 
-  const NewSessionScreen({Key key, @required this.date}) : super(key: key);
+  const NewSessionScreen({Key key, @required this.date, @required this.bloc})
+      : super(key: key);
   @override
-  _NewSessionScreenState createState() => _NewSessionScreenState(date);
+  _NewSessionScreenState createState() => _NewSessionScreenState(date, bloc);
 }
 
 class _NewSessionScreenState extends State<NewSessionScreen> {
   final DateTime date;
+  final NewSessionBloc bloc;
+
+  _NewSessionScreenState(this.date, this.bloc);
 
   bool _doneButtonEnabled = false;
 
   bool get _showEventCreator {
-    return _bloc.selectedSkill != null;
+    return bloc.selectedSkill != null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bloc.close();
   }
 
   Map<String, dynamic> currentEventMap = {};
-  // TODO - make bloc required?
-  NewSessionBloc _bloc;
-
-  _NewSessionScreenState(this.date);
 
   @override
   void initState() {
     super.initState();
-    _bloc = locator<NewSessionBloc>();
-    _bloc.sessionDate = date;
+
+    bloc.sessionDate ??= date;
   }
 
   String get _startTimeString {
-    return _bloc.selectedStartTime == null
+    return bloc.selectedStartTime == null
         ? 'Select Time'
-        : _bloc.selectedStartTime.format(context);
+        : bloc.selectedStartTime.format(context);
   }
 
   String get _finishTimeString {
-    return _bloc.selectedFinishTime == null
+    return bloc.selectedFinishTime == null
         ? 'Select Time'
-        : _bloc.selectedFinishTime.format(context);
+        : bloc.selectedFinishTime.format(context);
   }
 
   String get _durationString {
-    String minutes = _bloc.sessionDuration.toString();
+    String minutes = bloc.sessionDuration.toString();
     return 'Duration: $minutes min.';
+  }
+
+  bool get inEditingMode {
+    return bloc.sessionForEdit != null;
   }
 
   void _setDoneBtnStatus() {
     setState(() {
       _doneButtonEnabled =
-          _bloc.selectedStartTime != null && _bloc.selectedFinishTime != null;
+          bloc.selectedStartTime != null && bloc.selectedFinishTime != null;
     });
   }
 
   Container _contentBuilder() {
-    String countString = _bloc.eventMapsForListView.length.toString();
     return Container(
       child: Column(
         children: <Widget>[
@@ -97,47 +106,21 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 2, 8, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(_durationString,
-                        style: Theme.of(context).textTheme.subhead),
-                    Text('Available: 30 min.',
-                        style: Theme.of(context).textTheme.subhead)
-                  ],
-                ),
+                child: _timeRowBuilder(),
               ),
               _eventCreator(),
             ],
           ),
-          Column(
-            children: <Widget>[
-              Container(
-                  height: 40,
-                  color: Colors.grey[200],
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Activities',
-                            style: Theme.of(context).textTheme.subhead),
-                        Text('$countString scheduled',
-                            style: Theme.of(context).textTheme.subhead),
-                        IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            _showSkillsList();
-                          },
-                        )
-                      ],
-                    ),
-                  )),
-            ],
-          ),
+          _eventsHeaderBuilder(),
           _eventsListBuilder(),
-          ButtonBar(
+          _buttonsBuilder(),
+        ],
+      ),
+    );
+  }
+
+  ButtonBar _buttonsBuilder(){
+    return ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton(
@@ -154,9 +137,46 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                         }
                       : null),
             ],
-          ),
-        ],
-      ),
+          );
+  }
+
+  Column _eventsHeaderBuilder() {
+    String countString = bloc.eventMapsForListView.length.toString();
+    return Column(
+      children: <Widget>[
+        Container(
+            height: 40,
+            color: Colors.grey[200],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Activities',
+                      style: Theme.of(context).textTheme.subhead),
+                  Text('$countString scheduled',
+                      style: Theme.of(context).textTheme.subhead),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      _showSkillsList();
+                    },
+                  )
+                ],
+              ),
+            )),
+      ],
+    );
+  }
+
+  Row _timeRowBuilder() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(_durationString, style: Theme.of(context).textTheme.subhead),
+        Text('Available: 30 min.', style: Theme.of(context).textTheme.subhead)
+      ],
     );
   }
 
@@ -165,11 +185,11 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return SessionEventCard(
-          map: _bloc.eventMapsForListView[index],
+          map: bloc.eventMapsForListView[index],
           callback: _eventTapped,
         );
       },
-      itemCount: _bloc.eventMapsForListView.length,
+      itemCount: bloc.eventMapsForListView.length,
     );
   }
 
@@ -179,8 +199,8 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       body = SizedBox();
     } else {
       Map<String, dynamic> map = {
-        'skill': _bloc.selectedSkill,
-        'goal': _bloc.currentGoal
+        'skill': bloc.selectedSkill,
+        'goal': bloc.currentGoal
       };
       body = EventCreator(
           eventMap: currentEventMap,
@@ -195,51 +215,68 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body = _contentBuilder();
-    return BlocListener<NewSessionBloc, NewSessionState>(
-      bloc: _bloc,
-      listener: (context, state) {
-        if (state is InitialNewSessionState) {
-          body = _contentBuilder();
-        } else if (state is NewSessionCrudInProgressState) {
-          body = Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is NewSessionInsertedState) {
-          body = Center(
-            child: CircularProgressIndicator(),
-          );
-          // state returns events list if not empty, or pops
-          if (state.events.isNotEmpty) {
-            _bloc.add(EventsForSessionCreationEvent(
-                events: state.events, session: state.newSession));
-          } else {
+    return BlocProvider(
+      builder: (context) => bloc,
+      child: BlocListener<NewSessionBloc, NewSessionState>(
+        bloc: bloc,
+        listener: (context, state) {
+          if (state is NewSessionInsertedState) {
+            // state returns events list if not empty, or pops
+            if (state.events.isNotEmpty) {
+              bloc.add(EventsForSessionCreationEvent(
+                  events: state.events, session: state.newSession));
+            } else {
+              Navigator.of(context).pop();
+            }
+          } else if (state is EventsCreatedForSessionState) {
             Navigator.of(context).pop();
           }
-        } else if (state is SkillSelectedForEventState) {
-          _bloc.selectedSkill = state.skill;
-          currentEventMap = {
-            'skill': _bloc.selectedSkill,
-            'goal': _bloc.currentGoal
-          };
-          body = _contentBuilder();
-        } else if (state is EventsCreatedForSessionState) {
-          body = Center(
-            child: CircularProgressIndicator(),
-          );
-          Navigator.of(context).pop();
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(title: Text('New Session')),
-        body: body,
+        },
+        child: Builder(
+          builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(title: Text('New Session')),
+              body: BlocBuilder<NewSessionBloc, NewSessionState>(
+                builder: (context, state) {
+                  Widget body;
+                  if (state is InitialNewSessionState) {
+                    body = _contentBuilder();
+                  } else if (state is EditingSessionState) {
+                    body = _contentBuilder();
+                  } else if (state is NewSessionCrudInProgressState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is NewSessionInsertedState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is SkillSelectedForEventState) {
+                    bloc.selectedSkill = state.skill;
+                    currentEventMap = {
+                      'skill': bloc.selectedSkill,
+                      'goal': bloc.currentGoal
+                    };
+                    body = _contentBuilder();
+                  } else if (state is EventsCreatedForSessionState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                    // Navigator.of(context).pop();
+                  }
+                  return body;
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
-  void noFlash() {
-    Navigator.of(context).pop();
-  }
+  // void noFlash() {
+  //   Navigator.of(context).pop();
+  // }
 
   Container _timeSelectionBox(
       String descText, String timeText, Function callback) {
@@ -305,7 +342,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   void _deleteEventTapped(Map<String, dynamic> map) async {
     await showDialog<bool>(
-        context: context,
+        context: (context),
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -321,7 +358,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                 child: Text('Delete'),
                 onPressed: () {
                   setState(() {
-                    _bloc.eventMapsForListView.remove(map);
+                    bloc.eventMapsForListView.remove(map);
                   });
 
                   Navigator.of(context).pop();
@@ -333,7 +370,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   void _doneTapped() {
-    _bloc.createSession(date);
+    bloc.createSession(date);
   }
 
   void _cancelTapped() {
@@ -341,16 +378,16 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   void _addEvent(int eventDuration) {
-    _bloc.eventDuration = eventDuration;
-    _bloc.createEvent(date);
+    bloc.eventDuration = eventDuration;
+    bloc.createEvent(date);
     setState(() {
-      _bloc.selectedSkill = null;
+      bloc.selectedSkill = null;
     });
   }
 
   void _cancelEventTapped() {
     setState(() {
-      _bloc.selectedSkill = null;
+      bloc.selectedSkill = null;
     });
   }
 
@@ -371,7 +408,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     var selectedSkill = await Navigator.of(context).push(routeBuilder);
     if (selectedSkill != null) {
       setState(() {
-        _bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
+        bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
       });
     }
   }
@@ -382,10 +419,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
 
   void _selectStartTime() async {
     TimeOfDay initial = TimeOfDay.now();
-    if (_bloc.selectedFinishTime != null) {
+    if (bloc.selectedFinishTime != null) {
       initial = TimeOfDay(
-          hour: _bloc.selectedFinishTime.hour,
-          minute: _bloc.selectedFinishTime.minute - 5);
+          hour: bloc.selectedFinishTime.hour,
+          minute: bloc.selectedFinishTime.minute - 5);
     }
 
     TimeOfDay selectedTime = await showTimePicker(
@@ -394,43 +431,41 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     );
 
     if (selectedTime != null) {
-      if (timeIsValid(selectedTime, _bloc.selectedFinishTime, true)) {
+      if (timeIsValid(selectedTime, bloc.selectedFinishTime, true)) {
         setState(() {
-          _bloc.selectedStartTime = selectedTime;
+          bloc.selectedStartTime = selectedTime;
         });
       } else {
         _showInvalidTimeAlert();
         setState(() {
-          _bloc.selectedStartTime = null;
+          bloc.selectedStartTime = null;
         });
       }
-        
     }
     _setDoneBtnStatus();
   }
 
   void _selectFinishTime() async {
     TimeOfDay initial = TimeOfDay.now();
-    if (_bloc.selectedStartTime != null) {
+    if (bloc.selectedStartTime != null) {
       initial = TimeOfDay(
-          hour: _bloc.selectedStartTime.hour,
-          minute: _bloc.selectedStartTime.minute + 5);
+          hour: bloc.selectedStartTime.hour,
+          minute: bloc.selectedStartTime.minute + 5);
     }
     TimeOfDay selectedTime =
         await showTimePicker(context: context, initialTime: initial);
 
     if (selectedTime != null) {
-      if (timeIsValid(selectedTime, _bloc.selectedStartTime, false)) {
+      if (timeIsValid(selectedTime, bloc.selectedStartTime, false)) {
         setState(() {
-          _bloc.selectedFinishTime = selectedTime;
+          bloc.selectedFinishTime = selectedTime;
         });
       } else {
         _showInvalidTimeAlert();
         setState(() {
-          _bloc.selectedFinishTime = null;
+          bloc.selectedFinishTime = null;
         });
       }
-        
     }
     _setDoneBtnStatus();
   }
@@ -448,7 +483,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               FlatButton(
                 child: Text('Ok'),
                 onPressed: () {
-                  
                   Navigator.of(context).pop();
                 },
               ),

@@ -135,8 +135,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
   }
 
-  void _createOrEditGoal(){
-    if (_skill.currentGoalId == 0){
+  void _createOrEditGoal() {
+    if (_skill.currentGoalId == 0) {
       _goToNewGoalScreen(_skill.id, _skill.name);
     } else {
       _goToGoalEditor(_skill.id, _skill.name, _skill.currentGoalId);
@@ -144,8 +144,11 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   }
 
   void _goToNewGoalScreen(int skillId, String skillName) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context){
-      return NewGoalScreen(skillId: skillId, skillName: skillName,);
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewGoalScreen(
+        skillId: skillId,
+        skillName: skillName,
+      );
     }));
 
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
@@ -162,8 +165,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
 
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
   }
-
-  
 
   Form _skillEditFormBuilder(Key formKey) {
     return Form(

@@ -1,9 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import 'package:skills/features/skills/presentation/bloc/new_session/new_session_state.dart';
 
 class InsertNewSkillEventUC
     extends UseCase<SkillEvent, SkillEventInsertOrUpdateParams> {
@@ -71,6 +74,23 @@ class GetEventsForSession extends UseCase<List<SkillEvent>, SessionByIdParams> {
       SessionByIdParams params) async {
     return await repo.getEventsForSession(params.sessionId);
   }
+}
+
+class GetEventMapsForSession extends UseCase<List<Map>, SessionByIdParams> {
+  final SkillEventRepository repo;
+
+  GetEventMapsForSession(this.repo);
+  @override
+  Future<Either<Failure, List<Map>>> call(SessionByIdParams params) async {
+    Future<Either<Failure, List<Map>>> maps;
+    List<SkillEvent> theEvents = [];
+    final events = await repo.getEventsForSession(params.sessionId);
+    events.fold((failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (eventsList) {theEvents = eventsList;});
+      // use getInfoForEvents - return List<Map> with Skill and Goal, make new Map with that list
+   
+    return maps;
+  }
+  
 }
 
 // class GetSkillInfoForEvent

@@ -64,8 +64,10 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     return _goalType == 0;
   }
 
+// TODO - BUG: exception thrown if a decimal value used
   int get _goalMinutes {
-    int hours = _hoursTextController.text.isNotEmpty
+    
+    int hours= _hoursTextController.text.isNotEmpty
         ? int.parse(_hoursTextController.text)
         : 0;
     int minutes = _minTextController.text.isNotEmpty

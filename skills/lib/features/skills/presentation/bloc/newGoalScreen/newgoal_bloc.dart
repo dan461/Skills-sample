@@ -24,7 +24,7 @@ class NewgoalBloc extends Bloc<NewgoalEvent, NewgoalState> {
     NewgoalEvent event,
   ) async* {
     if (event is InsertNewGoalEvent) {
-      yield NewGoalInsertingState();
+      // yield NewGoalInsertingState();
       final failureOrNewGoal =
           await insertNewGoalUC(GoalCrudParams(goal: event.newGoal));
       yield failureOrNewGoal.fold(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/new_session/new_session_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
@@ -54,10 +56,11 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     );
   }
 
-  Container _contentBuilder(DateTime selectedDate, DateTime month, List<Map> sessionMaps) {
+  Container _contentBuilder(
+      DateTime selectedDate, DateTime month, List<Map> sessionMaps) {
     final today =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-        sessionMaps ??= List<Map>();
+    sessionMaps ??= List<Map>();
     return Container(
       child: Column(
         children: <Widget>[
@@ -89,14 +92,24 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return NewSessionScreen(
         date: date,
+        bloc: locator<NewSessionBloc>(),
       );
     }));
 
     _bloc.add(MonthSelectedEvent(change: 0));
   }
 
-  void _showSessionEditor(Session session){
-    print(session);
+  void _showSessionEditor(Session session) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      NewSessionScreen editor = NewSessionScreen(
+        date: session.date,
+        bloc: locator<NewSessionBloc>(),
+      );
+      editor.bloc.add(BeginSessionEditingEvent(session: session));
+      return editor;
+    }));
+
+    _bloc.add(MonthSelectedEvent(change: 0));
   }
 
   void _calendarMonthChanged(int change) {

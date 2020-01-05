@@ -17,15 +17,22 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   final InsertNewSession insertNewSession;
   // final InsertNewSkillEventUC insertNewSkillEventUC;
   final InsertEventsForSessionUC insertEventsForSessionUC;
+  final GetEventsForSession getEventsForSession;
+
+  NewSessionBloc(
+      {this.insertNewSession,
+      this.insertEventsForSessionUC,
+      this.getEventsForSession});
 
   TimeOfDay selectedStartTime;
   TimeOfDay selectedFinishTime;
   DateTime sessionDate;
   Skill selectedSkill;
   Goal currentGoal;
-  Session _sessionForEdit;
+  Session sessionForEdit;
   var pendingEvents = <SkillEvent>[];
   var eventMapsForListView = <Map>[];
+  var eventMapsForSession = <Map>[];
 
   int eventDuration;
 
@@ -40,8 +47,6 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     }
     return minutes;
   }
-
-  NewSessionBloc({this.insertNewSession, this.insertEventsForSessionUC});
 
 // TODO - should entities and models use DateTime and TimeOfDay and convert to/from ints in toMap/fromMap?
   int timeToInt(DateTime date, TimeOfDay timeOfDay) {
@@ -93,8 +98,22 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Stream<NewSessionState> mapEventToState(
     NewSessionEvent event,
   ) async* {
+    if (event is BeginSessionEditingEvent) {
+      // get session's events
+
+      sessionForEdit = event.session;
+      selectedStartTime = sessionForEdit.startTime;
+      selectedFinishTime = sessionForEdit.endTime;
+
+      yield EditingSessionState(event.session);
+      final eventsOrFailure = await getEventsForSession(
+          SessionByIdParams(sessionId: sessionForEdit.sessionId));
+          yield eventsOrFailure.fold((failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (events){
+            
+          });
+    }
     // Cache New Session
-    if (event is InsertNewSessionEvent) {
+    else if (event is InsertNewSessionEvent) {
       yield NewSessionCrudInProgressState();
       final failureOrNewSession = await insertNewSession(
           SessionInsertOrUpdateParams(session: event.newSession));

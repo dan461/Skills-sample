@@ -42,4 +42,10 @@ class SkillEventRepositoryImpl implements SkillEventRepository {
       int sessionId) async {
     return Right(await localDataSource.getEventsForSession(sessionId));
   }
+
+  @override
+  Future<Either<Failure, List<Map>>> getInfoForEvents(
+      List<SkillEvent> events) async {
+    return Right(await localDataSource.getInfoForEvents(events));
+  }
 }

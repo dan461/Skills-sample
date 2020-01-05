@@ -44,7 +44,7 @@ void init() {
       ));
 
   locator.registerFactory(() => NewSessionBloc(
-      insertNewSession: locator(), insertEventsForSessionUC: locator()));
+      insertNewSession: locator(), insertEventsForSessionUC: locator(), getEventsForSession: locator()));
 
   locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator(), getEventsForSession: locator()));
 
