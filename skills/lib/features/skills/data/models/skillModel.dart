@@ -9,7 +9,7 @@ class SkillModel extends Skill {
 //  int totalTime;
 
   SkillModel({
-    int id,
+    int skillId,
     @required String name,
     @required String source,
     DateTime startDate,
@@ -18,7 +18,7 @@ class SkillModel extends Skill {
     int currentGoalId,
     String goalText,
   }) : super(
-            id: id,
+            skillId: skillId,
             name: name,
             source: source,
             startDate: startDate,
@@ -29,29 +29,29 @@ class SkillModel extends Skill {
 
   factory SkillModel.fromMap(Map<String, dynamic> map) {
     return SkillModel(
-        id: map['skillId'],
+        skillId: map['skillId'],
         name: map['name'],
         source: map['source'],
         startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']) ,
         totalTime: map['totalTime'],
         lastPracDate: map['lastPracDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']) : DateTime.fromMillisecondsSinceEpoch(map['startDate']),
-        currentGoalId: map['currentGoalId'],
+        currentGoalId: map['goalId'],
         goalText: map['goalText']);
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'skillId': id,
+      'skillId': skillId,
       'name': name,
       'source': source,
       'startDate': startDate.millisecondsSinceEpoch,
       'totalTime': totalTime,
       'lastPracDate': lastPracDate.millisecondsSinceEpoch,
-      'currentGoalId': currentGoalId,
+      'goalId': currentGoalId,
       'goalText': goalText
     };
   }
 
   @override
-  List<Object> get props => [id, name, source, startDate, totalTime, lastPracDate, currentGoalId, goalText];
+  List<Object> get props => [skillId, name, source, startDate, totalTime, lastPracDate, currentGoalId, goalText];
 }

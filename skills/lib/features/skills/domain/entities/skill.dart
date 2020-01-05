@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 
 class Skill extends Equatable {
-  final int id;
+  final int skillId;
   final String name;
   final String source;
   final DateTime startDate;
@@ -12,7 +12,7 @@ class Skill extends Equatable {
   final String goalText;
 
   Skill(
-      {this.id,
+      {this.skillId,
       @required this.name,
       @required this.source,
       this.startDate,
@@ -24,7 +24,7 @@ class Skill extends Equatable {
 
   @override
   List<Object> get props => [
-        id,
+        skillId,
         name,
         source,
         startDate,

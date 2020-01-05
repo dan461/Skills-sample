@@ -8,7 +8,7 @@ void main() {
 
   setUp(() {
     sut = SkillModel(
-        id: 1,
+        skillId: 1,
         name: 'test',
         source: 'testing',
         startDate: DateTime.fromMillisecondsSinceEpoch(0),

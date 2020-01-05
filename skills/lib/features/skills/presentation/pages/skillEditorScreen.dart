@@ -112,12 +112,12 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   }
 
   void _deleteSkill() async {
-    skillEditorBloc.add(DeleteSkillWithIdEvent(skillId: _skill.id));
+    skillEditorBloc.add(DeleteSkillWithIdEvent(skillId: _skill.skillId));
   }
 
   void _updateSkill() async {
     Skill updatedSkill = Skill(
-        id: _skill.id,
+        skillId: _skill.skillId,
         name: _nameController.text,
         source: _sourceController.text,
         startDate: _skill.startDate,
@@ -135,17 +135,20 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(InsertNewSkillEvent(newSkill));
   }
 
-  void _createOrEditGoal(){
-    if (_skill.currentGoalId == 0){
-      _goToNewGoalScreen(_skill.id, _skill.name);
+  void _createOrEditGoal() {
+    if (_skill.currentGoalId == 0) {
+      _goToNewGoalScreen(_skill.skillId, _skill.name);
     } else {
-      _goToGoalEditor(_skill.id, _skill.name, _skill.currentGoalId);
+      _goToGoalEditor(_skill.skillId, _skill.name, _skill.currentGoalId);
     }
   }
 
   void _goToNewGoalScreen(int skillId, String skillName) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context){
-      return NewGoalScreen(skillId: skillId, skillName: skillName,);
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewGoalScreen(
+        skillId: skillId,
+        skillName: skillName,
+      );
     }));
 
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
@@ -162,8 +165,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
 
     skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
   }
-
-  
 
   Form _skillEditFormBuilder(Key formKey) {
     return Form(
@@ -276,7 +277,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
                 decoration: InputDecoration(labelText: 'Source'),
               ),
             ),
-            _goalDescriptionArea(true, skill.id),
+            _goalDescriptionArea(true, skill.skillId),
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: 8.0),
               child: RaisedButton(
