@@ -18,11 +18,13 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   // final InsertNewSkillEventUC insertNewSkillEventUC;
   final InsertEventsForSessionUC insertEventsForSessionUC;
   final GetEventsForSession getEventsForSession;
+  final GetEventMapsForSession getEventMapsForSession;
 
   NewSessionBloc(
       {this.insertNewSession,
       this.insertEventsForSessionUC,
-      this.getEventsForSession});
+      this.getEventsForSession,
+      this.getEventMapsForSession});
 
   TimeOfDay selectedStartTime;
   TimeOfDay selectedFinishTime;
@@ -99,18 +101,17 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     NewSessionEvent event,
   ) async* {
     if (event is BeginSessionEditingEvent) {
-      // get session's events
-
       sessionForEdit = event.session;
       selectedStartTime = sessionForEdit.startTime;
       selectedFinishTime = sessionForEdit.endTime;
-
-      yield EditingSessionState(event.session);
-      final eventsOrFailure = await getEventsForSession(
-          SessionByIdParams(sessionId: sessionForEdit.sessionId));
-          yield eventsOrFailure.fold((failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (events){
-            
-          });
+      // get session's events
+      final infoMapsOrFailure = await getEventMapsForSession(
+          SessionByIdParams(sessionId: event.session.sessionId));
+      yield infoMapsOrFailure.fold(
+          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (maps) {
+        eventMapsForSession = maps;
+        return EditingSessionState(event.session, maps);
+      });
     }
     // Cache New Session
     else if (event is InsertNewSessionEvent) {

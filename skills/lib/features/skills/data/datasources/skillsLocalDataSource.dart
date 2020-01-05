@@ -249,10 +249,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText) async {
     final Database db = await database;
-    Map<String, dynamic> changeMap = {
-      'goalId': goalId,
-      'goalText': goalText
-    };
+    Map<String, dynamic> changeMap = {'goalId': goalId, 'goalText': goalText};
     int updates = await db.update(skillsTable, changeMap,
         where: '$skillId = ?', whereArgs: [skillId]);
     return updates;
@@ -399,16 +396,23 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
+    final Database db = await database;
     
-    Goal goal;
-    List<Map> maps;
+    List<Map> maps = [];
     for (var event in events) {
-      SkillModel skill = await getSkillById(event.skillId);
-      if (skill.currentGoalId != 0) {
-        goal = await getGoalById(skill.currentGoalId);
-      }
-      Map<String, dynamic> map = {'skill' : skill, 'goal' : goal};
-      maps.add(map);
+      var skillId = event.skillId;
+      var query =
+          "SELECT name, source, goalText, timeRemaining FROM $skillsTable "
+          "INNER JOIN $goalsTable ON skills.skillId = goals.skillId "
+          "WHERE skills.skillId = ?";
+      List<Map> infomaps = await db.rawQuery(query, [skillId]);
+      maps.add(infomaps.first);
+      // SkillModel skill = await getSkillById(event.skillId);
+      // if (skill.currentGoalId != 0) {
+      //   goal = await getGoalById(skill.currentGoalId);
+      // }
+      // Map<String, dynamic> map = {'skill' : skill, 'goal' : goal};
+      // maps.add(map);
     }
 
     return maps;

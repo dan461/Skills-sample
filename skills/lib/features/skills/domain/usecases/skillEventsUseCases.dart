@@ -82,10 +82,11 @@ class GetEventMapsForSession extends UseCase<List<Map>, SessionByIdParams> {
   GetEventMapsForSession(this.repo);
   @override
   Future<Either<Failure, List<Map>>> call(SessionByIdParams params) async {
-    Future<Either<Failure, List<Map>>> maps;
+    Either<Failure, List<Map>> maps;
     List<SkillEvent> theEvents = [];
     final events = await repo.getEventsForSession(params.sessionId);
     events.fold((failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (eventsList) {theEvents = eventsList;});
+    maps = await repo.getInfoForEvents(theEvents);
       // use getInfoForEvents - return List<Map> with Skill and Goal, make new Map with that list
    
     return maps;

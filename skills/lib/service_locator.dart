@@ -44,9 +44,13 @@ void init() {
       ));
 
   locator.registerFactory(() => NewSessionBloc(
-      insertNewSession: locator(), insertEventsForSessionUC: locator(), getEventsForSession: locator()));
+      insertNewSession: locator(),
+      insertEventsForSessionUC: locator(),
+      getEventsForSession: locator(),
+      getEventMapsForSession: locator()));
 
-  locator.registerFactory(() => SchedulerBloc(getSessionInMonth: locator(), getEventsForSession: locator()));
+  locator.registerFactory(() => SchedulerBloc(
+      getSessionInMonth: locator(), getEventsForSession: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
@@ -71,6 +75,7 @@ void init() {
   locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
   locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
   locator.registerLazySingleton(() => GetEventsForSession(locator()));
+  locator.registerLazySingleton(() => GetEventMapsForSession(locator()));
   // locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));
 
   // Repositories
