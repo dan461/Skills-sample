@@ -93,29 +93,29 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   static final String integer = "INTEGER";
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
-  static final String skillId = 'skillId';
-  static final String sessionId = 'sessionId';
-  static final String goalId = 'goalId';
-  static final String eventId = 'eventId';
+  // static final String skillId = 'skillId';
+  // static final String sessionId = 'sessionId';
+  // static final String goalId = 'goalId';
+  // static final String eventId = 'eventId';
 
   // table creation
-  final String _createSkillTable = "$createTable skills($skillId $primaryKey, "
+  final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
       "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId $integer, goalText TEXT)";
 
-  final String _createGoalTable = "$createTable goals($goalId $primaryKey, "
-      "$skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
+  final String _createGoalTable = "$createTable goals(goalId $primaryKey, "
+      "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
       "goalTime $integer, timeRemaining $integer, desc TEXT, "
-      "CONSTRAINT fk_skills FOREIGN KEY ($skillId) REFERENCES skills($skillId) ON DELETE CASCADE)";
+      "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
   final String _createSessionsTable =
-      "$createTable sessions($sessionId $primaryKey, "
+      "$createTable sessions(sessionId $primaryKey, "
       "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
       "isScheduled INTEGER, isCompleted INTEGER)";
 
   final String _createSkillEventsTable =
-      "$createTable skillEvents($eventId $primaryKey, "
-      "$skillId $integer, $sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
-      "CONSTRAINT fk_sessions FOREIGN KEY ($sessionId) REFERENCES sessions($sessionId) ON DELETE CASCADE)";
+      "$createTable skillEvents(eventId $primaryKey, "
+      "skillId $integer, sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
+      "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
 // ******* SKILLS *********
   @override
@@ -134,7 +134,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<SkillModel> getSkillById(int id) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillsTable,
-        columns: null, where: '$skillId = ?', whereArgs: [id]);
+        columns: null, where: 'skillId = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return SkillModel.fromMap(maps.first);
     }
@@ -166,8 +166,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> deleteSkillWithId(int skillId) async {
     final Database db = await database;
-    int result = await db
-        .delete(skillsTable, where: '$skillId = ?', whereArgs: [skillId]);
+    int result =
+        await db.delete(skillsTable, where: ' = ?', whereArgs: [skillId]);
     return result;
   }
 
@@ -184,7 +184,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         currentGoalId: skill.currentGoalId,
         goalText: skill.goalText);
     int updates = await db.update(skillsTable, skillModel.toMap(),
-        where: '$skillId = ?', whereArgs: [skillModel.skillId]);
+        where: 'skillId = ?', whereArgs: [skillModel.skillId]);
     return updates;
   }
 
@@ -193,15 +193,15 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> deleteGoalWithId(int id) async {
     final Database db = await database;
     int result =
-        await db.delete(goalsTable, where: '$goalId = ?', whereArgs: [id]);
+        await db.delete(goalsTable, where: 'goalId = ?', whereArgs: [id]);
     return result;
   }
 
   @override
   Future<GoalModel> getGoalById(int id) async {
     final Database db = await database;
-    List<Map> maps = await db.query(goalsTable,
-        columns: null, where: '$goalId = ?', whereArgs: [id]);
+    List<Map> maps = await db
+        .query(goalsTable, columns: null, where: 'goalId = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return GoalModel.fromMap(maps.first);
     }
@@ -242,7 +242,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeRemaining: goal.timeRemaining,
         desc: goal.desc);
     int updates = await db.update(goalsTable, goalModel.toMap(),
-        where: '$goalId = ?', whereArgs: [goal.goalId]);
+        where: 'goalId = ?', whereArgs: [goal.goalId]);
     return updates;
   }
 
@@ -250,8 +250,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText) async {
     final Database db = await database;
     Map<String, dynamic> changeMap = {'goalId': goalId, 'goalText': goalText};
-    int updates = await db.update(skillsTable, changeMap,
-        where: '$skillId = ?', whereArgs: [skillId]);
+    int updates = await db
+        .update(skillsTable, changeMap, where: ' = ?', whereArgs: [skillId]);
     return updates;
   }
 
@@ -268,6 +268,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       isCompleted: session.isCompleted,
       isScheduled: session.isScheduled,
     );
+    
     int id = await db.insert(sessionsTable, sessionModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     Session newSession = await getSessionById(id);
@@ -278,7 +279,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<SessionModel> getSessionById(int id) async {
     final Database db = await database;
     List<Map> maps = await db.query(sessionsTable,
-        columns: null, where: '$sessionId = ?', whereArgs: [id]);
+        columns: null, where: 'sessionId = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return SessionModel.fromMap(maps.first);
     }
@@ -287,8 +288,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   Future<int> deleteSessionWithId(int id) async {
     final Database db = await database;
-    int result = await db
-        .delete(sessionsTable, where: '$sessionId = ?', whereArgs: [id]);
+    int result =
+        await db.delete(sessionsTable, where: 'sessionId = ?', whereArgs: [id]);
     return result;
   }
 
@@ -315,7 +316,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> deleteEventById(int id) async {
     final Database db = await database;
     int result = await db
-        .delete(skillEventsTable, where: '$eventId = ?', whereArgs: [id]);
+        .delete(skillEventsTable, where: 'eventId = ?', whereArgs: [id]);
     return result;
   }
 
@@ -323,7 +324,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<SkillEventModel> getEventById(int id) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillEventsTable,
-        columns: null, where: '$eventId = ?', whereArgs: [id]);
+        columns: null, where: 'eventId = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return SkillEventModel.fromMap(maps.first);
     }
@@ -379,7 +380,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         skillString: event.skillString);
 
     int updates = await db.update(skillEventsTable, model.toMap(),
-        where: '$eventId = ?', whereArgs: [event.eventId]);
+        where: 'eventId = ?', whereArgs: [event.eventId]);
     return updates;
   }
 
@@ -387,7 +388,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<List<SkillEvent>> getEventsForSession(int sessionId) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillEventsTable,
-        where: '$sessionId = ?', whereArgs: [sessionId]);
+        where: 'sessionId = ?', whereArgs: [sessionId]);
     List<SkillEvent> events = [];
     for (var map in maps) {
       events.add(SkillEventModel.fromMap(map));
@@ -396,25 +397,78 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
-    final Database db = await database;
-    
+    // final Database db = await database;
+
     List<Map> maps = [];
     for (var event in events) {
-      var skillId = event.skillId;
-      var query =
-          "SELECT name, source, goalText, timeRemaining FROM $skillsTable "
-          "INNER JOIN $goalsTable ON skills.skillId = goals.skillId "
-          "WHERE skills.skillId = ?";
-      List<Map> infomaps = await db.rawQuery(query, [skillId]);
-      maps.add(infomaps.first);
-      // SkillModel skill = await getSkillById(event.skillId);
-      // if (skill.currentGoalId != 0) {
-      //   goal = await getGoalById(skill.currentGoalId);
-      // }
-      // Map<String, dynamic> map = {'skill' : skill, 'goal' : goal};
-      // maps.add(map);
+      SkillModel skill = await getSkillById(event.skillId);
+      
+
+      GoalModel goal;
+      if (skill.currentGoalId != 0) {
+        goal = await getGoalById(skill.currentGoalId);
+      }
+
+      Map<String, dynamic> eventMap = {
+        'event': event,
+        'skill': skill,
+        'goal': goal ?? 'none',
+      };
+      maps.add(eventMap);
     }
 
     return maps;
   }
+
+  // Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
+  //   final Database db = await database;
+
+  //   List<Map> maps = [];
+  //   for (var event in events) {
+  //     // Get the id for the Skill's current goal, so only that one will be selected
+
+  //     List<Map> currentGoalMapList = await db.query(skillsTable,
+  //         columns: ['goalId'],
+  //         where: 'skillId = ?',
+  //         whereArgs: [event.skillId]);
+
+  //     var currentGoalId = currentGoalMapList.first['goalId'];
+
+  //     var query;
+  //     if (currentGoalId > 0) {
+  //         query =
+  //         "SELECT name, source, goalText, timeRemaining FROM $skillsTable "
+  //         "INNER JOIN $goalsTable ON skills.skillId = goals.skillId "
+  //         "WHERE skills.skillId = ?";
+  //     } else {
+  //       query = "SELECT name, source FROM $skillsTable WHERE skillId = ?";
+  //     }
+
+  //     List<Map> infomaps =
+  //         await db.rawQuery(query, [event.skillId]);
+
+  //     var skillName = '';
+  //     var skillSource = '';
+  //     var goalText = '';
+  //     var time = 0;
+
+  //     if (infomaps.isNotEmpty) {
+  //       skillName = infomaps.first['name'];
+  //       skillSource = infomaps.first['source'];
+  //       goalText = infomaps.first['goalText'] ?? 'None';
+  //       time = infomaps.first['timeRemaining'] ?? 0;
+  //     }
+
+  //     Map<String, dynamic> eventMap = {
+  //       'event': event,
+  //       'skillName': skillName,
+  //       'source': skillSource,
+  //       'goalText': goalText,
+  //       'time': time
+  //     };
+  //     maps.add(eventMap);
+  //   }
+
+  //   return maps;
+  // }
 }
