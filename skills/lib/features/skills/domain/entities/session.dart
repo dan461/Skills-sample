@@ -11,6 +11,18 @@ class Session extends Equatable {
   final bool isScheduled;
   final bool isCompleted;
 
+  int get sessionduration {
+     int minutes;
+    if (startTime == null || endTime == null)
+      minutes = 0;
+    else {
+      int hours = endTime.hour - startTime.hour;
+      minutes =
+          endTime.minute - startTime.minute + hours * 60;
+    }
+    return minutes;
+  }
+
   Session(
       {this.sessionId,
       @required this.date,
