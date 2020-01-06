@@ -16,6 +16,15 @@ class InsertNewSessionEvent extends NewSessionEvent {
   List<Object> get props => [newSession];
 }
 
+class UpdateSessionEvent extends NewSessionEvent {
+  final Map<String, dynamic> changeMap;
+
+  UpdateSessionEvent(this.changeMap);
+
+  @override
+  List<Object> get props => [changeMap];
+}
+
 class GetSessionWithIdEvent extends NewSessionEvent {
   final int id;
 
@@ -36,7 +45,6 @@ class DeleteSessionWithIdEvent extends NewSessionEvent {
 
 class SkillSelectedForSessionEvent extends NewSessionEvent {
   final Skill skill;
-  
 
   SkillSelectedForSessionEvent({@required this.skill});
 

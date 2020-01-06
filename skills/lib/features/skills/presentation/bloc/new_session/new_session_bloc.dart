@@ -33,7 +33,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Goal currentGoal;
   Session sessionForEdit;
   var pendingEvents = <SkillEvent>[];
-  var eventMapsForListView = <Map>[];
+  var pendingEventMapsForListView = <Map>[];
   var eventMapsForSession = <Map>[];
 
   int eventDuration;
@@ -70,6 +70,30 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     add(InsertNewSessionEvent(newSession: newSession));
   }
 
+  void updateSession() {
+    /* possible changes 
+      - new date
+      - new start time
+      - new end time
+      - new duration (should probably be a computed property of Session)
+      - isCompleted status changed to true
+    */
+
+    Map<String, dynamic> changeMap = {'sessionId': sessionForEdit.sessionId};
+
+    if (sessionDate != sessionForEdit.date)
+      
+
+    if (selectedStartTime != sessionForEdit.startTime)
+      changeMap.addEntries([MapEntry('startTime', selectedStartTime)]);
+
+    if (selectedFinishTime != sessionForEdit.endTime)
+      changeMap.addEntries([MapEntry('endTime', selectedFinishTime)]);
+
+    if (changeMap.isNotEmpty){}
+      // add(UpdateSessionEvent())
+  }
+
   void createEvent(DateTime date) {
     final newEvent = SkillEvent(
         skillId: selectedSkill.skillId,
@@ -80,12 +104,15 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
         skillString: selectedSkill.name);
 
     pendingEvents.add(newEvent);
-    Map<String, dynamic> map = {
-      'event': newEvent,
-      'skill': selectedSkill,
-      'goal': currentGoal
-    };
-    eventMapsForListView.add(map);
+
+    if (sessionForEdit == null) {
+      Map<String, dynamic> map = {
+        'event': newEvent,
+        'skill': selectedSkill,
+        'goal': currentGoal
+      };
+      pendingEventMapsForListView.add(map);
+    }
   }
 
   @override
@@ -104,6 +131,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
       sessionForEdit = event.session;
       selectedStartTime = sessionForEdit.startTime;
       selectedFinishTime = sessionForEdit.endTime;
+      sessionDate = sessionForEdit.date;
       // get session's events
       final infoMapsOrFailure = await getEventMapsForSession(
           SessionByIdParams(sessionId: event.session.sessionId));
@@ -124,8 +152,14 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
         return NewSessionInsertedState(
             newSession: session, events: pendingEvents);
       });
-      //Skill selected
-    } else if (event is SkillSelectedForSessionEvent) {
+    }
+    // Update Session
+    else if (event is UpdateSessionEvent) {
+      // use changeMap to update session
+      // create UpdateSession UC
+    }
+    //Skill selected
+    else if (event is SkillSelectedForSessionEvent) {
       selectedSkill = event.skill;
       if (selectedSkill.currentGoalId != 0) {
         var getGoal = locator<GetGoalById>();
