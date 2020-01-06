@@ -121,29 +121,35 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     );
   }
 
-  ButtonBar _buttonsBuilder(){
+  ButtonBar _buttonsBuilder() {
     return ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              RaisedButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  _cancelTapped();
-                },
-              ),
-              RaisedButton(
-                  child: Text('Done'),
-                  onPressed: _doneButtonEnabled
-                      ? () {
-                          _doneTapped();
-                        }
-                      : null),
-            ],
-          );
+      alignment: MainAxisAlignment.center,
+      children: <Widget>[
+        RaisedButton(
+          child: Text('Cancel'),
+          onPressed: () {
+            _cancelTapped();
+          },
+        ),
+        RaisedButton(
+            child: Text('Done'),
+            onPressed: _doneButtonEnabled
+                ? () {
+                    _doneTapped();
+                  }
+                : null),
+      ],
+    );
   }
 
   Column _eventsHeaderBuilder() {
-    String countString = bloc.eventMapsForListView.length.toString();
+    int eventCount = bloc.pendingEventMapsForListView.length;
+
+    if (inEditingMode) {
+      eventCount += bloc.eventMapsForSession.length;
+    }
+    String countString = eventCount.toString();
+
     return Column(
       children: <Widget>[
         Container(
@@ -183,15 +189,18 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   }
 
   ListView _eventsListBuilder() {
+    List<Map> sourceList = inEditingMode
+        ? bloc.eventMapsForSession
+        : bloc.pendingEventMapsForListView;
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return SessionEventCard(
-          map: bloc.eventMapsForListView[index],
+          map: sourceList[index],
           callback: _eventTapped,
         );
       },
-      itemCount: bloc.eventMapsForListView.length,
+      itemCount: sourceList.length,
     );
   }
 
@@ -244,7 +253,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                   if (state is InitialNewSessionState) {
                     body = _contentBuilder();
                   } else if (state is EditingSessionState) {
-                    
                     body = _contentBuilder();
                   } else if (state is NewSessionCrudInProgressState) {
                     body = Center(
@@ -361,7 +369,11 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                 child: Text('Delete'),
                 onPressed: () {
                   setState(() {
-                    bloc.eventMapsForListView.remove(map);
+                    if (inEditingMode) {
+                      // delete existing event
+                    } else {
+                      bloc.pendingEventMapsForListView.remove(map);
+                    }
                   });
 
                   Navigator.of(context).pop();
@@ -521,9 +533,10 @@ class SessionEventCard extends StatelessWidget {
   const SessionEventCard({Key key, @required this.map, @required this.callback})
       : super(key: key);
 
-  Widget goalSectionBuilder(Goal goal, Skill skill, BuildContext context) {
+  Widget goalSectionBuilder(Skill skill, BuildContext context) {
     Widget body = SizedBox();
-    if (goal != null) {
+    var goal = map['goal'];
+    if (goal is Goal) {
       String goalTimeString = goal.timeRemaining.toString();
       body = Card(
         child: Padding(
@@ -556,7 +569,7 @@ class SessionEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String durationString = map['event'].duration.toString();
     Skill skill = map['skill'];
-    Goal goal = map['goal'];
+    // Goal goal = map['goal'];
 
     return GestureDetector(
       onTap: () {
@@ -585,7 +598,7 @@ class SessionEventCard extends StatelessWidget {
                     Text(skill.source, style: Theme.of(context).textTheme.body1)
                   ],
                 ),
-                goalSectionBuilder(goal, skill, context)
+                goalSectionBuilder(skill, context)
               ],
             ),
           ),
