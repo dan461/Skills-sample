@@ -80,6 +80,15 @@ class SessionInMonthParams extends Params {
   List<Object> get props => [month];
 }
 
+class SessionUpdateParams extends Params {
+  final int sessionId;
+  final Map<String, dynamic> changeMap;
+
+  SessionUpdateParams({@required this.sessionId, @required this.changeMap});
+  @override
+  List<Object> get props => [sessionId, changeMap];
+}
+
 class SessionDeleteParams extends Params {
   final int sessionId;
 
@@ -100,7 +109,7 @@ class SkillEventGetOrDeleteParams extends Params {
   final int eventId;
 
   SkillEventGetOrDeleteParams({@required this.eventId});
-   @override
+  @override
   List<Object> get props => [eventId];
 }
 
@@ -108,9 +117,9 @@ class SkillEventMultiInsertParams extends Params {
   final List<SkillEvent> events;
   final int newSessionId;
 
-  SkillEventMultiInsertParams({@required this.events, @required this.newSessionId});
+  SkillEventMultiInsertParams(
+      {@required this.events, @required this.newSessionId});
 
-   @override
+  @override
   List<Object> get props => [events];
-  
 }

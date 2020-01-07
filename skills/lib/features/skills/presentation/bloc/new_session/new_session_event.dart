@@ -4,6 +4,8 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
+
+
 abstract class NewSessionEvent extends Equatable {
   const NewSessionEvent();
 }
@@ -16,28 +18,10 @@ class InsertNewSessionEvent extends NewSessionEvent {
   List<Object> get props => [newSession];
 }
 
-class UpdateSessionEvent extends NewSessionEvent {
-  final Map<String, dynamic> changeMap;
-
-  UpdateSessionEvent(this.changeMap);
-
-  @override
-  List<Object> get props => [changeMap];
-}
-
 class GetSessionWithIdEvent extends NewSessionEvent {
   final int id;
 
   GetSessionWithIdEvent({@required this.id});
-
-  @override
-  List<Object> get props => [id];
-}
-
-class DeleteSessionWithIdEvent extends NewSessionEvent {
-  final int id;
-
-  DeleteSessionWithIdEvent({@required this.id});
 
   @override
   List<Object> get props => [id];
@@ -71,11 +55,4 @@ class EventCreationEvent extends NewSessionEvent {
   List<Object> get props => [event];
 }
 
-class BeginSessionEditingEvent extends NewSessionEvent {
-  final Session session;
 
-  BeginSessionEditingEvent({@required this.session});
-
-  @override
-  List<Object> get props => [session];
-}

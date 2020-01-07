@@ -6,6 +6,8 @@ import 'package:skills/features/skills/presentation/bloc/new_session/new_session
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
+import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/calendar.dart';
 import 'package:skills/features/skills/presentation/widgets/dayDetails.dart';
 import 'package:skills/service_locator.dart';
@@ -101,13 +103,21 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
 
   void _showSessionEditor(Session session) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      NewSessionScreen editor = NewSessionScreen(
-        date: session.date,
-        bloc: locator<NewSessionBloc>(),
+      SessionEditorScreen editor = SessionEditorScreen(
+        bloc: locator<SessionEditorBloc>(),
+        session: session,
       );
-      editor.bloc.add(BeginSessionEditingEvent(session: session));
+      
       return editor;
     }));
+    // await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    //   NewSessionScreen editor = NewSessionScreen(
+    //     date: session.date,
+    //     bloc: locator<NewSessionBloc>(),
+    //   );
+    //   editor.bloc.add(BeginSessionEditingEvent(session: session));
+    //   return editor;
+    // }));
 
     _bloc.add(MonthSelectedEvent(change: 0));
   }

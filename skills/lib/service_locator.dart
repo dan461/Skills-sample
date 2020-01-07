@@ -17,6 +17,7 @@ import 'features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
+import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
 final locator = GetIt.instance;
@@ -49,6 +50,11 @@ void init() {
       getEventsForSession: locator(),
       getEventMapsForSession: locator()));
 
+  locator.registerFactory(() => SessionEditorBloc(
+      updateSessionWithId: locator(),
+      deleteSessionWithId: locator(),
+      insertEventsForSession: locator()));
+
   locator.registerFactory(() => SchedulerBloc(
       getSessionInMonth: locator(), getEventsForSession: locator()));
 
@@ -68,6 +74,8 @@ void init() {
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
   locator.registerLazySingleton(() => GetSessionsInMonth(locator()));
+  locator.registerLazySingleton(() => UpdateSessionWithId(locator()));
+  locator.registerLazySingleton(() => DeleteSessionWithId(locator()));
 
   locator.registerLazySingleton(() => InsertNewSkillEventUC(locator()));
   locator.registerLazySingleton(() => InsertEventsForSessionUC(locator()));

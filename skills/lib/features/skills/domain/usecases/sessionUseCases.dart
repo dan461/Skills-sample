@@ -5,6 +5,8 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
+
+
 class InsertNewSession extends UseCase<Session, SessionInsertOrUpdateParams> {
   final SessionRepository repo;
 
@@ -35,6 +37,18 @@ class GetSessionWithId extends UseCase<Session, SessionByIdParams> {
   Future<Either<Failure, Session>> call(SessionByIdParams params) async {
     return await repo.getSessionById(params.sessionId);
   }
+}
+
+class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
+  final SessionRepository repo;
+
+  UpdateSessionWithId(this.repo);
+  @override
+  Future<Either<Failure, int>> call(SessionUpdateParams params) {
+    
+    return null;
+  }
+
 }
 
 class DeleteSessionWithId extends UseCase<int, SessionDeleteParams> {

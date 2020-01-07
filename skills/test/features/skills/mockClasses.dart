@@ -67,3 +67,7 @@ class MockInsertEventsForSessionUC extends Mock
     implements InsertEventsForSessionUC {}
 
 class MockGetEventsForSessionUC extends Mock implements GetEventsForSession {}
+
+class MockUpdateSessionWithId extends Mock implements UpdateSessionWithId {}
+
+class MockDeleteSessionWithId extends Mock implements DeleteSessionWithId {}

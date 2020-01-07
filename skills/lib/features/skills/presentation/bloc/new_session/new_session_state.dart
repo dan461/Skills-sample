@@ -63,11 +63,4 @@ class SkillEventCreatedState extends NewSessionState {
   List<Object> get props => [event];
 }
 
-class EditingSessionState extends NewSessionState {
-  final Session session;
-  final List<Map> eventMaps;
 
-  EditingSessionState(this.session, this.eventMaps);
-  @override
-  List<Object> get props => [session];
-}

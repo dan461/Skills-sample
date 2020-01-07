@@ -50,7 +50,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
     return minutes;
   }
 
-// TODO - should entities and models use DateTime and TimeOfDay and convert to/from ints in toMap/fromMap?
+  // TODO - still need this?
   int timeToInt(DateTime date, TimeOfDay timeOfDay) {
     return DateTime(
             date.year, date.month, date.day, timeOfDay.hour, timeOfDay.minute)
@@ -127,22 +127,9 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Stream<NewSessionState> mapEventToState(
     NewSessionEvent event,
   ) async* {
-    if (event is BeginSessionEditingEvent) {
-      sessionForEdit = event.session;
-      selectedStartTime = sessionForEdit.startTime;
-      selectedFinishTime = sessionForEdit.endTime;
-      sessionDate = sessionForEdit.date;
-      // get session's events
-      final infoMapsOrFailure = await getEventMapsForSession(
-          SessionByIdParams(sessionId: event.session.sessionId));
-      yield infoMapsOrFailure.fold(
-          (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-        eventMapsForSession = maps;
-        return EditingSessionState(event.session, maps);
-      });
-    }
+    
     // Cache New Session
-    else if (event is InsertNewSessionEvent) {
+    if (event is InsertNewSessionEvent) {
       yield NewSessionCrudInProgressState();
       final failureOrNewSession = await insertNewSession(
           SessionInsertOrUpdateParams(session: event.newSession));
@@ -153,11 +140,11 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
             newSession: session, events: pendingEvents);
       });
     }
-    // Update Session
-    else if (event is UpdateSessionEvent) {
-      // use changeMap to update session
-      // create UpdateSession UC
-    }
+    // // Update Session
+    // else if (event is UpdateSessionEvent) {
+    //   // use changeMap to update session
+    //   // create UpdateSession UC
+    // }
     //Skill selected
     else if (event is SkillSelectedForSessionEvent) {
       selectedSkill = event.skill;

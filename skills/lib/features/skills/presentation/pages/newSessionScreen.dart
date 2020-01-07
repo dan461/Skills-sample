@@ -252,8 +252,8 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                   Widget body;
                   if (state is InitialNewSessionState) {
                     body = _contentBuilder();
-                  } else if (state is EditingSessionState) {
-                    body = _contentBuilder();
+                  // } else if (state is EditingSessionState) {
+                  //   body = _contentBuilder();
                   } else if (state is NewSessionCrudInProgressState) {
                     body = Center(
                       child: CircularProgressIndicator(),
