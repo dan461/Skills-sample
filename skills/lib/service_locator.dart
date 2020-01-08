@@ -53,7 +53,8 @@ void init() {
   locator.registerFactory(() => SessionEditorBloc(
       updateSessionWithId: locator(),
       deleteSessionWithId: locator(),
-      insertEventsForSession: locator()));
+      insertEventsForSession: locator(),
+      deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(
       getSessionInMonth: locator(), getEventsForSession: locator()));

@@ -7,26 +7,29 @@ import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import '../../mockClasses.dart';
+import 'blocTestClasses.dart';
 
 void main() {
   SessionEditorBloc sut;
   MockInsertEventsForSessionUC mockInsertEventsForSessionUC;
   MockUpdateSessionWithId mockUpdateSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
+  MockDeleteEventByIdUC mockDeleteEventByIdUC;
   Session testSession;
 
   setUp(() {
     mockInsertEventsForSessionUC = MockInsertEventsForSessionUC();
     mockUpdateSessionWithId = MockUpdateSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
+    mockDeleteEventByIdUC = MockDeleteEventByIdUC();
 
     sut = SessionEditorBloc(
         updateSessionWithId: mockUpdateSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
-        insertEventsForSession: mockInsertEventsForSessionUC);
+        insertEventsForSession: mockInsertEventsForSessionUC,
+        deleteEventByIdUC: mockDeleteEventByIdUC);
 
     testSession = Session(
         sessionId: 1,
@@ -45,6 +48,7 @@ void main() {
 
   group('UpdateSession', () {
     Map<String, dynamic> testChangeMap = {};
+
     test('test that UpdateSessionWithId usecase is called', () async {
       when(mockUpdateSessionWithId(
               SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
@@ -73,7 +77,7 @@ void main() {
     });
 
     test(
-        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] upon unsuccessful update',
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] when update fails',
         () async {
       when(mockUpdateSessionWithId(
               SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
@@ -88,15 +92,178 @@ void main() {
     });
   });
 
-  group('DeleteSession', (){
+  group('DeleteSession', () {
+    test('test that DeleteSession usecase is called', () async {
+      when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
+          .thenAnswer((_) async => Right(1));
 
+      sut.add(DeleteSessionWithIdEvent(id: 1));
+      await untilCalled(
+          mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)));
+      verify(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)));
+
+      //   UseCaseCalledTestFunction func = UseCaseCalledTestFunction();
+      //   await func(
+      //       bloc: sut,
+      //       useCase: mockDeleteSessionWithId,
+      //       params: SessionDeleteParams(sessionId: 1),
+      //       event: DeleteSessionWithIdEvent(id: 1),
+      //       response: 1);
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionDeletedState] upon successful delete',
+        () async {
+      when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
+          .thenAnswer((_) async => Right(1));
+
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionDeletedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteSessionWithIdEvent(id: 1));
+
+      // Either<Failure, int> response = Right(1);
+      // BlocEmitsStatesInOrderTest func = BlocEmitsStatesInOrderTest();
+      // await func(
+      //     bloc: sut,
+      //     useCase: mockDeleteSessionWithId,
+      //     params: SessionDeleteParams(sessionId: 1),
+      //     expectedStates: expected,
+      //     event: DeleteSessionWithIdEvent(id: 1),
+      //     response: response);
+    });
+// (type 'Future<Right<Failure, dynamic>>' is not a subtype of type 'Future<Either<Failure, int>>')
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] when delete fails',
+        () async {
+      when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteSessionWithIdEvent(id: 1));
+    });
   });
 
-  group('InsertEvents', (){
+  group('InsertEvents', () {
+    var testEvent = SkillEvent(
+        skillId: 1,
+        sessionId: 1,
+        duration: 1,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
+        isComplete: false,
+        skillString: 'test');
 
+    List<SkillEvent> events = [testEvent];
+    List<int> resultsList = [1];
+    test('test that InsertEvents usecase is called', () async {
+      when(mockInsertEventsForSessionUC(
+              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+          .thenAnswer((_) async => Right(resultsList));
+
+      sut.add(EventsCreationForExistingSessionEvent(events: events));
+      await untilCalled(mockInsertEventsForSessionUC(
+          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+      verify(mockInsertEventsForSessionUC(
+          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+
+      // UseCaseCalledTestFunction insertfunc = UseCaseCalledTestFunction();
+      // await insertfunc(
+      //     bloc: sut,
+      //     useCase: mockInsertEventsForSessionUC,
+      //     params: SkillEventMultiInsertParams(events: events, newSessionId: 1),
+      //     event: EventsCreationForExistingSessionEvent(events: events),
+      //     response: 1); ??
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, NewEventsCreatedState] upon successful event creation',
+        () {
+      when(mockInsertEventsForSessionUC(
+              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+          .thenAnswer((_) async => Right(resultsList));
+
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        NewEventsCreatedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(EventsCreationForExistingSessionEvent(events: events));
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] when event creation fails',
+        () {
+      when(mockInsertEventsForSessionUC(
+              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(EventsCreationForExistingSessionEvent(events: events));
+    });
   });
 
-  group('DeleteEvents', (){
+  group('DeleteEvent', () {
+    test('test that DeleteEventById usecase is called', () async {
+      when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
+          .thenAnswer((_) async => Right(1));
 
+      sut.add(DeleteEventFromSessionEvent(1));
+      await untilCalled(
+          mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
+      verify(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
+
+      // UseCaseCalledTestFunction deleteTestfunc = UseCaseCalledTestFunction();
+      // await deleteTestfunc(
+      //     bloc: sut,
+      //     useCase: mockDeleteEventByIdUC,
+      //     params: SkillEventGetOrDeleteParams(eventId: 1),
+      //     event: DeleteEventFromSessionEvent(1),
+      //     response: 1);
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, EventDeletedFromSessionState] upon successful event deletion',
+        () {
+      when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
+          .thenAnswer((_) async => Right(1));
+
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        EventDeletedFromSessionState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteEventFromSessionEvent(1));
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] when event deletion fails',
+        () {
+      when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteEventFromSessionEvent(1));
+    });
   });
 }

@@ -9,18 +9,19 @@ import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import './bloc.dart';
 
 class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   final UpdateSessionWithId updateSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
   final InsertEventsForSessionUC insertEventsForSession;
+  final DeleteEventByIdUC deleteEventByIdUC;
 
   SessionEditorBloc(
       {this.updateSessionWithId,
       this.deleteSessionWithId,
-      this.insertEventsForSession});
+      this.insertEventsForSession,
+      this.deleteEventByIdUC});
 
   TimeOfDay selectedStartTime;
   TimeOfDay selectedFinishTime;
@@ -70,19 +71,43 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   @override
   SessionEditorState get initialState => InitialSessionEditorState();
 
+  Function errorStateResponse =
+      (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE);
+
   @override
   Stream<SessionEditorState> mapEventToState(
     SessionEditorEvent event,
   ) async* {
+    // Update Session
     if (event is UpdateSessionEvent) {
       yield SessionEditorCrudInProgressState();
-
       final updateOrFailure = await updateSessionWithId(SessionUpdateParams(
           sessionId: sessionForEdit.sessionId, changeMap: changeMap));
+      yield updateOrFailure.fold(
+          errorStateResponse, (result) => SessionUpdatedState());
+      // Delete Session
+    } else if (event is DeleteSessionWithIdEvent) {
+      yield SessionEditorCrudInProgressState();
+      final deleteOrFailure = await deleteSessionWithId(
+          SessionDeleteParams(sessionId: sessionForEdit.sessionId));
+      yield deleteOrFailure.fold(
+          errorStateResponse, (response) => SessionDeletedState());
+      // Create Events for Session
+    } else if (event is EventsCreationForExistingSessionEvent) {
+      yield SessionEditorCrudInProgressState();
+      final eventsOrFailure = await insertEventsForSession(
+          SkillEventMultiInsertParams(
+              events: event.events, newSessionId: sessionForEdit.sessionId));
+      yield eventsOrFailure.fold(
+          errorStateResponse, ((results) => NewEventsCreatedState()));
 
-     yield updateOrFailure.fold(
-          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (result) => SessionUpdatedState());
+      // Delete an Event
+    } else if (event is DeleteEventFromSessionEvent) {
+      yield SessionEditorCrudInProgressState();
+      final deleteOrFailure = await deleteEventByIdUC(
+          SkillEventGetOrDeleteParams(eventId: event.eventId));
+      yield deleteOrFailure.fold(
+          errorStateResponse, (reply) => EventDeletedFromSessionState());
     }
   }
 }

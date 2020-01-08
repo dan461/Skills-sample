@@ -77,6 +77,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     );
                   } else if (state is SkillSelectedForSessionEditorState) {
                     // show EventCreator
+                  } else if (state is SessionUpdatedState){
+                    // create new sessions if any are needed, else pop
                   }
                   return body;
                 },

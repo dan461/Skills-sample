@@ -49,6 +49,18 @@ class EventCreatedForSessionEditorState extends SessionEditorState {
   List<Object> get props => [event];
 }
 
+class NewEventsCreatedState extends SessionEditorState {
+  NewEventsCreatedState();
+  @override
+  List<Object> get props => [];
+}
+
+class EventDeletedFromSessionState extends SessionEditorState {
+  EventDeletedFromSessionState();
+  @override
+  List<Object> get props => [];
+}
+
 class SessionEditorCrudInProgressState extends SessionEditorState {
   @override
   List<Object> get props => [];
