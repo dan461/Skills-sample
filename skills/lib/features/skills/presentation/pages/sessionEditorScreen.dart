@@ -69,7 +69,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                   Widget body;
                   // TODO - find better way to deal with the Bloc's dependency on a session
                   if (state is InitialSessionEditorState) {
-                    bloc.sessionForEdit = widget.session;
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                    bloc.add(BeginSessionEditingEvent(session: widget.session));
+                  } else if (state is EditingSessionState) {
                     body = _contentBuilder();
                   } else if (state is SessionEditorCrudInProgressState) {
                     body = Center(
@@ -77,7 +81,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     );
                   } else if (state is SkillSelectedForSessionEditorState) {
                     // show EventCreator
-                  } else if (state is SessionUpdatedState){
+                  } else if (state is SessionUpdatedState) {
                     // create new sessions if any are needed, else pop
                   }
                   return body;
@@ -89,6 +93,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
       ),
     );
   }
+
+  // ******* BUILDERS **********
 
   Container _contentBuilder() {
     return Container(
@@ -102,8 +108,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
                     child: Text(
-                      'Date Here',
-                      // DateFormat.yMMMd().format(date),
+                      DateFormat.yMMMd().format(bloc.sessionForEdit.date),
                       style: Theme.of(context).textTheme.title,
                     ),
                   )
@@ -156,7 +161,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
             child: Text('Done'),
             onPressed: _doneButtonEnabled
                 ? () {
-                    // _doneTapped();
+                    _doneTapped();
                   }
                 : null),
       ],
@@ -198,7 +203,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   ListView _eventsListBuilder() {
-    List sourceList = [];
+    List sourceList = bloc.eventMapsForListView;
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
@@ -240,6 +245,25 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
+  Container _timeSelectionBox(
+      String descText, String timeText, Function callback) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(descText, style: Theme.of(context).textTheme.subhead),
+          InkWell(
+            child: Text(timeText, style: Theme.of(context).textTheme.subhead),
+            onTap: () {
+              callback();
+              // _setDoneBtnStatus();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   // void _selectTime(TimeOfDay initialTime, TimeOfDay targetTime) async {
   //   TimeOfDay selectedTime = await showTimePicker(
   //     context: context,
@@ -255,6 +279,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
   //   _setDoneBtnStatus();
   // }
+
+// ****** ACTIONS *********
 
   void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
@@ -319,6 +345,10 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
       _doneButtonEnabled =
           bloc.selectedStartTime != null && bloc.selectedFinishTime != null;
     });
+  }
+
+  void _doneTapped() {
+    bloc.add(UpdateSessionEvent(bloc.changeMap));
   }
 
   void _addEvent(int eventDuration) {
@@ -409,24 +439,5 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
             ],
           );
         });
-  }
-
-  Container _timeSelectionBox(
-      String descText, String timeText, Function callback) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(descText, style: Theme.of(context).textTheme.subhead),
-          InkWell(
-            child: Text(timeText, style: Theme.of(context).textTheme.subhead),
-            onTap: () {
-              callback();
-              // _setDoneBtnStatus();
-            },
-          )
-        ],
-      ),
-    );
   }
 }

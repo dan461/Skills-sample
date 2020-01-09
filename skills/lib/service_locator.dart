@@ -53,6 +53,7 @@ void init() {
   locator.registerFactory(() => SessionEditorBloc(
       updateSessionWithId: locator(),
       deleteSessionWithId: locator(),
+      getEventMapsForSession: locator(),
       insertEventsForSession: locator(),
       deleteEventByIdUC: locator()));
 

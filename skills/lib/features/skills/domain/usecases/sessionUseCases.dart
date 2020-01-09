@@ -5,8 +5,6 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
-
-
 class InsertNewSession extends UseCase<Session, SessionInsertOrUpdateParams> {
   final SessionRepository repo;
 
@@ -45,10 +43,8 @@ class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
   UpdateSessionWithId(this.repo);
   @override
   Future<Either<Failure, int>> call(SessionUpdateParams params) {
-    
     return repo.updateSession(params.changeMap, params.sessionId);
   }
-
 }
 
 class DeleteSessionWithId extends UseCase<int, SessionDeleteParams> {

@@ -17,6 +17,7 @@ void main() {
   MockUpdateSessionWithId mockUpdateSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
   MockDeleteEventByIdUC mockDeleteEventByIdUC;
+  MockGetEventMapsForSession mockGetEventMapsForSession;
   Session testSession;
 
   setUp(() {
@@ -24,10 +25,12 @@ void main() {
     mockUpdateSessionWithId = MockUpdateSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
     mockDeleteEventByIdUC = MockDeleteEventByIdUC();
+    mockGetEventMapsForSession = MockGetEventMapsForSession();
 
     sut = SessionEditorBloc(
         updateSessionWithId: mockUpdateSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
+        getEventMapsForSession: mockGetEventMapsForSession,
         insertEventsForSession: mockInsertEventsForSessionUC,
         deleteEventByIdUC: mockDeleteEventByIdUC);
 
@@ -46,7 +49,7 @@ void main() {
     expect(sut.initialState, equals(InitialSessionEditorState()));
   });
 
-  group('UpdateSession', () {
+  group('UpdateSession: ', () {
     Map<String, dynamic> testChangeMap = {};
 
     test('test that UpdateSessionWithId usecase is called', () async {
@@ -92,7 +95,7 @@ void main() {
     });
   });
 
-  group('DeleteSession', () {
+  group('DeleteSession: ', () {
     test('test that DeleteSession usecase is called', () async {
       when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
           .thenAnswer((_) async => Right(1));
@@ -153,7 +156,7 @@ void main() {
     });
   });
 
-  group('InsertEvents', () {
+  group('InsertEvents: ', () {
     var testEvent = SkillEvent(
         skillId: 1,
         sessionId: 1,
@@ -217,7 +220,7 @@ void main() {
     });
   });
 
-  group('DeleteEvent', () {
+  group('DeleteEvent: ', () {
     test('test that DeleteEventById usecase is called', () async {
       // when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
       //     .thenAnswer((_) async => Right(1));
@@ -264,6 +267,32 @@ void main() {
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(DeleteEventFromSessionEvent(1));
+    });
+  });
+
+  group('GetEventMapsForSession: ', () {
+    test(
+        'test that GetEventMapsForSession usecase is called after a BeginSessionEditingEvent is added',
+        () async {
+      sut.add(BeginSessionEditingEvent(session: testSession));
+      await untilCalled(
+          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] upon a successful retrieval of Event maps, after a BeginSessionEditingEvent is added.',
+        () async {
+      // the events list returned by the repo can be an empty list, if there are no events
+      when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Right([]));
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        EditingSessionState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(BeginSessionEditingEvent(session: testSession));
     });
   });
 }

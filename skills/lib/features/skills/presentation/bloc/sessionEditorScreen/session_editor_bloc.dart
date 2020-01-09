@@ -14,12 +14,14 @@ import './bloc.dart';
 class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   final UpdateSessionWithId updateSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
+  final GetEventMapsForSession getEventMapsForSession;
   final InsertEventsForSessionUC insertEventsForSession;
   final DeleteEventByIdUC deleteEventByIdUC;
 
   SessionEditorBloc(
       {this.updateSessionWithId,
       this.deleteSessionWithId,
+      this.getEventMapsForSession,
       this.insertEventsForSession,
       this.deleteEventByIdUC});
 
@@ -31,8 +33,9 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   Skill selectedSkill;
   Goal currentGoal;
   var pendingEvents = <SkillEvent>[];
-
+  List<Map> eventMapsForListView = [];
   int eventDuration;
+
   Map<String, dynamic> changeMap = {};
 
   int get sessionDuration {
@@ -78,8 +81,24 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   Stream<SessionEditorState> mapEventToState(
     SessionEditorEvent event,
   ) async* {
+    // Begin editing
+    if (event is BeginSessionEditingEvent) {
+      sessionForEdit = event.session;
+      selectedStartTime = sessionForEdit.startTime;
+      selectedFinishTime = sessionForEdit.endTime;
+      sessionDate = sessionForEdit.date;
+      yield SessionEditorCrudInProgressState();
+      // Get Events
+      final eventMapsOrFailure = await getEventMapsForSession(
+          SessionByIdParams(sessionId: sessionForEdit.sessionId));
+      eventMapsOrFailure.fold((failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE), (maps) {
+        eventMapsForListView = maps;
+      });
+      yield EditingSessionState();
+    }
+
     // Update Session
-    if (event is UpdateSessionEvent) {
+    else if (event is UpdateSessionEvent) {
       yield SessionEditorCrudInProgressState();
       final updateOrFailure = await updateSessionWithId(SessionUpdateParams(
           sessionId: sessionForEdit.sessionId, changeMap: changeMap));

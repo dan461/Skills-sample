@@ -15,12 +15,12 @@ class InitialSessionEditorState extends SessionEditorState {
 }
 
 class EditingSessionState extends SessionEditorState {
-  final Session session;
-  final List<Map> eventMaps;
+  // final Session session;
+  // final List<Map> eventMaps;
 
-  EditingSessionState(this.session, this.eventMaps);
+  EditingSessionState();
   @override
-  List<Object> get props => [session];
+  List<Object> get props => [];
 }
 
 class SessionUpdatedState extends SessionEditorState {
