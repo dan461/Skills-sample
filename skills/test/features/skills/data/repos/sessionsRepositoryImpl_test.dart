@@ -54,6 +54,15 @@ void main() {
       expect(result, equals(Right(newSession)));
     });
 
+    test('updateSession - returns an integer after an update', () async {
+      Map<String, dynamic> changeMap = {};
+      when(mockLocalDataSource.updateSession(changeMap, 1))
+          .thenAnswer((_) async => 1);
+      final result = await sut.updateSession(changeMap, 1);
+      verify(mockLocalDataSource.updateSession(changeMap, 1));
+      expect(result, equals(Right(1)));
+    });
+
     test('getSessionWithId - returns a SessionModel', () async {
       when(mockLocalDataSource.getSessionById(1))
           .thenAnswer((_) async => testSessionModel);
@@ -73,7 +82,8 @@ void main() {
     test('getSessionsInMonth returns a List<Session>', () async {
       final testMonth = DateTime(2019, 12);
       final testList = [testSession];
-      when(mockLocalDataSource.getSessionsInMonth(testMonth)).thenAnswer((_) async => testList);
+      when(mockLocalDataSource.getSessionsInMonth(testMonth))
+          .thenAnswer((_) async => testList);
       final result = await sut.getSessionsInMonth(testMonth);
       verify(mockLocalDataSource.getSessionsInMonth(testMonth));
       expect(result, equals(Right(testList)));

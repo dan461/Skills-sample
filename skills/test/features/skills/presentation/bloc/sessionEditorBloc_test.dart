@@ -165,9 +165,9 @@ void main() {
     List<SkillEvent> events = [testEvent];
     List<int> resultsList = [1];
     test('test that InsertEvents usecase is called', () async {
-      when(mockInsertEventsForSessionUC(
-              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
-          .thenAnswer((_) async => Right(resultsList));
+      // when(mockInsertEventsForSessionUC(
+      //         SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+      //     .thenAnswer((_) async => Right(resultsList));
 
       sut.add(EventsCreationForExistingSessionEvent(events: events));
       await untilCalled(mockInsertEventsForSessionUC(
@@ -219,8 +219,8 @@ void main() {
 
   group('DeleteEvent', () {
     test('test that DeleteEventById usecase is called', () async {
-      when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
-          .thenAnswer((_) async => Right(1));
+      // when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
+      //     .thenAnswer((_) async => Right(1));
 
       sut.add(DeleteEventFromSessionEvent(1));
       await untilCalled(

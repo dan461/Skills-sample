@@ -46,7 +46,7 @@ class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
   @override
   Future<Either<Failure, int>> call(SessionUpdateParams params) {
     
-    return null;
+    return repo.updateSession(params.changeMap, params.sessionId);
   }
 
 }

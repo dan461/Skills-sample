@@ -85,6 +85,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
           sessionId: sessionForEdit.sessionId, changeMap: changeMap));
       yield updateOrFailure.fold(
           errorStateResponse, (result) => SessionUpdatedState());
+
       // Delete Session
     } else if (event is DeleteSessionWithIdEvent) {
       yield SessionEditorCrudInProgressState();
@@ -92,6 +93,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
           SessionDeleteParams(sessionId: sessionForEdit.sessionId));
       yield deleteOrFailure.fold(
           errorStateResponse, (response) => SessionDeletedState());
+
       // Create Events for Session
     } else if (event is EventsCreationForExistingSessionEvent) {
       yield SessionEditorCrudInProgressState();

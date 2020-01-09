@@ -26,6 +26,7 @@ abstract class SkillsLocalDataSource {
   Future<int> deleteGoalWithId(int id);
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
   Future<Session> insertNewSession(Session session);
+  Future<int> updateSession(Map<String, dynamic> changeMap, int id);
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
@@ -268,12 +269,19 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       isCompleted: session.isCompleted,
       isScheduled: session.isScheduled,
     );
-    
+
     int id = await db.insert(sessionsTable, sessionModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     Session newSession = await getSessionById(id);
 
     return newSession;
+  }
+
+  Future<int> updateSession(Map<String, dynamic> changeMap, int id) async {
+    final Database db = await database;
+    int response = await db.update(sessionsTable, changeMap,
+        where: 'sessionId = ?', whereArgs: [id]);
+    return response;
   }
 
   Future<SessionModel> getSessionById(int id) async {
@@ -402,7 +410,6 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     List<Map> maps = [];
     for (var event in events) {
       SkillModel skill = await getSkillById(event.skillId);
-      
 
       GoalModel goal;
       if (skill.currentGoalId != 0) {

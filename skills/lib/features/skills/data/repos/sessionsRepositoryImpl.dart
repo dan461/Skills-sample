@@ -25,8 +25,8 @@ class SessionsRepositoryImpl extends SessionRepository {
   }
 
   @override
-  Future<Either<Failure, int>> updateSession(Session session) async {
-    return null;
+  Future<Either<Failure, int>> updateSession(Map<String, dynamic> changeMap, int id) async {
+    return Right(await localDataSource.updateSession(changeMap, id));
   }
 
   @override
