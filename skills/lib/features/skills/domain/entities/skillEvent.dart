@@ -8,6 +8,9 @@ class SkillEvent extends Equatable {
   final DateTime date;
   final int duration;
   final bool isComplete;
+  // this string will be useful if a Skill has been deleted and
+  // there are still past events for that Skill that need to be shown in Sessions,
+  // or maybe don't actually delete Skills, just make them inactive
   final String skillString;
 
   SkillEvent(
