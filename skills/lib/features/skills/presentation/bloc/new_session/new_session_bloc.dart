@@ -81,17 +81,15 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
 
     Map<String, dynamic> changeMap = {'sessionId': sessionForEdit.sessionId};
 
-    if (sessionDate != sessionForEdit.date)
-      
-
-    if (selectedStartTime != sessionForEdit.startTime)
+    if (sessionDate != sessionForEdit.date) if (selectedStartTime !=
+        sessionForEdit.startTime)
       changeMap.addEntries([MapEntry('startTime', selectedStartTime)]);
 
     if (selectedFinishTime != sessionForEdit.endTime)
       changeMap.addEntries([MapEntry('endTime', selectedFinishTime)]);
 
-    if (changeMap.isNotEmpty){}
-      // add(UpdateSessionEvent())
+    if (changeMap.isNotEmpty) {}
+    // add(UpdateSessionEvent())
   }
 
   void createEvent(DateTime date) {
@@ -127,7 +125,6 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Stream<NewSessionState> mapEventToState(
     NewSessionEvent event,
   ) async* {
-    
     // Cache New Session
     if (event is InsertNewSessionEvent) {
       yield NewSessionCrudInProgressState();
@@ -159,9 +156,10 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
         });
       } else
         yield SkillSelectedForEventState(skill: selectedSkill);
+    }
 
-      // Creating events after Session is created
-    } else if (event is EventsForSessionCreationEvent) {
+    // Creating events after Session is created
+    else if (event is EventsForSessionCreationEvent) {
       yield NewSessionCrudInProgressState();
       final failureOrNewEvents = await insertEventsForSessionUC(
           SkillEventMultiInsertParams(

@@ -45,9 +45,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     return 'Duration: $minutes min.';
   }
 
-  bool get _showEventCreator {
-    return bloc.selectedSkill != null;
-  }
+  bool _showEventCreator = false;
+
+  // bool get _showEventCreator {
+  //   return bloc.selectedSkill != null;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,21 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
           builder: (BuildContext context) {
             return Scaffold(
               appBar: AppBar(title: Text('New Session')),
+              persistentFooterButtons: <Widget>[
+                RaisedButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    // _cancelTapped();
+                  },
+                ),
+                RaisedButton(
+                    child: Text('Done'),
+                    onPressed: _doneButtonEnabled
+                        ? () {
+                            _doneTapped();
+                          }
+                        : null),
+              ],
               body: BlocBuilder<SessionEditorBloc, SessionEditorState>(
                 builder: (context, state) {
                   Widget body;
@@ -80,9 +97,19 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (state is SkillSelectedForSessionEditorState) {
-                    // show EventCreator
-                  } else if (state is SessionUpdatedState) {
-                    // create new sessions if any are needed, else pop
+                    _showEventCreator = true;
+                    body = _contentBuilder();
+                  } else if (state is NewEventsCreatedState) {
+                    _showEventCreator = false;
+                    bloc.add(RefreshEventsListEvnt());
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is EventDeletedFromSessionState) {
+                    bloc.add(RefreshEventsListEvnt());
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
                   return body;
                 },
@@ -121,7 +148,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
           ),
           _eventsHeaderBuilder(),
           _eventsListBuilder(),
-          _buttonsBuilder(),
+          // _buttonsBuilder(),
         ],
       ),
     );
@@ -137,7 +164,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         'goal': bloc.currentGoal
       };
       body = EventCreator(
-          eventMap: currentEventMap,
+          eventMap: map,
           addEventCallback: _addEvent,
           cancelEventCreateCallback: _cancelEventTapped);
     }
@@ -264,22 +291,6 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
-  // void _selectTime(TimeOfDay initialTime, TimeOfDay targetTime) async {
-  //   TimeOfDay selectedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: initialTime,
-  //   );
-
-  //   if (selectedTime != null){
-  //     // TODO - Time validation
-  //     setState(() {
-  //         targetTime = selectedTime;
-  //       });
-  //   }
-
-  //   _setDoneBtnStatus();
-  // }
-
 // ****** ACTIONS *********
 
   void _showSkillsList() async {
@@ -299,7 +310,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     var selectedSkill = await Navigator.of(context).push(routeBuilder);
     if (selectedSkill != null) {
       setState(() {
-        // bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
+        bloc.add(SkillSelectedForExistingSessionEvent(skill: selectedSkill));
       });
     }
   }
@@ -348,15 +359,15 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   void _doneTapped() {
-    bloc.add(UpdateSessionEvent(bloc.changeMap));
+    bloc.updateSession();
   }
 
   void _addEvent(int eventDuration) {
-    // bloc.eventDuration = eventDuration;
-    // bloc.createEvent(date);
-    // setState(() {
-    //   bloc.selectedSkill = null;
-    // });
+    bloc.createEvent(eventDuration);
+
+    setState(() {
+      _showEventCreator = false;
+    });
   }
 
   void _cancelEventTapped() {
@@ -410,34 +421,32 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
   void _deleteEventTapped(Map<String, dynamic> map) async {
     await showDialog<bool>(
-        context: (context),
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Delete this Event?'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text('Delete'),
-                onPressed: () {
-                  setState(() {
-                    // if (inEditingMode) {
-                    //   // delete existing event
-                    // } else {
-                    //   bloc.pendingEventMapsForListView.remove(map);
-                    // }
-                  });
-
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
+      context: (context),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete this Event?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  bloc.deleteEvent(map);
+                  _doneButtonEnabled = true;
+                });
+              },
+            )
+          ],
+        );
+      },
+    );
+    Navigator.of(context).pop();
   }
 }

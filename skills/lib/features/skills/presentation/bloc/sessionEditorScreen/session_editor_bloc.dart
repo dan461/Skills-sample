@@ -6,9 +6,11 @@ import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import '../../../../../service_locator.dart';
 import './bloc.dart';
 
 class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
@@ -34,7 +36,6 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   Goal currentGoal;
   var pendingEvents = <SkillEvent>[];
   List<Map> eventMapsForListView = [];
-  int eventDuration;
 
   Map<String, dynamic> changeMap = {};
 
@@ -50,24 +51,33 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     return minutes;
   }
 
-  void createEvent(DateTime date) {
+  void updateSession() {
+    if (changeMap.isNotEmpty) add(UpdateSessionEvent(changeMap));
+  }
+
+  void deleteSession() {}
+
+  void createEvent(int eventDuration) {
     final newEvent = SkillEvent(
         skillId: selectedSkill.skillId,
-        sessionId: 0,
-        date: date,
+        sessionId: sessionForEdit.sessionId,
+        date: sessionDate,
         duration: eventDuration,
         isComplete: false,
         skillString: selectedSkill.name);
+    add(InsertEventForSessionEvnt(newEvent));
 
-    pendingEvents.add(newEvent);
+    selectedSkill = null;
+  }
 
-    if (sessionForEdit == null) {
-      Map<String, dynamic> map = {
-        'event': newEvent,
-        'skill': selectedSkill,
-        'goal': currentGoal
-      };
-      // pendingEventMapsForListView.add(map);
+  void deleteEvent(Map<String, dynamic> eventMap) {
+    SkillEvent event = eventMap['event'];
+    if (event.eventId == null) {
+      eventMapsForListView.remove(eventMap);
+      pendingEvents.remove(eventMap['event']);
+    } else {
+      // delete cached Event
+      add(DeleteEventFromSessionEvent(event.eventId));
     }
   }
 
@@ -91,8 +101,10 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       // Get Events
       final eventMapsOrFailure = await getEventMapsForSession(
           SessionByIdParams(sessionId: sessionForEdit.sessionId));
-      eventMapsOrFailure.fold((failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE), (maps) {
+      eventMapsOrFailure.fold(
+          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE), (maps) {
         eventMapsForListView = maps;
+        // return EditingSessionState();
       });
       yield EditingSessionState();
     }
@@ -104,31 +116,65 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
           sessionId: sessionForEdit.sessionId, changeMap: changeMap));
       yield updateOrFailure.fold(
           errorStateResponse, (result) => SessionUpdatedState());
+    }
 
-      // Delete Session
-    } else if (event is DeleteSessionWithIdEvent) {
+    // Delete Session
+    else if (event is DeleteSessionWithIdEvent) {
       yield SessionEditorCrudInProgressState();
       final deleteOrFailure = await deleteSessionWithId(
           SessionDeleteParams(sessionId: sessionForEdit.sessionId));
       yield deleteOrFailure.fold(
           errorStateResponse, (response) => SessionDeletedState());
+    }
 
-      // Create Events for Session
-    } else if (event is EventsCreationForExistingSessionEvent) {
-      yield SessionEditorCrudInProgressState();
+    // Skill selected for new event
+    else if (event is SkillSelectedForExistingSessionEvent) {
+      selectedSkill = event.skill;
+      if (selectedSkill.currentGoalId != 0) {
+        var getGoal = locator<GetGoalById>();
+        final goalOrFail =
+            await getGoal(GoalCrudParams(id: selectedSkill.currentGoalId));
+        yield goalOrFail
+            .fold((failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE),
+                (goal) {
+          currentGoal = goal;
+          return SkillSelectedForSessionEditorState(skill: selectedSkill);
+        });
+      } else {
+        yield SkillSelectedForSessionEditorState(skill: selectedSkill);
+      }
+    }
+
+    // Create new SkillEvent for Session
+    else if (event is InsertEventForSessionEvnt) {
       final eventsOrFailure = await insertEventsForSession(
           SkillEventMultiInsertParams(
-              events: event.events, newSessionId: sessionForEdit.sessionId));
-      yield eventsOrFailure.fold(
-          errorStateResponse, ((results) => NewEventsCreatedState()));
+              events: [event.event], newSessionId: sessionForEdit.sessionId));
 
-      // Delete an Event
-    } else if (event is DeleteEventFromSessionEvent) {
+      yield eventsOrFailure.fold(
+          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE),
+          (results) => NewEventsCreatedState());
+    }
+
+    // Delete an Event
+    else if (event is DeleteEventFromSessionEvent) {
       yield SessionEditorCrudInProgressState();
       final deleteOrFailure = await deleteEventByIdUC(
           SkillEventGetOrDeleteParams(eventId: event.eventId));
       yield deleteOrFailure.fold(
           errorStateResponse, (reply) => EventDeletedFromSessionState());
+    }
+
+    // Refresh Events List
+    else if (event is RefreshEventsListEvnt) {
+      yield SessionEditorCrudInProgressState();
+      final eventMapsOrFailure = await getEventMapsForSession(
+          SessionByIdParams(sessionId: sessionForEdit.sessionId));
+      eventMapsOrFailure.fold(
+          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE), (maps) {
+        eventMapsForListView = maps;
+      });
+      yield EditingSessionState();
     }
   }
 }

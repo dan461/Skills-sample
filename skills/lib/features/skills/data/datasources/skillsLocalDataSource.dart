@@ -252,7 +252,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final Database db = await database;
     Map<String, dynamic> changeMap = {'goalId': goalId, 'goalText': goalText};
     int updates = await db
-        .update(skillsTable, changeMap, where: ' = ?', whereArgs: [skillId]);
+        .update(skillsTable, changeMap, where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 

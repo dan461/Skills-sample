@@ -27,8 +27,9 @@ class InsertEventsForSessionUC
 
   InsertEventsForSessionUC(this.repo);
   @override
-  Future<Either<Failure, List<int>>> call(SkillEventMultiInsertParams params) {
-    return repo.insertEvents(params.events, params.newSessionId);
+  Future<Either<Failure, List<int>>> call(
+      SkillEventMultiInsertParams params) async {
+    return await repo.insertEvents(params.events, params.newSessionId);
   }
 }
 
@@ -85,13 +86,15 @@ class GetEventMapsForSession extends UseCase<List<Map>, SessionByIdParams> {
     Either<Failure, List<Map>> maps;
     List<SkillEvent> theEvents = [];
     final events = await repo.getEventsForSession(params.sessionId);
-    events.fold((failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (eventsList) {theEvents = eventsList;});
+    events.fold((failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE),
+        (eventsList) {
+      theEvents = eventsList;
+    });
     maps = await repo.getInfoForEvents(theEvents);
-      // use getInfoForEvents - return List<Map> with Skill and Goal, make new Map with that list
-   
+    // use getInfoForEvents - return List<Map> with Skill and Goal, make new Map with that list
+
     return maps;
   }
-  
 }
 
 // class GetSkillInfoForEvent

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 
 abstract class BlocEvent extends Equatable {
@@ -36,6 +37,29 @@ class DeleteSessionWithIdEvent extends SessionEditorEvent {
 
   @override
   List<Object> get props => [id];
+}
+
+class SkillSelectedForExistingSessionEvent extends SessionEditorEvent {
+  final Skill skill;
+
+  SkillSelectedForExistingSessionEvent({@required this.skill});
+
+  @override
+  List<Object> get props => null;
+}
+
+class InsertEventForSessionEvnt extends SessionEditorEvent {
+  final SkillEvent event;
+
+  InsertEventForSessionEvnt(this.event);
+
+  @override
+  List<Object> get props => [event];
+}
+
+class RefreshEventsListEvnt extends SessionEditorEvent {
+  @override
+  List<Object> get props => [];
 }
 
 class EventsCreationForExistingSessionEvent extends SessionEditorEvent {

@@ -222,9 +222,6 @@ void main() {
 
   group('DeleteEvent: ', () {
     test('test that DeleteEventById usecase is called', () async {
-      // when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
-      //     .thenAnswer((_) async => Right(1));
-
       sut.add(DeleteEventFromSessionEvent(1));
       await untilCalled(
           mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
@@ -281,7 +278,7 @@ void main() {
     });
 
     test(
-        'test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] upon a successful retrieval of Event maps, after a BeginSessionEditingEvent is added.',
+        'test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] when getting Event maps, after a BeginSessionEditingEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
       when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
@@ -290,6 +287,33 @@ void main() {
         InitialSessionEditorState(),
         SessionEditorCrudInProgressState(),
         EditingSessionState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(BeginSessionEditingEvent(session: testSession));
+    });
+
+    test('test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] when getting Event maps, after a RefreshEventsListEvnt is added.', () async {
+      when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Right([]));
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        EditingSessionState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(RefreshEventsListEvnt());
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] after cache failure getting Event maps.',
+        () async {
+      // the events list returned by the repo can be an empty list, if there are no events
+      when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionEditorErrorState(CACHE_FAILURE_MESSAGE)
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(BeginSessionEditingEvent(session: testSession));
