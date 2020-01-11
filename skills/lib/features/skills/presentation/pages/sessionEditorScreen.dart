@@ -90,22 +90,22 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                       child: CircularProgressIndicator(),
                     );
                     bloc.add(BeginSessionEditingEvent(session: widget.session));
-                  } 
+                  }
                   // EDITING SESSION
                   else if (state is EditingSessionState) {
                     body = _contentBuilder();
-                  } 
+                  }
                   // Spinner
                   else if (state is SessionEditorCrudInProgressState) {
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
-                  } 
+                  }
                   // Skill Selected, show Event Creator
                   else if (state is SkillSelectedForSessionEditorState) {
                     _showEventCreator = true;
                     body = _contentBuilder();
-                  } 
+                  }
                   // New Event created, hide Event Creator
                   else if (state is NewEventsCreatedState) {
                     _showEventCreator = false;
@@ -113,7 +113,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
-                  } 
+                  }
                   // Event Deleted
                   else if (state is EventDeletedFromSessionState) {
                     bloc.add(RefreshEventsListEvnt());
@@ -206,10 +206,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   Column _eventsHeaderBuilder() {
-    // int eventCount = bloc.pendingEventMapsForListView.length;
-    int eventCount = 1000;
-
-    String countString = eventCount.toString();
+    int count =
+        bloc.eventMapsForListView.isEmpty ? 0 : bloc.completedEventsCount;
+    String suffix =
+        bloc.eventMapsForListView.isEmpty ? 'scheduled' : 'completed';
+    String countString = count.toString() + ' $suffix';
 
     return Column(
       children: <Widget>[
@@ -224,7 +225,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 children: <Widget>[
                   Text('Activities',
                       style: Theme.of(context).textTheme.subhead),
-                  Text('$countString scheduled',
+                  Text('$countString',
                       style: Theme.of(context).textTheme.subhead),
                   IconButton(
                     icon: Icon(Icons.add),
