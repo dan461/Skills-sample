@@ -172,7 +172,7 @@ void main() {
       //         SkillEventMultiInsertParams(events: events, newSessionId: 1)))
       //     .thenAnswer((_) async => Right(resultsList));
 
-      sut.add(EventsCreationForExistingSessionEvent(events: events));
+      sut.add(InsertEventForSessionEvnt(testEvent));
       await untilCalled(mockInsertEventsForSessionUC(
           SkillEventMultiInsertParams(events: events, newSessionId: 1)));
       verify(mockInsertEventsForSessionUC(
@@ -196,11 +196,11 @@ void main() {
 
       final expected = [
         InitialSessionEditorState(),
-        SessionEditorCrudInProgressState(),
+        // SessionEditorCrudInProgressState(),
         NewEventsCreatedState()
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(EventsCreationForExistingSessionEvent(events: events));
+      sut.add(InsertEventForSessionEvnt(testEvent));
     });
 
     test(
@@ -212,11 +212,11 @@ void main() {
 
       final expected = [
         InitialSessionEditorState(),
-        SessionEditorCrudInProgressState(),
+        // SessionEditorCrudInProgressState(),
         SessionEditorErrorState(CACHE_FAILURE_MESSAGE)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(EventsCreationForExistingSessionEvent(events: events));
+      sut.add(InsertEventForSessionEvnt(testEvent));
     });
   });
 
@@ -226,14 +226,6 @@ void main() {
       await untilCalled(
           mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
       verify(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
-
-      // UseCaseCalledTestFunction deleteTestfunc = UseCaseCalledTestFunction();
-      // await deleteTestfunc(
-      //     bloc: sut,
-      //     useCase: mockDeleteEventByIdUC,
-      //     params: SkillEventGetOrDeleteParams(eventId: 1),
-      //     event: DeleteEventFromSessionEvent(1),
-      //     response: 1);
     });
 
     test(
@@ -278,6 +270,15 @@ void main() {
     });
 
     test(
+        'test that GetEventMapsForSession usecase is called after a RefreshEventsListEvnt is added',
+        () async {
+      sut.add(RefreshEventsListEvnt());
+      await untilCalled(
+          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+    });
+
+    test(
         'test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] when getting Event maps, after a BeginSessionEditingEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
@@ -292,7 +293,9 @@ void main() {
       sut.add(BeginSessionEditingEvent(session: testSession));
     });
 
-    test('test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] when getting Event maps, after a RefreshEventsListEvnt is added.', () async {
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, EditingSessionState] when getting Event maps, after a RefreshEventsListEvnt is added.',
+        () async {
       when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Right([]));
       final expected = [

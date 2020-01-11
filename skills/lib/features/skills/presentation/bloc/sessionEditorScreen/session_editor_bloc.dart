@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
@@ -82,6 +83,12 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   }
 
   @override
+  void onTransition(
+      Transition<SessionEditorEvent, SessionEditorState> transition) {
+    super.onTransition(transition);
+  }
+
+  @override
   SessionEditorState get initialState => InitialSessionEditorState();
 
   Function errorStateResponse =
@@ -101,12 +108,13 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       // Get Events
       final eventMapsOrFailure = await getEventMapsForSession(
           SessionByIdParams(sessionId: sessionForEdit.sessionId));
-      eventMapsOrFailure.fold(
-          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-        eventMapsForListView = maps;
-        // return EditingSessionState();
-      });
-      yield EditingSessionState();
+
+      yield eventMapsOrFailure.fold(
+          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE),
+          (maps) {
+            eventMapsForListView = maps;
+            return EditingSessionState();
+          });
     }
 
     // Update Session
@@ -170,11 +178,12 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       yield SessionEditorCrudInProgressState();
       final eventMapsOrFailure = await getEventMapsForSession(
           SessionByIdParams(sessionId: sessionForEdit.sessionId));
-      eventMapsOrFailure.fold(
-          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-        eventMapsForListView = maps;
-      });
-      yield EditingSessionState();
+      yield eventMapsOrFailure.fold(
+          (failure) => SessionEditorErrorState(CACHE_FAILURE_MESSAGE),
+          (maps) {
+            eventMapsForListView = maps;
+            return EditingSessionState();
+          });
     }
   }
 }

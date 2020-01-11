@@ -37,6 +37,7 @@ abstract class SkillsLocalDataSource {
   Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
   Future<List<SkillEvent>> getEventsForSession(int sessionId);
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events);
+  Future<List<Map>> getEventMapsForSession(int sessionId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -251,8 +252,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText) async {
     final Database db = await database;
     Map<String, dynamic> changeMap = {'goalId': goalId, 'goalText': goalText};
-    int updates = await db
-        .update(skillsTable, changeMap, where: 'skillId = ?', whereArgs: [skillId]);
+    int updates = await db.update(skillsTable, changeMap,
+        where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 
@@ -406,6 +407,31 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
     // final Database db = await database;
+
+    List<Map> maps = [];
+    for (var event in events) {
+      SkillModel skill = await getSkillById(event.skillId);
+
+      GoalModel goal;
+      if (skill.currentGoalId != 0) {
+        goal = await getGoalById(skill.currentGoalId);
+      }
+
+      Map<String, dynamic> eventMap = {
+        'event': event,
+        'skill': skill,
+        'goal': goal ?? 'none',
+      };
+      maps.add(eventMap);
+    }
+
+    return maps;
+  }
+
+  @override
+  Future<List<Map>> getEventMapsForSession(int sessionId) async {
+    
+    List<SkillEvent> events = await getEventsForSession(sessionId);
 
     List<Map> maps = [];
     for (var event in events) {

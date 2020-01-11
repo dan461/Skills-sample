@@ -90,22 +90,32 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                       child: CircularProgressIndicator(),
                     );
                     bloc.add(BeginSessionEditingEvent(session: widget.session));
-                  } else if (state is EditingSessionState) {
+                  } 
+                  // EDITING SESSION
+                  else if (state is EditingSessionState) {
                     body = _contentBuilder();
-                  } else if (state is SessionEditorCrudInProgressState) {
+                  } 
+                  // Spinner
+                  else if (state is SessionEditorCrudInProgressState) {
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
-                  } else if (state is SkillSelectedForSessionEditorState) {
+                  } 
+                  // Skill Selected, show Event Creator
+                  else if (state is SkillSelectedForSessionEditorState) {
                     _showEventCreator = true;
                     body = _contentBuilder();
-                  } else if (state is NewEventsCreatedState) {
+                  } 
+                  // New Event created, hide Event Creator
+                  else if (state is NewEventsCreatedState) {
                     _showEventCreator = false;
                     bloc.add(RefreshEventsListEvnt());
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
-                  } else if (state is EventDeletedFromSessionState) {
+                  } 
+                  // Event Deleted
+                  else if (state is EventDeletedFromSessionState) {
                     bloc.add(RefreshEventsListEvnt());
                     body = Center(
                       child: CircularProgressIndicator(),

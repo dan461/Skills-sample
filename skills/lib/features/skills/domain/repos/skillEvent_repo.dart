@@ -10,6 +10,8 @@ abstract class SkillEventRepository {
   Future<Either<Failure, int>> deleteEventById(int id);
   Future<Either<Failure, List<SkillEvent>>> getEventsForSession(int sessionId);
   Future<Either<Failure, List<Map>>> getInfoForEvents(List<SkillEvent> events);
+  Future<Either<Failure, List<Map>>> getEventMapsForSession(int sessionId);
+  
   
 
 
