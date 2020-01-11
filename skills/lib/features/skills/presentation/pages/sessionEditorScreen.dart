@@ -28,6 +28,10 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   bool _doneButtonEnabled = false;
   Map<String, dynamic> currentEventMap = {};
 
+  String get _sessionDateString {
+    return DateFormat.yMMMd().format(bloc.sessionDate);
+  }
+
   String get _startTimeString {
     return bloc.selectedStartTime == null
         ? 'Select Time'
@@ -53,6 +57,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // assert(debugCheckHasMaterial(context));
     return BlocProvider(
       builder: (context) => bloc,
       child: BlocListener<SessionEditorBloc, SessionEditorState>(
@@ -139,18 +144,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         children: <Widget>[
           Column(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                    child: Text(
-                      DateFormat.yMMMd().format(bloc.sessionForEdit.date),
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  )
-                ],
-              ),
+              _dateRowBuilder(),
               _timeSelectRow(),
               _timeRowBuilder(),
               _eventCreator(),
@@ -161,6 +155,30 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
           // _buttonsBuilder(),
         ],
       ),
+    );
+  }
+
+  Row _dateRowBuilder() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          child: Material(
+            shape:
+                Border(bottom: BorderSide(color: Colors.blue[100], width: 1.0)),
+            child: InkWell(
+              child: Text(
+                _sessionDateString,
+                style: Theme.of(context).textTheme.title,
+              ),
+              onTap: () {
+                _pickNewDate();
+              },
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -367,6 +385,23 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
       _doneButtonEnabled =
           bloc.selectedStartTime != null && bloc.selectedFinishTime != null;
     });
+  }
+
+  void _pickNewDate() async {
+    DateTime pickedDate = await showDatePicker(
+      context: context,
+      initialDate: bloc.sessionDate,
+      firstDate: bloc.sessionDate.subtract(Duration(days: 365)),
+      lastDate: bloc.sessionDate.add(
+        Duration(days: 365),
+      ),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        bloc.changeDate(pickedDate);
+      });
+    }
   }
 
   void _doneTapped() {

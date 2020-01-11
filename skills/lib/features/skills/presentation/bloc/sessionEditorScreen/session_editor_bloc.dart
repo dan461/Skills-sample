@@ -63,6 +63,17 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     completedEventsCount = count;
   }
 
+  void changeDate(DateTime newDate) {
+    sessionDate = newDate;
+    if (sessionForEdit.date.compareTo(sessionDate) != 0) {
+      changeMap.addAll({'sessionDate': sessionDate});
+    } else {
+      changeMap.remove('sessionDate');
+    }
+
+    print(changeMap);
+  }
+
   void updateSession() {
     if (changeMap.isNotEmpty) add(UpdateSessionEvent(changeMap));
   }
@@ -116,7 +127,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       selectedFinishTime = sessionForEdit.endTime;
       sessionDate = sessionForEdit.date;
       yield SessionEditorCrudInProgressState();
-      
+
       // Get Events - RefreshList
       // add(RefreshEventsListEvnt());
       final eventMapsOrFailure = await getEventMapsForSession(
@@ -199,6 +210,4 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       });
     }
   }
-
-  
 }
