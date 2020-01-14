@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:skills/core/TickTock.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
@@ -52,10 +53,8 @@ void main() {
     final expectedMap = {
       "sessionId": 1,
       "date": 0,
-      "startTime": sut.timeToInt(DateTime.fromMillisecondsSinceEpoch(0),
-          TimeOfDay(hour: 12, minute: 0)),
-      "endTime": sut.timeToInt(DateTime.fromMillisecondsSinceEpoch(0),
-          TimeOfDay(hour: 13, minute: 0)),
+      "startTime": TickTock.timeToInt(TimeOfDay(hour: 12, minute: 0)),
+      "endTime": TickTock.timeToInt(TimeOfDay(hour: 13, minute: 0)),
       "duration": 60,
       "timeRemaining": 60,
       "isScheduled": true,

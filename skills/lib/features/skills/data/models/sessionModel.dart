@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/core/TickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
 class SessionModel extends Session {
@@ -25,13 +26,8 @@ class SessionModel extends Session {
     return SessionModel(
         sessionId: map['sessionId'],
         date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-        startTime: TimeOfDay(
-            hour: DateTime.fromMillisecondsSinceEpoch(map['startTime']).hour,
-            minute:
-                DateTime.fromMillisecondsSinceEpoch(map['startTime']).minute),
-        endTime: TimeOfDay(
-            hour: DateTime.fromMillisecondsSinceEpoch(map['endTime']).hour,
-            minute: DateTime.fromMillisecondsSinceEpoch(map['endTime']).minute),
+        startTime: TickTock.timeFromInt(map['startTime']),
+        endTime: TickTock.timeFromInt(map['endTime']),
         duration: map['duration'],
         timeRemaining: map['timeRemaining'],
         isScheduled: map['isScheduled'] == 0 ? false : true,
@@ -42,8 +38,8 @@ class SessionModel extends Session {
     return {
       'sessionId': sessionId,
       'date': date.millisecondsSinceEpoch,
-      'startTime': timeToInt(date, startTime),
-      'endTime': timeToInt(date, endTime),
+      'startTime': TickTock.timeToInt(startTime),
+      'endTime': TickTock.timeToInt(endTime),
       'duration': duration,
       'timeRemaining': timeRemaining,
       'isScheduled': isScheduled,
@@ -51,16 +47,7 @@ class SessionModel extends Session {
     };
   }
 
-  TimeOfDay intToTimeOfDay(int dateInt) {
-    var date = DateTime.fromMillisecondsSinceEpoch(dateInt);
-    return TimeOfDay(hour: date.hour, minute: date.minute);
-  }
-
-  int timeToInt(DateTime date, TimeOfDay timeOfDay) {
-    return DateTime(
-            date.year, date.month, date.day, timeOfDay.hour, timeOfDay.minute)
-        .millisecondsSinceEpoch;
-  }
+  
 
   @override
   List<Object> get props => [
