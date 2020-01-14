@@ -71,12 +71,20 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       await _lock.synchronized(() async {
         if (_database == null) {
           _database = await openDatabase(path,
-              version: dbVersion, onOpen: (db) {}, onCreate: _onCreate);
+              version: dbVersion, onOpen: _onOpen, onCreate: _onCreate);
         }
       });
     }
-
+    
+    
     return _database;
+  }
+ 
+  // TODO - check on ways to make this more reliable
+  void _onOpen(Database db) async {
+    // Enable Foreign keys, default is OFF
+    await db.execute('PRAGMA foreign_keys=ON');
+    _checkForeignKeysEnabled(db);
   }
 
   void _onCreate(Database db, int version) async {
@@ -84,6 +92,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     await db.execute(_createGoalTable);
     await db.execute(_createSessionsTable);
     await db.execute(_createSkillEventsTable);
+  }
+
+
+  void _checkForeignKeysEnabled(Database db) async {
+    List<Map> result = await db.rawQuery('PRAGMA foreign_keys');
+    if (result.first['foreign_keys'] == 0){
+      await db.execute('PRAGMA foreign_keys=ON');
+    }
   }
 
   Future<void> deleteDatabase() async {
@@ -169,7 +185,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> deleteSkillWithId(int skillId) async {
     final Database db = await database;
     int result =
-        await db.delete(skillsTable, where: ' = ?', whereArgs: [skillId]);
+        await db.delete(skillsTable, where: 'skillId = ?', whereArgs: [skillId]);
     return result;
   }
 
