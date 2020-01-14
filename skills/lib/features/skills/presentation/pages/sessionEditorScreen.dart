@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
@@ -25,7 +26,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
   _SessionEditorScreenState(this.bloc);
 
-  bool _doneButtonEnabled = false;
+  bool _doneButtonEnabled = true;
   Map<String, dynamic> currentEventMap = {};
 
   String get _sessionDateString {
@@ -58,12 +59,18 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   @override
   Widget build(BuildContext context) {
     // assert(debugCheckHasMaterial(context));
+    Widget body;
     return BlocProvider(
       builder: (context) => bloc,
       child: BlocListener<SessionEditorBloc, SessionEditorState>(
         bloc: bloc,
         listener: (context, state) {
-          if (state is SessionUpdatedState || state is SessionDeletedState) {
+          if (state is SessionUpdatedState ||
+              state is SessionDeletedState ||
+              state is SessionEditorFinishedEditingState) {
+            body = Center(
+              child: CircularProgressIndicator(),
+            );
             Navigator.of(context).pop();
           }
         },
@@ -75,9 +82,17 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 RaisedButton(
                   child: Text('Cancel'),
                   onPressed: () {
-                    // _cancelTapped();
+                    // TODO - warn if unsaved changes
+                    Navigator.of(context).pop();
                   },
                 ),
+                RaisedButton(
+                    child: Text('Complete'),
+                    onPressed: _doneButtonEnabled
+                        ? () {
+                            _doneTapped();
+                          }
+                        : null),
                 RaisedButton(
                     child: Text('Done'),
                     onPressed: _doneButtonEnabled
@@ -88,7 +103,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
               ],
               body: BlocBuilder<SessionEditorBloc, SessionEditorState>(
                 builder: (context, state) {
-                  Widget body;
+                  // Widget body;
                   // TODO - find better way to deal with the Bloc's dependency on a session
                   if (state is InitialSessionEditorState) {
                     body = Center(
@@ -356,8 +371,12 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
     if (selectedTime != null) {
       // TODO - Time validation
+
       setState(() {
-        bloc.selectedStartTime = selectedTime;
+        if (TickTock.timesAreEqual(selectedTime, bloc.selectedStartTime) ==
+            false) {
+          bloc.changeStartTime(selectedTime);
+        }
       });
     }
 
@@ -373,7 +392,10 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     if (selectedTime != null) {
       // TODO - Time validation
       setState(() {
-        bloc.selectedFinishTime = selectedTime;
+        if (TickTock.timesAreEqual(selectedTime, bloc.selectedFinishTime) ==
+            false) {
+          bloc.changeFinishTime(selectedTime);
+        }
       });
     }
 

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
@@ -19,6 +20,7 @@ void main() {
   MockDeleteEventByIdUC mockDeleteEventByIdUC;
   MockGetEventMapsForSession mockGetEventMapsForSession;
   Session testSession;
+  Map<String, dynamic> testChangeMap;
 
   setUp(() {
     mockInsertEventsForSessionUC = MockInsertEventsForSessionUC();
@@ -38,11 +40,80 @@ void main() {
         sessionId: 1,
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
+        endTime: TimeOfDay(hour: 12, minute: 30),
         isCompleted: false,
         isScheduled: true);
 
     sut.sessionForEdit = testSession;
+    testChangeMap = {};
+  });
+
+  group('changeMap logic: ', () {
+    // StartTime
+    test('test that changeMap is correct after new startTime is selected',
+        () async {
+      sut.selectedStartTime = TimeOfDay(hour: 12, minute: 15);
+      sut.changeStartTime(TimeOfDay(hour: 12, minute: 30));
+      bool rightTime = sut.changeMap['startTime'] ==
+          TickTock.timeToInt(sut.selectedStartTime);
+      expect(true, rightTime);
+    });
+
+    
+
+    test(
+        'test that changeMap has no startTime entry after selectedStartTime is returned to the original start time',
+        () {
+      sut.sessionForEdit = testSession;
+      sut.selectedStartTime = testSession.startTime;
+      sut.changeStartTime(TimeOfDay(hour: 12, minute: 30));
+      sut.changeStartTime(testSession.startTime);
+      expect(sut.changeMap['startTime'], null);
+    });
+
+    // EndTime
+    test('test that changeMap is correct after new endTime is selected',
+        () async {
+      sut.selectedFinishTime = TimeOfDay(hour: 12, minute: 15);
+      sut.changeFinishTime(TimeOfDay(hour: 12, minute: 0));
+      bool rightTime = sut.changeMap['endTime'] ==
+          TickTock.timeToInt(sut.selectedFinishTime);
+      expect(true, rightTime);
+    });
+
+    test(
+        'test that changeMap has no endTime entry after selectedFinishTime is returned to the original finish time',
+        () {
+      sut.sessionForEdit = testSession;
+      sut.selectedFinishTime = testSession.endTime;
+      sut.changeFinishTime(TimeOfDay(hour: 12, minute: 40));
+      sut.changeFinishTime(testSession.endTime);
+      expect(sut.changeMap['endTime'], null);
+    });
+  });
+
+  // test(
+  //     'test that SessionEditorFinishedEvent is called if when Done button tappee and changeMap is empty',
+  //     () async {
+  //   sut.changeMap = testChangeMap;
+
+  //   sut.updateSession();
+  //   await untilCalled(mockUpdateSessionWithId(
+  //       SessionUpdateParams(sessionId: 1, changeMap: sut.changeMap)));
+  //   verifyNever(mockUpdateSessionWithId(
+  //       SessionUpdateParams(sessionId: 1, changeMap: sut.changeMap)));
+
+  //   // sut.add(BeginSessionEditingEvent(session: testSession));
+  // });
+
+  test('test that UpdateSessionEvent is called if changeMap is not empty',
+      () async {
+    sut.changeMap = {'test': 'test'};
+    sut.updateSession();
+    await untilCalled(mockUpdateSessionWithId(
+        SessionUpdateParams(sessionId: 1, changeMap: sut.changeMap)));
+    verify(mockUpdateSessionWithId(
+        SessionUpdateParams(sessionId: 1, changeMap: sut.changeMap)));
   });
 
   test('test bloc initial state is correct', () {
@@ -50,13 +121,7 @@ void main() {
   });
 
   group('UpdateSession: ', () {
-    Map<String, dynamic> testChangeMap = {};
-
     test('test that UpdateSessionWithId usecase is called', () async {
-      when(mockUpdateSessionWithId(
-              SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
-          .thenAnswer((_) async => Right(1));
-
       sut.add(UpdateSessionEvent(testChangeMap));
       await untilCalled(mockUpdateSessionWithId(
           SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)));

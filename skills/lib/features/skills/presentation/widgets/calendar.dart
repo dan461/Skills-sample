@@ -172,7 +172,8 @@ class _CalendarState extends State<Calendar> {
       // else {
       //   thisDay = sunday.add(Duration(days: i));
       // }
-      bool hasSession = eventDates.indexOf(thisDay) != -1;
+      // TODO -temp fix to get around UTC bug
+      bool hasSession = eventDates.indexOf(thisDay) != -1 || eventDates.indexOf(thisDay.subtract(Duration(hours: 12))) != -1;
       days.add(DayCell(
         date: thisDay,
         displayedMonth: activeMonth.month,

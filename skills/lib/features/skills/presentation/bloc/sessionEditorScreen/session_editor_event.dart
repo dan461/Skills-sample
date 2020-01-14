@@ -71,6 +71,11 @@ class EventsCreationForExistingSessionEvent extends SessionEditorEvent {
   List<Object> get props => [events];
 }
 
+class SessionEditorFinishedEvent extends SessionEditorEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class DeleteEventFromSessionEvent extends SessionEditorEvent {
   final int eventId;
 

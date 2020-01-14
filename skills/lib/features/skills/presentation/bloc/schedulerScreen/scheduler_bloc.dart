@@ -7,7 +7,7 @@ import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
-import 'package:skills/core/aboutTime.dart';
+import 'package:skills/core/tickTock.dart';
 
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   final GetSessionsInMonth getSessionInMonth;
@@ -59,7 +59,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     SchedulerEvent event,
   ) async* {
     if (event is MonthSelectedEvent) {
-      activeMonth = AboutTime.changeMonth(activeMonth, event.change);
+      activeMonth = TickTock.changeMonth(activeMonth, event.change);
       yield GettingSessionsForMonthState();
     } else if (event is GetSessionsForMonthEvent) {
       final failureOrSessions =

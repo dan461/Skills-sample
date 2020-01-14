@@ -66,6 +66,11 @@ class SessionEditorCrudInProgressState extends SessionEditorState {
   List<Object> get props => [];
 }
 
+class SessionEditorFinishedEditingState extends SessionEditorState {
+  @override
+  List<Object> get props => [];
+}
+
 class SessionEditorErrorState extends SessionEditorState {
   final String message;
 

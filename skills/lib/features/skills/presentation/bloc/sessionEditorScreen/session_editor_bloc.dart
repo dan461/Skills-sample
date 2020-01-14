@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
@@ -66,16 +67,43 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   void changeDate(DateTime newDate) {
     sessionDate = newDate;
     if (sessionForEdit.date.compareTo(sessionDate) != 0) {
-      changeMap.addAll({'sessionDate': sessionDate});
+      changeMap.addAll({'date': sessionDate.millisecondsSinceEpoch});
     } else {
-      changeMap.remove('sessionDate');
+      changeMap.remove('date');
     }
 
     print(changeMap);
   }
 
+  void changeStartTime(TimeOfDay newTime) {
+    // if changing back to original start time
+    if (TickTock.timesAreEqual(newTime, sessionForEdit.startTime)) {
+      changeMap.remove('startTime');
+    } else {
+      int startInt = TickTock.timeToInt(newTime);
+      changeMap.addAll({'startTime': startInt});
+    }
+
+    selectedStartTime = newTime;
+  }
+
+  void changeFinishTime(TimeOfDay newTime) {
+    if (TickTock.timesAreEqual(newTime, sessionForEdit.endTime)) {
+      changeMap.remove('endTime');
+    } else {
+      int endInt = TickTock.timeToInt(newTime);
+      changeMap.addAll({'endTime': endInt});
+    }
+
+    selectedFinishTime = newTime;
+  }
+
   void updateSession() {
-    if (changeMap.isNotEmpty) add(UpdateSessionEvent(changeMap));
+    if (changeMap.isNotEmpty) {
+      add(UpdateSessionEvent(changeMap));
+    } else {
+      add(SessionEditorFinishedEvent());
+    }
   }
 
   void deleteSession() {}
@@ -208,6 +236,11 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
         _countCompletedEvents();
         return EditingSessionState();
       });
+    }
+
+    // Finished Editing with no changes to save
+    else if (event is SessionEditorFinishedEvent) {
+      yield SessionEditorFinishedEditingState();
     }
   }
 }
