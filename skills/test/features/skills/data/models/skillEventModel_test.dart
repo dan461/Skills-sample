@@ -12,7 +12,7 @@ void main() {
         eventId: 1,
         skillId: 1,
         sessionId: 1,
-        date: DateTime.fromMillisecondsSinceEpoch(0),
+        date: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
         duration: 60,
         isComplete: false,
         skillString: 'test');

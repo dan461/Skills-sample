@@ -10,8 +10,8 @@ void main() {
     sut = GoalModel(
         goalId: 1,
         skillId: 1,
-        fromDate: DateTime.fromMillisecondsSinceEpoch(0),
-        toDate: DateTime.fromMillisecondsSinceEpoch(0),
+        fromDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
+        toDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
         timeBased: true,
         isComplete: false,
         goalTime: 60,

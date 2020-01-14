@@ -9,11 +9,9 @@ void main() {
   Map<String, dynamic> testMap;
 
   setUp(() {
-    var testDate = DateTime.fromMillisecondsSinceEpoch(0);
-    var start = DateTime(testDate.year, testDate.month, testDate.day, 12, 0)
-        .millisecondsSinceEpoch;
-    var end = DateTime(testDate.year, testDate.month, testDate.day, 13, 0)
-        .millisecondsSinceEpoch;
+    var testDate = DateTime.fromMillisecondsSinceEpoch(0).toUtc();
+    var start = TimeOfDay(hour: 12, minute: 0);
+    var end = TimeOfDay(hour: 13, minute: 0);
     sut = SessionModel(
         sessionId: 1,
         date: testDate,
@@ -27,8 +25,8 @@ void main() {
     testMap = {
       'sessionId': 1,
       'date': 0,
-      'startTime': start,
-      'endTime': end,
+      'startTime': TickTock.timeToInt(start),
+      'endTime': TickTock.timeToInt(end),
       'duration': 60,
       'timeRemaining': 60,
       'isScheduled': 1,

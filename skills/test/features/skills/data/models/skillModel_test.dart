@@ -11,9 +11,9 @@ void main() {
         skillId: 1,
         name: 'test',
         source: 'testing',
-        startDate: DateTime.fromMillisecondsSinceEpoch(0),
+        startDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
         totalTime: 1,
-        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
+        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
         currentGoalId: 1,
         goalText: "none");
 
@@ -24,7 +24,7 @@ void main() {
       'startDate': 0,
       'totalTime': 1,
       'lastPracDate': 0,
-      'currentGoalId': 1,
+      'goalId': 1,
       'goalText': "none"
     };
   });
@@ -58,7 +58,7 @@ void main() {
         'startDate': 0,
         'totalTime': 1,
         'lastPracDate': 0,
-        'currentGoalId': 1,
+        'goalId': 1,
         'goalText': 'none'
       };
       expect(result, expectedMap);
