@@ -418,7 +418,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         Duration(days: 365),
       ),
     );
-
+    pickedDate.toUtc();
     if (pickedDate != null) {
       setState(() {
         bloc.changeDate(pickedDate);

@@ -147,7 +147,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
     DateTime today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     final SkillModel skillModel = SkillModel(
         name: skill.name,
         source: skill.source,

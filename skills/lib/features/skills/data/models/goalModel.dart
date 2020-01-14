@@ -27,8 +27,8 @@ class GoalModel extends Goal {
     return GoalModel(
         goalId: map['goalId'],
         skillId: map['skillId'],
-        fromDate: DateTime.fromMillisecondsSinceEpoch(map['fromDate']),
-        toDate: DateTime.fromMillisecondsSinceEpoch(map['toDate']),
+        fromDate: DateTime.fromMillisecondsSinceEpoch(map['fromDate']).toUtc(),
+        toDate: DateTime.fromMillisecondsSinceEpoch(map['toDate']).toUtc(),
         timeBased: map['timeBased'] == 0 ? false : true,
         isComplete: map['isComplete'] == 0 ? false : true,
         goalTime: map['goalTime'],

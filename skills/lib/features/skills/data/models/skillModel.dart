@@ -32,9 +32,9 @@ class SkillModel extends Skill {
         skillId: map['skillId'],
         name: map['name'],
         source: map['source'],
-        startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']) ,
+        startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']).toUtc() ,
         totalTime: map['totalTime'],
-        lastPracDate: map['lastPracDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']) : DateTime.fromMillisecondsSinceEpoch(map['startDate']),
+        lastPracDate: map['lastPracDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']).toUtc() : DateTime.fromMillisecondsSinceEpoch(map['startDate']).toUtc(),
         currentGoalId: map['goalId'],
         goalText: map['goalText']);
   }

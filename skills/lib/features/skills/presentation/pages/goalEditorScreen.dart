@@ -147,14 +147,14 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   }
 
   void _selectEndDate() async {
-    DateTime firstDate = _startDate == null
+    DateTime firstDate = _endDate == null
         ? DateTime.now().subtract(Duration(days: 365))
-        : _startDate;
+        : _endDate;
 
     DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
             firstDate.millisecondsSinceEpoch
         ? DateTime.now()
-        : _startDate;
+        : _endDate;
 
     DateTime pickedDate = await showDatePicker(
         context: context,

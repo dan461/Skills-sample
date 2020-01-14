@@ -25,7 +25,7 @@ class SessionModel extends Session {
   factory SessionModel.fromMap(Map<String, dynamic> map) {
     return SessionModel(
         sessionId: map['sessionId'],
-        date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+        date: DateTime.fromMillisecondsSinceEpoch(map['date']).toUtc(),
         startTime: TickTock.timeFromInt(map['startTime']),
         endTime: TickTock.timeFromInt(map['endTime']),
         duration: map['duration'],

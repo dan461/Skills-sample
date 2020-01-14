@@ -24,7 +24,7 @@ class SkillEventModel extends SkillEvent {
       eventId: map['eventId'],
       skillId: map['skillId'],
       sessionId: map['sessionId'],
-      date: DateTime.fromMicrosecondsSinceEpoch(map['date']),
+      date: DateTime.fromMillisecondsSinceEpoch(map['date']).toUtc(),
       duration: map['duration'],
       isComplete: map['isComplete'] == 0 ? false : true,
       skillString: map['skillString'],

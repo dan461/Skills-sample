@@ -66,8 +66,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
 // TODO - BUG: exception thrown if a decimal value used
   int get _goalMinutes {
-    
-    int hours= _hoursTextController.text.isNotEmpty
+    int hours = _hoursTextController.text.isNotEmpty
         ? int.parse(_hoursTextController.text)
         : 0;
     int minutes = _minTextController.text.isNotEmpty
@@ -94,21 +93,27 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
   void _selectStartDate() async {
     DateTime lastDate =
-        _endDate == null ? DateTime.now().add(Duration(days: 365)) : _endDate;
+        _endDate ?? DateTime.now().add(Duration(days: 365)).toUtc();
+
+    // DateTime lastDate =
+    //     _endDate == null ? DateTime.now().add(Duration(days: 365)).toUtc() : _endDate;
+
     DateTime initialDate =
         DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
-            ? DateTime.now()
+            ? DateTime.now().toUtc()
             : lastDate;
+
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
         lastDate: lastDate);
 
+    pickedDate.toUtc();
     if (pickedDate != null) {
       setState(() {
         _startDate =
-            DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+            DateTime.utc(pickedDate.year, pickedDate.month, pickedDate.day);
         print(_startDate);
       });
     }
@@ -116,12 +121,12 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
   void _selectEndDate() async {
     DateTime firstDate = _startDate == null
-        ? DateTime.now().subtract(Duration(days: 365))
+        ? DateTime.now().subtract(Duration(days: 365)).toUtc()
         : _startDate;
 
     DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
             firstDate.millisecondsSinceEpoch
-        ? DateTime.now()
+        ? DateTime.now().toUtc()
         : _startDate;
 
     DateTime pickedDate = await showDatePicker(
@@ -129,10 +134,10 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
         initialDate: initialDate,
         firstDate: firstDate,
         lastDate: DateTime.now().add(Duration(days: 365)));
-
+    pickedDate.toUtc();
     if (pickedDate != null) {
       setState(() {
-        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+        _endDate = DateTime.utc(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }

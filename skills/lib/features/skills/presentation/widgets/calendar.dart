@@ -136,8 +136,8 @@ class _CalendarState extends State<Calendar> {
   }
 
   List<Expanded> buildMonth({int month, int year}) {
-    // using 12 noon to avoid daylight savings issues
-    DateTime firstOfMonth = DateTime(year, month, 1, 12);
+    
+    DateTime firstOfMonth = DateTime(year, month, 1).toUtc();
 
     List<Expanded> weeks = [];
 

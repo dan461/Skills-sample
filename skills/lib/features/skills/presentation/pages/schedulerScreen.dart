@@ -61,7 +61,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   Container _contentBuilder(
       DateTime selectedDate, DateTime month, List<Map> sessionMaps) {
     final today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc();
     sessionMaps ??= List<Map>();
     return Container(
       child: Column(
