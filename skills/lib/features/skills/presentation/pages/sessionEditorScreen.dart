@@ -94,6 +94,13 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                           }
                         : null),
                 RaisedButton(
+                    child: Text('Delete'),
+                    onPressed: _doneButtonEnabled
+                        ? () {
+                            _deleteSessionTapped();
+                          }
+                        : null),
+                RaisedButton(
                     child: Text('Done'),
                     onPressed: _doneButtonEnabled
                         ? () {
@@ -424,6 +431,35 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         bloc.changeDate(pickedDate);
       });
     }
+  }
+
+  void _deleteSessionTapped() async {
+    await showDialog<bool>(
+        context: (context),
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Delete this Session?'),
+            content: Text('Any events in this session will also be deleted.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Delete'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    bloc.add(DeleteSessionWithIdEvent(id: bloc.sessionForEdit.sessionId));
+                  });
+                },
+              )
+            ],
+          );
+        });
+    
   }
 
   void _doneTapped() {
