@@ -11,7 +11,7 @@ class SessionModel extends Session {
       int duration,
       int timeRemaining,
       @required bool isScheduled,
-      @required bool isCompleted})
+      @required bool isComplete})
       : super(
             sessionId: sessionId,
             date: date,
@@ -20,7 +20,7 @@ class SessionModel extends Session {
             duration: duration,
             timeRemaining: timeRemaining,
             isScheduled: isScheduled,
-            isCompleted: isCompleted);
+            isComplete: isComplete);
 
   factory SessionModel.fromMap(Map<String, dynamic> map) {
     return SessionModel(
@@ -31,7 +31,7 @@ class SessionModel extends Session {
         duration: map['duration'],
         timeRemaining: map['timeRemaining'],
         isScheduled: map['isScheduled'] == 0 ? false : true,
-        isCompleted: map['isCompleted'] == 0 ? false : true);
+        isComplete: map['isComplete'] == 0 ? false : true);
   }
 
   Map<String, dynamic> toMap() {
@@ -43,11 +43,9 @@ class SessionModel extends Session {
       'duration': duration,
       'timeRemaining': timeRemaining,
       'isScheduled': isScheduled,
-      'isCompleted': isCompleted
+      'isComplete': isComplete
     };
   }
-
-  
 
   @override
   List<Object> get props => [
@@ -57,7 +55,7 @@ class SessionModel extends Session {
         endTime,
         duration,
         timeRemaining,
-        isCompleted,
+        isComplete,
         isScheduled
       ];
 }

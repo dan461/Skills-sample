@@ -9,16 +9,15 @@ class Session extends Equatable {
   final int duration;
   final int timeRemaining;
   final bool isScheduled;
-  final bool isCompleted;
+  final bool isComplete;
 
   int get sessionduration {
-     int minutes;
+    int minutes;
     if (startTime == null || endTime == null)
       minutes = 0;
     else {
       int hours = endTime.hour - startTime.hour;
-      minutes =
-          endTime.minute - startTime.minute + hours * 60;
+      minutes = endTime.minute - startTime.minute + hours * 60;
     }
     return minutes;
   }
@@ -31,7 +30,7 @@ class Session extends Equatable {
       this.duration,
       this.timeRemaining,
       @required this.isScheduled,
-      @required this.isCompleted})
+      @required this.isComplete})
       : super();
 
   @override
@@ -42,7 +41,7 @@ class Session extends Equatable {
         endTime,
         duration,
         timeRemaining,
-        isCompleted,
+        isComplete,
         isScheduled
       ];
 }

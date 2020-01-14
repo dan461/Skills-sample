@@ -20,7 +20,7 @@ void main() {
         duration: 60,
         timeRemaining: 60,
         isScheduled: true,
-        isCompleted: false);
+        isComplete: false);
 
     testMap = {
       'sessionId': 1,
@@ -30,7 +30,7 @@ void main() {
       'duration': 60,
       'timeRemaining': 60,
       'isScheduled': 1,
-      'isCompleted': 0
+      'isComplete': 0
     };
   });
 
@@ -56,7 +56,7 @@ void main() {
       "duration": 60,
       "timeRemaining": 60,
       "isScheduled": true,
-      "isCompleted": false
+      "isComplete": false
     };
     expect(result, expectedMap);
   });

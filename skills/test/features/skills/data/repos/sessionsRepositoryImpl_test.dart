@@ -24,7 +24,7 @@ void main() {
         duration: 1,
         timeRemaining: 1,
         isScheduled: false,
-        isCompleted: false);
+        isComplete: false);
 
     testSession = Session(
         date: DateTime.now(),
@@ -32,7 +32,7 @@ void main() {
         endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
-        isCompleted: false,
+        isComplete: false,
         isScheduled: false);
   });
 
@@ -44,7 +44,7 @@ void main() {
         endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
-        isCompleted: false,
+        isComplete: false,
         isScheduled: false);
     test('insertNewSession - returns a new Session with an id', () async {
       when(mockLocalDataSource.insertNewSession(testSession))

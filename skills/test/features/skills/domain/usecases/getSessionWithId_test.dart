@@ -22,7 +22,7 @@ void main() {
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
         endTime: TimeOfDay(hour: 12, minute: 0),
-        isCompleted: false,
+        isComplete: false,
         isScheduled: true);
 
     when(mockSessionRepo.getSessionById(1))

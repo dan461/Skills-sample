@@ -106,7 +106,13 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     }
   }
 
-  void deleteSession() {}
+  void markSessionComplete(){
+    changeMap.addAll({'isComplete' : 1});
+  }
+
+  void deleteSession() {
+    add(DeleteSessionWithIdEvent(id:sessionForEdit.sessionId));
+  }
 
   void createEvent(int eventDuration) {
     final newEvent = SkillEvent(

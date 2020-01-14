@@ -41,7 +41,7 @@ void main() {
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
         endTime: TimeOfDay(hour: 12, minute: 30),
-        isCompleted: false,
+        isComplete: false,
         isScheduled: true);
 
     sut.sessionForEdit = testSession;
@@ -58,8 +58,6 @@ void main() {
           TickTock.timeToInt(sut.selectedStartTime);
       expect(true, rightTime);
     });
-
-    
 
     test(
         'test that changeMap has no startTime entry after selectedStartTime is returned to the original start time',

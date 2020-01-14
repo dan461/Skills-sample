@@ -64,7 +64,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
       endTime: selectedFinishTime,
       duration: sessionDuration,
       timeRemaining: sessionDuration,
-      isCompleted: false,
+      isComplete: false,
       isScheduled: false,
     );
     add(InsertNewSessionEvent(newSession: newSession));
@@ -76,7 +76,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
       - new start time
       - new end time
       - new duration (should probably be a computed property of Session)
-      - isCompleted status changed to true
+      - isComplete status changed to true
     */
 
     Map<String, dynamic> changeMap = {'sessionId': sessionForEdit.sessionId};

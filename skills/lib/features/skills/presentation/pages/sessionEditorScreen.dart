@@ -90,7 +90,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     child: Text('Complete'),
                     onPressed: _doneButtonEnabled
                         ? () {
-                            _doneTapped();
+                            _completeTapped();
                           }
                         : null),
                 RaisedButton(
@@ -433,13 +433,41 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     }
   }
 
+  void _completeTapped() async {
+    await showDialog<bool>(
+        context: (context),
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Complete this Session?'),
+            content: Text('All events in this session will also be completed.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Complete'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    bloc.markSessionComplete();
+                  });
+                },
+              )
+            ],
+          );
+        });
+  }
+
   void _deleteSessionTapped() async {
     await showDialog<bool>(
         context: (context),
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Delete this Session?'),
-            content: Text('Any events in this session will also be deleted.'),
+            content: Text('All events in this session will also be deleted.'),
             actions: <Widget>[
               FlatButton(
                 child: Text('Cancel'),

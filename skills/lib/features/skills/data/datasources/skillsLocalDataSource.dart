@@ -75,11 +75,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         }
       });
     }
-    
-    
+
     return _database;
   }
- 
+
   // TODO - check on ways to make this more reliable
   void _onOpen(Database db) async {
     // Enable Foreign keys, default is OFF
@@ -94,10 +93,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     await db.execute(_createSkillEventsTable);
   }
 
-
   void _checkForeignKeysEnabled(Database db) async {
     List<Map> result = await db.rawQuery('PRAGMA foreign_keys');
-    if (result.first['foreign_keys'] == 0){
+    if (result.first['foreign_keys'] == 0) {
       await db.execute('PRAGMA foreign_keys=ON');
     }
   }
@@ -128,12 +126,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   final String _createSessionsTable =
       "$createTable sessions(sessionId $primaryKey, "
       "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
-      "isScheduled INTEGER, isCompleted INTEGER)";
+      "isScheduled INTEGER, isComplete INTEGER)";
 
   final String _createSkillEventsTable =
       "$createTable skillEvents(eventId $primaryKey, "
       "skillId $integer, sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
-      "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
+      "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)"
+      "CONSTRAINT fk_sessionsComp FOREIGN KEY (isComplete) REFERENCES sessions(isComplete) ON UPDATE CASCADE)";
 
 // ******* SKILLS *********
   @override
@@ -162,8 +161,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
-    DateTime today =
-        DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    DateTime today = DateTime.utc(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day);
     final SkillModel skillModel = SkillModel(
         name: skill.name,
         source: skill.source,
@@ -184,8 +183,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> deleteSkillWithId(int skillId) async {
     final Database db = await database;
-    int result =
-        await db.delete(skillsTable, where: 'skillId = ?', whereArgs: [skillId]);
+    int result = await db
+        .delete(skillsTable, where: 'skillId = ?', whereArgs: [skillId]);
     return result;
   }
 
@@ -283,7 +282,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       endTime: session.endTime,
       duration: session.duration,
       timeRemaining: session.timeRemaining,
-      isCompleted: session.isCompleted,
+      isComplete: session.isComplete,
       isScheduled: session.isScheduled,
     );
 
@@ -446,7 +445,6 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   @override
   Future<List<Map>> getEventMapsForSession(int sessionId) async {
-    
     List<SkillEvent> events = await getEventsForSession(sessionId);
 
     List<Map> maps = [];
