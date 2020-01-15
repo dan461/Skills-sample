@@ -23,7 +23,17 @@ class _SessionCardState extends State<SessionCard> {
   _SessionCardState(this.sessionMap, this.editorCallback);
 
   // TODO - should probably get this value somewhere else, maybe add to Session entity
-  int openTime = 0;
+  int get openTime {
+    Session session = sessionMap['session'];
+    List<SkillEvent> events = sessionMap['events'];
+    var time = session.duration;
+    for (var event in events) {
+      time -= event.duration;
+    }
+
+    return time;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,10 +50,6 @@ class _SessionCardState extends State<SessionCard> {
   Widget build(BuildContext context) {
     Session session = sessionMap['session'];
     List<SkillEvent> events = sessionMap['events'];
-    openTime = session.duration;
-    for (var event in events) {
-      openTime -= event.duration;
-    }
 
     return GestureDetector(
       onTap: () {
