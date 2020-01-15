@@ -176,7 +176,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
             ],
           ),
           _eventsHeaderBuilder(),
-          _eventsListBuilder(),
+          Expanded(child: _eventsListBuilder()),
           // _buttonsBuilder(),
         ],
       ),
