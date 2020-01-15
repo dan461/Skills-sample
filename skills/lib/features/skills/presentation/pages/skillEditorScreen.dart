@@ -75,7 +75,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   }
 
   void _doneTapped() {
-    if (skillEditorBloc.state is EditingSkillState) {
+    if (skillEditorBloc.state is EditingSkillState ||
+        skillEditorBloc.state is SkillRetrievedForEditingState) {
       _updateSkill();
     } else if (skillEditorBloc.state is CreatingNewSkillState) {
       _insertNewSkill();
@@ -338,49 +339,59 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (BuildContext context) => skillEditorBloc,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Center(
-            child: Text('New Skill'),
-          ),
-        ),
-        body: BlocBuilder<SkillEditorBloc, SkillEditorState>(
-          builder: (context, state) {
-            Widget body;
-
-            if (state is InitialSkillEditorState ||
-                state is CreatingNewSkillState) {
-              body = _newSkillAreaBuilder();
-              // Editing
-            } else if (state is EditingSkillState) {
-              _skill = state.skill;
-              _nameController.text = _skill.name;
-              _sourceController.text = _skill.source;
-              body = _skillEditingArea(_skill);
-            } else if (state is SkillRetrievedForEditingState) {
-              _skill = state.skill;
-              body = _skillEditingArea(_skill);
-              // Skill updated
-            } else if (state is UpdatedSkillState ||
+        builder: (BuildContext context) => skillEditorBloc,
+        child: BlocListener<SkillEditorBloc, SkillEditorState>(
+          bloc: skillEditorBloc,
+          listener: (context, state) {
+            if (state is UpdatedSkillState ||
                 state is DeletedSkillWithIdState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
               Navigator.of(context).pop();
-              // Procressing
-            } else if (state is NewSkillInsertingState ||
-                state is UpdatingSkillState ||
-                state is DeletingSkillWithIdState ||
-                state is SkillEditorCrudInProgressState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
             }
-            return body;
           },
-        ),
-      ),
-    );
+          child: Builder(builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Center(
+                  child: Text('New Skill'),
+                ),
+              ),
+              body: BlocBuilder<SkillEditorBloc, SkillEditorState>(
+                builder: (context, state) {
+                  Widget body;
+
+                  if (state is InitialSkillEditorState ||
+                      state is CreatingNewSkillState) {
+                    body = _newSkillAreaBuilder();
+                    // Editing
+                  } else if (state is EditingSkillState) {
+                    _skill = state.skill;
+                    _nameController.text = _skill.name;
+                    _sourceController.text = _skill.source;
+                    body = _skillEditingArea(_skill);
+                  } else if (state is SkillRetrievedForEditingState) {
+                    _skill = state.skill;
+                    body = _skillEditingArea(_skill);
+                    // Skill updated
+                  } else if (state is UpdatedSkillState ||
+                      state is DeletedSkillWithIdState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+
+                    // Procressing
+                  } else if (state is NewSkillInsertingState ||
+                      state is UpdatingSkillState ||
+                      state is DeletingSkillWithIdState ||
+                      state is SkillEditorCrudInProgressState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return body;
+                },
+              ),
+            );
+          }),
+        ));
   }
 }

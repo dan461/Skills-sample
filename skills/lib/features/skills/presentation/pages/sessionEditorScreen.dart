@@ -126,7 +126,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     body = _contentBuilder();
                   }
                   // Spinner
-                  else if (state is SessionEditorCrudInProgressState) {
+                  else if (state is SessionEditorCrudInProgressState ||
+                      state is SessionEditorFinishedEditingState) {
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
