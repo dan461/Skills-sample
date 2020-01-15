@@ -41,11 +41,28 @@ void main() {
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
         endTime: TimeOfDay(hour: 12, minute: 30),
+        duration: 30,
         isComplete: false,
         isScheduled: true);
 
     sut.sessionForEdit = testSession;
     testChangeMap = {};
+  });
+
+  test('test that availableTime is correct', () async {
+    var testEvent = SkillEvent(
+        skillId: 1,
+        sessionId: 1,
+        duration: 10,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
+        isComplete: false,
+        skillString: 'test');
+    Map<String, dynamic> eventMap = {'event': testEvent};
+
+    sut.sessionForEdit = testSession;
+    sut.eventMapsForListView = [eventMap];
+
+    expect(sut.availableTime, 20);
   });
 
   group('changeMap logic: ', () {

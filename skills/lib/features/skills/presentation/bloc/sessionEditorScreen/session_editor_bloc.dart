@@ -54,13 +54,11 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   }
 
   int get availableTime {
-    
     var time = sessionForEdit.duration ?? 0;
     for (var map in eventMapsForListView) {
       var event = map['event'];
       time -= event.duration;
     }
-
     return time;
   }
 
