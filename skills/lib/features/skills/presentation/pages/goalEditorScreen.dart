@@ -87,16 +87,18 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     return totalMinutes;
   }
 
-  void _focusNodeListener(){
-    if (_focusNode.hasFocus){
+  void _focusNodeListener() {
+    if (_focusNode.hasFocus) {
       print('focus');
-
-    } else print('no focus');
+    } else
+      print('no focus');
   }
 
-  void goalIsChanged(String key, dynamic value){
+  void goalIsChanged(String key, dynamic value) {
     Map changeMap = Map.from(_goalEditorBloc.goalModel.toMap());
-    changeMap.update(key, (_){return value;});
+    changeMap.update(key, (_) {
+      return value;
+    });
     bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
   }
 
@@ -112,15 +114,19 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
 
   void _updateGoal() async {
     // TODO - finish this
-    // Goal updatedGoal = Goal(
-    //     skillId: _goalEditorBloc.goal.skillId,
-    //     fromDate: _startDate.millisecondsSinceEpoch,
-    //     toDate: _endDate.millisecondsSinceEpoch,
-    //     timeBased: _isTimeBased,
-    //     goalTime: _goalMinutes,
-    //     timeRemaining: _goalMinutes,
-    //     isComplete: false,
-    //     desc: _isTimeBased ? "none" : _goalDescTextController.text);
+    Goal updatedGoal = Goal(
+      goalId: _goalEditorBloc.theGoal.goalId,
+        skillId: _goalEditorBloc.theGoal.skillId,
+        fromDate: _startDate,
+        toDate: _endDate,
+        timeBased: _isTimeBased,
+        goalTime: _goalMinutes,
+        timeRemaining: _goalMinutes,
+        isComplete: false,
+        desc: _isTimeBased ? "none" : _goalDescTextController.text);
+
+        _goalEditorBloc.add(UpdateGoalEvent(updatedGoal));
+
   }
 
   void _selectStartDate() async {
@@ -141,7 +147,8 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     if (pickedDate != null) {
       goalIsChanged('fromDate', pickedDate.millisecondsSinceEpoch);
       setState(() {
-        _startDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+        _startDate =
+            DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }
@@ -163,14 +170,13 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
         lastDate: DateTime.now().add(Duration(days: 365)));
 
     if (pickedDate != null) {
-      
       setState(() {
         _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }
 
-  DateTime dayMonthYearFromDateTime(DateTime date){
+  DateTime dayMonthYearFromDateTime(DateTime date) {
     return DateTime(date.year, date.month, date.day);
   }
 
@@ -220,7 +226,6 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                     _setDoneButtonEnabled();
                   },
                   focusNode: _focusNode,
-                  
                 ),
               )
             ],
@@ -366,31 +371,45 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (_) => _goalEditorBloc,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
-          builder: (context, state) {
-            Widget body;
-
-            if (state is EmptyGoalEditorState ||
-                state is GoalCrudInProgressState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is GoalEditorGoalReturnedState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
-              _setScreenValues(state.goal);
-              // _goalEditorBloc.goal = state.goal;
-              _goalEditorBloc.add(EditGoalEvent());
-            } else if (state is GoalEditorEditingState) {
-              body = _goalEditArea();
+      child: Builder(builder: (BuildContext context) {
+        return BlocListener(
+          bloc: _goalEditorBloc,
+          listener: (context, state) {
+            if(state is GoalUpdatedState || state is GoalDeletedState){
+              Navigator.of(context).pop();
             }
-            return body;
           },
-        ),
-      ),
+          child: Scaffold(
+            appBar: AppBar(),
+            body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
+              builder: (context, state) {
+                Widget body;
+
+                if (state is EmptyGoalEditorState ||
+                    state is GoalCrudInProgressState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is GoalEditorGoalReturnedState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                  _setScreenValues(state.goal);
+                  // _goalEditorBloc.goal = state.goal;
+                  _goalEditorBloc.add(EditGoalEvent());
+                } else if (state is GoalEditorEditingState) {
+                  body = _goalEditArea();
+                } else if (state is GoalUpdatedState || state is GoalDeletedState){
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return body;
+              },
+            ),
+          ),
+        );
+      }),
     );
   }
 
