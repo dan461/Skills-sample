@@ -27,6 +27,9 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   _SessionEditorScreenState(this.bloc);
 
   bool _doneButtonEnabled = true;
+  bool get _plusButtonEnabled {
+    return bloc.availableTime > 0;
+  }
 
   Map<String, dynamic> currentEventMap = {};
 
@@ -269,9 +272,9 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                       style: Theme.of(context).textTheme.subhead),
                   IconButton(
                     icon: Icon(Icons.add),
-                    onPressed: () {
+                    onPressed: _plusButtonEnabled ? () {
                       _showSkillsList();
-                    },
+                    } : null,
                   )
                 ],
               ),
@@ -295,13 +298,14 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   Widget _timeRowBuilder() {
+    var timeString = bloc.availableTime.toString();
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 2, 8, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(_durationString, style: Theme.of(context).textTheme.subhead),
-          Text('Available: 30 min.', style: Theme.of(context).textTheme.subhead)
+          Text('Available: $timeString min.', style: Theme.of(context).textTheme.subhead)
         ],
       ),
     );
@@ -434,31 +438,48 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   void _completeTapped() async {
-    
+
+    AlertDialog alert;
+    if (bloc.sessionForEdit.isComplete) {
+      alert = AlertDialog(
+        title: Text('Session is complete'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
+    } else {
+      alert = AlertDialog(
+        title: Text('Complete this Session?'),
+        content: Text('All events in this session will also be completed.'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('Complete'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                bloc.markSessionComplete();
+              });
+            },
+          )
+        ],
+      );
+    }
+
     await showDialog<bool>(
         context: (context),
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Complete this Session?'),
-            content: Text('All events in this session will also be completed.'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text('Complete'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    bloc.markSessionComplete();
-                  });
-                },
-              )
-            ],
-          );
+          return alert;
         });
   }
 

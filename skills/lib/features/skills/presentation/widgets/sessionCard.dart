@@ -23,7 +23,7 @@ class _SessionCardState extends State<SessionCard> {
   _SessionCardState(this.sessionMap, this.editorCallback);
 
   // TODO - should probably get this value somewhere else, maybe add to Session entity
-  int get openTime {
+  int get availableTime {
     Session session = sessionMap['session'];
     List<SkillEvent> events = sessionMap['events'];
     var time = session.duration;
@@ -128,7 +128,7 @@ class _SessionCardState extends State<SessionCard> {
           child: Text('$duration min.'),
         ),
         Text(
-          '$openTime min. open',
+          '$availableTime min. open',
           style: Theme.of(context).textTheme.body2,
         ),
       ],
