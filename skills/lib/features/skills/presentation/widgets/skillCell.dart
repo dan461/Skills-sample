@@ -31,7 +31,7 @@ class SkillCell extends StatelessWidget {
           border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
         ),
         padding: EdgeInsets.all(4),
-        height: 70,
+        height: 90,
         child: Row(
           children: <Widget>[
             Expanded(
@@ -45,6 +45,14 @@ class SkillCell extends StatelessWidget {
                         skill.name,
                         style: Theme.of(context).textTheme.title,
                       ),
+                      Column(
+                        children: <Widget>[
+                          Text('Last Practiced',
+                              style: Theme.of(context).textTheme.subtitle),
+                          Text(lastPracString,
+                              style: Theme.of(context).textTheme.subtitle)
+                        ],
+                      )
                     ],
                   ),
                   Row(
@@ -64,14 +72,14 @@ class SkillCell extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              children: <Widget>[
-                Text('Last Practiced',
-                    style: Theme.of(context).textTheme.subtitle),
-                Text(lastPracString,
-                    style: Theme.of(context).textTheme.subtitle)
-              ],
-            )
+            // Column(
+            //   children: <Widget>[
+            //     Text('Last Practiced',
+            //         style: Theme.of(context).textTheme.subtitle),
+            //     Text(lastPracString,
+            //         style: Theme.of(context).textTheme.subtitle)
+            //   ],
+            // )
           ],
         ),
       ),
