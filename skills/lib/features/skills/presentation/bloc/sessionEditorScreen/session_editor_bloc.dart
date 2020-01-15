@@ -53,6 +53,8 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     return minutes;
   }
 
+  bool enableCompleteButton;
+
   int completedEventsCount = 0;
 
   void _countCompletedEvents() {
@@ -106,12 +108,13 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     }
   }
 
-  void markSessionComplete(){
-    changeMap.addAll({'isComplete' : 1});
+  void markSessionComplete() {
+    changeMap.addAll({'isComplete': 1});
+    enableCompleteButton = false;
   }
 
   void deleteSession() {
-    add(DeleteSessionWithIdEvent(id:sessionForEdit.sessionId));
+    add(DeleteSessionWithIdEvent(id: sessionForEdit.sessionId));
   }
 
   void createEvent(int eventDuration) {
@@ -160,6 +163,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       selectedStartTime = sessionForEdit.startTime;
       selectedFinishTime = sessionForEdit.endTime;
       sessionDate = sessionForEdit.date;
+      enableCompleteButton = !sessionForEdit.isComplete;
       yield SessionEditorCrudInProgressState();
 
       // Get Events - RefreshList

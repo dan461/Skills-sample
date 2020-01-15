@@ -131,8 +131,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   final String _createSkillEventsTable =
       "$createTable skillEvents(eventId $primaryKey, "
       "skillId $integer, sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
-      "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)"
-      "CONSTRAINT fk_sessionsComp FOREIGN KEY (isComplete) REFERENCES sessions(isComplete) ON UPDATE CASCADE)";
+      "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
 // ******* SKILLS *********
   @override
@@ -297,6 +296,11 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final Database db = await database;
     int response = await db.update(sessionsTable, changeMap,
         where: 'sessionId = ?', whereArgs: [id]);
+
+    if (changeMap['isComplete'] != null){
+      int update = await db.rawUpdate('UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $id');
+      print(update);
+    }
     return response;
   }
 

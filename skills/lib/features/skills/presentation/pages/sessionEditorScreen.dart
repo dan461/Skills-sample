@@ -27,6 +27,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   _SessionEditorScreenState(this.bloc);
 
   bool _doneButtonEnabled = true;
+
   Map<String, dynamic> currentEventMap = {};
 
   String get _sessionDateString {
@@ -87,12 +88,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                   },
                 ),
                 RaisedButton(
-                    child: Text('Complete'),
-                    onPressed: _doneButtonEnabled
-                        ? () {
-                            _completeTapped();
-                          }
-                        : null),
+                  child: Text('Complete'),
+                  onPressed: () {
+                    _completeTapped();
+                  },
+                ),
                 RaisedButton(
                     child: Text('Delete'),
                     onPressed: _doneButtonEnabled
@@ -434,6 +434,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   void _completeTapped() async {
+    
     await showDialog<bool>(
         context: (context),
         builder: (BuildContext context) {
@@ -480,14 +481,14 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   setState(() {
-                    bloc.add(DeleteSessionWithIdEvent(id: bloc.sessionForEdit.sessionId));
+                    bloc.add(DeleteSessionWithIdEvent(
+                        id: bloc.sessionForEdit.sessionId));
                   });
                 },
               )
             ],
           );
         });
-    
   }
 
   void _doneTapped() {
