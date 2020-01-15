@@ -272,9 +272,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                       style: Theme.of(context).textTheme.subhead),
                   IconButton(
                     icon: Icon(Icons.add),
-                    onPressed: _plusButtonEnabled ? () {
-                      _showSkillsList();
-                    } : null,
+                    onPressed: _plusButtonEnabled
+                        ? () {
+                            _showSkillsList();
+                          }
+                        : null,
                   )
                 ],
               ),
@@ -305,7 +307,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(_durationString, style: Theme.of(context).textTheme.subhead),
-          Text('Available: $timeString min.', style: Theme.of(context).textTheme.subhead)
+          Text('Available: $timeString min.',
+              style: Theme.of(context).textTheme.subhead)
         ],
       ),
     );
@@ -438,7 +441,6 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
   }
 
   void _completeTapped() async {
-
     AlertDialog alert;
     if (bloc.sessionForEdit.isComplete) {
       alert = AlertDialog(
@@ -516,12 +518,30 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     bloc.updateSession();
   }
 
-  void _addEvent(int eventDuration) {
-    bloc.createEvent(eventDuration);
+  void _addEvent(int eventDuration) async {
+    if (eventDuration > bloc.availableTime) {
+      await showDialog(
+          context: (context),
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('The selected duration exceeds the time available.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      bloc.createEvent(eventDuration);
 
-    setState(() {
-      _showEventCreator = false;
-    });
+      setState(() {
+        _showEventCreator = false;
+      });
+    }
   }
 
   void _cancelEventTapped() {
