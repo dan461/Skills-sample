@@ -137,7 +137,8 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     pickedDate.toUtc();
     if (pickedDate != null) {
       setState(() {
-        _endDate = DateTime.utc(pickedDate.year, pickedDate.month, pickedDate.day);
+        _endDate =
+            DateTime.utc(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }
@@ -347,36 +348,44 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   Widget build(BuildContext context) {
     return BlocProvider<NewgoalBloc>(
       builder: (_) => locator<NewgoalBloc>(),
-      child: Scaffold(
-          appBar: AppBar(),
-          body: BlocBuilder<NewgoalBloc, NewgoalState>(
-            builder: (context, state) {
-              Widget body;
-              if (state is InitialNewgoalState) {
-                body = _goalEditArea(context);
-              } else if (state is NewGoalInsertingState ||
-                  state is AddingGoalToSkillState) {
-                body = Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is NewGoalInsertedState) {
-                // Need to update skill with currentGoalId and goalText
-                BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
-                    skillId: widget.skillId,
-                    goalId: state.newGoal.goalId,
-                    goalText: _goalTranslation));
-                body = Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is GoalAddedToSkillState) {
-                body = Center(child: CircularProgressIndicator());
+      child: BlocListener<NewgoalBloc, NewgoalState>(
+        listener: (context, state) {
+          if (state is GoalAddedToSkillState) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Builder(builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: BlocBuilder<NewgoalBloc, NewgoalState>(
+              builder: (context, state) {
+                Widget body;
+                if (state is InitialNewgoalState) {
+                  body = _goalEditArea(context);
+                } else if (state is NewGoalInsertingState ||
+                    state is AddingGoalToSkillState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is NewGoalInsertedState) {
+                  // Need to update skill with currentGoalId and goalText
+                  BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
+                      skillId: widget.skillId,
+                      goalId: state.newGoal.goalId,
+                      goalText: _goalTranslation));
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is GoalAddedToSkillState) {
+                  body = Center(child: CircularProgressIndicator());
+                }
 
-                Navigator.of(context).pop();
-              }
-
-              return body;
-            },
-          )),
+                return body;
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }
