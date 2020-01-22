@@ -57,7 +57,7 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
             timeRemaining: goal.goalTime,
             desc: goal.desc != null ? goal.desc : "");
         return GoalEditorGoalReturnedState(goal: goal);
-      });
+      }); 
 
       // edit Goal
     } else if (event is EditGoalEvent) {

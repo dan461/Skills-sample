@@ -19,6 +19,7 @@ void main() {
   MockDeleteSessionWithId mockDeleteSessionWithId;
   MockDeleteEventByIdUC mockDeleteEventByIdUC;
   MockGetEventMapsForSession mockGetEventMapsForSession;
+  MockCompleteSessionAndEvents mockCompleteSessionAndEvents;
   Session testSession;
   Map<String, dynamic> testChangeMap;
 
@@ -28,12 +29,14 @@ void main() {
     mockDeleteSessionWithId = MockDeleteSessionWithId();
     mockDeleteEventByIdUC = MockDeleteEventByIdUC();
     mockGetEventMapsForSession = MockGetEventMapsForSession();
+    mockCompleteSessionAndEvents = MockCompleteSessionAndEvents();
 
     sut = SessionEditorBloc(
         updateSessionWithId: mockUpdateSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
         getEventMapsForSession: mockGetEventMapsForSession,
         insertEventsForSession: mockInsertEventsForSessionUC,
+        completeSessionAndEvents: mockCompleteSessionAndEvents,
         deleteEventByIdUC: mockDeleteEventByIdUC);
 
     testSession = Session(
@@ -400,6 +403,58 @@ void main() {
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(BeginSessionEditingEvent(session: testSession));
+    });
+  });
+
+  group('CompleteSessionAndEvents', () {
+    test(
+        'test that a CompleteSessionEvent is added when markSessionComplete is called',
+        () async {
+      sut.markSessionComplete();
+      await untilCalled(mockCompleteSessionAndEvents(
+          SessionCompleteParams(testSession.sessionId, testSession.date)));
+      verify(mockCompleteSessionAndEvents(
+          SessionCompleteParams(testSession.sessionId, testSession.date)));
+    });
+
+    test(
+        'test that CompleteSessionAndEvents usecase is called when a CompleteSessionEvent is called',
+        () async {
+      sut.add(CompleteSessionEvent());
+      await untilCalled(mockCompleteSessionAndEvents(
+          SessionCompleteParams(testSession.sessionId, testSession.date)));
+      verify(mockCompleteSessionAndEvents(
+          SessionCompleteParams(testSession.sessionId, testSession.date)));
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionCompletedState] after a Session is completed',
+        () async {
+      when(mockCompleteSessionAndEvents(
+              SessionCompleteParams(testSession.sessionId, testSession.date)))
+          .thenAnswer((_) async => Right(1));
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionCompletedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(CompleteSessionEvent());
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] after a Session is completion fails',
+        () async {
+      when(mockCompleteSessionAndEvents(
+              SessionCompleteParams(testSession.sessionId, testSession.date)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        InitialSessionEditorState(),
+        SessionEditorCrudInProgressState(),
+        SessionEditorErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(CompleteSessionEvent());
     });
   });
 }

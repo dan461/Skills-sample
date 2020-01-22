@@ -55,6 +55,7 @@ void init() {
       deleteSessionWithId: locator(),
       getEventMapsForSession: locator(),
       insertEventsForSession: locator(),
+      completeSessionAndEvents: locator(),
       deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(
@@ -86,6 +87,7 @@ void init() {
   locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
   locator.registerLazySingleton(() => GetEventsForSession(locator()));
   locator.registerLazySingleton(() => GetEventMapsForSession(locator()));
+  locator.registerLazySingleton(() => CompleteSessionAndEvents(locator()));
   // locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));
 
   // Repositories

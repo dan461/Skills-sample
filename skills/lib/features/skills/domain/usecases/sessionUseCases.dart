@@ -47,6 +47,16 @@ class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
   }
 }
 
+class CompleteSessionAndEvents extends UseCase<int, SessionCompleteParams> {
+  final SessionRepository repo;
+
+  CompleteSessionAndEvents(this.repo);
+  @override
+  Future<Either<Failure, int>> call(SessionCompleteParams params) {
+    return repo.completeSessionAndEvents(params.sessionId, params.date);
+  }
+}
+
 class DeleteSessionWithId extends UseCase<int, SessionDeleteParams> {
   final SessionRepository repo;
 

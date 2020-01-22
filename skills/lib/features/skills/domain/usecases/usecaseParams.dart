@@ -72,6 +72,15 @@ class SessionByIdParams extends Params {
   List<Object> get props => [sessionId];
 }
 
+class SessionCompleteParams extends Params {
+  final int sessionId;
+  final DateTime date;
+
+  SessionCompleteParams(this.sessionId, this.date);
+
+  List<Object> get props => [sessionId, date];
+}
+
 class SessionInMonthParams extends Params {
   final DateTime month;
 
@@ -103,6 +112,16 @@ class SkillEventInsertOrUpdateParams extends Params {
   SkillEventInsertOrUpdateParams({@required this.event});
   @override
   List<Object> get props => [event];
+}
+
+class SkillEventUpdateParams extends Params {
+  final Map<String, dynamic> changeMap;
+  final int eventId;
+
+  SkillEventUpdateParams(this.changeMap, this.eventId);
+
+  @override
+  List<Object> get props => [changeMap, eventId];
 }
 
 class SkillEventGetOrDeleteParams extends Params {

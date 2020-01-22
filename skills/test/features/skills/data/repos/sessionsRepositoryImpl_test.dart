@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -87,6 +89,14 @@ void main() {
       final result = await sut.getSessionsInMonth(testMonth);
       verify(mockLocalDataSource.getSessionsInMonth(testMonth));
       expect(result, equals(Right(testList)));
+    });
+
+    test('completeSessionsAndEvents returns an int', () async {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(0);
+      when(mockLocalDataSource.completeSessionAndEvents(1, date)).thenAnswer((_) async => 1);
+      final result = await sut.completeSessionAndEvents(1, date);
+      verify(mockLocalDataSource.completeSessionAndEvents(1, date));
+      expect(result, equals(Right(1)));
     });
   });
 }

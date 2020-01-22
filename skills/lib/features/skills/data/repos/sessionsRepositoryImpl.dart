@@ -25,12 +25,21 @@ class SessionsRepositoryImpl extends SessionRepository {
   }
 
   @override
-  Future<Either<Failure, int>> updateSession(Map<String, dynamic> changeMap, int id) async {
+  Future<Either<Failure, int>> updateSession(
+      Map<String, dynamic> changeMap, int id) async {
     return Right(await localDataSource.updateSession(changeMap, id));
   }
 
   @override
-  Future<Either<Failure, List<Session>>> getSessionsInMonth(DateTime month) async {
+  Future<Either<Failure, List<Session>>> getSessionsInMonth(
+      DateTime month) async {
     return Right(await localDataSource.getSessionsInMonth(month));
+  }
+
+  @override
+  Future<Either<Failure, int>> completeSessionAndEvents(
+      int sessionId, DateTime date) async {
+    return Right(
+        await localDataSource.completeSessionAndEvents(sessionId, date));
   }
 }

@@ -57,6 +57,13 @@ class InsertEventForSessionEvnt extends SessionEditorEvent {
   List<Object> get props => [event];
 }
 
+class CompleteSessionEvent extends SessionEditorEvent {
+  @override
+  
+  List<Object> get props => [];
+  
+}
+
 class RefreshEventsListEvnt extends SessionEditorEvent {
   @override
   List<Object> get props => [];

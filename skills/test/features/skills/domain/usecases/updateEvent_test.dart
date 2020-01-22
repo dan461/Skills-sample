@@ -16,19 +16,13 @@ void main() {
   });
 
   test('test that class returns an int after updating an event', () async {
-    final SkillEvent testEvent = SkillEvent(
-        eventId: 1,
-        skillId: 1,
-        sessionId: 1,
-        date: DateTime.fromMillisecondsSinceEpoch(0),
-        duration: 30,
-        isComplete: false,
-        skillString: 'test');
+    Map<String, dynamic> changeMap = {'isCompleted': 1};
 
-    when(mockEventsRepo.updateEvent(testEvent)).thenAnswer((_) async => Right(1));
-    final result = await sut(SkillEventInsertOrUpdateParams(event: testEvent));
+    when(mockEventsRepo.updateEvent(changeMap, 1))
+        .thenAnswer((_) async => Right(1));
+    final result = await sut(SkillEventUpdateParams(changeMap, 1));
     expect(result, Right(1));
-    verify(mockEventsRepo.updateEvent(testEvent));
+    verify(mockEventsRepo.updateEvent(changeMap, 1));
     verifyNoMoreInteractions(mockEventsRepo);
   });
 }

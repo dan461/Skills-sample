@@ -33,6 +33,11 @@ class SessionDeletedState extends SessionEditorState {
   List<Object> get props => [];
 }
 
+class SessionCompletedState extends SessionEditorState {
+  @override
+  List<Object> get props => [];
+}
+
 class SkillSelectedForSessionEditorState extends SessionEditorState {
   final Skill skill;
 

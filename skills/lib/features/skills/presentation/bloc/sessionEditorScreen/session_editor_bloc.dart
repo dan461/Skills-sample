@@ -20,6 +20,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   final DeleteSessionWithId deleteSessionWithId;
   final GetEventMapsForSession getEventMapsForSession;
   final InsertEventsForSessionUC insertEventsForSession;
+  final CompleteSessionAndEvents completeSessionAndEvents;
   final DeleteEventByIdUC deleteEventByIdUC;
 
   SessionEditorBloc(
@@ -27,6 +28,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       this.deleteSessionWithId,
       this.getEventMapsForSession,
       this.insertEventsForSession,
+      this.completeSessionAndEvents,
       this.deleteEventByIdUC});
 
   TimeOfDay selectedStartTime;
@@ -118,8 +120,9 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
   }
 
   void markSessionComplete() {
-    changeMap.addAll({'isComplete': 1});
+    // changeMap.addAll({'isComplete': 1});
     // enableCompleteButton = false;
+    add(CompleteSessionEvent());
   }
 
   void deleteSession() {
@@ -195,6 +198,14 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
           sessionId: sessionForEdit.sessionId, changeMap: changeMap));
       yield updateOrFailure.fold(
           errorStateResponse, (result) => SessionUpdatedState());
+    }
+
+    // Complete Session
+    else if (event is CompleteSessionEvent) {
+      yield SessionEditorCrudInProgressState();
+      final completeOrFailure = await completeSessionAndEvents(
+          SessionCompleteParams(sessionForEdit.sessionId, sessionForEdit.date));
+      yield completeOrFailure.fold(errorStateResponse, (response) => SessionCompletedState());
     }
 
     // Delete Session

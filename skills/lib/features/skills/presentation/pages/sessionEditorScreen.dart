@@ -138,7 +138,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     body = _contentBuilder();
                   }
                   // New Event created, hide Event Creator
-                  else if (state is NewEventsCreatedState) {
+                  else if (state is NewEventsCreatedState || state is SessionCompletedState) {
                     _showEventCreator = false;
                     bloc.add(RefreshEventsListEvnt());
                     body = Center(

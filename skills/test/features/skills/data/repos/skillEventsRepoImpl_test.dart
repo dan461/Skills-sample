@@ -70,10 +70,11 @@ void main() {
 
     test('updateEventById - returns int of number of row changes, should be 1',
         () async {
-      when(mockLocalDataSource.updateEvent(testEvent))
+          Map<String, dynamic> changeMap = {'isCompleted' : 1};
+      when(mockLocalDataSource.updateEvent(changeMap, 1))
           .thenAnswer((_) async => 1);
-      final result = await sut.updateEvent(testEvent);
-      verify(mockLocalDataSource.updateEvent(testEvent));
+      final result = await sut.updateEvent(changeMap, 1);
+      verify(mockLocalDataSource.updateEvent(changeMap, 1));
       expect(result, equals(Right(1)));
     });
 

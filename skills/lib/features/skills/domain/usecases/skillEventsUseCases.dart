@@ -54,15 +54,15 @@ class DeleteEventByIdUC extends UseCase<int, SkillEventGetOrDeleteParams> {
   }
 }
 
-class UpdateSkillEventUC extends UseCase<int, SkillEventInsertOrUpdateParams> {
+class UpdateSkillEventUC extends UseCase<int, SkillEventUpdateParams> {
   final SkillEventRepository repo;
 
   UpdateSkillEventUC(this.repo);
 
   @override
   Future<Either<Failure, int>> call(
-      SkillEventInsertOrUpdateParams params) async {
-    return await repo.updateEvent(params.event);
+      SkillEventUpdateParams params) async {
+    return await repo.updateEvent(params.changeMap, params.eventId);
   }
 }
 

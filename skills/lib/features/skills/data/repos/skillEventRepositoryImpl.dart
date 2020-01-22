@@ -33,8 +33,8 @@ class SkillEventRepositoryImpl implements SkillEventRepository {
   }
 
   @override
-  Future<Either<Failure, int>> updateEvent(SkillEvent event) async {
-    return Right(await localDataSource.updateEvent(event));
+  Future<Either<Failure, int>> updateEvent(Map<String, dynamic> changeMap, eventId) async {
+    return Right(await localDataSource.updateEvent(changeMap, eventId));
   }
 
   @override

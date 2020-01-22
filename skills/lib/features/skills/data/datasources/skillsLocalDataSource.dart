@@ -27,12 +27,13 @@ abstract class SkillsLocalDataSource {
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
   Future<Session> insertNewSession(Session session);
   Future<int> updateSession(Map<String, dynamic> changeMap, int id);
+  Future<int> completeSessionAndEvents(int sessionId, DateTime date);
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
   Future<SkillEventModel> insertNewEvent(SkillEvent event);
   Future<SkillEventModel> getEventById(int id);
-  Future<int> updateEvent(SkillEvent event);
+  Future<int> updateEvent(Map<String, dynamic> changeMap, int eventId);
   Future<int> deleteEventById(int id);
   Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
   Future<List<SkillEvent>> getEventsForSession(int sessionId);
@@ -297,11 +298,42 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int response = await db.update(sessionsTable, changeMap,
         where: 'sessionId = ?', whereArgs: [id]);
 
-    if (changeMap['isComplete'] != null){
-      int update = await db.rawUpdate('UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $id');
+    if (changeMap['isComplete'] != null) {
+      int update = await db.rawUpdate(
+          'UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $id');
+      List<Map> skillIds = await db.query(skillEventsTable,
+          columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
       print(update);
     }
     return response;
+  }
+
+  Future<int> completeSessionAndEvents(int sessionId, DateTime sessionDate) async {
+    final Database db = await database;
+    int dateInt = sessionDate.millisecondsSinceEpoch;
+
+    // set session complete
+    int complete = await updateSession({'isComplete': 1}, sessionId);
+    
+
+    // set events complete
+    int update = await db.rawUpdate(
+        'UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $sessionId');
+
+    // get skillIds of all Events
+    List<Map> skillIds = await db.query(skillEventsTable,
+        columns: ['skillId'], where: 'sessionId = ?', whereArgs: [sessionId]);
+
+    var pracDateBatch = db.batch();
+    for (var map in skillIds) {
+      int skillId = map['skillId'];
+      db.rawUpdate(
+          "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
+    }
+
+    List<int> updates = await pracDateBatch.commit(noResult: true);
+
+    return complete;
   }
 
   Future<SessionModel> getSessionById(int id) async {
@@ -396,19 +428,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateEvent(SkillEvent event) async {
+  Future<int> updateEvent(Map<String, dynamic> changeMap, eventId) async {
     final Database db = await database;
-    final model = SkillEventModel(
-        eventId: event.eventId,
-        skillId: event.skillId,
-        sessionId: event.sessionId,
-        date: event.date,
-        duration: event.duration,
-        isComplete: event.isComplete,
-        skillString: event.skillString);
-
-    int updates = await db.update(skillEventsTable, model.toMap(),
-        where: 'eventId = ?', whereArgs: [event.eventId]);
+    int updates = await db.update(skillEventsTable, changeMap,
+        where: 'eventId = ?', whereArgs: [eventId]);
     return updates;
   }
 
