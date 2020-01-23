@@ -64,7 +64,9 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     return time;
   }
 
-  // bool enableCompleteButton;
+  bool get enableCompleteButton {
+    return sessionForEdit != null ? !sessionForEdit.isComplete : true;
+  }
 
   int completedEventsCount = 0;
 
@@ -205,7 +207,8 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       yield SessionEditorCrudInProgressState();
       final completeOrFailure = await completeSessionAndEvents(
           SessionCompleteParams(sessionForEdit.sessionId, sessionForEdit.date));
-      yield completeOrFailure.fold(errorStateResponse, (response) => SessionCompletedState());
+      yield completeOrFailure.fold(
+          errorStateResponse, (response) => SessionCompletedState());
     }
 
     // Delete Session

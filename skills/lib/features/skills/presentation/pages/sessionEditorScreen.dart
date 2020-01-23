@@ -92,9 +92,9 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 ),
                 RaisedButton(
                   child: Text('Complete'),
-                  onPressed: () {
+                  onPressed: bloc.enableCompleteButton ? () {
                     _completeTapped();
-                  },
+                  } : null,
                 ),
                 RaisedButton(
                     child: Text('Delete'),
@@ -170,6 +170,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         children: <Widget>[
           Column(
             children: <Widget>[
+              _completedTextBuilder(),
               _dateRowBuilder(),
               _timeSelectRow(),
               _timeRowBuilder(),
@@ -184,12 +185,29 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
+  Row _completedTextBuilder(){
+    Widget content;
+    if (bloc.sessionForEdit.isComplete){
+      content = Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text('Completed', style: TextStyle(color: Colors.green, fontSize: 18)),
+        );
+    } else {
+      content = SizedBox();
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[content],
+    );
+  }
+
   Row _dateRowBuilder() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
           child: Material(
             shape:
                 Border(bottom: BorderSide(color: Colors.blue[100], width: 1.0)),
@@ -203,7 +221,9 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
               },
             ),
           ),
-        )
+        ),
+        
+    
       ],
     );
   }
