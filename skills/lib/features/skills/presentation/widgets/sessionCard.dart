@@ -74,18 +74,7 @@ class _SessionCardState extends State<SessionCard> {
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Column(
-                      children: <Widget>[
-                        InkWell(
-                          child: Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.grey,
-                            size: 20,
-                          ),
-                          onTap: () {
-                            _markSessionComplete();
-                          },
-                        )
-                      ],
+                      children: <Widget>[_completedIconBuilder(session)],
                     ),
                   )
                 ],
@@ -97,26 +86,21 @@ class _SessionCardState extends State<SessionCard> {
     );
   }
 
-  String createTimeString(int time) {
-    String timeString;
+  // ***** BUILDERS *********
 
-    String hours;
-    String min;
-    if (time < 60) {
-      min = time.toString();
-      timeString = '$min minutes';
-    } else if (time == 60) {
-      timeString = '1 hour';
+  Widget _completedIconBuilder(Session session) {
+    Widget content;
+    if (session.isComplete) {
+      content = Icon(
+        Icons.check,
+        color: Colors.green,
+        size: 20,
+      );
     } else {
-      hours = (time / 60).floor().toString();
-      timeString = '$hours hrs';
-      if (time % 60 != 0) {
-        min = (time % 60).toString();
-        timeString = '$hours hrs $min min';
-      }
+      content = SizedBox();
     }
 
-    return timeString;
+    return content;
   }
 
   Row _headerBuilder(int count, int duration) {
@@ -176,7 +160,7 @@ class _SessionCardState extends State<SessionCard> {
         // create row for event
         var text =
             Text(event.skillString, style: Theme.of(context).textTheme.body2);
-        var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
+        var timeText = Text('${event.duration} min', style: Theme.of(context).textTheme.body2);
         var newRow = Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
             child: Row(
@@ -206,5 +190,25 @@ class _SessionCardState extends State<SessionCard> {
     return rows;
   }
 
-  void _markSessionComplete() {}
+  String createTimeString(int time) {
+    String timeString;
+
+    String hours;
+    String min;
+    if (time < 60) {
+      min = time.toString();
+      timeString = '$min minutes';
+    } else if (time == 60) {
+      timeString = '1 hour';
+    } else {
+      hours = (time / 60).floor().toString();
+      timeString = '$hours hrs';
+      if (time % 60 != 0) {
+        min = (time % 60).toString();
+        timeString = '$hours hrs $min min';
+      }
+    }
+
+    return timeString;
+  }
 }
