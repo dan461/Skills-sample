@@ -327,7 +327,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     var pracDateBatch = db.batch();
     for (var map in skillIds) {
       int skillId = map['skillId'];
-      db.rawUpdate(
+      // update last practice date if new date is later than or equal to current 
+      pracDateBatch.rawUpdate(
           "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
     }
 
