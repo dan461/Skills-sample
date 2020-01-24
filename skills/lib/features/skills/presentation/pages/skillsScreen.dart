@@ -37,36 +37,21 @@ class _SkillsScreenState extends State<SkillsScreen> {
     super.dispose();
   }
 
-  void addSkill() async {
-    final editor = SkillEditorScreen(
-      skillEditorBloc: locator<SkillEditorBloc>(),
-    );
-    editor.skillEditorBloc.add(CreateSkillEvent());
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return editor;
-    }));
-    bloc.add(GetAllSkillsEvent());
-  }
-
-  void editSkill(Skill skill) async {
-    final editor = SkillEditorScreen(
-      skillEditorBloc: locator<SkillEditorBloc>(),
-    );
-    editor.skillEditorBloc.add(EditSkillEvent(skill));
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return editor;
-    }));
-    bloc.add(GetAllSkillsEvent());
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (_) => bloc,
       child: Scaffold(
         appBar: AppBar(
-          title: Center(child: Text('Your Skills')),
+          centerTitle: true,
+          title: Text('Your Skills'),
           actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.unfold_more),
+                onPressed: () {
+                  _ascDescTapped();
+                }),
+            _sortByBuilder(),
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
@@ -90,9 +75,10 @@ class _SkillsScreenState extends State<SkillsScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is AllSkillsLoaded) {
+              // bloc.skills = state.skills;
               body = Container(
                 child: SkillsList(
-                  skills: state.skills,
+                  skills: bloc.skills,
                   callback: callback == null ? editSkill : callback,
                 ),
               );
@@ -109,6 +95,65 @@ class _SkillsScreenState extends State<SkillsScreen> {
         ),
       ),
     );
+  }
+
+  // ****** BUILDERS *********
+  Widget _sortByBuilder() {
+    return PopupMenuButton<SkillSortOption>(
+        tooltip: "Sort by...",
+        icon: Icon(Icons.sort),
+        onSelected: (SkillSortOption choice) {
+          _sortTapped(choice);
+        },
+        itemBuilder: (BuildContext context) =>
+            <PopupMenuEntry<SkillSortOption>>[
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.name,
+                child: Text('Name'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.source,
+                child: Text('Source'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.lastPracDate,
+                child: Text('Last Practiced'),
+              )
+            ]);
+  }
+
+  void _ascDescTapped() {
+    setState(() {
+      bloc.ascDescTapped();
+    });
+  }
+
+  void _sortTapped(SkillSortOption choice) {
+    setState(() {
+      bloc.sortOptionPicked(choice);
+    });
+  }
+
+  void addSkill() async {
+    final editor = SkillEditorScreen(
+      skillEditorBloc: locator<SkillEditorBloc>(),
+    );
+    editor.skillEditorBloc.add(CreateSkillEvent());
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return editor;
+    }));
+    bloc.add(GetAllSkillsEvent());
+  }
+
+  void editSkill(Skill skill) async {
+    final editor = SkillEditorScreen(
+      skillEditorBloc: locator<SkillEditorBloc>(),
+    );
+    editor.skillEditorBloc.add(EditSkillEvent(skill));
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return editor;
+    }));
+    bloc.add(GetAllSkillsEvent());
   }
 }
 
@@ -154,5 +199,3 @@ class _SkillsListState extends State<SkillsList> {
     );
   }
 }
-
-

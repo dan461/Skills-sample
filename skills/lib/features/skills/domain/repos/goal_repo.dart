@@ -8,4 +8,5 @@ abstract class GoalRepository {
   Future<Either<Failure, int>> updateGoal(Goal goal);
   Future<Either<Failure, int>> deleteGoalWithId(int id);
   Future<Either<Failure, int>> addGoalToSkill(int skillId, int goalId, String goalText);
+  
 }

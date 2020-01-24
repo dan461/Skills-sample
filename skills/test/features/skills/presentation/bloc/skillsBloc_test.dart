@@ -21,10 +21,29 @@ void main() {
     );
   });
 
-  test('test initial state is correct', () {
-    expect(sut.initialState, equals(InitialSkillsState()));
-  });
+  group('Skill list sorting', (){
 
+    final testSkill1 = Skill(name: 'Zulu', source: 'test');
+    final testSkill2 = Skill(name: 'Delta', source: 'test');
+    final testSkill3 = Skill(name: 'Alpha', source: 'test');
+    final testSkill4 = Skill(name: 'Lima', source: 'test');
+    final List<Skill> skillsList = [testSkill1, testSkill2, testSkill3, testSkill4];
+    
+    test('test that skill list is sorted by selected option', (){
+      sut.skills = skillsList;
+      sut.sortOptionPicked(SkillSortOption.name);
+      List<Skill> expected = [testSkill3, testSkill2, testSkill4, testSkill1];
+      expect(sut.skills, expected);
+    });
+
+    test('test that skill list is reversed when asc/desc tapped', (){
+      sut.skills = skillsList;
+      sut.ascDescTapped();
+      List<Skill> expected = [testSkill4, testSkill3, testSkill2, testSkill1];
+      expect(sut.skills, expected);
+    });
+  });
+  
   group('GetAllSkills', () {
     final testSkill = Skill(name: 'test', source: 'test');
     final List<Skill> skillsList = [testSkill];
