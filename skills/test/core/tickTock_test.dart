@@ -26,8 +26,30 @@ void main() {
     });
   });
 
-  group('TimeOfDay helpers', (){
-    
+  test('firstSunday', () async {
+    // need activeMonth to get month and year
+    DateTime testMonth = DateTime(2020, 1).toUtc();
+    DateTime firstDay = TickTock.firstSunday(testMonth);
+    DateTime matcher = DateTime(2019, 12, 29).toUtc();
+    expect(firstDay, matcher);
+  });
+
+  test('daysOfWeek', () {
+    DateTime testDay = DateTime(2020, 1, 16).toUtc();
+    List<DateTime> result = TickTock.daysOfWeek(testDay);
+    List<DateTime> expected = [
+      DateTime(2020, 1, 12).toUtc(),
+      DateTime(2020, 1, 13).toUtc(),
+      DateTime(2020, 1, 14).toUtc(),
+      DateTime(2020, 1, 15).toUtc(),
+      DateTime(2020, 1, 16).toUtc(),
+      DateTime(2020, 1, 17).toUtc(),
+      DateTime(2020, 1, 18).toUtc()
+    ];
+    expect(result, expected);
+  });
+
+  group('TimeOfDay helpers', () {
     test('', () async {
       TimeOfDay t1 = TimeOfDay(hour: 12, minute: 30);
       int t1int = TickTock.timeToInt(t1);
@@ -36,5 +58,4 @@ void main() {
       expect(true, right);
     });
   });
-  
 }
