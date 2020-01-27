@@ -22,13 +22,15 @@ class Calendar extends StatefulWidget {
       _CalendarState(tapCallback, monthChangeCallback, activeMonth, eventDates);
 }
 
-class _CalendarState extends State<Calendar> {
+class _CalendarState extends State<Calendar>
+    with SingleTickerProviderStateMixin {
   double monthHeight;
   final DateTime activeMonth;
   final List<DateTime> eventDates;
 
   final Function tapCallback;
   final Function monthChangeCallback;
+  int pageId = 0;
 
   _CalendarState(this.tapCallback, this.monthChangeCallback, this.activeMonth,
       this.eventDates);
@@ -117,31 +119,88 @@ class _CalendarState extends State<Calendar> {
     return monthString;
   }
 
+  int testCount = 0;
+
   @override
   Widget build(BuildContext context) {
     monthHeight = MediaQuery.of(context).size.height / 2.25;
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          headerBuilder(),
-          DaysRow(),
-          Expanded(
-            child: PageView.builder(
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              itemBuilder: (context, position) {
-                return monthBuilder(activeMonth);
-              },
-              onPageChanged: (index) {
-                // changeMonth(index);
-              },
-            ),
-          ),
-        ],
-      ),
+    return AnimatedSize(
+      duration: Duration(milliseconds: 330),
+      curve: Curves.fastOutSlowIn,
+      alignment: Alignment(0, -1),
+      vsync: this,
+      child: _contentBuilder(),
     );
   }
+
+  Widget _contentBuilder() {
+    return Column(
+      children: <Widget>[
+        headerBuilder(),
+        DaysRow(),
+        AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return SlideTransition(
+                position: Tween<Offset>(begin: Offset.zero, end: Offset(0, 0))
+                    .animate(animation),
+                child: child,
+              );
+            },
+            layoutBuilder: (currentChild, _) => currentChild,
+            child: Dismissible(
+              key: ValueKey(pageId),
+              resizeDuration: null,
+              onDismissed: _onHorizontalSwipe,
+              direction: DismissDirection.horizontal,
+              child: monthBuilder(activeMonth)
+            ))
+      ],
+    );
+  }
+
+  void _onHorizontalSwipe(DismissDirection direction) {
+    if (direction == DismissDirection.startToEnd) {
+      // Swipe right
+      setState(() {
+        testCount = 2;
+      });
+      
+      monthChangeCallback(-1);
+    } else {
+      // Swipe left
+      setState(() {
+        testCount--;
+      });
+      monthChangeCallback(1);
+    }
+  }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   monthHeight = MediaQuery.of(context).size.height / 2.25;
+  //   return Container(
+  //     color: Colors.white,
+  //     child: Column(
+  //       children: <Widget>[
+  //         headerBuilder(),
+  //         DaysRow(),
+  //         Expanded(
+  //           child: PageView.builder(
+  //             scrollDirection: Axis.horizontal,
+  //             reverse: true,
+  //             itemBuilder: (context, position) {
+  //               return monthBuilder(activeMonth);
+  //             },
+  //             onPageChanged: (index) {
+  //               // changeMonth(index);
+  //             },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Container monthBuilder(DateTime month) {
     return Container(
@@ -200,6 +259,10 @@ class _CalendarState extends State<Calendar> {
   }
 
   void changeMonth(int change) {
+    // setState(() {
+    //   testCount += change;
+    // });
+
     monthChangeCallback(change);
   }
 
