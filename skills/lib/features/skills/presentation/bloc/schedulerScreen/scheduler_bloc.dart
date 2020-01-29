@@ -6,6 +6,7 @@ import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
 import './bloc.dart';
 import 'package:skills/core/tickTock.dart';
 
@@ -13,7 +14,17 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   final GetSessionsInMonth getSessionInMonth;
   final GetEventsForSession getEventsForSession;
 
-  DateTime activeMonth = DateTime(DateTime.now().year, DateTime.now().month);
+  static DateTime activeMonth =
+      DateTime(DateTime.now().year, DateTime.now().month);
+
+  static DateTime today =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          .toLocal();
+  CalendarControl calendarControl = CalendarControl(
+    currentMode: CalendarMode.month,
+    visiblePeriod: activeMonth,
+    focusDay: today,
+  );
 
   SchedulerBloc({this.getSessionInMonth, this.getEventsForSession});
 
@@ -67,6 +78,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
       yield failureOrSessions.fold(
           (failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessions) {
         sessionsForMonth = sessions;
+        calendarControl.eventDates = sessionDates;
         return SessionsForMonthReturnedState(sessions);
       });
     } else if (event is DaySelectedEvent) {

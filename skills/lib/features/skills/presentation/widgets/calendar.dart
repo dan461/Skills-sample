@@ -1,39 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
+import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
 import 'daysRow.dart';
 import 'dayCell.dart';
 
 class Calendar extends StatefulWidget {
   final Function tapCallback;
   final Function monthChangeCallback;
-  final List<DateTime> eventDates;
-  final DateTime activeMonth;
+  // final List<DateTime> eventDates;
+  // final DateTime activeMonth;
+  final CalendarControl control;
 
-  const Calendar({
-    Key key,
-    this.activeMonth,
-    @required this.tapCallback,
-    @required this.monthChangeCallback,
-    this.eventDates,
-  }) : super(key: key);
+  const Calendar(
+      {Key key,
+      // this.activeMonth,
+      @required this.tapCallback,
+      @required this.monthChangeCallback,
+      @required this.control
+      // this.eventDates,
+      })
+      : super(key: key);
 
   @override
   _CalendarState createState() =>
-      _CalendarState(tapCallback, monthChangeCallback, activeMonth, eventDates);
+      _CalendarState(tapCallback, monthChangeCallback, control);
 }
 
 class _CalendarState extends State<Calendar>
     with SingleTickerProviderStateMixin {
   double monthHeight;
-  final DateTime activeMonth;
-  final List<DateTime> eventDates;
-
+  // final DateTime activeMonth;
+  // final List<DateTime> eventDates;
+  final CalendarControl control;
   final Function tapCallback;
   final Function monthChangeCallback;
+
+  // DateTime control.visiblePeriod;
   int pageId = 0;
 
-  _CalendarState(this.tapCallback, this.monthChangeCallback, this.activeMonth,
-      this.eventDates);
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.control);
 
   @override
   initState() {
@@ -129,85 +134,138 @@ class _CalendarState extends State<Calendar>
       curve: Curves.fastOutSlowIn,
       alignment: Alignment(0, -1),
       vsync: this,
-      child: _contentBuilder(),
+      child: _calendarBuilder(),
     );
   }
 
-  Widget _contentBuilder() {
-    return Column(
-      children: <Widget>[
-        headerBuilder(),
-        DaysRow(),
-        AnimatedSwitcher(
-            duration: const Duration(milliseconds: 350),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return SlideTransition(
-                position: Tween<Offset>(begin: Offset.zero, end: Offset(0, 0))
-                    .animate(animation),
-                child: child,
-              );
-            },
-            layoutBuilder: (currentChild, _) => currentChild,
-            child: Dismissible(
-              key: ValueKey(pageId),
-              resizeDuration: null,
-              onDismissed: _onHorizontalSwipe,
-              direction: DismissDirection.horizontal,
-              child: monthBuilder(activeMonth)
-            ))
-      ],
-    );
-  }
+  Column _calendarBuilder() {
+    List<Widget> calendarView = [
+      Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: _modeBarBuilder(),
+      ),
+    ];
 
-  void _onHorizontalSwipe(DismissDirection direction) {
-    if (direction == DismissDirection.startToEnd) {
-      // Swipe right
-      setState(() {
-        testCount = 2;
-      });
-      
-      monthChangeCallback(-1);
-    } else {
-      // Swipe left
-      setState(() {
-        testCount--;
-      });
-      monthChangeCallback(1);
+    switch (control.currentMode) {
+      case CalendarMode.month:
+        calendarView.addAll(_monthViewBuilder());
+        break;
+
+      case CalendarMode.week:
+        calendarView.addAll(_weekViewBuilder());
+        break;
+
+      case CalendarMode.day:
+        calendarView.addAll(_dayViewBuilder());
+        break;
+
+      default:
     }
+
+    return Column(
+      children: calendarView,
+    );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   monthHeight = MediaQuery.of(context).size.height / 2.25;
-  //   return Container(
-  //     color: Colors.white,
-  //     child: Column(
-  //       children: <Widget>[
-  //         headerBuilder(),
-  //         DaysRow(),
-  //         Expanded(
-  //           child: PageView.builder(
-  //             scrollDirection: Axis.horizontal,
-  //             reverse: true,
-  //             itemBuilder: (context, position) {
-  //               return monthBuilder(activeMonth);
-  //             },
-  //             onPageChanged: (index) {
-  //               // changeMonth(index);
-  //             },
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  // ******* Builders **************
+
+  AnimatedSwitcher _switcherBuilder(Container content) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 350),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: Offset.zero, end: Offset(0, 0))
+              .animate(animation),
+          child: child,
+        );
+      },
+      layoutBuilder: (currentChild, _) => currentChild,
+      child: Dismissible(
+        key: ValueKey(control.visiblePeriod.month),
+        resizeDuration: null,
+        onDismissed: _onHorizontalSwipe,
+        direction: DismissDirection.horizontal,
+        child: content,
+      ),
+    );
+  }
+
+  List<Widget> _monthViewBuilder() {
+    return <Widget>[
+      headerBuilder(),
+      DaysRow(),
+      _switcherBuilder(monthBuilder(control.visiblePeriod))
+    ];
+  }
+
+  List<Widget> _weekViewBuilder() {
+    return <Widget>[
+      DaysRow(),
+      _switcherBuilder(
+        Container(
+          height: 200,
+          child: Center(
+            child: Text('week'),
+          ),
+        ),
+      )
+    ];
+  }
+
+  List<Widget> _dayViewBuilder() {
+    return <Widget>[
+      _switcherBuilder(
+        Container(
+          height: 200,
+          child: Center(
+            child: Text('Day'),
+          ),
+        ),
+      )
+    ];
+  }
+
+  Container _modeBarBuilder() {
+    return Container(
+      height: 30,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          FlatButton(
+            // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
+            child: Text('Month'),
+            onPressed: () {
+              _modeSelected(CalendarMode.month);
+            },
+          ),
+          FlatButton(
+            // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
+            child: Text(
+              'Week',
+            ),
+            onPressed: () {
+              _modeSelected(CalendarMode.week);
+            },
+          ),
+          FlatButton(
+            // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
+            child: Text('Day'),
+            onPressed: () {
+              _modeSelected(CalendarMode.day);
+            },
+          )
+        ],
+      ),
+    );
+  }
 
   Container monthBuilder(DateTime month) {
     return Container(
+      color: Colors.red,
       height: monthHeight,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: buildMonth(month: activeMonth),
+        children: buildMonth(month: month),
       ),
     );
   }
@@ -217,7 +275,7 @@ class _CalendarState extends State<Calendar>
 
     int week = 0;
     while (week < 5) {
-      DateTime firstSunday = TickTock.firstSunday(activeMonth);
+      DateTime firstSunday = TickTock.firstSunday(month);
       if (week == 0) {
         weeks.add(buildWeek(firstSunday));
       } else {
@@ -236,10 +294,10 @@ class _CalendarState extends State<Calendar>
 
     List<Widget> days = [];
     for (var day in week) {
-      bool hasSession = eventDates.indexOf(day) != -1;
+      bool hasSession = control.eventDates.indexOf(day) != -1;
       days.add(DayCell(
         date: day,
-        displayedMonth: activeMonth.month,
+        displayedMonth: control.visiblePeriod.month,
         tapCallback: tapCallback,
         hasSession: hasSession,
       ));
@@ -254,22 +312,12 @@ class _CalendarState extends State<Calendar>
     );
   }
 
-  void dayTapped() {
-    print('tapped');
-  }
-
-  void changeMonth(int change) {
-    // setState(() {
-    //   testCount += change;
-    // });
-
-    monthChangeCallback(change);
-  }
-
   Container headerBuilder() {
     return Container(
-      margin: EdgeInsets.all(4),
+      color: Colors.green,
+      height: 35,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           FlatButton(
             onPressed: () {
@@ -279,11 +327,11 @@ class _CalendarState extends State<Calendar>
           ),
           Center(
             child: Text(
-              monthString(activeMonth.month) +
+              monthString(control.visiblePeriod.month) +
                   ' ' +
-                  activeMonth.year.toString(),
+                  control.visiblePeriod.year.toString(),
               textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 24, color: Colors.black),
+              style: TextStyle(fontSize: 18, color: Colors.black),
             ),
           ),
           FlatButton(
@@ -295,5 +343,43 @@ class _CalendarState extends State<Calendar>
         ],
       ),
     );
+  }
+
+  // ****** Actions *************
+
+  void _onHorizontalSwipe(DismissDirection direction) {
+    if (direction == DismissDirection.startToEnd) {
+      // Swipe right
+      setState(() {
+        pageId++;
+        control.visiblePeriod = TickTock.changeMonth(control.visiblePeriod, -1);
+      });
+
+      // monthChangeCallback(-1);
+    } else {
+      // Swipe left
+      setState(() {
+        control.visiblePeriod = TickTock.changeMonth(control.visiblePeriod, 1);
+      });
+      // monthChangeCallback(1);
+    }
+  }
+
+  void _modeSelected(CalendarMode newMode) {
+    setState(() {
+      control.currentMode = newMode;
+    });
+  }
+
+  void dayTapped() {
+    print('tapped');
+  }
+
+  void changeMonth(int change) {
+    // setState(() {
+    //   testCount += change;
+    // });
+
+    monthChangeCallback(change);
   }
 }

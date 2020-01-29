@@ -46,10 +46,10 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             );
             _bloc.add(GetSessionsForMonthEvent());
           } else if (state is DaySelectedState) {
-            body = _contentBuilder(state.date, _bloc.activeMonth, state.maps);
+            body = _contentBuilder(state.date, state.maps);
           } else if (state is SessionsForMonthReturnedState) {
             _bloc.sessionsForMonth = state.sessionsList;
-            body = _contentBuilder(null, _bloc.activeMonth, null);
+            body = _contentBuilder(null, null);
           }
 
           return body;
@@ -59,7 +59,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   }
 
   Container _contentBuilder(
-      DateTime selectedDate, DateTime month, List<Map> sessionMaps) {
+      DateTime selectedDate, List<Map> sessionMaps) {
     final today =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc();
     sessionMaps ??= List<Map>();
@@ -69,8 +69,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
           Expanded(
               flex: 2,
               child: Calendar(
-                activeMonth: _bloc.activeMonth,
-                eventDates: _bloc.sessionDates,
+                control: _bloc.calendarControl,
                 tapCallback: _dateSelected,
                 monthChangeCallback: _calendarMonthChanged,
               )),
