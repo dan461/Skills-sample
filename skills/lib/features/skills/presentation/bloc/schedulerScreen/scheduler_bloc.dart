@@ -20,11 +20,13 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   static DateTime today =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
           .toLocal();
+
   CalendarControl calendarControl = CalendarControl(
-    currentMode: CalendarMode.month,
-    visiblePeriod: activeMonth,
-    focusDay: today,
-  );
+      currentMode: CalendarMode.month,
+      keyDate: activeMonth,
+      focusDay: today,
+      modeChangeCallback: _calendarModeChanged,
+      keyDateChangeCallback: _calendarDateChanged);
 
   SchedulerBloc({this.getSessionInMonth, this.getEventsForSession});
 
@@ -69,10 +71,16 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   Stream<SchedulerState> mapEventToState(
     SchedulerEvent event,
   ) async* {
+
+    // Month selected
+    // change to handle change of keyDate in calendar, new month, week, day
     if (event is MonthSelectedEvent) {
       activeMonth = TickTock.changeMonth(activeMonth, event.change);
       yield GettingSessionsForMonthState();
-    } else if (event is GetSessionsForMonthEvent) {
+    } 
+    
+    // Get sessions for month
+    else if (event is GetSessionsForMonthEvent) {
       final failureOrSessions =
           await getSessionInMonth(SessionInMonthParams(activeMonth));
       yield failureOrSessions.fold(
@@ -81,12 +89,27 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
         calendarControl.eventDates = sessionDates;
         return SessionsForMonthReturnedState(sessions);
       });
-    } else if (event is DaySelectedEvent) {
+    } 
+
+    // Get sessions for week
+
+    // Calendar mode changed
+    
+    // Day selected
+    else if (event is DaySelectedEvent) {
       selectedDay = event.date;
       List<Map> sessionMaps = await _makeSessionMaps(daysSessions);
       yield DaySelectedState(
           date: event.date, sessions: daysSessions, maps: sessionMaps);
     }
+  }
+
+  static void _calendarDateChanged(int change) {
+    print(change);
+  }
+
+  static void _calendarModeChanged(CalendarMode mode) {
+
   }
 
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {

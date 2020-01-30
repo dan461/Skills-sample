@@ -138,6 +138,11 @@ class _CalendarState extends State<Calendar>
     );
   }
 
+  /*          **********
+                  ******* BUILDERS **************
+              **********
+  */
+
   Column _calendarBuilder() {
     List<Widget> calendarView = [
       Padding(
@@ -167,9 +172,7 @@ class _CalendarState extends State<Calendar>
     );
   }
 
-  // ******* Builders **************
-
-  AnimatedSwitcher _switcherBuilder(Container content) {
+  AnimatedSwitcher _switcherBuilder(Widget content) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 350),
       transitionBuilder: (Widget child, Animation<double> animation) {
@@ -181,7 +184,7 @@ class _CalendarState extends State<Calendar>
       },
       layoutBuilder: (currentChild, _) => currentChild,
       child: Dismissible(
-        key: ValueKey(control.visiblePeriod.month),
+        key: ValueKey(control.keyDate.millisecondsSinceEpoch),
         resizeDuration: null,
         onDismissed: _onHorizontalSwipe,
         direction: DismissDirection.horizontal,
@@ -194,21 +197,17 @@ class _CalendarState extends State<Calendar>
     return <Widget>[
       headerBuilder(),
       DaysRow(),
-      _switcherBuilder(monthBuilder(control.visiblePeriod))
+      _switcherBuilder(monthBuilder(control.keyDate))
     ];
   }
 
   List<Widget> _weekViewBuilder() {
+    DateTime sunday = TickTock.sundayOfWeek(control.keyDate);
     return <Widget>[
       DaysRow(),
-      _switcherBuilder(
-        Container(
-          height: 200,
-          child: Center(
-            child: Text('week'),
-          ),
-        ),
-      )
+      // _switcherBuilder(
+      //   _buildWeekRow(sunday)
+      // )
     ];
   }
 
@@ -297,7 +296,7 @@ class _CalendarState extends State<Calendar>
       bool hasSession = control.eventDates.indexOf(day) != -1;
       days.add(DayCell(
         date: day,
-        displayedMonth: control.visiblePeriod.month,
+        displayedMonth: control.keyDate.month,
         tapCallback: tapCallback,
         hasSession: hasSession,
       ));
@@ -321,22 +320,22 @@ class _CalendarState extends State<Calendar>
         children: <Widget>[
           FlatButton(
             onPressed: () {
-              changeMonth(-1);
+              _onPeriodChange(-1);
             },
             child: Icon(Icons.chevron_left),
           ),
           Center(
             child: Text(
-              monthString(control.visiblePeriod.month) +
+              monthString(control.keyDate.month) +
                   ' ' +
-                  control.visiblePeriod.year.toString(),
+                  control.keyDate.year.toString(),
               textAlign: TextAlign.left,
               style: TextStyle(fontSize: 18, color: Colors.black),
             ),
           ),
           FlatButton(
             onPressed: () {
-              changeMonth(1);
+              _onPeriodChange(1);
             },
             child: Icon(Icons.chevron_right),
           ),
@@ -345,29 +344,32 @@ class _CalendarState extends State<Calendar>
     );
   }
 
-  // ****** Actions *************
+  /*  **********
+        ******* ACTIONS **************
+      **********
+  */
+
+  void _onPeriodChange(int change) {
+    setState(() {
+      control.changeTimeRange(change);
+    });
+  }
 
   void _onHorizontalSwipe(DismissDirection direction) {
     if (direction == DismissDirection.startToEnd) {
-      // Swipe right
-      setState(() {
-        pageId++;
-        control.visiblePeriod = TickTock.changeMonth(control.visiblePeriod, -1);
-      });
+      _onPeriodChange(-1);
 
       // monthChangeCallback(-1);
     } else {
-      // Swipe left
-      setState(() {
-        control.visiblePeriod = TickTock.changeMonth(control.visiblePeriod, 1);
-      });
+      _onPeriodChange(1);
+
       // monthChangeCallback(1);
     }
   }
 
   void _modeSelected(CalendarMode newMode) {
     setState(() {
-      control.currentMode = newMode;
+      control.modeChanged(newMode);
     });
   }
 
