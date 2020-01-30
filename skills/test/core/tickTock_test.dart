@@ -26,12 +26,35 @@ void main() {
     });
   });
 
+  group('shiftOneWeek: ', () {
+    test('test that new date is correct after shifting one week ahead', () {
+      var startDate = DateTime.utc(2019, 12, 29);
+      var matcher = DateTime.utc(2020, 1, 5);
+      var result = TickTock.shiftOneWeek(day: startDate, ahead: true);
+      expect(result, matcher);
+    });
+
+    test('test that new date is correct after shifting one week back', () {
+      var startDate = DateTime.utc(2020, 1, 5);
+      var matcher = DateTime.utc(2019, 12, 29);
+      var result = TickTock.shiftOneWeek(day: startDate, ahead: false);
+      expect(result, matcher);
+    });
+  });
+
   test('firstSunday', () async {
     // need activeMonth to get month and year
     DateTime testMonth = DateTime(2020, 1).toUtc();
     DateTime firstDay = TickTock.firstSunday(testMonth);
     DateTime matcher = DateTime(2019, 12, 29).toUtc();
     expect(firstDay, matcher);
+  });
+
+  test('sundayOfWeek', () {
+    DateTime keyDate = DateTime.utc(2020, 1, 15);
+    DateTime matcher = DateTime.utc(2020, 1, 12);
+    DateTime result = TickTock.sundayOfWeek(keyDate);
+    expect(result, matcher);
   });
 
   test('daysOfWeek', () {

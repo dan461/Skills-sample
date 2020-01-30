@@ -2,42 +2,55 @@ import 'package:flutter/material.dart';
 
 class TickTock {
   static DateTime changeMonth(DateTime month, int change) {
-    return DateTime(month.year, month.month + change);
+    return DateTime.utc(month.year, month.month + change);
+  }
+
+  static DateTime shiftOneWeek({DateTime day, bool ahead}) {
+    int change = ahead ? 1 : -1;
+    change *= 7;
+    return DateTime.utc(day.year, day.month, day.day + change);
   }
 
   // returns the first Sunday of first week shown on calendar month view
   static DateTime firstSunday(DateTime month) {
-    DateTime firstSunday = DateTime(month.year, month.month, 1).toUtc();
-    return firstSunday.weekday == 7
-        ? firstSunday
-        : firstSunday.subtract(Duration(days: firstSunday.weekday));
+    DateTime firstOfMonth = DateTime(month.year, month.month, 1).toUtc();
+    return firstOfMonth.weekday == 7
+        ? firstOfMonth
+        : firstOfMonth.subtract(Duration(days: firstOfMonth.weekday));
+  }
+
+  // returns the DateTime for the Sunday of the week containing given day
+  static DateTime sundayOfWeek(DateTime day) {
+    DateTime sunday;
+    if (day.weekday == 7) {
+      sunday = day;
+    } else {
+      sunday = day.subtract(Duration(days: (day.weekday)));
+    }
+
+    return sunday;
   }
 
 // DateTime: In accordance with ISO 8601 a week starts with Monday, which has the value 1.
 // Need to return a list that starts with a Sunday, which is weekday = 7
   static List<DateTime> daysOfWeek(DateTime day) {
     List<DateTime> days = [];
-    DateTime sunday;
-    if(day.weekday == 7){
-      sunday = day.toUtc();
-    } else {
-      sunday = day.subtract(Duration(days: (day.weekday))).toUtc();
-    }
+    DateTime sunday = sundayOfWeek(day);
 
     days.add(sunday);
-    for (int i = 1; i < 7; i++){
+    for (int i = 1; i < 7; i++) {
       DateTime nextDay = sunday.add(Duration(days: i));
       days.add(nextDay);
     }
 
     assert(days.length == 7, 'Week list length incorrect');
-    assert(days.first.weekday == DateTime.sunday, 'First day in week list not a Sunday');
-    assert(days.last.weekday == DateTime.saturday, 'Last day in week list not a Saturday');
+    assert(days.first.weekday == DateTime.sunday,
+        'First day in week list not a Sunday');
+    assert(days.last.weekday == DateTime.saturday,
+        'Last day in week list not a Saturday');
 
     return days;
   }
-
-  
 
   // ****** TIME OF DAY ************
 
