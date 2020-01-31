@@ -50,7 +50,9 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
           } else if (state is SessionsForMonthReturnedState) {
             _bloc.sessionsForMonth = state.sessionsList;
             body = _contentBuilder(null, null);
-          }
+          } 
+
+          else if (state is NewCalendarModeState){}
 
           return body;
         },

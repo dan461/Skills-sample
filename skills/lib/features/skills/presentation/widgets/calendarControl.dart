@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
 
 typedef CalendarModeChangeCallback(CalendarMode newMode);
-typedef CalendarKeyDateChangeCallback(int change);
+typedef CalendarKeyDateChangeCallback(int change, CalendarMode mode);
 
 enum CalendarMode { year, month, week, day }
 
@@ -36,7 +36,7 @@ class CalendarControl {
       default:
     }
 
-    keyDateChangeCallback(change);
+    keyDateChangeCallback(change, currentMode);
   }
 
   void modeChanged(CalendarMode newMode){

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
 
 abstract class SchedulerEvent extends Equatable {
   const SchedulerEvent();
@@ -31,4 +32,13 @@ class GetSessionsForMonthEvent extends SchedulerEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class CalendarModeChangedEvent extends SchedulerEvent {
+  final CalendarMode newMode;
+
+  CalendarModeChangedEvent(this.newMode);
+
+  @override
+  List<Object> get props => [newMode];
 }

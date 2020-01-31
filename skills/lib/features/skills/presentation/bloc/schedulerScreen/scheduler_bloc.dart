@@ -25,10 +25,11 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
       currentMode: CalendarMode.month,
       keyDate: activeMonth,
       focusDay: today,
-      modeChangeCallback: _calendarModeChanged,
       keyDateChangeCallback: _calendarDateChanged);
 
-  SchedulerBloc({this.getSessionInMonth, this.getEventsForSession});
+  SchedulerBloc({this.getSessionInMonth, this.getEventsForSession}){
+    calendarControl.modeChangeCallback = _calendarModeChanged;
+  }
 
   List<Session> sessionsForMonth = [];
   DateTime selectedDay;
@@ -94,7 +95,9 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     // Get sessions for week
 
     // Calendar mode changed
-    
+    else if (event is CalendarModeChangedEvent){
+
+    }
     // Day selected
     else if (event is DaySelectedEvent) {
       selectedDay = event.date;
@@ -104,12 +107,12 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     }
   }
 
-  static void _calendarDateChanged(int change) {
+  static void _calendarDateChanged(int change, CalendarMode mode) {
     print(change);
   }
 
-  static void _calendarModeChanged(CalendarMode mode) {
-
+  void _calendarModeChanged(CalendarMode mode) {
+    add(CalendarModeChangedEvent(mode));
   }
 
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {

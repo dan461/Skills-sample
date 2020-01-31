@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
+import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
 
 abstract class SchedulerState extends Equatable {
   const SchedulerState();
@@ -42,4 +44,13 @@ class SchedulerErrorState extends SchedulerState {
 
   @override
   List<Object> get props => [message];
+}
+
+class NewCalendarModeState extends SchedulerState {
+  final CalendarMode newMode;
+
+  NewCalendarModeState(this.newMode);
+
+  @override
+  List<Object> get props => [newMode];
 }
