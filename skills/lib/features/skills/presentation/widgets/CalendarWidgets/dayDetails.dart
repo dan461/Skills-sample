@@ -1,10 +1,9 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
-import '../../presentation/widgets/sessionCard.dart';
+
+import '../sessionCard.dart';
 
 typedef ShowSessionEditorCallback(Session session);
 typedef GoToNewSessionScreenCallback(DateTime date);

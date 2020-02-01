@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 
 import '../../domain/entities/session.dart';
-import 'dayDetails.dart';
+
 
 class SessionCard extends StatefulWidget {
   final Map<String, dynamic> sessionMap;

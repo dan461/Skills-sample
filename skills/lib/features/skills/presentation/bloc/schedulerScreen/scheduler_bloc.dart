@@ -6,7 +6,7 @@ import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
-import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import './bloc.dart';
 import 'package:skills/core/tickTock.dart';
 
@@ -27,7 +27,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
       focusDay: today,
       keyDateChangeCallback: _calendarDateChanged);
 
-  SchedulerBloc({this.getSessionInMonth, this.getEventsForSession}){
+  SchedulerBloc({this.getSessionInMonth, this.getEventsForSession}) {
     calendarControl.modeChangeCallback = _calendarModeChanged;
   }
 
@@ -72,14 +72,13 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   Stream<SchedulerState> mapEventToState(
     SchedulerEvent event,
   ) async* {
-
     // Month selected
     // change to handle change of keyDate in calendar, new month, week, day
     if (event is MonthSelectedEvent) {
       activeMonth = TickTock.changeMonth(activeMonth, event.change);
       yield GettingSessionsForMonthState();
-    } 
-    
+    }
+
     // Get sessions for month
     else if (event is GetSessionsForMonthEvent) {
       final failureOrSessions =
@@ -90,13 +89,15 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
         calendarControl.eventDates = sessionDates;
         return SessionsForMonthReturnedState(sessions);
       });
-    } 
+    }
 
     // Get sessions for week
 
     // Calendar mode changed
-    else if (event is CalendarModeChangedEvent){
+    else if (event is CalendarModeChangedEvent) {
+      // get sessions based on mode
 
+      // yield mode changed state so widget can redraw for new mode/layout
     }
     // Day selected
     else if (event is DaySelectedEvent) {

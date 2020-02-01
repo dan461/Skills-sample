@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
-import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import 'daysRow.dart';
 import 'dayCell.dart';
 
@@ -37,6 +37,8 @@ class _CalendarState extends State<Calendar>
 
   // DateTime control.visiblePeriod;
   int pageId = 0;
+
+  double detailsHeight = 0.0;
 
   _CalendarState(this.tapCallback, this.monthChangeCallback, this.control);
 
@@ -144,7 +146,7 @@ class _CalendarState extends State<Calendar>
   */
 
   Column _calendarBuilder() {
-    List<Widget> calendarView = [
+    List<Widget> calendarWidgets = [
       Padding(
         padding: const EdgeInsets.all(2.0),
         child: _modeBarBuilder(),
@@ -153,22 +155,23 @@ class _CalendarState extends State<Calendar>
 
     switch (control.currentMode) {
       case CalendarMode.month:
-        calendarView.addAll(_monthViewBuilder());
+        calendarWidgets.addAll(_monthViewBuilder());
         break;
 
       case CalendarMode.week:
-        calendarView.addAll(_weekViewBuilder());
+        calendarWidgets.addAll(_weekViewBuilder());
         break;
 
       case CalendarMode.day:
-        calendarView.addAll(_dayViewBuilder());
+        calendarWidgets.addAll(_dayViewBuilder());
         break;
 
       default:
     }
 
+    calendarWidgets.add(_detailsViewBuilder());
     return Column(
-      children: calendarView,
+      children: calendarWidgets,
     );
   }
 
@@ -197,8 +200,26 @@ class _CalendarState extends State<Calendar>
     return <Widget>[
       headerBuilder(),
       DaysRow(),
-      _switcherBuilder(monthBuilder(control.keyDate))
+      Expanded(child: _switcherBuilder(monthBuilder(control.keyDate))),
     ];
+  }
+
+  AnimatedContainer _detailsViewBuilder() {
+    return AnimatedContainer(
+      height: detailsHeight,
+      color: Colors.red,
+      child: Center(
+    child: Text('Details'),
+      ),
+      duration: Duration(milliseconds: 250),
+    );
+  }
+
+  void _onCellTapped() {
+    setState(() {
+      detailsHeight = detailsHeight == 0 ? 200 : 0;
+    });
+    
   }
 
   List<Widget> _weekViewBuilder() {
@@ -261,7 +282,7 @@ class _CalendarState extends State<Calendar>
   Container monthBuilder(DateTime month) {
     return Container(
       color: Colors.red,
-      height: monthHeight,
+      // height: monthHeight,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: buildMonth(month: month),
@@ -294,10 +315,10 @@ class _CalendarState extends State<Calendar>
     List<Widget> days = [];
     for (var day in week) {
       bool hasSession = control.eventDates.indexOf(day) != -1;
-      days.add(DayCell(
+      days.add(DayOfMonthCell(
         date: day,
         displayedMonth: control.keyDate.month,
-        tapCallback: tapCallback,
+        tapCallback: _onCellTapped,
         hasSession: hasSession,
       ));
     }

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:skills/features/skills/presentation/widgets/calendarControl.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 
 abstract class SchedulerEvent extends Equatable {
   const SchedulerEvent();
