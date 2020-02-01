@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
+import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
+import 'dayOfWeekCell.dart';
 import 'daysRow.dart';
-import 'dayCell.dart';
+import 'dayOfMonthCell.dart';
 
 class Calendar extends StatefulWidget {
   final Function tapCallback;
@@ -155,15 +157,15 @@ class _CalendarState extends State<Calendar>
 
     switch (control.currentMode) {
       case CalendarMode.month:
-        calendarWidgets.addAll(_monthViewBuilder());
+        calendarWidgets.addAll(_monthModeBuilder());
         break;
 
       case CalendarMode.week:
-        calendarWidgets.addAll(_weekViewBuilder());
+        calendarWidgets.addAll(_weekModeBuilder());
         break;
 
       case CalendarMode.day:
-        calendarWidgets.addAll(_dayViewBuilder());
+        calendarWidgets.addAll(_dayModeBuilder());
         break;
 
       default:
@@ -196,12 +198,33 @@ class _CalendarState extends State<Calendar>
     );
   }
 
-  List<Widget> _monthViewBuilder() {
+  List<Widget> _monthModeBuilder() {
     return <Widget>[
       headerBuilder(),
       DaysRow(),
-      Expanded(child: _switcherBuilder(monthBuilder(control.keyDate))),
+      Expanded(child: _switcherBuilder(monthTableBuilder(control.keyDate))),
     ];
+  }
+
+  List<Widget> _weekModeBuilder() {
+    // DateTime sunday = TickTock.sundayOfWeek(control.keyDate);
+    return <Widget>[
+      headerBuilder(),
+      Expanded(child: _switcherBuilder(_weekColumnBuilder())),
+    ];
+  }
+
+  Column _weekColumnBuilder() {
+    DateTime sunday = TickTock.sundayOfWeek(control.keyDate);
+    List<DateTime> week = TickTock.daysOfWeek(sunday);
+    List<DayOfWeekCell> daysList = [];
+    for (var day in week) {
+      daysList.add(DayOfWeekCell(date: day));
+    }
+
+    return Column(
+      children: daysList,
+    );
   }
 
   AnimatedContainer _detailsViewBuilder() {
@@ -209,7 +232,7 @@ class _CalendarState extends State<Calendar>
       height: detailsHeight,
       color: Colors.red,
       child: Center(
-    child: Text('Details'),
+        child: Text('Details'),
       ),
       duration: Duration(milliseconds: 250),
     );
@@ -219,20 +242,9 @@ class _CalendarState extends State<Calendar>
     setState(() {
       detailsHeight = detailsHeight == 0 ? 200 : 0;
     });
-    
   }
 
-  List<Widget> _weekViewBuilder() {
-    DateTime sunday = TickTock.sundayOfWeek(control.keyDate);
-    return <Widget>[
-      DaysRow(),
-      // _switcherBuilder(
-      //   _buildWeekRow(sunday)
-      // )
-    ];
-  }
-
-  List<Widget> _dayViewBuilder() {
+  List<Widget> _dayModeBuilder() {
     return <Widget>[
       _switcherBuilder(
         Container(
@@ -279,7 +291,7 @@ class _CalendarState extends State<Calendar>
     );
   }
 
-  Container monthBuilder(DateTime month) {
+  Container monthTableBuilder(DateTime month) {
     return Container(
       color: Colors.red,
       // height: monthHeight,
@@ -297,10 +309,10 @@ class _CalendarState extends State<Calendar>
     while (week < 5) {
       DateTime firstSunday = TickTock.firstSunday(month);
       if (week == 0) {
-        weeks.add(buildWeek(firstSunday));
+        weeks.add(Expanded(child: buildWeekRow(firstSunday)));
       } else {
         DateTime sunday = firstSunday.add(Duration(days: 7 * week));
-        weeks.add(buildWeek(sunday));
+        weeks.add(Expanded(child: buildWeekRow(sunday)));
       }
 
       week++;
@@ -309,7 +321,33 @@ class _CalendarState extends State<Calendar>
     return weeks;
   }
 
-  Expanded buildWeek(DateTime sunday) {
+  // Expanded buildWeek(DateTime sunday, CalendarMode mode) {
+  //   List<DateTime> week = TickTock.daysOfWeek(sunday);
+
+  //   List<Widget> days = [];
+  //   for (var day in week) {
+  //     if (mode == CalendarMode.month) {
+  //       bool hasSession = control.eventDates.indexOf(day) != -1;
+  //       days.add(DayOfMonthCell(
+  //         date: day,
+  //         displayedMonth: control.keyDate.month,
+  //         tapCallback: _onCellTapped,
+  //         hasSession: hasSession,
+  //       ));
+  //     } else if (mode == CalendarMode.week) {}
+  //   }
+
+  //   return Expanded(
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+  //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //       children: days,
+  //     ),
+  //   );
+  // }
+
+  // Builds a row of DayOfMonthCells for the Month mode table
+  Row buildWeekRow(DateTime sunday) {
     List<DateTime> week = TickTock.daysOfWeek(sunday);
 
     List<Widget> days = [];
@@ -323,12 +361,10 @@ class _CalendarState extends State<Calendar>
       ));
     }
 
-    return Expanded(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: days,
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: days,
     );
   }
 
