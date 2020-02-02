@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/new_session_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
@@ -41,18 +42,18 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
         builder: (context, state) {
           Widget body;
           if (state is InitialSchedulerState ||
-              state is GettingSessionsForMonthState) {
+              state is GettingSessionsForDateRangeState) {
             body = Center(
               child: CircularProgressIndicator(),
             );
-            _bloc.add(GetSessionsForMonthEvent());
+            _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
           }
 
           // Day selectedState, may only be needed for month mode
           else if (state is DaySelectedState) {
             body = _contentBuilder(state.date, state.maps);
-          } else if (state is SessionsForMonthReturnedState) {
-            _bloc.sessionsForMonth = state.sessionsList;
+          } else if (state is SessionsForRangeReturnedState) {
+            // _bloc.sessionsForMonth = state.sessionsList;
             body = _contentBuilder(null, null);
           } else if (state is NewCalendarModeState) {}
 

@@ -11,32 +11,30 @@ import './bloc.dart';
 import 'package:skills/core/tickTock.dart';
 
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
-  final GetSessionsInMonth getSessionInMonth;
+  final GetSessionsInDateRange getSessionsInDateRange;
   final GetEventsForSession getEventsForSession;
 
   static DateTime activeMonth =
-      DateTime(DateTime.now().year, DateTime.now().month);
+      DateTime(DateTime.now().year, DateTime.now().month, 1, 0);
 
   static DateTime today =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0)
           .toLocal();
 
   CalendarControl calendarControl = CalendarControl(
-      currentMode: CalendarMode.month,
-      keyDate: activeMonth,
-      focusDay: today,
-      keyDateChangeCallback: _calendarDateChanged);
+      currentMode: CalendarMode.month, keyDate: activeMonth, focusDay: today);
 
-  SchedulerBloc({this.getSessionInMonth, this.getEventsForSession}) {
+  SchedulerBloc({this.getSessionsInDateRange, this.getEventsForSession}) {
     calendarControl.modeChangeCallback = _calendarModeChanged;
+    calendarControl.keyDateChangeCallback = _calendarDateChanged;
   }
 
-  List<Session> sessionsForMonth = [];
+  List<Session> sessionsForRange = [];
   DateTime selectedDay;
 
   List<DateTime> get sessionDates {
     List<DateTime> dates = [];
-    for (var session in sessionsForMonth) {
+    for (var session in sessionsForRange) {
       if (dates.indexOf(session.date) == -1) {
         dates.add(session.date);
       }
@@ -47,7 +45,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
 
   List<Session> get daysSessions {
     List<Session> found = [];
-    for (var session in sessionsForMonth) {
+    for (var session in sessionsForRange) {
       if (session.date == selectedDay) {
         found.add(session);
       }
@@ -72,26 +70,19 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
   Stream<SchedulerState> mapEventToState(
     SchedulerEvent event,
   ) async* {
-    // Month selected
-    // change to handle change of keyDate in calendar, new month, week, day
-    if (event is MonthSelectedEvent) {
-      activeMonth = TickTock.changeMonth(activeMonth, event.change);
-      yield GettingSessionsForMonthState();
-    }
-
-    // Get sessions for month
-    else if (event is GetSessionsForMonthEvent) {
-      final failureOrSessions =
-          await getSessionInMonth(SessionInMonthParams(activeMonth));
+    // Handle change of keyDate in calendar, new month, week, day
+    if (event is VisibleDateRangeChangeEvent) {
+      yield GettingSessionsForDateRangeState();
+      final failureOrSessions = await getSessionsInDateRange(
+          SessionsInDateRangeParams(event.dateRange));
       yield failureOrSessions.fold(
           (failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessions) {
-        sessionsForMonth = sessions;
+        sessionsForRange = sessions;
+        calendarControl.events = sessionsForRange;
         calendarControl.eventDates = sessionDates;
-        return SessionsForMonthReturnedState(sessions);
+        return SessionsForRangeReturnedState(sessionsForRange);
       });
     }
-
-    // Get sessions for week
 
     // Calendar mode changed
     else if (event is CalendarModeChangedEvent) {
@@ -108,12 +99,13 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     }
   }
 
-  static void _calendarDateChanged(int change, CalendarMode mode) {
-    print(change);
+  void _calendarDateChanged(int change, CalendarMode mode) {
+    add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
   }
 
   void _calendarModeChanged(CalendarMode mode) {
-    add(CalendarModeChangedEvent(mode));
+    add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
+    // add(CalendarModeChangedEvent(mode));
   }
 
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {

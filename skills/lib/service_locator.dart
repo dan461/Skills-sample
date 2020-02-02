@@ -59,7 +59,7 @@ void init() {
       deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(
-      getSessionInMonth: locator(), getEventsForSession: locator()));
+      getSessionsInDateRange: locator(), getEventsForSession: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
@@ -76,7 +76,7 @@ void init() {
   locator.registerLazySingleton(() => AddGoalToSkill(locator()));
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
-  locator.registerLazySingleton(() => GetSessionsInMonth(locator()));
+  locator.registerLazySingleton(() => GetSessionsInDateRange(locator()));
   locator.registerLazySingleton(() => UpdateSessionWithId(locator()));
   locator.registerLazySingleton(() => DeleteSessionWithId(locator()));
 

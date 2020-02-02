@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import 'dayOfWeekCell.dart';
@@ -219,7 +220,11 @@ class _CalendarState extends State<Calendar>
     List<DateTime> week = TickTock.daysOfWeek(sunday);
     List<DayOfWeekCell> daysList = [];
     for (var day in week) {
-      daysList.add(DayOfWeekCell(date: day));
+      List sessions = control.events.where((session) => session.date.day == day.day).toList();
+      daysList.add(DayOfWeekCell(
+        date: day,
+        sessions: sessions,
+      ));
     }
 
     return Column(

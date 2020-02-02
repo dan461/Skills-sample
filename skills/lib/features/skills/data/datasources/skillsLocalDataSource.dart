@@ -31,6 +31,7 @@ abstract class SkillsLocalDataSource {
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
+  Future<List<Session>> getSessionsInDateRange(DateTime from, DateTime to);
   Future<SkillEventModel> insertNewEvent(SkillEvent event);
   Future<SkillEventModel> getEventById(int id);
   Future<int> updateEvent(Map<String, dynamic> changeMap, int eventId);
@@ -354,14 +355,33 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return result;
   }
 
-  Future<List<Session>> getSessionsInMonth(DateTime month) async {
-    final nextMonth =
-        DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
+  Future<List<Session>> getSessionsInDateRange(DateTime from, DateTime to) async {
     final Database db = await database;
     List<Map> maps = await db.query(sessionsTable,
         columns: null,
         where: 'date BETWEEN ? AND ?',
+        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch]);
+
+        List<Session> sessionsList = [];
+    if (maps.isNotEmpty) {
+      for (var map in maps) {
+        Session session = SessionModel.fromMap(map);
+        sessionsList.add(session);
+      }
+    }
+    return sessionsList;
+  }
+
+  Future<List<Session>> getSessionsInMonth(DateTime month) async {
+    final nextMonth =
+        DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
+    final Database db = await database;
+
+    List<Map> maps = await db.query(sessionsTable,
+        columns: null,
+        where: 'date BETWEEN ? AND ?',
         whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
+
     List<Session> sessionsList = [];
     if (maps.isNotEmpty) {
       for (var map in maps) {

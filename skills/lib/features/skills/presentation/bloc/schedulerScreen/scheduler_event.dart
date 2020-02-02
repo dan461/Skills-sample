@@ -25,6 +25,16 @@ class MonthSelectedEvent extends SchedulerEvent {
   List<Object> get props => [change];
 }
 
+class VisibleDateRangeChangeEvent extends SchedulerEvent {
+  final List<DateTime> dateRange;
+
+  VisibleDateRangeChangeEvent(this.dateRange);
+  
+  @override
+  List<Object> get props => null;
+  
+}
+
 class GetSessionsForMonthEvent extends SchedulerEvent {
   // final DateTime month;
 

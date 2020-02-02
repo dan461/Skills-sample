@@ -16,15 +16,19 @@ class InsertNewSession extends UseCase<Session, SessionInsertOrUpdateParams> {
   }
 }
 
-class GetSessionsInMonth extends UseCase<List<Session>, SessionInMonthParams> {
+
+
+class GetSessionsInDateRange extends UseCase<List<Session>, SessionsInDateRangeParams> {
   final SessionRepository repo;
 
-  GetSessionsInMonth(this.repo);
-
+  GetSessionsInDateRange(this.repo);
+  
   @override
-  Future<Either<Failure, List<Session>>> call(SessionInMonthParams params) {
-    return repo.getSessionsInMonth(params.month);
+  Future<Either<Failure, List<Session>>> call(SessionsInDateRangeParams params) {
+    
+    return repo.getSessionsInDateRange(params.dates.first, params.dates.last);
   }
+  
 }
 
 class GetSessionWithId extends UseCase<Session, SessionByIdParams> {

@@ -12,6 +12,8 @@ class CalendarControl {
   DateTime keyDate;
   DateTime selectedDay;
   List<DateTime> eventDates;
+  List events;
+
   CalendarModeChangeCallback modeChangeCallback;
   CalendarKeyDateChangeCallback keyDateChangeCallback;
 
@@ -20,7 +22,35 @@ class CalendarControl {
       @required this.focusDay,
       @required this.keyDate,
       this.modeChangeCallback,
-      this.keyDateChangeCallback});
+      this.keyDateChangeCallback}) {
+    // dateRange = [];
+  }
+
+  List<DateTime> get dateRange {
+    List<DateTime> dates = [];
+    switch (currentMode) {
+      case CalendarMode.month:
+        dates.add(TickTock.firstSunday(keyDate));
+        dates
+            .add(TickTock.firstSunday(keyDate).add(Duration(days: 35)).toUtc());
+
+        break;
+
+      case CalendarMode.week:
+        dates.add(TickTock.sundayOfWeek(keyDate));
+        dates
+            .add(TickTock.sundayOfWeek(keyDate).add(Duration(days: 7)).toUtc());
+        break;
+
+      case CalendarMode.day:
+        dates.first = keyDate;
+        break;
+
+      default:
+    }
+
+    return dates;
+  }
 
   void changeTimeRange(int change) {
     switch (currentMode) {
@@ -39,7 +69,7 @@ class CalendarControl {
     keyDateChangeCallback(change, currentMode);
   }
 
-  void modeChanged(CalendarMode newMode){
+  void modeChanged(CalendarMode newMode) {
     currentMode = newMode;
     modeChangeCallback(newMode);
   }

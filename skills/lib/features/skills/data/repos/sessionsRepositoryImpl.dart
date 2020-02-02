@@ -37,6 +37,12 @@ class SessionsRepositoryImpl extends SessionRepository {
   }
 
   @override
+  Future<Either<Failure, List<Session>>> getSessionsInDateRange(
+      DateTime from, DateTime to) async {
+    return Right(await localDataSource.getSessionsInDateRange(from, to));
+  }
+
+  @override
   Future<Either<Failure, int>> completeSessionAndEvents(
       int sessionId, DateTime date) async {
     return Right(

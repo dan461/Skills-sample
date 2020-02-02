@@ -13,7 +13,7 @@ class TickTock {
 
   // returns the first Sunday of first week shown on calendar month view
   static DateTime firstSunday(DateTime month) {
-    DateTime firstOfMonth = DateTime(month.year, month.month, 1).toUtc();
+    DateTime firstOfMonth = DateTime(month.year, month.month, 1, 0).toUtc();
     return firstOfMonth.weekday == 7
         ? firstOfMonth
         : firstOfMonth.subtract(Duration(days: firstOfMonth.weekday));
