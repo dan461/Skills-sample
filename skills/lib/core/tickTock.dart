@@ -13,7 +13,7 @@ class TickTock {
 
   // returns the first Sunday of first week shown on calendar month view
   static DateTime firstSunday(DateTime month) {
-    DateTime firstOfMonth = DateTime(month.year, month.month, 1, 0).toUtc();
+    DateTime firstOfMonth = DateTime.utc(month.year, month.month, 1);
     return firstOfMonth.weekday == 7
         ? firstOfMonth
         : firstOfMonth.subtract(Duration(days: firstOfMonth.weekday));
@@ -50,6 +50,12 @@ class TickTock {
         'Last day in week list not a Saturday');
 
     return days;
+  }
+
+  static DateTime today(){
+    DateTime today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    assert(today.hour == 0, 'Hour value for Today is not zero');
+    return today;
   }
 
   // ****** TIME OF DAY ************

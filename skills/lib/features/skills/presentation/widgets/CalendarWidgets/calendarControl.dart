@@ -32,14 +32,14 @@ class CalendarControl {
       case CalendarMode.month:
         dates.add(TickTock.firstSunday(keyDate));
         dates
-            .add(TickTock.firstSunday(keyDate).add(Duration(days: 35)).toUtc());
+            .add(TickTock.firstSunday(keyDate).add(Duration(days: 35)));
 
         break;
 
       case CalendarMode.week:
         dates.add(TickTock.sundayOfWeek(keyDate));
         dates
-            .add(TickTock.sundayOfWeek(keyDate).add(Duration(days: 7)).toUtc());
+            .add(TickTock.sundayOfWeek(keyDate).add(Duration(days: 7)));
         break;
 
       case CalendarMode.day:

@@ -23,9 +23,16 @@ class SessionModel extends Session {
             isComplete: isComplete);
 
   factory SessionModel.fromMap(Map<String, dynamic> map) {
+    // TODO - just in case a Session was made with an hour value not zero
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(map['date']).toUtc();
+    if (date.hour != 0)
+    {
+      date = date.subtract(Duration(hours:date.hour)); 
+    }
+
     return SessionModel(
         sessionId: map['sessionId'],
-        date: DateTime.fromMillisecondsSinceEpoch(map['date']).toUtc(),
+        date: date,
         startTime: TickTock.timeFromInt(map['startTime']),
         endTime: TickTock.timeFromInt(map['endTime']),
         duration: map['duration'],

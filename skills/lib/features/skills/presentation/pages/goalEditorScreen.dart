@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 
@@ -115,7 +116,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   void _updateGoal() async {
     // TODO - finish this
     Goal updatedGoal = Goal(
-      goalId: _goalEditorBloc.theGoal.goalId,
+        goalId: _goalEditorBloc.theGoal.goalId,
         skillId: _goalEditorBloc.theGoal.skillId,
         fromDate: _startDate,
         toDate: _endDate,
@@ -125,23 +126,19 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
         isComplete: false,
         desc: _isTimeBased ? "none" : _goalDescTextController.text);
 
-        _goalEditorBloc.add(UpdateGoalEvent(updatedGoal));
-
+    _goalEditorBloc.add(UpdateGoalEvent(updatedGoal));
   }
 
   void _selectStartDate() async {
-    DateTime lastDate =
-        _endDate == null ? DateTime.now().add(Duration(days: 365)) : _endDate;
+    DateTime lastDate = _endDate ?? TickTock.today().add(Duration(days: 365));
 
     DateTime initialDate =
-        DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
-            ? DateTime.now()
-            : lastDate;
+        TickTock.today().isBefore(lastDate) ? TickTock.today() : lastDate;
 
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
+        firstDate: TickTock.today().subtract(Duration(days: 365)),
         lastDate: lastDate);
 
     if (pickedDate != null) {
@@ -154,30 +151,23 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   }
 
   void _selectEndDate() async {
-    DateTime firstDate = _endDate == null
-        ? DateTime.now().subtract(Duration(days: 365))
-        : _endDate;
+    DateTime firstDate =
+        _startDate ?? TickTock.today().subtract(Duration(days: 365));
 
-    DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
-            firstDate.millisecondsSinceEpoch
-        ? DateTime.now()
-        : _endDate;
+    DateTime initialDate =
+        TickTock.today().isAfter(firstDate) ? TickTock.today() : _startDate;
 
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
         firstDate: firstDate,
-        lastDate: DateTime.now().add(Duration(days: 365)));
+        lastDate: TickTock.today().add(Duration(days: 365)));
 
     if (pickedDate != null) {
       setState(() {
         _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
-  }
-
-  DateTime dayMonthYearFromDateTime(DateTime date) {
-    return DateTime(date.year, date.month, date.day);
   }
 
   Widget _goalDetailAreaBuilder() {
@@ -375,7 +365,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
         return BlocListener(
           bloc: _goalEditorBloc,
           listener: (context, state) {
-            if(state is GoalUpdatedState || state is GoalDeletedState){
+            if (state is GoalUpdatedState || state is GoalDeletedState) {
               Navigator.of(context).pop();
             }
           },
@@ -399,7 +389,8 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                   _goalEditorBloc.add(EditGoalEvent());
                 } else if (state is GoalEditorEditingState) {
                   body = _goalEditArea();
-                } else if (state is GoalUpdatedState || state is GoalDeletedState){
+                } else if (state is GoalUpdatedState ||
+                    state is GoalDeletedState) {
                   body = Center(
                     child: CircularProgressIndicator(),
                   );

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_event.dart';
@@ -92,24 +93,17 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   }
 
   void _selectStartDate() async {
-    DateTime lastDate =
-        _endDate ?? DateTime.now().add(Duration(days: 365)).toUtc();
-
-    // DateTime lastDate =
-    //     _endDate == null ? DateTime.now().add(Duration(days: 365)).toUtc() : _endDate;
+    DateTime lastDate = _endDate ?? TickTock.today().add(Duration(days: 365));
 
     DateTime initialDate =
-        DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
-            ? DateTime.now().toUtc()
-            : lastDate;
+        TickTock.today().isBefore(lastDate) ? TickTock.today() : lastDate;
 
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
+        firstDate: TickTock.today().subtract(Duration(days: 365)),
         lastDate: lastDate);
 
-    pickedDate.toUtc();
     if (pickedDate != null) {
       setState(() {
         _startDate =
@@ -120,21 +114,18 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   }
 
   void _selectEndDate() async {
-    DateTime firstDate = _startDate == null
-        ? DateTime.now().subtract(Duration(days: 365)).toUtc()
-        : _startDate;
+    DateTime firstDate =
+        _startDate ?? TickTock.today().subtract(Duration(days: 365));
 
-    DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
-            firstDate.millisecondsSinceEpoch
-        ? DateTime.now().toUtc()
-        : _startDate;
+    DateTime initialDate =
+        TickTock.today().isAfter(firstDate) ? TickTock.today() : _startDate;
 
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
         firstDate: firstDate,
-        lastDate: DateTime.now().add(Duration(days: 365)));
-    pickedDate.toUtc();
+        lastDate: TickTock.today().add(Duration(days: 365)));
+
     if (pickedDate != null) {
       setState(() {
         _endDate =

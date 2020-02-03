@@ -215,7 +215,7 @@ class _CalendarState extends State<Calendar>
     ];
   }
 
-  Column _weekColumnBuilder() {
+  Widget _weekColumnBuilder() {
     DateTime sunday = TickTock.sundayOfWeek(control.keyDate);
     List<DateTime> week = TickTock.daysOfWeek(sunday);
     List<DayOfWeekCell> daysList = [];
@@ -228,7 +228,9 @@ class _CalendarState extends State<Calendar>
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: daysList,
+      // scrollDirection: Axis.vertical,
     );
   }
 

@@ -27,15 +27,15 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          widget.tapCallback(widget.date);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(width: 0.0, color: Colors.grey[400]))),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+            border: Border(
+                bottom: BorderSide(width: 0.0, color: Colors.grey[400]))),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: _content(widget.date, sessions),
           ),
         ),
@@ -49,6 +49,10 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
 
     for (var session in sessions) {
       widgets.add(_sessionBoxBuilder(session));
+      // widgets.add(_sessionBoxBuilder(session));
+      // widgets.add(_sessionBoxBuilder(session));
+      // widgets.add(_sessionBoxBuilder(session));
+      // widgets.add(_sessionBoxBuilder(session));
     }
 
     return widgets;
@@ -56,10 +60,9 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
 
   Container _dateBoxBuilder(DateTime date) {
     return Container(
+      color: Colors.grey[200],
+      margin: EdgeInsets.all(2),
       width: 60,
-      decoration: BoxDecoration(
-        color: widget.date.weekday > 5 ? Colors.grey[100] : Colors.white,
-      ),
       child: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8),
         child: Column(
@@ -83,12 +86,13 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Text('10:00am', style: Theme.of(context).textTheme.body2)
+                Text(session.startTime.format(context),
+                    style: Theme.of(context).textTheme.body2)
               ],
             ),
-            Text('60 min', style: Theme.of(context).textTheme.body1),
+            Text('${session.duration} min', style: Theme.of(context).textTheme.body1),
             Text('4 actvities', style: Theme.of(context).textTheme.body1),
-            Text('0 min. open', style: Theme.of(context).textTheme.body1)
+            Text('${session.timeRemaining} min. open', style: Theme.of(context).textTheme.body1)
           ],
         ));
   }
