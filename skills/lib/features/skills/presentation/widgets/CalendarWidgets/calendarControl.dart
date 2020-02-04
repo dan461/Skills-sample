@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
 
+abstract class CalendarDataSource {
+  CalendarControl calendarControl;
+  void dateRangeCallback(List<DateTime> dateRange);
+  List calendarEvents;
+}
+
 typedef CalendarModeChangeCallback(CalendarMode newMode);
 typedef CalendarKeyDateChangeCallback(int change, CalendarMode mode);
+typedef CalendarDateRangeChangeCallback(List<DateTime> dateRange);
 
 enum CalendarMode { year, month, week, day }
 
 class CalendarControl {
+  CalendarDataSource dataSource;
   CalendarMode currentMode;
   DateTime focusDay;
   DateTime keyDate;
@@ -17,29 +25,26 @@ class CalendarControl {
   CalendarModeChangeCallback modeChangeCallback;
   CalendarKeyDateChangeCallback keyDateChangeCallback;
 
-  CalendarControl(
-      {@required this.currentMode,
-      @required this.focusDay,
-      @required this.keyDate,
-      this.modeChangeCallback,
-      this.keyDateChangeCallback}) {
-    // dateRange = [];
-  }
+  CalendarControl({
+    this.dataSource,
+    @required this.currentMode,
+    @required this.focusDay,
+    @required this.keyDate,
+    this.modeChangeCallback,
+  });
 
   List<DateTime> get dateRange {
     List<DateTime> dates = [];
     switch (currentMode) {
       case CalendarMode.month:
         dates.add(TickTock.firstSunday(keyDate));
-        dates
-            .add(TickTock.firstSunday(keyDate).add(Duration(days: 35)));
+        dates.add(TickTock.firstSunday(keyDate).add(Duration(days: 35)));
 
         break;
 
       case CalendarMode.week:
         dates.add(TickTock.sundayOfWeek(keyDate));
-        dates
-            .add(TickTock.sundayOfWeek(keyDate).add(Duration(days: 7)));
+        dates.add(TickTock.sundayOfWeek(keyDate).add(Duration(days: 7)));
         break;
 
       case CalendarMode.day:
@@ -66,11 +71,12 @@ class CalendarControl {
       default:
     }
 
-    keyDateChangeCallback(change, currentMode);
+    dataSource.dateRangeCallback(dateRange);
   }
 
   void modeChanged(CalendarMode newMode) {
     currentMode = newMode;
-    modeChangeCallback(newMode);
+
+    dataSource.dateRangeCallback(dateRange);
   }
 }

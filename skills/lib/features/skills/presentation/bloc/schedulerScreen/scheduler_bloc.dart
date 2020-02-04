@@ -7,12 +7,22 @@ import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
+import 'package:skills/service_locator.dart';
 import './bloc.dart';
 import 'package:skills/core/tickTock.dart';
 
-class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
+class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
+    implements CalendarDataSource {
   final GetSessionsInDateRange getSessionsInDateRange;
   final GetEventsForSession getEventsForSession;
+
+  @override
+  List calendarEvents;
+
+  @override
+  void dateRangeCallback(List<DateTime> dateRange) {
+    add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
+  }
 
   static DateTime activeMonth =
       DateTime(DateTime.now().year, DateTime.now().month, 1, 0);
@@ -25,8 +35,8 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
       currentMode: CalendarMode.month, keyDate: activeMonth, focusDay: today);
 
   SchedulerBloc({this.getSessionsInDateRange, this.getEventsForSession}) {
-    calendarControl.modeChangeCallback = _calendarModeChanged;
-    calendarControl.keyDateChangeCallback = _calendarDateChanged;
+    calendarControl.dataSource = this;
+    calendarEvents = sessionsForRange;
   }
 
   List<Session> sessionsForRange = [];
@@ -99,7 +109,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     }
   }
 
-  void _calendarDateChanged(int change, CalendarMode mode) {
+  void _calendarDateChanged(List<DateTime> dateRange) {
     add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
   }
 
@@ -110,7 +120,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
 
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {
     List<Map> sessionMaps = [];
-    for (var session in daysSessions) {
+    for (var session in sessions) {
       List<SkillEvent> events = [];
       var eventsOrFail = await getEventsForSession(
           SessionByIdParams(sessionId: session.sessionId));
