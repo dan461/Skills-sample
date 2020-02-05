@@ -366,6 +366,7 @@ class _CalendarState extends State<Calendar>
         displayedMonth: control.keyDate.month,
         tapCallback: _onCellTapped,
         hasSession: hasSession,
+        isFocused: day.isAtSameMomentAs(control.focusDay),
       ));
     }
 
