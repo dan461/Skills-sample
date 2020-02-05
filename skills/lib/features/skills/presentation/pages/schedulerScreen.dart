@@ -46,38 +46,39 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             body = Center(
               child: CircularProgressIndicator(),
             );
-            _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
+            _bloc.add(
+                VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
           }
 
           // Day selectedState, may only be needed for month mode
           else if (state is DaySelectedState) {
             body = _contentBuilder(state.date, state.maps);
-          } else if (state is SessionsForRangeReturnedState) {
+          } 
+          
+          else if (state is SessionsForRangeReturnedState) {
             // _bloc.sessionsForMonth = state.sessionsList;
-            body = _contentBuilder(null, null);
-          } else if (state is NewCalendarModeState) {}
+            body = Calendar(
+              control: _bloc.calendarControl,
+              tapCallback: _dateSelected,
+              monthChangeCallback: _calendarMonthChanged,
+            );
+          } 
+          
+          else if (state is NewCalendarModeState) {}
 
-          return body;
+          return Container(
+            child: Column(
+              children: <Widget>[
+                Expanded(flex: 2, child: body),
+              ],
+            ),
+          );
         },
       ),
     );
   }
 
-  // Container _contentByMode(CalendarMode mode){
-
-  //   switch (mode) {
-  //     case CalendarMode.month:
-
-  //       break;
-  //     default:
-  //   }
-  // }
-
   Container _contentBuilder(DateTime selectedDate, List<Map> sessionMaps) {
-    final today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
-            .toUtc();
-    sessionMaps ??= List<Map>();
     return Container(
       child: Column(
         children: <Widget>[
@@ -88,17 +89,6 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
                 tapCallback: _dateSelected,
                 monthChangeCallback: _calendarMonthChanged,
               )),
-          // Expanded(
-          //   flex: 1,
-          //   child: DayDetails(
-          //     key: UniqueKey(),
-          //     bloc: _bloc,
-          //     date: selectedDate != null ? selectedDate : today,
-          //     sessions: sessionMaps,
-          //     newSessionCallback: _showNewSessionScreen,
-          //     editorCallback: _showSessionEditor,
-          //   ),
-          // ),
         ],
       ),
     );

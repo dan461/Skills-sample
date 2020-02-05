@@ -190,7 +190,7 @@ class _CalendarState extends State<Calendar>
       },
       layoutBuilder: (currentChild, _) => currentChild,
       child: Dismissible(
-        key: ValueKey(control.keyDate.millisecondsSinceEpoch),
+        key: ObjectKey(DayOfWeekCell()),
         resizeDuration: null,
         onDismissed: _onHorizontalSwipe,
         direction: DismissDirection.horizontal,
@@ -224,6 +224,7 @@ class _CalendarState extends State<Calendar>
       daysList.add(DayOfWeekCell(
         date: day,
         sessions: sessions,
+        isFocused: day.isAtSameMomentAs(control.focusDay),
       ));
     }
 

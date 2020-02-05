@@ -20,16 +20,22 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   List calendarEvents;
 
   @override
-  void dateRangeCallback(List<DateTime> dateRange) {
+  void dateRangeCallback(List<DateTime> dateRange) async {
     add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
+    // final failureOrSessions =
+    //     await getSessionsInDateRange(SessionsInDateRangeParams(dateRange));
+    // failureOrSessions.fold(
+    //     (failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessions) {
+    //   sessionsForRange = sessions;
+    //   calendarControl.events = sessionsForRange;
+    //   calendarControl.eventDates = sessionDates;
+    // });
   }
 
   static DateTime activeMonth =
       DateTime(DateTime.now().year, DateTime.now().month, 1, 0);
 
-  static DateTime today =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0)
-          .toLocal();
+  static DateTime today = TickTock.today();
 
   CalendarControl calendarControl = CalendarControl(
       currentMode: CalendarMode.month, keyDate: activeMonth, focusDay: today);
@@ -82,7 +88,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   ) async* {
     // Handle change of keyDate in calendar, new month, week, day
     if (event is VisibleDateRangeChangeEvent) {
-      yield GettingSessionsForDateRangeState();
+      // yield GettingSessionsForDateRangeState();
       final failureOrSessions = await getSessionsInDateRange(
           SessionsInDateRangeParams(event.dateRange));
       yield failureOrSessions.fold(

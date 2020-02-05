@@ -8,21 +8,23 @@ class DayOfWeekCell extends StatefulWidget {
   final DateTime date;
   final List<Session> sessions;
   final DayCellTapCallback tapCallback;
+  final bool isFocused;
 
-  const DayOfWeekCell({Key key, this.date, this.tapCallback, this.sessions})
+  const DayOfWeekCell({Key key, this.date, this.tapCallback, this.sessions, this.isFocused})
       : super(key: key);
 
   @override
   _DayOfWeekCellState createState() =>
-      _DayOfWeekCellState(date, sessions, tapCallback);
+      _DayOfWeekCellState(date, sessions, tapCallback, isFocused);
 }
 
 class _DayOfWeekCellState extends State<DayOfWeekCell> {
   final DateTime date;
   final List<Session> sessions;
   final DayCellTapCallback tapCallback;
+  final bool isFocused;
 
-  _DayOfWeekCellState(this.date, this.sessions, this.tapCallback);
+  _DayOfWeekCellState(this.date, this.sessions, this.tapCallback, this.isFocused);
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +62,13 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
 
   Container _dateBoxBuilder(DateTime date) {
     return Container(
-      color: Colors.grey[200],
+      color: isFocused ? Colors.cyan[200] : Colors.grey[200],
       margin: EdgeInsets.all(2),
       width: 60,
       child: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8),
-        child: Column(
+        child: 
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(DateFormat.E().format(widget.date)),
