@@ -59,7 +59,9 @@ void init() {
       deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(
-      getSessionsInDateRange: locator(), getEventsForSession: locator()));
+      getSessionsInDateRange: locator(),
+      getEventsForSession: locator(),
+      getInfoForWeekDayMode: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
@@ -77,6 +79,7 @@ void init() {
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
   locator.registerLazySingleton(() => GetSessionsInDateRange(locator()));
+  locator.registerLazySingleton(() => GetSessionMapsInDateRange(locator()));
   locator.registerLazySingleton(() => UpdateSessionWithId(locator()));
   locator.registerLazySingleton(() => DeleteSessionWithId(locator()));
 

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 import 'dayOfWeekCell.dart';
 import 'daysRow.dart';
 import 'dayOfMonthCell.dart';
@@ -29,8 +31,7 @@ class Calendar extends StatefulWidget {
       _CalendarState(tapCallback, monthChangeCallback, control);
 }
 
-class _CalendarState extends State<Calendar>
-    with SingleTickerProviderStateMixin {
+class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   double monthHeight;
   // final DateTime activeMonth;
   // final List<DateTime> eventDates;
@@ -219,11 +220,20 @@ class _CalendarState extends State<Calendar>
     DateTime sunday = TickTock.sundayOfWeek(control.keyDate);
     List<DateTime> week = TickTock.daysOfWeek(sunday);
     List<DayOfWeekCell> daysList = [];
+
     for (var day in week) {
-      List sessions = control.events.where((session) => session.date.day == day.day).toList();
+      List<Map> sessions;
+      // Use an abstract class for the week day cell, that just takes events, have DayOfWeekCell handle it
+      if (control.events.isNotEmpty && control.events.first is Map) {
+        sessions = control.events
+            .where((sessionMap) => sessionMap['session'].date.day == day.day)
+            .toList();
+      } else
+        sessions = [];
+
       daysList.add(DayOfWeekCell(
         date: day,
-        sessions: sessions,
+        sessionMaps: sessions,
         isFocused: day.isAtSameMomentAs(control.focusDay),
       ));
     }
@@ -256,14 +266,22 @@ class _CalendarState extends State<Calendar>
     return <Widget>[
       _switcherBuilder(
         Container(
+          color: Colors.lightBlue,
           height: 200,
+          width: 300,
           child: Center(
-            child: Text('Day'),
+            child: Text(
+              DateFormat.yMMMd().format(control.keyDate),
+            ),
           ),
         ),
       )
     ];
   }
+
+  void _goToNewSession(DateTime date) {}
+
+  void _goToSessionEditor(Session session) {}
 
   Container _modeBarBuilder() {
     return Container(

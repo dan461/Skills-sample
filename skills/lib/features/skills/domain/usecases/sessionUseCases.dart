@@ -16,19 +16,30 @@ class InsertNewSession extends UseCase<Session, SessionInsertOrUpdateParams> {
   }
 }
 
-
-
-class GetSessionsInDateRange extends UseCase<List<Session>, SessionsInDateRangeParams> {
+class GetSessionsInDateRange
+    extends UseCase<List<Session>, SessionsInDateRangeParams> {
   final SessionRepository repo;
 
   GetSessionsInDateRange(this.repo);
-  
+
   @override
-  Future<Either<Failure, List<Session>>> call(SessionsInDateRangeParams params) {
-    
+  Future<Either<Failure, List<Session>>> call(
+      SessionsInDateRangeParams params) {
     return repo.getSessionsInDateRange(params.dates.first, params.dates.last);
   }
-  
+}
+
+class GetSessionMapsInDateRange
+    extends UseCase<List<Map>, SessionsInDateRangeParams> {
+  final SessionRepository repo;
+
+  GetSessionMapsInDateRange(this.repo);
+
+  @override
+  Future<Either<Failure, List<Map>>> call(SessionsInDateRangeParams params) {
+    return repo.getSessionMapsInDateRange(
+        params.dates.first, params.dates.last);
+  }
 }
 
 class GetSessionWithId extends UseCase<Session, SessionByIdParams> {

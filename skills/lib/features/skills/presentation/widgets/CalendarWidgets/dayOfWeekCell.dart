@@ -6,25 +6,25 @@ typedef DayCellTapCallback(DateTime date);
 
 class DayOfWeekCell extends StatefulWidget {
   final DateTime date;
-  final List<Session> sessions;
+  final List<Map> sessionMaps;
   final DayCellTapCallback tapCallback;
   final bool isFocused;
 
-  const DayOfWeekCell({Key key, this.date, this.tapCallback, this.sessions, this.isFocused})
+  const DayOfWeekCell({Key key, this.date, this.tapCallback, this.sessionMaps, this.isFocused})
       : super(key: key);
 
   @override
   _DayOfWeekCellState createState() =>
-      _DayOfWeekCellState(date, sessions, tapCallback, isFocused);
+      _DayOfWeekCellState(date, sessionMaps, tapCallback, isFocused);
 }
 
 class _DayOfWeekCellState extends State<DayOfWeekCell> {
   final DateTime date;
-  final List<Session> sessions;
+  final List<Map> sessionMaps;
   final DayCellTapCallback tapCallback;
   final bool isFocused;
 
-  _DayOfWeekCellState(this.date, this.sessions, this.tapCallback, this.isFocused);
+  _DayOfWeekCellState(this.date, this.sessionMaps, this.tapCallback, this.isFocused);
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +38,20 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
           scrollDirection: Axis.horizontal,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: _content(widget.date, sessions),
+            children: _content(widget.date, sessionMaps),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _content(DateTime date, List<Session> sessions) {
+  List<Widget> _content(DateTime date, List<Map> sessionMaps) {
     List<Widget> widgets = [];
     widgets.add(_dateBoxBuilder(date));
 
-    for (var session in sessions) {
-      widgets.add(_sessionBoxBuilder(session));
-      // widgets.add(_sessionBoxBuilder(session));
-      // widgets.add(_sessionBoxBuilder(session));
-      // widgets.add(_sessionBoxBuilder(session));
-      // widgets.add(_sessionBoxBuilder(session));
+    for (var map in sessionMaps) {
+      widgets.add(_sessionBoxBuilder(map));
+      
     }
 
     return widgets;
@@ -79,7 +76,9 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
     );
   }
 
-  Container _sessionBoxBuilder(Session session) {
+  Container _sessionBoxBuilder(Map sessionMap) {
+    var session = sessionMap['session'];
+    var events = sessionMap['events'];
     return Container(
         padding: EdgeInsets.only(left: 2, right: 6),
         margin: EdgeInsets.all(2),
@@ -94,7 +93,7 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
               ],
             ),
             Text('${session.duration} min', style: Theme.of(context).textTheme.body1),
-            Text('4 actvities', style: Theme.of(context).textTheme.body1),
+            Text('${events.length} actvities', style: Theme.of(context).textTheme.body1),
             Text('${session.timeRemaining} min. open', style: Theme.of(context).textTheme.body1)
           ],
         ));

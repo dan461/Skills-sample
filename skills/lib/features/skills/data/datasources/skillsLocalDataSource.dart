@@ -31,7 +31,8 @@ abstract class SkillsLocalDataSource {
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
-  Future<List<Session>> getSessionsInDateRange(DateTime from, DateTime to);
+  Future<List<Session>> getSessionsInDateRange(DateTime from, DateTime to); // for calendar month mode
+  Future<List<Map>> getSessionMapsInDateRange(DateTime from, DateTime to); // for calendar week and day modes
   Future<SkillEventModel> insertNewEvent(SkillEvent event);
   Future<SkillEventModel> getEventById(int id);
   Future<int> updateEvent(Map<String, dynamic> changeMap, int eventId);
@@ -309,13 +310,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return response;
   }
 
-  Future<int> completeSessionAndEvents(int sessionId, DateTime sessionDate) async {
+  Future<int> completeSessionAndEvents(
+      int sessionId, DateTime sessionDate) async {
     final Database db = await database;
     int dateInt = sessionDate.millisecondsSinceEpoch;
 
     // set session complete
     int complete = await updateSession({'isComplete': 1}, sessionId);
-    
 
     // set events complete
     int update = await db.rawUpdate(
@@ -328,7 +329,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     var pracDateBatch = db.batch();
     for (var map in skillIds) {
       int skillId = map['skillId'];
-      // update last practice date if new date is later than or equal to current 
+      // update last practice date if new date is later than or equal to current
       pracDateBatch.rawUpdate(
           "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
     }
@@ -355,14 +356,20 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return result;
   }
 
-  Future<List<Session>> getSessionsInDateRange(DateTime from, DateTime to) async {
+  Future<List<Session>> getSessionsInDateRange(
+      DateTime from, DateTime to) async {
     final Database db = await database;
+
+    if (from.isAtSameMomentAs(to)) {
+      to.add(Duration(days: 1));
+    }
+
     List<Map> maps = await db.query(sessionsTable,
         columns: null,
         where: 'date BETWEEN ? AND ?',
         whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch]);
 
-        List<Session> sessionsList = [];
+    List<Session> sessionsList = [];
     if (maps.isNotEmpty) {
       for (var map in maps) {
         Session session = SessionModel.fromMap(map);
@@ -370,6 +377,19 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       }
     }
     return sessionsList;
+  }
+
+  Future<List<Map>> getSessionMapsInDateRange(
+      DateTime from, DateTime to) async {
+    List<Session> sessions = await getSessionsInDateRange(from, to);
+    List<Map> sessionMaps = [];
+    for (var session in sessions) {
+      List<SkillEvent> events = await getEventsForSession(session.sessionId);
+      Map<String, dynamic> sessionMap = {'session': session, 'events': events};
+      sessionMaps.add(sessionMap);
+    }
+
+    return sessionMaps;
   }
 
   Future<List<Session>> getSessionsInMonth(DateTime month) async {
@@ -468,6 +488,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return events;
   }
 
+  // TODO - dead code?
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
     // final Database db = await database;
 

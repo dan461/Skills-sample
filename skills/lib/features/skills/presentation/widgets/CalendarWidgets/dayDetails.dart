@@ -71,7 +71,7 @@ class _DayDetailsState extends State<DayDetails> {
   }
 
   Container _headerBuilder() {
-    String count = sessions.length.toString();
+    String count = sessions != null ? sessions.length.toString(): "0";
     return Container(
       color: Colors.grey,
       child: Padding(

@@ -48,7 +48,7 @@ class CalendarControl {
         break;
 
       case CalendarMode.day:
-        dates.first = keyDate;
+        dates.add(keyDate);
         break;
 
       default:
@@ -66,6 +66,10 @@ class CalendarControl {
       case CalendarMode.week:
         bool shift = change == 1 ? true : false;
         keyDate = TickTock.shiftOneWeek(day: keyDate, ahead: shift);
+        break;
+
+      case CalendarMode.day:
+        keyDate = keyDate.add(Duration(days: change));
         break;
 
       default:

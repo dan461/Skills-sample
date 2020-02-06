@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
@@ -14,6 +15,7 @@ import 'package:skills/core/tickTock.dart';
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     implements CalendarDataSource {
   final GetSessionsInDateRange getSessionsInDateRange;
+  final GetSessionMapsInDateRange getInfoForWeekDayMode;
   final GetEventsForSession getEventsForSession;
 
   @override
@@ -22,14 +24,6 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   @override
   void dateRangeCallback(List<DateTime> dateRange) async {
     add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
-    // final failureOrSessions =
-    //     await getSessionsInDateRange(SessionsInDateRangeParams(dateRange));
-    // failureOrSessions.fold(
-    //     (failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessions) {
-    //   sessionsForRange = sessions;
-    //   calendarControl.events = sessionsForRange;
-    //   calendarControl.eventDates = sessionDates;
-    // });
   }
 
   static DateTime activeMonth =
@@ -38,9 +32,12 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   static DateTime today = TickTock.today();
 
   CalendarControl calendarControl = CalendarControl(
-      currentMode: CalendarMode.month, keyDate: activeMonth, focusDay: today);
+      currentMode: CalendarMode.month, keyDate: today, focusDay: today);
 
-  SchedulerBloc({this.getSessionsInDateRange, this.getEventsForSession}) {
+  SchedulerBloc(
+      {this.getSessionsInDateRange,
+      this.getEventsForSession,
+      this.getInfoForWeekDayMode}) {
     calendarControl.dataSource = this;
     calendarEvents = sessionsForRange;
   }
@@ -89,22 +86,32 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     // Handle change of keyDate in calendar, new month, week, day
     if (event is VisibleDateRangeChangeEvent) {
       // yield GettingSessionsForDateRangeState();
-      final failureOrSessions = await getSessionsInDateRange(
-          SessionsInDateRangeParams(event.dateRange));
-      yield failureOrSessions.fold(
-          (failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessions) {
-        sessionsForRange = sessions;
-        calendarControl.events = sessionsForRange;
-        calendarControl.eventDates = sessionDates;
-        return SessionsForRangeReturnedState(sessionsForRange);
-      });
+
+      if (calendarControl.currentMode == CalendarMode.month) {
+        final failureOrSessions = await getSessionsInDateRange(
+            SessionsInDateRangeParams(event.dateRange));
+        yield failureOrSessions
+            .fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
+                (sessions) {
+          sessionsForRange = sessions;
+
+          calendarControl.events = sessionsForRange;
+          calendarControl.eventDates = sessionDates;
+          return SessionsForRangeReturnedState(sessionsForRange);
+        });
+      } else {
+        final failureOrMaps = await getInfoForWeekDayMode(SessionsInDateRangeParams(event.dateRange));
+        yield failureOrMaps.fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessionMaps){
+          calendarControl.events = sessionMaps;
+          sessionsForRange = [];
+          calendarControl.eventDates = sessionDates;
+          return SessionsForRangeReturnedState(sessionMaps);
+        });
+      }
     }
 
     // Calendar mode changed
     else if (event is CalendarModeChangedEvent) {
-      // get sessions based on mode
-
-      // yield mode changed state so widget can redraw for new mode/layout
     }
     // Day selected
     else if (event is DaySelectedEvent) {

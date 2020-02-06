@@ -38,7 +38,7 @@ class SessionsForMonthReturnedState extends SchedulerState {
 }
 
 class SessionsForRangeReturnedState extends SchedulerState {
-  final List<Session> sessionsList;
+  final List<dynamic> sessionsList;
 
   SessionsForRangeReturnedState(this.sessionsList);
 
