@@ -4,10 +4,20 @@ import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayCell.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 import 'dayOfWeekCell.dart';
 import 'daysRow.dart';
 import 'dayOfMonthCell.dart';
+
+typedef CalendarCellTapCallback(DateTime date);
+
+abstract class WeekCalendarCell {
+  DateTime date;
+  List events;
+  CalendarCellTapCallback tapCallback;
+  bool isFocused;
+}
 
 class Calendar extends StatefulWidget {
   final Function tapCallback;
@@ -264,16 +274,9 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
   List<Widget> _dayModeBuilder() {
     return <Widget>[
-      _switcherBuilder(
-        Container(
-          color: Colors.lightBlue,
-          height: 200,
-          width: 300,
-          child: Center(
-            child: Text(
-              DateFormat.yMMMd().format(control.keyDate),
-            ),
-          ),
+      Expanded(
+        child: _switcherBuilder(
+          DayCell(date: control.dateRange.first),
         ),
       )
     ];
