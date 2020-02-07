@@ -21,6 +21,8 @@ class _DayCellState extends State<DayCell> {
 
   @override
   Widget build(BuildContext context) {
+    double cellHeight =
+        (MediaQuery.of(context).size.height / 8).floor().toDouble();
     return Column(
       children: <Widget>[
         Container(
@@ -32,16 +34,45 @@ class _DayCellState extends State<DayCell> {
         Expanded(
             child: HoursScrollView(
           events: events,
+          cellHeight: cellHeight,
         ))
       ],
     );
   }
 }
 
-class HoursScrollView extends StatelessWidget {
+class HoursScrollView extends StatefulWidget {
   final List events;
+  final double cellHeight;
 
-  const HoursScrollView({Key key, this.events}) : super(key: key);
+  const HoursScrollView({Key key, this.events, this.cellHeight})
+      : super(key: key);
+
+  @override
+  _HoursScrollViewState createState() =>
+      _HoursScrollViewState(events, cellHeight);
+}
+
+class _HoursScrollViewState extends State<HoursScrollView> {
+  final List events;
+  final double cellHeight;
+  ScrollController scrollController;
+
+  _HoursScrollViewState(this.events, this.cellHeight);
+
+  @override
+  initState() {
+    super.initState();
+    
+    double start = 0;
+    if (events.isNotEmpty) {
+      Session session = events.first['session'];
+      start = TickTock.timeToDouble(session.startTime);
+    }
+    double yPos = start * cellHeight;
+    scrollController =
+        ScrollController(initialScrollOffset: yPos, keepScrollOffset: false);
+  }
 
   String _hourString(int hour) {
     switch (hour) {
@@ -55,11 +86,6 @@ class HoursScrollView extends StatelessWidget {
       default:
         return hour <= 11 ? hour.toString() : (hour - 12).toString();
     }
-    // if (hour == 0)
-    //   return '12';
-
-    // else
-    //   return hour <= 11 ? hour.toString() : (hour - 12).toString();
   }
 
   Container _hoursBuilder(double height) {
@@ -95,7 +121,6 @@ class HoursScrollView extends StatelessWidget {
               margin: EdgeInsets.only(left: 6, top: 0),
               height: height,
               decoration: BoxDecoration(
-                  // color: Colors.amber[100],
                   border: Border(
                       top: BorderSide(width: 0.0, color: Colors.grey[400]))),
             ),
@@ -116,9 +141,9 @@ class HoursScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double cellHeight =
-        (MediaQuery.of(context).size.height / 8).floor().toDouble();
+    
     return SingleChildScrollView(
+      controller: scrollController,
       child: Stack(children: _contentBuilder(cellHeight)),
     );
   }
@@ -126,7 +151,7 @@ class HoursScrollView extends StatelessWidget {
   List<Widget> _contentBuilder(double cellHeight) {
     List<Widget> children = [];
     children.add(_hoursBuilder(cellHeight));
-    for (var event in events) {
+    for (var event in widget.events) {
       children.add(_eventBuilder(event, cellHeight));
     }
 
@@ -136,7 +161,7 @@ class HoursScrollView extends StatelessWidget {
   Positioned _eventBuilder(Map event, double cellHeight) {
     Session session = event['session'];
     double yPos = TickTock.timeToDouble(session.startTime) * cellHeight;
-    double eventHeight = (cellHeight / 60) * session.duration.toDouble();
+    if (event == widget.events.first) {}
 
     return Positioned(top: yPos, left: 55, child: _eventBox(event, cellHeight));
   }
@@ -149,6 +174,9 @@ class HoursScrollView extends StatelessWidget {
     List<Row> rows = [_infoRow(event)];
     for (var event in events) {
       rows.add(_activityRow(event));
+      // rows.add(_activityRow(event));
+      // rows.add(_activityRow(event));
+      // rows.add(_activityRow(event));
     }
 
     return Container(
@@ -176,7 +204,7 @@ class HoursScrollView extends StatelessWidget {
 
   Row _activityRow(SkillEvent event) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Text('${event.skillString}'),
         Text('${event.duration} min.')
