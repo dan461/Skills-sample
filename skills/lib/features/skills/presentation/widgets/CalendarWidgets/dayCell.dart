@@ -63,7 +63,7 @@ class _HoursScrollViewState extends State<HoursScrollView> {
   @override
   initState() {
     super.initState();
-    
+
     double start = 0;
     if (events.isNotEmpty) {
       Session session = events.first['session'];
@@ -88,13 +88,20 @@ class _HoursScrollViewState extends State<HoursScrollView> {
     }
   }
 
+  Text _hourText(int hour) {
+    String hourString = _hourString(hour);
+    double fontSize = hour == 12 ? 12 : 14;
+    return Text(
+      '$hourString',
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
+    );
+  }
+
   Container _hoursBuilder(double height) {
     List<Row> hours = [];
     for (int hour = 0; hour < 25; hour++) {
-      String hourString = _hourString(hour);
       String amPm = hour <= 11 ? 'AM' : 'PM';
       amPm = hour == 12 ? '' : amPm;
-      // String timeString = hour == 12 ? 'NOON' : '$hourString$amPm';
 
       Row hourBox = Row(
         children: <Widget>[
@@ -106,10 +113,7 @@ class _HoursScrollViewState extends State<HoursScrollView> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    '$hourString',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  _hourText(hour),
                   Text(
                     '$amPm',
                     style: TextStyle(fontSize: 10),
@@ -141,7 +145,6 @@ class _HoursScrollViewState extends State<HoursScrollView> {
 
   @override
   Widget build(BuildContext context) {
-    
     return SingleChildScrollView(
       controller: scrollController,
       child: Stack(children: _contentBuilder(cellHeight)),
