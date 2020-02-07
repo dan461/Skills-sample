@@ -4,6 +4,7 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 
 import '../sessionCard.dart';
+import 'calendar.dart';
 
 typedef ShowSessionEditorCallback(Session session);
 typedef GoToNewSessionScreenCallback(DateTime date);
@@ -13,6 +14,7 @@ class DayDetails extends StatefulWidget {
   final DateTime date;
   final GoToNewSessionScreenCallback newSessionCallback;
   final ShowSessionEditorCallback editorCallback;
+  final DetailsViewCloseCallback closeCallback;
   final SchedulerBloc bloc;
 
   const DayDetails(
@@ -21,6 +23,7 @@ class DayDetails extends StatefulWidget {
       @required this.date,
       @required this.newSessionCallback,
       @required this.editorCallback,
+      @required this.closeCallback,
       this.bloc})
       : super(key: key);
   @override
@@ -71,26 +74,35 @@ class _DayDetailsState extends State<DayDetails> {
   }
 
   Container _headerBuilder() {
-    String count = sessions != null ? sessions.length.toString(): "0";
+    String count = sessions != null ? sessions.length.toString() : "0";
     return Container(
+      height: 35,
       color: Colors.grey,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              DateFormat.yMMMd().format(widget.date),
-              style: Theme.of(context).textTheme.subhead,
-            ),
-            Text(
-              '$count Sessions',
-              style: Theme.of(context).textTheme.subhead,
-            )
-          ],
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _close,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                DateFormat.yMMMd().format(widget.date),
+                style: Theme.of(context).textTheme.subhead,
+              ),
+              Text(
+                '$count Sessions',
+                style: Theme.of(context).textTheme.subhead,
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _close() {
+    widget.closeCallback();
   }
 
   @override

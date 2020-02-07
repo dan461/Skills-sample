@@ -11,6 +11,7 @@ import 'daysRow.dart';
 import 'dayOfMonthCell.dart';
 
 typedef CalendarCellTapCallback(DateTime date);
+typedef DetailsViewCloseCallback();
 
 abstract class WeekCalendarCell {
   DateTime date;
@@ -262,10 +263,13 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
       child: detailsHeight == 0
           ? null
           : DayDetails(
+              key: UniqueKey(),
               sessions: control.dataSource.sessionMaps,
               date: control.selectedDay,
               newSessionCallback: _goToNewSession,
-              editorCallback: _goToSessionEditor),
+              editorCallback: _goToSessionEditor,
+              closeCallback: _closeDetailsView,
+            ),
       duration: Duration(milliseconds: 250),
     );
   }
@@ -274,7 +278,13 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     setState(() {
       control.daySelected(date);
       control.selectedDay = date;
-      detailsHeight = detailsHeight == 0 ? 200 : 0;
+      detailsHeight = 200;
+    });
+  }
+
+  void _closeDetailsView() {
+    setState(() {
+      detailsHeight = 0;
     });
   }
 
