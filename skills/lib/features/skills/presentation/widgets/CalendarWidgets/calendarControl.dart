@@ -6,7 +6,7 @@ abstract class CalendarDataSource {
   // CalendarDateRangeChangeCallback dateRangeChangeCallback;
   void dateRangeCallback(List<DateTime> dateRange);
   void daySelectedCallback(DateTime date);
-  // void 
+  // void
   List calendarEvents;
   List<Map> sessionMaps;
 }
@@ -26,6 +26,7 @@ class CalendarControl {
   DateTime selectedDay;
   List<DateTime> eventDates;
   List events;
+  List<Map> weekModeEventViewMaps;
 
   CalendarModeChangeCallback modeChangeCallback;
   CalendarKeyDateChangeCallback keyDateChangeCallback;
@@ -89,7 +90,9 @@ class CalendarControl {
     dataSource.dateRangeCallback(dateRange);
   }
 
-  void daySelected(DateTime date){
+  void daySelected(DateTime date) {
     dataSource.daySelectedCallback(date);
   }
 }
+
+

@@ -8,6 +8,7 @@ import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/weekSessionBox.dart';
 import 'package:skills/service_locator.dart';
 import './bloc.dart';
 import 'package:skills/core/tickTock.dart';
@@ -27,7 +28,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   }
 
   @override
-  void daySelectedCallback(DateTime date){
+  void daySelectedCallback(DateTime date) {
     add(DaySelectedEvent(date));
   }
 
@@ -115,6 +116,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
           calendarControl.events = sessionMaps;
           sessionsForRange = [];
           calendarControl.eventDates = sessionDates;
+          calendarControl.weekModeEventViewMaps = _makeWeekBoxMaps(sessionMaps);
           return SessionsForRangeReturnedState(sessionMaps);
         });
       }
@@ -141,6 +143,17 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     // add(CalendarModeChangedEvent(mode));
   }
 
+  List<Map> _makeWeekBoxMaps(List<Map> sessionMaps) {
+    List<Map> maps = [];
+    for (var map in sessionMaps) {
+      Session session = map['session'];
+      var box = WeekSessionBox(sessionMap: map);
+      maps.add({'date': session.date, 'box': box});
+    }
+
+    return maps;
+  }
+
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {
     List<Map> sessionMaps = [];
     for (var session in sessions) {
@@ -157,6 +170,6 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
     return sessionMaps;
   }
-
-  
 }
+
+

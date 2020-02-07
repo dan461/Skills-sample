@@ -233,19 +233,18 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     List<DayOfWeekCell> daysList = [];
 
     for (var day in week) {
-      List<Map> sessions;
-      // Use an abstract class for the week day cell, that just takes events, have DayOfWeekCell handle it
-      if (control.events.isNotEmpty && control.events.first is Map) {
-        sessions = control.events
-            .where((sessionMap) => sessionMap['session'].date.day == day.day)
-            .toList();
-      } else
-        sessions = [];
+      List<Widget> eventViews = [];
+
+      for (var map in control.weekModeEventViewMaps) {
+        if (map['date'] == day) {
+          eventViews.add(map['box']);
+        }
+      }
 
       daysList.add(DayOfWeekCell(
         date: day,
-        sessionMaps: sessions,
         isFocused: day.isAtSameMomentAs(control.focusDay),
+        eventViews: eventViews,
       ));
     }
 
@@ -272,20 +271,6 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
             ),
       duration: Duration(milliseconds: 250),
     );
-  }
-
-  void _onCellTapped(DateTime date) {
-    setState(() {
-      control.daySelected(date);
-      control.selectedDay = date;
-      detailsHeight = 200;
-    });
-  }
-
-  void _closeDetailsView() {
-    setState(() {
-      detailsHeight = 0;
-    });
   }
 
   List<Widget> _dayModeBuilder() {
@@ -342,7 +327,6 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   Container monthTableBuilder(DateTime month) {
     return Container(
       color: Colors.red,
-      // height: monthHeight,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: buildMonth(month: month),
@@ -429,6 +413,20 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         ******* ACTIONS **************
       **********
   */
+
+  void _onCellTapped(DateTime date) {
+    setState(() {
+      control.daySelected(date);
+      control.selectedDay = date;
+      detailsHeight = 200;
+    });
+  }
+
+  void _closeDetailsView() {
+    setState(() {
+      detailsHeight = 0;
+    });
+  }
 
   void _onPeriodChange(int change) {
     setState(() {

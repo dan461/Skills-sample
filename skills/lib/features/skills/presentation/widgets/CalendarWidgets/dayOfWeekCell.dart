@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:skills/features/skills/domain/entities/session.dart';
 
 typedef DayCellTapCallback(DateTime date);
 
 class DayOfWeekCell extends StatefulWidget {
   final DateTime date;
-  final List<Map> sessionMaps;
+
   final DayCellTapCallback tapCallback;
   final bool isFocused;
+  final List<Widget> eventViews;
 
-  const DayOfWeekCell({Key key, this.date, this.tapCallback, this.sessionMaps, this.isFocused})
+  const DayOfWeekCell(
+      {Key key, this.date, this.tapCallback, this.isFocused, this.eventViews})
       : super(key: key);
 
   @override
   _DayOfWeekCellState createState() =>
-      _DayOfWeekCellState(date, sessionMaps, tapCallback, isFocused);
+      _DayOfWeekCellState(date, tapCallback, isFocused, eventViews);
 }
 
 class _DayOfWeekCellState extends State<DayOfWeekCell> {
   final DateTime date;
-  final List<Map> sessionMaps;
+
   final DayCellTapCallback tapCallback;
   final bool isFocused;
+  final List<Widget> eventViews;
 
-  _DayOfWeekCellState(this.date, this.sessionMaps, this.tapCallback, this.isFocused);
+  _DayOfWeekCellState(
+      this.date, this.tapCallback, this.isFocused, this.eventViews);
 
   @override
   Widget build(BuildContext context) {
@@ -38,20 +41,18 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
           scrollDirection: Axis.horizontal,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: _content(widget.date, sessionMaps),
+            children: _content(widget.date, eventViews),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _content(DateTime date, List<Map> sessionMaps) {
+  List<Widget> _content(DateTime date, List<Widget> views) {
     List<Widget> widgets = [];
     widgets.add(_dateBoxBuilder(date));
-
-    for (var map in sessionMaps) {
-      widgets.add(_sessionBoxBuilder(map));
-      
+    if (views != null) {
+      widgets.addAll(views);
     }
 
     return widgets;
@@ -64,8 +65,7 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
       width: 60,
       child: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8),
-        child: 
-        Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(DateFormat.E().format(widget.date)),
@@ -74,28 +74,5 @@ class _DayOfWeekCellState extends State<DayOfWeekCell> {
         ),
       ),
     );
-  }
-
-  Container _sessionBoxBuilder(Map sessionMap) {
-    var session = sessionMap['session'];
-    var events = sessionMap['events'];
-    return Container(
-        padding: EdgeInsets.only(left: 2, right: 6),
-        margin: EdgeInsets.all(2),
-        color: Colors.amber[200],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text(session.startTime.format(context),
-                    style: Theme.of(context).textTheme.body2)
-              ],
-            ),
-            Text('${session.duration} min', style: Theme.of(context).textTheme.body1),
-            Text('${events.length} actvities', style: Theme.of(context).textTheme.body1),
-            Text('${session.timeRemaining} min. open', style: Theme.of(context).textTheme.body1)
-          ],
-        ));
   }
 }
