@@ -276,7 +276,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     return <Widget>[
       Expanded(
         child: _switcherBuilder(
-          DayCell(date: control.dateRange.first),
+          DayCell(date: control.dateRange.first, events: control.events,),
         ),
       )
     ];

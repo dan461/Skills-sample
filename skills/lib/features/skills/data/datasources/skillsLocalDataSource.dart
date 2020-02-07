@@ -361,7 +361,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final Database db = await database;
 
     if (from.isAtSameMomentAs(to)) {
-      to.add(Duration(days: 1));
+      to = to.add(Duration(days: 1));
     }
 
     List<Map> maps = await db.query(sessionsTable,
