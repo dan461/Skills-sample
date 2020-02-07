@@ -258,16 +258,22 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   AnimatedContainer _detailsViewBuilder() {
     return AnimatedContainer(
       height: detailsHeight,
-      color: Colors.red,
-      child: Center(
-        child: Text('Details'),
-      ),
+      color: Colors.green[100],
+      child: detailsHeight == 0
+          ? null
+          : DayDetails(
+              sessions: control.dataSource.sessionMaps,
+              date: control.selectedDay,
+              newSessionCallback: _goToNewSession,
+              editorCallback: _goToSessionEditor),
       duration: Duration(milliseconds: 250),
     );
   }
 
-  void _onCellTapped() {
+  void _onCellTapped(DateTime date) {
     setState(() {
+      control.daySelected(date);
+      control.selectedDay = date;
       detailsHeight = detailsHeight == 0 ? 200 : 0;
     });
   }
@@ -276,7 +282,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     return <Widget>[
       Expanded(
         child: _switcherBuilder(
-          DayCell(date: control.dateRange.first, events: control.events,),
+          DayCell(
+            date: control.dateRange.first,
+            events: control.events,
+          ),
         ),
       )
     ];
@@ -349,31 +358,6 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
     return weeks;
   }
-
-  // Expanded buildWeek(DateTime sunday, CalendarMode mode) {
-  //   List<DateTime> week = TickTock.daysOfWeek(sunday);
-
-  //   List<Widget> days = [];
-  //   for (var day in week) {
-  //     if (mode == CalendarMode.month) {
-  //       bool hasSession = control.eventDates.indexOf(day) != -1;
-  //       days.add(DayOfMonthCell(
-  //         date: day,
-  //         displayedMonth: control.keyDate.month,
-  //         tapCallback: _onCellTapped,
-  //         hasSession: hasSession,
-  //       ));
-  //     } else if (mode == CalendarMode.week) {}
-  //   }
-
-  //   return Expanded(
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.stretch,
-  //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //       children: days,
-  //     ),
-  //   );
-  // }
 
   // Builds a row of DayOfMonthCells for the Month mode table
   Row buildWeekRow(DateTime sunday) {

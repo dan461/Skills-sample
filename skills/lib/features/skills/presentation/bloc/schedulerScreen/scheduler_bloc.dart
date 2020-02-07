@@ -26,6 +26,13 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
   }
 
+  @override
+  void daySelectedCallback(DateTime date){
+    add(DaySelectedEvent(date));
+  }
+
+  List<Map> sessionMaps;
+
   static DateTime activeMonth =
       DateTime(DateTime.now().year, DateTime.now().month, 1, 0);
 
@@ -100,8 +107,11 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
           return SessionsForRangeReturnedState(sessionsForRange);
         });
       } else {
-        final failureOrMaps = await getInfoForWeekDayMode(SessionsInDateRangeParams(event.dateRange));
-        yield failureOrMaps.fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (sessionMaps){
+        final failureOrMaps = await getInfoForWeekDayMode(
+            SessionsInDateRangeParams(event.dateRange));
+        yield failureOrMaps
+            .fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
+                (sessionMaps) {
           calendarControl.events = sessionMaps;
           sessionsForRange = [];
           calendarControl.eventDates = sessionDates;
@@ -116,7 +126,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     // Day selected
     else if (event is DaySelectedEvent) {
       selectedDay = event.date;
-      List<Map> sessionMaps = await _makeSessionMaps(daysSessions);
+      sessionMaps = await _makeSessionMaps(daysSessions);
       yield DaySelectedState(
           date: event.date, sessions: daysSessions, maps: sessionMaps);
     }
@@ -147,4 +157,6 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
     return sessionMaps;
   }
+
+  
 }

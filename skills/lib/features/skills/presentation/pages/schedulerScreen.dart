@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/new_session_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
-import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
-import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 import 'package:skills/service_locator.dart';
 
 import 'newSessionScreen.dart';
@@ -52,7 +48,11 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
 
           // Day selectedState, may only be needed for month mode
           else if (state is DaySelectedState) {
-            body = _contentBuilder(state.date, state.maps);
+            body = Calendar(
+              control: _bloc.calendarControl,
+              tapCallback: _dateSelected,
+              monthChangeCallback: _calendarMonthChanged,
+            );
           } 
           
           else if (state is SessionsForRangeReturnedState) {

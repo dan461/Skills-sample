@@ -44,7 +44,7 @@ class _DayDetailsState extends State<DayDetails> {
   }
 
   Widget _showContentForSession() {
-    if (sessions.isNotEmpty) {
+    if (sessions != null && sessions.isNotEmpty) {
       return new ListView.builder(
         itemBuilder: (context, index) {
           var sessionMap = sessions[index];

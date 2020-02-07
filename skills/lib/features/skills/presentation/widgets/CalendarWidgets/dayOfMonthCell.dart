@@ -83,7 +83,7 @@ class DayOfMonthCell extends StatelessWidget {
       flex: 1,
       child: GestureDetector(
         onTap: () {
-          tapCallback();
+          tapCallback(date);
         },
         child: Container(
           // height: cellHeight,

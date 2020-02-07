@@ -3,13 +3,18 @@ import 'package:skills/core/tickTock.dart';
 
 abstract class CalendarDataSource {
   CalendarControl calendarControl;
+  // CalendarDateRangeChangeCallback dateRangeChangeCallback;
   void dateRangeCallback(List<DateTime> dateRange);
+  void daySelectedCallback(DateTime date);
+  // void 
   List calendarEvents;
+  List<Map> sessionMaps;
 }
 
 typedef CalendarModeChangeCallback(CalendarMode newMode);
 typedef CalendarKeyDateChangeCallback(int change, CalendarMode mode);
 typedef CalendarDateRangeChangeCallback(List<DateTime> dateRange);
+typedef CalendarDaySelectedCallback(DateTime date);
 
 enum CalendarMode { year, month, week, day }
 
@@ -82,5 +87,9 @@ class CalendarControl {
     currentMode = newMode;
 
     dataSource.dateRangeCallback(dateRange);
+  }
+
+  void daySelected(DateTime date){
+    dataSource.daySelectedCallback(date);
   }
 }
