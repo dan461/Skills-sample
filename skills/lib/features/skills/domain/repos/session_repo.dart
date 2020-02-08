@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 
 abstract class SessionRepository {
   Future<Either<Failure, Session>> getSessionById(int id);

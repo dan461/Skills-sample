@@ -8,8 +8,6 @@ import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
-import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/weekSessionBox.dart';
-import 'package:skills/service_locator.dart';
 import './bloc.dart';
 import 'package:skills/core/tickTock.dart';
 

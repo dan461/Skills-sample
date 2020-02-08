@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
-import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/weekSessionBox.dart';
 
 class Session extends Equatable implements CalendarEvent {
   final int sessionId;

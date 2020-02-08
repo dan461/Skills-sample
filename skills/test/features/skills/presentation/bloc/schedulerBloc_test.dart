@@ -18,7 +18,7 @@ void main() {
   Session testSession1;
   Session testSession2;
   Session testSession3;
-  final testMonth = DateTime(2019, 12);
+  
   final testDateRange = [DateTime(2019, 12, 29), DateTime(2020, 1, 1)];
 
   setUp(() {

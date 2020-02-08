@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
@@ -248,26 +247,26 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
-  ButtonBar _buttonsBuilder() {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        RaisedButton(
-          child: Text('Cancel'),
-          onPressed: () {
-            // _cancelTapped();
-          },
-        ),
-        RaisedButton(
-            child: Text('Done'),
-            onPressed: _doneButtonEnabled
-                ? () {
-                    _doneTapped();
-                  }
-                : null),
-      ],
-    );
-  }
+  // ButtonBar _buttonsBuilder() {
+  //   return ButtonBar(
+  //     alignment: MainAxisAlignment.center,
+  //     children: <Widget>[
+  //       RaisedButton(
+  //         child: Text('Cancel'),
+  //         onPressed: () {
+  //           // _cancelTapped();
+  //         },
+  //       ),
+  //       RaisedButton(
+  //           child: Text('Done'),
+  //           onPressed: _doneButtonEnabled
+  //               ? () {
+  //                   _doneTapped();
+  //                 }
+  //               : null),
+  //     ],
+  //   );
+  // }
 
   Column _eventsHeaderBuilder() {
     int count =

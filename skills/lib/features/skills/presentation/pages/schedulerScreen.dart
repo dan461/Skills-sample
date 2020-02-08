@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
-import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
-import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
 import 'package:skills/service_locator.dart';
 
-import 'newSessionScreen.dart';
 
 class SchedulerScreen extends StatefulWidget {
   @override
@@ -78,53 +73,53 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     );
   }
 
-  Container _contentBuilder(DateTime selectedDate, List<Map> sessionMaps) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-              flex: 2,
-              child: Calendar(
-                control: _bloc.calendarControl,
-                tapCallback: _dateSelected,
-                monthChangeCallback: _calendarMonthChanged,
-              )),
-        ],
-      ),
-    );
-  }
+  // Container _contentBuilder(DateTime selectedDate, List<Map> sessionMaps) {
+  //   return Container(
+  //     child: Column(
+  //       children: <Widget>[
+  //         Expanded(
+  //             flex: 2,
+  //             child: Calendar(
+  //               control: _bloc.calendarControl,
+  //               tapCallback: _dateSelected,
+  //               monthChangeCallback: _calendarMonthChanged,
+  //             )),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  void _showNewSessionScreen(DateTime date) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return NewSessionScreen(
-        date: date,
-        bloc: locator<NewSessionBloc>(),
-      );
-    }));
+  // void _showNewSessionScreen(DateTime date) async {
+  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+  //     return NewSessionScreen(
+  //       date: date,
+  //       bloc: locator<NewSessionBloc>(),
+  //     );
+  //   }));
 
-    _bloc.add(MonthSelectedEvent(change: 0));
-  }
+  //   _bloc.add(MonthSelectedEvent(change: 0));
+  // }
 
-  void _showSessionEditor(Session session) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      SessionEditorScreen editor = SessionEditorScreen(
-        bloc: locator<SessionEditorBloc>(),
-        session: session,
-      );
+  // void _showSessionEditor(Session session) async {
+  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+  //     SessionEditorScreen editor = SessionEditorScreen(
+  //       bloc: locator<SessionEditorBloc>(),
+  //       session: session,
+  //     );
 
-      return editor;
-    }));
-    // await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-    //   NewSessionScreen editor = NewSessionScreen(
-    //     date: session.date,
-    //     bloc: locator<NewSessionBloc>(),
-    //   );
-    //   editor.bloc.add(BeginSessionEditingEvent(session: session));
-    //   return editor;
-    // }));
+  //     return editor;
+  //   }));
+  //   // await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+  //   //   NewSessionScreen editor = NewSessionScreen(
+  //   //     date: session.date,
+  //   //     bloc: locator<NewSessionBloc>(),
+  //   //   );
+  //   //   editor.bloc.add(BeginSessionEditingEvent(session: session));
+  //   //   return editor;
+  //   // }));
 
-    _bloc.add(MonthSelectedEvent(change: 0));
-  }
+  //   _bloc.add(MonthSelectedEvent(change: 0));
+  // }
 
   void _calendarMonthChanged(int change) {
     setState(() {

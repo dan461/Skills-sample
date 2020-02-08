@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 
 abstract class SchedulerState extends Equatable {

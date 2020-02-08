@@ -10,7 +10,7 @@ import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import '../../mockClasses.dart';
-import 'blocTestClasses.dart';
+
 
 void main() {
   SessionEditorBloc sut;

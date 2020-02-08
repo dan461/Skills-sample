@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayCell.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
