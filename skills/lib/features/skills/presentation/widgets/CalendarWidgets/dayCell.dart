@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/core/tickTock.dart';
-import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+
+import 'calendar.dart';
 
 class DayCell extends StatefulWidget {
   final DateTime date;
@@ -66,8 +66,7 @@ class _HoursScrollViewState extends State<HoursScrollView> {
 
     double start = 0;
     if (events.isNotEmpty) {
-      Session session = events.first['session'];
-      start = TickTock.timeToDouble(session.startTime);
+      start = TickTock.timeToDouble(events.first.startTime);
     }
     double yPos = start * cellHeight;
     scrollController =
@@ -161,57 +160,25 @@ class _HoursScrollViewState extends State<HoursScrollView> {
     return children;
   }
 
-  Positioned _eventBuilder(Map event, double cellHeight) {
-    Session session = event['session'];
-    double yPos = TickTock.timeToDouble(session.startTime) * cellHeight;
+  // add an event view for each event (Session.eventView)
+  Positioned _eventBuilder(CalendarEvent event, double cellHeight) {
+    // Session session = event['session'];
+    double yPos = TickTock.timeToDouble(event.startTime) * cellHeight;
     if (event == widget.events.first) {}
 
     return Positioned(top: yPos, left: 55, child: _eventBox(event, cellHeight));
   }
 
-  Container _eventBox(Map event, double cellHeight) {
-    Session session = event['session'];
-    List events = event['events'];
-    double eventHeight = (cellHeight / 60) * session.duration.toDouble();
-
-    List<Row> rows = [_infoRow(event)];
-    for (var event in events) {
-      rows.add(_activityRow(event));
-      // rows.add(_activityRow(event));
-      // rows.add(_activityRow(event));
-      // rows.add(_activityRow(event));
-    }
+  // make a Container with a child that is the session.eventView
+  Container _eventBox(CalendarEvent event, double cellHeight) {
+    double eventHeight = (cellHeight / 60) * event.duration.toDouble();
 
     return Container(
         height: eventHeight,
         width: 300,
         color: Colors.blue[200],
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 2),
-          child: Column(children: rows),
-        ));
-  }
-
-  Row _infoRow(Map event) {
-    Session session = event['session'];
-    List events = event['events'];
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text('${session.duration}min'),
-        Text('${session.timeRemaining}min open'),
-        Text('${events.length} activities'),
-      ],
-    );
-  }
-
-  Row _activityRow(SkillEvent event) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Text('${event.skillString}'),
-        Text('${event.duration} min.')
-      ],
-    );
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 2),
+            child: event.eventView));
   }
 }

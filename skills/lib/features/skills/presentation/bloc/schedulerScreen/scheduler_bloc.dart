@@ -22,11 +22,13 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   @override
   List calendarEvents;
 
+  // CalendarDataSource
   @override
   void dateRangeCallback(List<DateTime> dateRange) async {
     add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
   }
 
+  // CalendarDataSource
   @override
   void daySelectedCallback(DateTime date) {
     add(DaySelectedEvent(date));
@@ -113,10 +115,11 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
         yield failureOrMaps
             .fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
                 (sessionMaps) {
-          calendarControl.events = sessionMaps;
+          calendarControl.events =
+              _sessionsFromMaps(sessionMaps, calendarControl.currentMode);
           sessionsForRange = [];
           calendarControl.eventDates = sessionDates;
-          calendarControl.weekModeEventViewMaps = _makeWeekBoxMaps(sessionMaps);
+
           return SessionsForRangeReturnedState(sessionMaps);
         });
       }
@@ -134,24 +137,94 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     }
   }
 
-  void _calendarDateChanged(List<DateTime> dateRange) {
-    add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
-  }
+  // void _calendarDateChanged(List<DateTime> dateRange) {
+  //   add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
+  // }
 
-  void _calendarModeChanged(CalendarMode mode) {
-    add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
-    // add(CalendarModeChangedEvent(mode));
-  }
+  // void _calendarModeChanged(CalendarMode mode) {
+  //   add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
+  //   // add(CalendarModeChangedEvent(mode));
+  // }
 
-  List<Map> _makeWeekBoxMaps(List<Map> sessionMaps) {
-    List<Map> maps = [];
+  List<Session> _sessionsFromMaps(List<Map> sessionMaps, CalendarMode mode) {
+    List<Session> sessions = [];
     for (var map in sessionMaps) {
-      Session session = map['session'];
-      var box = WeekSessionBox(sessionMap: map);
-      maps.add({'date': session.date, 'box': box});
+      Session thisSession = map['session'];
+      if (mode == CalendarMode.week)
+        thisSession.eventView = _makeWeekView(map);
+      else if (mode == CalendarMode.day)
+        thisSession.eventView = _makeDaySessionView(map);
+
+      sessions.add(thisSession);
+    }
+    return sessions;
+  }
+
+  Container _makeWeekView(Map sessionMap) {
+    var session = sessionMap['session'];
+    var events = sessionMap['events'];
+
+    return Container(
+      padding: EdgeInsets.only(left: 2, right: 6),
+      margin: EdgeInsets.all(2),
+      color: Colors.amber[200],
+      child: Builder(
+        builder: (BuildContext context) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(session.startTime.format(context),
+                      style: Theme.of(context).textTheme.body2)
+                ],
+              ),
+              Text('${session.duration} min',
+                  style: Theme.of(context).textTheme.body1),
+              Text('${events.length} actvities',
+                  style: Theme.of(context).textTheme.body1),
+              Text('${session.timeRemaining} min. open',
+                  style: Theme.of(context).textTheme.body1)
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Container _makeDaySessionView(Map sessionMap) {
+    // Session session = sessionMap['session'];
+    List events = sessionMap['events'];
+
+    List<Row> rows = [_infoRow(sessionMap)];
+    for (var event in events) {
+      rows.add(_activityRow(event));
     }
 
-    return maps;
+    return Container(child: Column(children: rows));
+  }
+
+  Row _infoRow(Map event) {
+    Session session = event['session'];
+    List events = event['events'];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text('${session.duration}min'),
+        Text('${session.timeRemaining}min open'),
+        Text('${events.length} activities'),
+      ],
+    );
+  }
+
+  Row _activityRow(SkillEvent event) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text('${event.skillString}'),
+        Text('${event.duration} min.')
+      ],
+    );
   }
 
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {
@@ -171,5 +244,3 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     return sessionMaps;
   }
 }
-
-

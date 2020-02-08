@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/tickTock.dart';
 
+import 'calendar.dart';
+
 abstract class CalendarDataSource {
   CalendarControl calendarControl;
   // CalendarDateRangeChangeCallback dateRangeChangeCallback;
@@ -25,7 +27,7 @@ class CalendarControl {
   DateTime keyDate;
   DateTime selectedDay;
   List<DateTime> eventDates;
-  List events;
+  List<CalendarEvent> events;
   List<Map> weekModeEventViewMaps;
 
   CalendarModeChangeCallback modeChangeCallback;

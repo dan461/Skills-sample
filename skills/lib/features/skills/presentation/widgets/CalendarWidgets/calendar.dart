@@ -13,6 +13,15 @@ import 'dayOfMonthCell.dart';
 typedef CalendarCellTapCallback(DateTime date);
 typedef DetailsViewCloseCallback();
 
+abstract class CalendarEvent{
+  final DateTime date;
+  final TimeOfDay startTime;
+  final int duration;
+  Widget eventView;
+
+  CalendarEvent(this.date, this.startTime, this.duration);
+}
+
 abstract class WeekCalendarCell {
   DateTime date;
   List events;
@@ -235,10 +244,14 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     for (var day in week) {
       List<Widget> eventViews = [];
 
-      for (var map in control.weekModeEventViewMaps) {
-        if (map['date'] == day) {
-          eventViews.add(map['box']);
-        }
+      // for (var map in control.weekModeEventViewMaps) {
+      //   if (map['date'] == day) {
+      //     eventViews.add(map['box']);
+      //   }
+      // }
+      for (var event in control.events){
+        if(event.date.isAtSameMomentAs(day))
+          eventViews.add(event.eventView);
       }
 
       daysList.add(DayOfWeekCell(

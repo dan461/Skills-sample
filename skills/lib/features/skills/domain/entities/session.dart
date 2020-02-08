@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/weekSessionBox.dart';
 
-class Session extends Equatable {
+class Session extends Equatable implements CalendarEvent {
   final int sessionId;
   final DateTime date;
   final TimeOfDay startTime;
@@ -10,6 +12,7 @@ class Session extends Equatable {
   final int timeRemaining;
   final bool isScheduled;
   final bool isComplete;
+  Widget eventView; // ignored by sqlite/SessionModel
 
   int get sessionduration {
     int minutes;
@@ -30,7 +33,8 @@ class Session extends Equatable {
       this.duration,
       this.timeRemaining,
       @required this.isScheduled,
-      @required this.isComplete})
+      @required this.isComplete,
+      this.eventView})
       : super();
 
   @override
@@ -44,4 +48,7 @@ class Session extends Equatable {
         isComplete,
         isScheduled
       ];
+
+  // @override
+  // Widget eventView;
 }
