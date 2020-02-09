@@ -77,6 +77,7 @@ class CalendarControl {
         break;
 
       case CalendarMode.day:
+        events.clear(); // TODO - clearing list to prevent previous day's events showing before redraw
         keyDate = keyDate.add(Duration(days: change));
         break;
 

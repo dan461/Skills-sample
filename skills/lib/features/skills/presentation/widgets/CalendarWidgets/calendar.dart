@@ -10,6 +10,8 @@ import 'dayOfMonthCell.dart';
 
 typedef CalendarCellTapCallback(DateTime date);
 typedef DetailsViewCloseCallback();
+typedef void EventTappedCallback(CalendarEvent event);
+typedef void DetailsViewCallback(DateTime date);
 
 abstract class CalendarEvent{
   final DateTime date;
@@ -30,6 +32,8 @@ abstract class WeekCalendarCell {
 class Calendar extends StatefulWidget {
   final Function tapCallback;
   final Function monthChangeCallback;
+  final EventTappedCallback eventTapCallback;
+  final DetailsViewCallback detailsViewCallback;
   // final List<DateTime> eventDates;
   // final DateTime activeMonth;
   final CalendarControl control;
@@ -39,14 +43,14 @@ class Calendar extends StatefulWidget {
       // this.activeMonth,
       @required this.tapCallback,
       @required this.monthChangeCallback,
-      @required this.control
+      @required this.control, this.eventTapCallback, this.detailsViewCallback
       // this.eventDates,
       })
       : super(key: key);
 
   @override
   _CalendarState createState() =>
-      _CalendarState(tapCallback, monthChangeCallback, control);
+      _CalendarState(tapCallback, monthChangeCallback, control, eventTapCallback, detailsViewCallback);
 }
 
 class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
@@ -56,13 +60,15 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   final CalendarControl control;
   final Function tapCallback;
   final Function monthChangeCallback;
+  final EventTappedCallback eventTapCallback;
+  final DetailsViewCallback detailsViewCallback;
 
   // DateTime control.visiblePeriod;
   int pageId = 0;
 
   double detailsHeight = 0.0;
 
-  _CalendarState(this.tapCallback, this.monthChangeCallback, this.control);
+  _CalendarState(this.tapCallback, this.monthChangeCallback, this.control, this.eventTapCallback, this.detailsViewCallback);
 
   @override
   initState() {
@@ -248,7 +254,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
       //   }
       // }
       for (var event in control.events){
-        if(event.date.isAtSameMomentAs(day))
+        if(event.date.isAtSameMomentAs(day) && event.eventView != null)
           eventViews.add(event.eventView);
       }
 
@@ -276,8 +282,8 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
               key: UniqueKey(),
               sessions: control.dataSource.sessionMaps,
               date: control.selectedDay,
-              newSessionCallback: _goToNewSession,
-              editorCallback: _goToSessionEditor,
+              newSessionCallback: _detailsViewCallback,
+              editorCallback: _onEventTapped,
               closeCallback: _closeDetailsView,
             ),
       duration: Duration(milliseconds: 250),
@@ -297,9 +303,19 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     ];
   }
 
-  void _goToNewSession(DateTime date) {}
+  void _detailsViewCallback(DateTime date){
+    detailsViewCallback(date);
+  }
 
-  void _goToSessionEditor(Session session) {}
+  void _onEventTapped(CalendarEvent event){
+    eventTapCallback(event);
+  }
+
+  // void _goToNewSession(DateTime date) {
+  //   Navigator.of(context)
+  // }
+
+  // void _goToSessionEditor(Session session) {}
 
   Container _modeBarBuilder() {
     return Container(

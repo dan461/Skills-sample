@@ -126,6 +126,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     // Calendar mode changed
     else if (event is CalendarModeChangedEvent) {
     }
+    
     // Day selected
     else if (event is DaySelectedEvent) {
       selectedDay = event.date;

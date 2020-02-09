@@ -31,8 +31,10 @@ abstract class SkillsLocalDataSource {
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
-  Future<List<Session>> getSessionsInDateRange(DateTime from, DateTime to); // for calendar month mode
-  Future<List<Map>> getSessionMapsInDateRange(DateTime from, DateTime to); // for calendar week and day modes
+  Future<List<Session>> getSessionsInDateRange(
+      DateTime from, DateTime to); // for calendar month mode
+  Future<List<Map>> getSessionMapsInDateRange(
+      DateTime from, DateTime to); // for calendar week and day modes
   Future<SkillEventModel> insertNewEvent(SkillEvent event);
   Future<SkillEventModel> getEventById(int id);
   Future<int> updateEvent(Map<String, dynamic> changeMap, int eventId);
@@ -359,10 +361,6 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<List<Session>> getSessionsInDateRange(
       DateTime from, DateTime to) async {
     final Database db = await database;
-
-    if (from.isAtSameMomentAs(to)) {
-      to = to.add(Duration(days: 1));
-    }
 
     List<Map> maps = await db.query(sessionsTable,
         columns: null,

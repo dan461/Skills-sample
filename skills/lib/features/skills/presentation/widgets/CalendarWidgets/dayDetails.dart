@@ -12,8 +12,8 @@ typedef GoToNewSessionScreenCallback(DateTime date);
 class DayDetails extends StatefulWidget {
   final List<Map> sessions;
   final DateTime date;
-  final GoToNewSessionScreenCallback newSessionCallback;
-  final ShowSessionEditorCallback editorCallback;
+  final DetailsViewCallback newSessionCallback;
+  final EventTappedCallback editorCallback;
   final DetailsViewCloseCallback closeCallback;
   final SchedulerBloc bloc;
 

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/session_editor_bloc.dart';
+import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
+import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
 import 'package:skills/service_locator.dart';
-
 
 class SchedulerScreen extends StatefulWidget {
   @override
@@ -47,19 +51,18 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
               control: _bloc.calendarControl,
               tapCallback: _dateSelected,
               monthChangeCallback: _calendarMonthChanged,
+              eventTapCallback: _showSessionEditor,
+              detailsViewCallback: _showNewSessionScreen,
             );
-          } 
-          
-          else if (state is SessionsForRangeReturnedState) {
+          } else if (state is SessionsForRangeReturnedState) {
             // _bloc.sessionsForMonth = state.sessionsList;
             body = Calendar(
               control: _bloc.calendarControl,
               tapCallback: _dateSelected,
               monthChangeCallback: _calendarMonthChanged,
+              detailsViewCallback: _showNewSessionScreen,
             );
-          } 
-          
-          else if (state is NewCalendarModeState) {}
+          } else if (state is NewCalendarModeState) {}
 
           return Container(
             child: Column(
@@ -89,37 +92,28 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   //   );
   // }
 
-  // void _showNewSessionScreen(DateTime date) async {
-  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-  //     return NewSessionScreen(
-  //       date: date,
-  //       bloc: locator<NewSessionBloc>(),
-  //     );
-  //   }));
+  void _showNewSessionScreen(DateTime date) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewSessionScreen(
+        date: date,
+        bloc: locator<NewSessionBloc>(),
+      );
+    }));
 
-  //   _bloc.add(MonthSelectedEvent(change: 0));
-  // }
+    _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
+  }
 
-  // void _showSessionEditor(Session session) async {
-  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-  //     SessionEditorScreen editor = SessionEditorScreen(
-  //       bloc: locator<SessionEditorBloc>(),
-  //       session: session,
-  //     );
+  void _showSessionEditor(CalendarEvent event) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      SessionEditorScreen editor = SessionEditorScreen(
+        bloc: locator<SessionEditorBloc>(),
+        session: event,
+      );
 
-  //     return editor;
-  //   }));
-  //   // await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-  //   //   NewSessionScreen editor = NewSessionScreen(
-  //   //     date: session.date,
-  //   //     bloc: locator<NewSessionBloc>(),
-  //   //   );
-  //   //   editor.bloc.add(BeginSessionEditingEvent(session: session));
-  //   //   return editor;
-  //   // }));
-
-  //   _bloc.add(MonthSelectedEvent(change: 0));
-  // }
+      return editor;
+    }));
+    _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
+  }
 
   void _calendarMonthChanged(int change) {
     setState(() {
