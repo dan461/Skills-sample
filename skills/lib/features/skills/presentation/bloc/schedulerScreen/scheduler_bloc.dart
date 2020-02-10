@@ -23,6 +23,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   // CalendarDataSource
   @override
   void dateRangeCallback(List<DateTime> dateRange) async {
+    // TODO - Optimize with conditional db calls only when new dateRange is outside of existing range
     add(VisibleDateRangeChangeEvent(calendarControl.dateRange));
   }
 
@@ -126,7 +127,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     // Calendar mode changed
     else if (event is CalendarModeChangedEvent) {
     }
-    
+
     // Day selected
     else if (event is DaySelectedEvent) {
       selectedDay = event.date;
