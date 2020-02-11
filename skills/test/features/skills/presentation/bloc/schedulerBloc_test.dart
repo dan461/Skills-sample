@@ -7,6 +7,7 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import '../../mockClasses.dart';
 
 void main() {
@@ -18,16 +19,16 @@ void main() {
   Session testSession1;
   Session testSession2;
   Session testSession3;
-  
+  List<Session> testList = [testSession];
   final testDateRange = [DateTime(2019, 12, 29), DateTime(2020, 1, 1)];
 
   setUp(() {
     mockGetSessionsInDateRange = MockGetSessionsInDateRange();
-    mockCalendarControl = MockCalendarControl();
-
+    // mockCalendarControl = MockCalendarControl();
+    // mockCalendarControl.currentMode = CalendarMode.month;
     sut = SchedulerBloc(getSessionsInDateRange: mockGetSessionsInDateRange);
-    sut.calendarControl = mockCalendarControl;
-    // sut.activeMonth = testMonth;
+    // sut.calendarControl = mockCalendarControl;
+
     testSession = Session(
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
@@ -55,6 +56,8 @@ void main() {
         endTime: TimeOfDay(hour: 12, minute: 0),
         isComplete: false,
         isScheduled: true);
+
+        testList = [testSession];
   });
 
   test('test bloc initial state is correct', () {
@@ -76,14 +79,7 @@ void main() {
     expect(result, matcher);
   });
 
-  // test(
-  //     'test that bloc emits [GettingSessionsForMonthState] when MonthSelectedEvent is added',
-  //     () async {
-  //   sut.add(MonthSelectedEvent(change: 0));
-
-  //   final expected = [InitialSchedulerState(), GettingSessionsForMonthState()];
-  //   expect(sut, emitsInOrder(expected));
-  // });
+  
 
   group('DaySelectedEvent', () {
     test(
@@ -98,29 +94,31 @@ void main() {
     });
   });
 
-
   group('GetSessionsInDateRange', () {
-    final testList = [testSession];
+    
 
-    test('test that GetSessionsInDateRange usecase is called', () async {
+    test(
+        'test that GetSessionsInDateRange usecase is called when date range changes in Month mode',
+        () async {
       when(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Right(testList));
 
       sut.add(VisibleDateRangeChangeEvent(testDateRange));
       await untilCalled(
           mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)));
-      verify(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)));
+      verify(
+          mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)));
     });
 
     test(
-        'test that bloc emits [GettingSessionsForDateRangeState, SessionsForRangeReturnedState] when VisibleDateRangeChangeEvent event occurs',
+        'test that bloc emits [SessionsForRangeReturnedState] when VisibleDateRangeChangeEvent event occurs',
         () async {
       when(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Right(testList));
 
       final expected = [
         InitialSchedulerState(),
-        GettingSessionsForDateRangeState(),
+        // GettingSessionsForDateRangeState(),
         SessionsForRangeReturnedState(testList)
       ];
       expectLater(sut, emitsInOrder(expected));
