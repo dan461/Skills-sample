@@ -70,7 +70,7 @@ class _SessionCardState extends State<SessionCard> {
                   Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: _middleSectionBuilder(events)),
+                        children: _middleSectionBuilder(events, session.duration)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
@@ -142,10 +142,10 @@ class _SessionCardState extends State<SessionCard> {
     );
   }
 
-  List<Widget> _middleSectionBuilder(List<SkillEvent> events) {
+  List<Widget> _middleSectionBuilder(List<SkillEvent> events, int duration) {
     List<Widget> rows = [];
     rows.add(
-      _headerBuilder(events.length, 60),
+      _headerBuilder(events.length, duration),
     );
     if (events.isEmpty) {
       Row emptyRow = Row(
