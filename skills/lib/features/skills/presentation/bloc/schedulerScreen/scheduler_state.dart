@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 
 abstract class SchedulerState extends Equatable {
   const SchedulerState();
@@ -21,7 +22,7 @@ class DaySelectedState extends SchedulerState {
   List<Object> get props => [date];
 }
 
-class GettingSessionsForMonthState extends SchedulerState {
+class GettingSessionsForDateRangeState extends SchedulerState {
   @override
   List<Object> get props => [null];
 }
@@ -35,6 +36,15 @@ class SessionsForMonthReturnedState extends SchedulerState {
   List<Object> get props => [sessionsList];
 }
 
+class SessionsForRangeReturnedState extends SchedulerState {
+  final List<dynamic> sessionsList;
+
+  SessionsForRangeReturnedState(this.sessionsList);
+
+  @override
+  List<Object> get props => [sessionsList];
+}
+
 class SchedulerErrorState extends SchedulerState {
   final String message;
 
@@ -42,4 +52,13 @@ class SchedulerErrorState extends SchedulerState {
 
   @override
   List<Object> get props => [message];
+}
+
+class NewCalendarModeState extends SchedulerState {
+  final CalendarMode newMode;
+
+  NewCalendarModeState(this.newMode);
+
+  @override
+  List<Object> get props => [newMode];
 }

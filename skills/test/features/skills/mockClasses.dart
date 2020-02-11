@@ -10,6 +10,7 @@ import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 
 class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
 
@@ -51,7 +52,11 @@ class MockGetSessionWithIdUC extends Mock implements GetSessionWithId {}
 
 class MockDeleteSessionWithIdUC extends Mock implements DeleteSessionWithId {}
 
-class MockGetSessionsInMonthUC extends Mock implements GetSessionsInMonth {}
+class MockGetSessionsInDateRange extends Mock
+    implements GetSessionsInDateRange {}
+
+class MockGetMapsForSessionsInDateRange extends Mock
+    implements GetMapsForSessionsInDateRange {}
 
 class MockEventsRepo extends Mock implements SkillEventRepository {}
 
@@ -75,4 +80,7 @@ class MockUpdateSessionWithId extends Mock implements UpdateSessionWithId {}
 
 class MockDeleteSessionWithId extends Mock implements DeleteSessionWithId {}
 
-class MockCompleteSessionAndEvents extends Mock implements CompleteSessionAndEvents {}
+class MockCompleteSessionAndEvents extends Mock
+    implements CompleteSessionAndEvents {}
+
+class MockCalendarControl extends Mock implements CalendarControl {}

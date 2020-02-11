@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
@@ -92,9 +91,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 ),
                 RaisedButton(
                   child: Text('Complete'),
-                  onPressed: bloc.enableCompleteButton ? () {
-                    _completeTapped();
-                  } : null,
+                  onPressed: bloc.enableCompleteButton
+                      ? () {
+                          _completeTapped();
+                        }
+                      : null,
                 ),
                 RaisedButton(
                     child: Text('Delete'),
@@ -138,7 +139,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     body = _contentBuilder();
                   }
                   // New Event created, hide Event Creator
-                  else if (state is NewEventsCreatedState || state is SessionCompletedState) {
+                  else if (state is NewEventsCreatedState ||
+                      state is SessionCompletedState) {
                     _showEventCreator = false;
                     bloc.add(RefreshEventsListEvnt());
                     body = Center(
@@ -185,13 +187,14 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
-  Row _completedTextBuilder(){
+  Row _completedTextBuilder() {
     Widget content;
-    if (bloc.sessionForEdit.isComplete){
+    if (bloc.sessionForEdit.isComplete) {
       content = Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Text('Completed', style: TextStyle(color: Colors.green, fontSize: 18)),
-        );
+        padding: const EdgeInsets.only(top: 6),
+        child: Text('Completed',
+            style: TextStyle(color: Colors.green, fontSize: 18)),
+      );
     } else {
       content = SizedBox();
     }
@@ -222,8 +225,6 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
             ),
           ),
         ),
-        
-    
       ],
     );
   }
@@ -248,26 +249,26 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
-  ButtonBar _buttonsBuilder() {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        RaisedButton(
-          child: Text('Cancel'),
-          onPressed: () {
-            // _cancelTapped();
-          },
-        ),
-        RaisedButton(
-            child: Text('Done'),
-            onPressed: _doneButtonEnabled
-                ? () {
-                    _doneTapped();
-                  }
-                : null),
-      ],
-    );
-  }
+  // ButtonBar _buttonsBuilder() {
+  //   return ButtonBar(
+  //     alignment: MainAxisAlignment.center,
+  //     children: <Widget>[
+  //       RaisedButton(
+  //         child: Text('Cancel'),
+  //         onPressed: () {
+  //           // _cancelTapped();
+  //         },
+  //       ),
+  //       RaisedButton(
+  //           child: Text('Done'),
+  //           onPressed: _doneButtonEnabled
+  //               ? () {
+  //                   _doneTapped();
+  //                 }
+  //               : null),
+  //     ],
+  //   );
+  // }
 
   Column _eventsHeaderBuilder() {
     int count =

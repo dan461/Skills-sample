@@ -89,6 +89,14 @@ class SessionInMonthParams extends Params {
   List<Object> get props => [month];
 }
 
+class SessionsInDateRangeParams extends Params {
+  final List<DateTime> dates;
+
+  SessionsInDateRangeParams(this.dates);
+  @override
+  List<Object> get props => [dates];
+}
+
 class SessionUpdateParams extends Params {
   final int sessionId;
   final Map<String, dynamic> changeMap;

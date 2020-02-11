@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';

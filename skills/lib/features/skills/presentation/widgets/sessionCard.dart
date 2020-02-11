@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 
 import '../../domain/entities/session.dart';
-import 'dayDetails.dart';
+
 
 class SessionCard extends StatefulWidget {
   final Map<String, dynamic> sessionMap;
@@ -69,7 +70,7 @@ class _SessionCardState extends State<SessionCard> {
                   Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: _middleSectionBuilder(events)),
+                        children: _middleSectionBuilder(events, session.duration)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
@@ -141,10 +142,10 @@ class _SessionCardState extends State<SessionCard> {
     );
   }
 
-  List<Widget> _middleSectionBuilder(List<SkillEvent> events) {
+  List<Widget> _middleSectionBuilder(List<SkillEvent> events, int duration) {
     List<Widget> rows = [];
     rows.add(
-      _headerBuilder(events.length, 60),
+      _headerBuilder(events.length, duration),
     );
     if (events.isEmpty) {
       Row emptyRow = Row(

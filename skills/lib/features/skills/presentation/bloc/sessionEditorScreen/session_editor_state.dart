@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
-import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 
 abstract class SessionEditorState extends Equatable {
   const SessionEditorState();

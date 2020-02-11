@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+
 
 typedef AddEventCallback(int eventDuration);
 typedef CancelEventCreateCallback();

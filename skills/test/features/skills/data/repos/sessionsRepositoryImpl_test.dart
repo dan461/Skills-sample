@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -91,9 +89,21 @@ void main() {
       expect(result, equals(Right(testList)));
     });
 
+    test('getSessionsInDateRange returns a List<Session>', () async {
+      final dates = [DateTime(2019, 12, 29), DateTime(2020, 1, 1)];
+      final testList = [testSession];
+      when(mockLocalDataSource.getSessionsInDateRange(dates.first, dates.last))
+          .thenAnswer((_) async => testList);
+      final result = await sut.getSessionsInDateRange(dates.first, dates.last);
+      verify(
+          mockLocalDataSource.getSessionsInDateRange(dates.first, dates.last));
+      expect(result, equals(Right(testList)));
+    });
+
     test('completeSessionsAndEvents returns an int', () async {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(0);
-      when(mockLocalDataSource.completeSessionAndEvents(1, date)).thenAnswer((_) async => 1);
+      when(mockLocalDataSource.completeSessionAndEvents(1, date))
+          .thenAnswer((_) async => 1);
       final result = await sut.completeSessionAndEvents(1, date);
       verify(mockLocalDataSource.completeSessionAndEvents(1, date));
       expect(result, equals(Right(1)));
