@@ -91,9 +91,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 ),
                 RaisedButton(
                   child: Text('Complete'),
-                  onPressed: bloc.enableCompleteButton ? () {
-                    _completeTapped();
-                  } : null,
+                  onPressed: bloc.enableCompleteButton
+                      ? () {
+                          _completeTapped();
+                        }
+                      : null,
                 ),
                 RaisedButton(
                     child: Text('Delete'),
@@ -137,7 +139,8 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                     body = _contentBuilder();
                   }
                   // New Event created, hide Event Creator
-                  else if (state is NewEventsCreatedState || state is SessionCompletedState) {
+                  else if (state is NewEventsCreatedState ||
+                      state is SessionCompletedState) {
                     _showEventCreator = false;
                     bloc.add(RefreshEventsListEvnt());
                     body = Center(
@@ -184,13 +187,14 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
-  Row _completedTextBuilder(){
+  Row _completedTextBuilder() {
     Widget content;
-    if (bloc.sessionForEdit.isComplete){
+    if (bloc.sessionForEdit.isComplete) {
       content = Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Text('Completed', style: TextStyle(color: Colors.green, fontSize: 18)),
-        );
+        padding: const EdgeInsets.only(top: 6),
+        child: Text('Completed',
+            style: TextStyle(color: Colors.green, fontSize: 18)),
+      );
     } else {
       content = SizedBox();
     }
@@ -221,8 +225,6 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
             ),
           ),
         ),
-        
-    
       ],
     );
   }

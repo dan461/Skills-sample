@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
@@ -17,8 +16,6 @@ class SchedulerScreen extends StatefulWidget {
 }
 
 class _SchedulerScreenState extends State<SchedulerScreen> {
-  // DateTime _activeMonth;
-
   SchedulerBloc _bloc;
 
   @override
@@ -50,17 +47,17 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             body = Calendar(
               control: _bloc.calendarControl,
               tapCallback: _dateSelected,
-              monthChangeCallback: _calendarMonthChanged,
               eventTapCallback: _showSessionEditor,
               detailsViewCallback: _showNewSessionScreen,
+              detailsViewOpenHeight: 200,
             );
           } else if (state is SessionsForRangeReturnedState) {
-            // _bloc.sessionsForMonth = state.sessionsList;
             body = Calendar(
               control: _bloc.calendarControl,
               tapCallback: _dateSelected,
-              monthChangeCallback: _calendarMonthChanged,
               detailsViewCallback: _showNewSessionScreen,
+              eventTapCallback: _showSessionEditor,
+              detailsViewOpenHeight: 200,
             );
           } else if (state is NewCalendarModeState) {}
 
@@ -75,22 +72,6 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       ),
     );
   }
-
-  // Container _contentBuilder(DateTime selectedDate, List<Map> sessionMaps) {
-  //   return Container(
-  //     child: Column(
-  //       children: <Widget>[
-  //         Expanded(
-  //             flex: 2,
-  //             child: Calendar(
-  //               control: _bloc.calendarControl,
-  //               tapCallback: _dateSelected,
-  //               monthChangeCallback: _calendarMonthChanged,
-  //             )),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   void _showNewSessionScreen(DateTime date) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -113,15 +94,6 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       return editor;
     }));
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
-  }
-
-  void _calendarMonthChanged(int change) {
-    setState(() {
-      // var newMonth = DateTime(_bloc.activeMonth.year, _bloc.activeMonth.month + change);
-      // _bloc.activeMonth = null;
-      // _bloc.activeMonth = newMonth;
-      _bloc.add(MonthSelectedEvent(change: change));
-    });
   }
 
   void _dateSelected(DateTime selectedDate) {

@@ -39,7 +39,11 @@ class CalendarControl {
     @required this.focusDay,
     @required this.keyDate,
     this.modeChangeCallback,
-  });
+    this.selectedDay
+  }){
+    selectedDay ??= focusDay;
+  }
+  
 
   List<DateTime> get dateRange {
     List<DateTime> dates = [];
