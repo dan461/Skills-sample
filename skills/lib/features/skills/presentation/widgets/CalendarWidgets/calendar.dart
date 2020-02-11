@@ -16,7 +16,8 @@ abstract class CalendarEvent {
   final DateTime date;
   final TimeOfDay startTime;
   final int duration;
-  Widget eventView;
+  Widget weekView;
+  Widget dayView;
 
   CalendarEvent(this.date, this.startTime, this.duration);
 }
@@ -249,8 +250,8 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
       List<Widget> eventViews = [];
 
       for (var event in control.events) {
-        if (event.date.isAtSameMomentAs(day) && event.eventView != null)
-          eventViews.add(event.eventView);
+        if (event.date.isAtSameMomentAs(day) && event.weekView != null)
+          eventViews.add(event.weekView);
       }
 
       daysList.add(DayOfWeekCell(

@@ -179,6 +179,6 @@ class _HoursScrollViewState extends State<HoursScrollView> {
         color: Colors.blue[200],
         child: Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 2),
-            child: event.eventView));
+            child: event.dayView));
   }
 }

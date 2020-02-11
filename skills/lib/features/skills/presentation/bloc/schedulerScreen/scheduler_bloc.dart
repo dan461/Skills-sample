@@ -150,10 +150,10 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     List<Session> sessions = [];
     for (var map in sessionMaps) {
       Session thisSession = map['session'];
-      if (mode == CalendarMode.week)
-        thisSession.eventView = _makeWeekView(map);
-      else if (mode == CalendarMode.day)
-        thisSession.eventView = _makeDaySessionView(map);
+      // if (mode == CalendarMode.week)
+        thisSession.weekView = _makeWeekView(map);
+      // else if (mode == CalendarMode.day)
+        thisSession.dayView = _makeDaySessionView(map);
 
       sessions.add(thisSession);
     }
