@@ -14,7 +14,7 @@ import 'package:skills/core/tickTock.dart';
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     implements CalendarDataSource {
   final GetSessionsInDateRange getSessionsInDateRange;
-  final GetMapsForSessionsInDateRange getInfoForWeekDayMode;
+  final GetMapsForSessionsInDateRange getMapsForSessionsInDateRange;
   final GetEventsForSession getEventsForSession;
 
   @override
@@ -46,7 +46,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   SchedulerBloc(
       {this.getSessionsInDateRange,
       this.getEventsForSession,
-      this.getInfoForWeekDayMode}) {
+      this.getMapsForSessionsInDateRange}) {
     calendarControl.dataSource = this;
     calendarEvents = sessionsForRange;
   }
@@ -109,7 +109,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
           return SessionsForRangeReturnedState(sessionsForRange);
         });
       } else {
-        final failureOrMaps = await getInfoForWeekDayMode(
+        final failureOrMaps = await getMapsForSessionsInDateRange(
             SessionsInDateRangeParams(event.dateRange));
         yield failureOrMaps
             .fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),

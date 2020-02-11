@@ -61,7 +61,7 @@ void init() {
   locator.registerFactory(() => SchedulerBloc(
       getSessionsInDateRange: locator(),
       getEventsForSession: locator(),
-      getInfoForWeekDayMode: locator()));
+      getMapsForSessionsInDateRange: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
