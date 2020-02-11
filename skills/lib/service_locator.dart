@@ -79,7 +79,7 @@ void init() {
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
   locator.registerLazySingleton(() => GetSessionsInDateRange(locator()));
-  locator.registerLazySingleton(() => GetSessionMapsInDateRange(locator()));
+  locator.registerLazySingleton(() => GetMapsForSessionsInDateRange(locator()));
   locator.registerLazySingleton(() => UpdateSessionWithId(locator()));
   locator.registerLazySingleton(() => DeleteSessionWithId(locator()));
 

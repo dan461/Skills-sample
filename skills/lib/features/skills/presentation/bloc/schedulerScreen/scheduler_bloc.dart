@@ -14,7 +14,7 @@ import 'package:skills/core/tickTock.dart';
 class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     implements CalendarDataSource {
   final GetSessionsInDateRange getSessionsInDateRange;
-  final GetSessionMapsInDateRange getInfoForWeekDayMode;
+  final GetMapsForSessionsInDateRange getInfoForWeekDayMode;
   final GetEventsForSession getEventsForSession;
 
   @override
@@ -35,8 +35,8 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
   List<Map> sessionMaps;
 
-  static DateTime activeMonth =
-      DateTime(DateTime.now().year, DateTime.now().month, 1, 0);
+  // static DateTime activeMonth =
+  //     DateTime(DateTime.now().year, DateTime.now().month, 1, 0);
 
   static DateTime today = TickTock.today();
 

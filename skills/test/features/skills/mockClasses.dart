@@ -55,6 +55,9 @@ class MockDeleteSessionWithIdUC extends Mock implements DeleteSessionWithId {}
 class MockGetSessionsInDateRange extends Mock
     implements GetSessionsInDateRange {}
 
+class MockGetMapsForSessionsInDateRange extends Mock
+    implements GetMapsForSessionsInDateRange {}
+
 class MockEventsRepo extends Mock implements SkillEventRepository {}
 
 class MockInsertNewEventUC extends Mock implements InsertNewSkillEventUC {}

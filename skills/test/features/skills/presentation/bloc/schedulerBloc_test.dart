@@ -14,6 +14,9 @@ void main() {
   SchedulerBloc sut;
 
   MockGetSessionsInDateRange mockGetSessionsInDateRange;
+  MockGetEventsForSessionUC mockGetEventsForSessionUC;
+  MockGetMapsForSessionsInDateRange mockGetMapsForSessionsInDateRange;
+
   MockCalendarControl mockCalendarControl;
   Session testSession;
   Session testSession1;
@@ -24,9 +27,14 @@ void main() {
 
   setUp(() {
     mockGetSessionsInDateRange = MockGetSessionsInDateRange();
+    mockGetEventsForSessionUC = MockGetEventsForSessionUC();
+    mockGetMapsForSessionsInDateRange = MockGetMapsForSessionsInDateRange();
     // mockCalendarControl = MockCalendarControl();
     // mockCalendarControl.currentMode = CalendarMode.month;
-    sut = SchedulerBloc(getSessionsInDateRange: mockGetSessionsInDateRange);
+    sut = SchedulerBloc(
+        getSessionsInDateRange: mockGetSessionsInDateRange,
+        getEventsForSession: mockGetEventsForSessionUC,
+        getInfoForWeekDayMode: MockGetMapsForSessionsInDateRange());
     // sut.calendarControl = mockCalendarControl;
 
     testSession = Session(
@@ -57,7 +65,7 @@ void main() {
         isComplete: false,
         isScheduled: true);
 
-        testList = [testSession];
+    testList = [testSession];
   });
 
   test('test bloc initial state is correct', () {
@@ -79,8 +87,6 @@ void main() {
     expect(result, matcher);
   });
 
-  
-
   group('DaySelectedEvent', () {
     test(
         'test that bloc emits [DaySelectedState] when DaySelectedEvent is added',
@@ -95,8 +101,6 @@ void main() {
   });
 
   group('GetSessionsInDateRange', () {
-    
-
     test(
         'test that GetSessionsInDateRange usecase is called when date range changes in Month mode',
         () async {
@@ -111,7 +115,7 @@ void main() {
     });
 
     test(
-        'test that bloc emits [SessionsForRangeReturnedState] when VisibleDateRangeChangeEvent event occurs',
+        'test that bloc emits [SessionsForRangeReturnedState] when VisibleDateRangeChangeEvent event occurs in Month mode',
         () async {
       when(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Right(testList));
@@ -123,6 +127,12 @@ void main() {
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(VisibleDateRangeChangeEvent(testDateRange));
+    });
+  });
+
+  group('GetSessionMapsInDateRange', () {
+    test('test that GetSessionMapsInDateRange is called when VisibleDateRangeChangeEvent event occurs in Week mode ', () {
+      when(mockGetMapsForSessionsInDateRange(SessionsInDateRangeParams(testDateRange))).thenReturn(expected)
     });
   });
 }

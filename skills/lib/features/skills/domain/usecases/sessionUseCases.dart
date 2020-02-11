@@ -29,11 +29,11 @@ class GetSessionsInDateRange
   }
 }
 
-class GetSessionMapsInDateRange
+class GetMapsForSessionsInDateRange
     extends UseCase<List<Map>, SessionsInDateRangeParams> {
   final SessionRepository repo;
 
-  GetSessionMapsInDateRange(this.repo);
+  GetMapsForSessionsInDateRange(this.repo);
 
   @override
   Future<Either<Failure, List<Map>>> call(SessionsInDateRangeParams params) {
