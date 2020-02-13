@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
@@ -9,6 +10,8 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_st
 import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
 import 'package:skills/service_locator.dart';
+
+import 'newSkillScreen.dart';
 
 typedef SelectionCallback(Skill skill);
 
@@ -135,13 +138,12 @@ class _SkillsScreenState extends State<SkillsScreen> {
   }
 
   void addSkill() async {
-    final editor = SkillEditorScreen(
-      skillEditorBloc: locator<SkillEditorBloc>(),
-    );
-    editor.skillEditorBloc.add(CreateSkillEvent());
+    // final newSkillScreen = NewSkillScreen(bloc: locator<NewskillBloc>());
+
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return editor;
+      return NewSkillScreen(bloc: locator<NewskillBloc>());
     }));
+
     bloc.add(GetAllSkillsEvent());
   }
 
