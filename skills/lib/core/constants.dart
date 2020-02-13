@@ -1,6 +1,7 @@
 const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
 const String SERVER_FAILURE_MESSAGE = 'Server Failure';
 
+// Instruments
 const GUITAR_CL = 'Guitar (Classical)';
 const GUITAR_AC = 'Guitar (Acoustic)';
 const GUITAR_EL = 'Guitar (Electric)';
@@ -45,4 +46,19 @@ const INSTRUMENTS = [
   CLARINET,
   OBOE,
   TROMB
+];
+
+// Skill Priorities
+const String LOWEST_PRIORITY = 'Lowest';
+const String LOW_PRIORITY = 'Low';
+const String NORMAL_PRIORITY = 'Normal';
+const String HIGH_PRIORITY = 'High';
+const String HIGHEST_PRIORITY = 'Highest';
+
+const PRIORITIES = [
+  LOWEST_PRIORITY,
+  LOW_PRIORITY,
+  NORMAL_PRIORITY,
+  HIGH_PRIORITY,
+  HIGHEST_PRIORITY
 ];

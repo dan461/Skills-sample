@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/core/constants.dart';
 import 'package:skills/core/enums.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
@@ -23,6 +24,9 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
 
   SkillType _selectedType = SkillType.composition;
   String _selectedInstrument = 'Select an Instrument (required)';
+  String _profString = 'Rate 1 - 10';
+  double currentProfValue = 0;
+  String _priorityString = NORMAL_PRIORITY;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -45,20 +49,19 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
           },
           child: Builder(builder: (BuildContext context) {
             return Scaffold(
-              
               appBar: AppBar(
                 title: Center(
                   child: Text('New Skill'),
                 ),
               ),
               persistentFooterButtons: <Widget>[
-                  RaisedButton(
-                child: Text('Done!'),
-                onPressed: _doneEnabled
-                    ? () {
-                        _doneTapped();
-                      }
-                    : null),
+                RaisedButton(
+                    child: Text('Done!'),
+                    onPressed: _doneEnabled
+                        ? () {
+                            _doneTapped();
+                          }
+                        : null),
               ],
               body: BlocBuilder<NewskillBloc, NewSkillState>(
                   builder: (context, state) {
@@ -120,38 +123,70 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
             child: _instrumentPicker(),
           ),
-          // Padding(
-          //   padding: const EdgeInsetsDirectional.only(bottom: 8.0),
-          //   child: RaisedButton(
-          //       child: Text('Done!'),
-          //       onPressed: _doneEnabled
-          //           ? () {
-          //               _doneTapped();
-          //             }
-          //           : null),
-          // ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: _proficiencyRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _priorityRow(),
+          )
         ],
       ),
     );
   }
 
-  Row _instrumentPicker() {
+  Row _priorityRow() {
     return Row(
       children: <Widget>[
-        Text(
-          'For: ',
-          style: Theme.of(context).textTheme.subhead,
+        Text('Priority: ', style: Theme.of(context).textTheme.subhead),
+        DropdownButton<String>(
+          value: _priorityString,
+            items: PRIORITIES.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String newValue) {
+              setState(() {
+                _priorityString = newValue;
+              });
+            })
+      ],
+    );
+  }
+
+  Row _proficiencyRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Text(
+              'Proficiency: ',
+              style: Theme.of(context).textTheme.subhead,
+            ),
+            Text(
+              _profString,
+              style: Theme.of(context).textTheme.subhead,
+            ),
+          ],
         ),
-        GestureDetector(
-          child: Text(
-            _selectedInstrument,
-            style: Theme.of(context).textTheme.subhead,
-          ),
-          onTap: _showInstrumentsList,
-        )
+        Slider(
+            min: 0,
+            max: 10,
+            value: currentProfValue,
+            divisions: 10,
+            onChanged: (newValue) {
+              setState(() {
+                currentProfValue = newValue;
+                _profString = newValue.toString();
+              });
+            })
       ],
     );
   }
@@ -193,17 +228,34 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     );
   }
 
+  Row _instrumentPicker() {
+    return Row(
+      children: <Widget>[
+        Text(
+          'For: ',
+          style: Theme.of(context).textTheme.subhead,
+        ),
+        GestureDetector(
+          child: Text(
+            _selectedInstrument,
+            style: Theme.of(context).textTheme.subhead,
+          ),
+          onTap: _showInstrumentsList,
+        )
+      ],
+    );
+  }
 // ACTIONS
 
   void _showInstrumentsList() async {
-    String selected = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    String selected =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return InstrumentsScreen();
     }));
 
     setState(() {
       _selectedInstrument = selected ?? _selectedInstrument;
     });
-    
   }
 
   void _doneTapped() {}
