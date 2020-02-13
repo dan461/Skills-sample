@@ -28,14 +28,14 @@ class GetSkillByIdEvent extends SkillEditorEvent {
   List<Object> get props => [id];
 }
 
-class InsertNewSkillEvent extends SkillEditorEvent {
-  final Skill newSkill;
+// class InsertNewSkillEvent extends SkillEditorEvent {
+//   final Skill newSkill;
 
-  InsertNewSkillEvent(this.newSkill);
+//   InsertNewSkillEvent(this.newSkill);
 
-  @override
-  List<Object> get props => [newSkill];
-}
+//   @override
+//   List<Object> get props => [newSkill];
+// }
 
 class DeleteSkillWithIdEvent extends SkillEditorEvent {
   final int skillId;

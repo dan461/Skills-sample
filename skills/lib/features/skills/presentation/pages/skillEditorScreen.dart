@@ -48,13 +48,69 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     if (skillEditorBloc.state is EditingSkillState) {
       shouldEnable = _nameController.text != _skill.name ||
           _sourceController.text != _skill.source;
-    } else if (skillEditorBloc.state is CreatingNewSkillState) {
-      shouldEnable =
-          _nameController.text.isNotEmpty && _sourceController.text.isNotEmpty;
     }
     //  return shouldEnable;
 
     return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+        builder: (BuildContext context) => skillEditorBloc,
+        child: BlocListener<SkillEditorBloc, SkillEditorState>(
+          bloc: skillEditorBloc,
+          listener: (context, state) {
+            if (state is UpdatedSkillState ||
+                state is DeletedSkillWithIdState) {
+              Navigator.of(context).pop();
+            }
+          },
+          child: Builder(builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Center(
+                  child: Text('New Skill'),
+                ),
+              ),
+              body: BlocBuilder<SkillEditorBloc, SkillEditorState>(
+                builder: (context, state) {
+                  Widget body;
+
+                  if (state is InitialSkillEditorState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                    
+                  } 
+                  // Editing
+                  else if (state is EditingSkillState) {
+                    _skill = state.skill;
+                    _nameController.text = _skill.name;
+                    _sourceController.text = _skill.source;
+                    body = _skillEditingArea(_skill);
+                  } 
+                  
+                  else if (state is SkillRetrievedForEditingState) {
+                    _skill = state.skill;
+                    body = _skillEditingArea(_skill);
+                    // Skill updated
+                  } 
+                  
+                  else if (state is UpdatedSkillState ||
+                      state is DeletedSkillWithIdState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+
+                  
+                  }
+                  return body;
+                },
+              ),
+            );
+          }),
+        ));
   }
 
   void setDoneButtonEnabled() {
@@ -62,9 +118,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     if (skillEditorBloc.state is EditingSkillState) {
       shouldEnable = _nameController.text != _skill.name ||
           _sourceController.text != _skill.source;
-    } else if (skillEditorBloc.state is CreatingNewSkillState) {
-      shouldEnable =
-          _nameController.text.isNotEmpty && _sourceController.text.isNotEmpty;
     }
 
     if (_doneEnabled != shouldEnable) {
@@ -78,8 +131,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     if (skillEditorBloc.state is EditingSkillState ||
         skillEditorBloc.state is SkillRetrievedForEditingState) {
       _updateSkill();
-    } else if (skillEditorBloc.state is CreatingNewSkillState) {
-      _insertNewSkill();
     }
   }
 
@@ -130,11 +181,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     skillEditorBloc.add(UpdateSkillEvent(skill: updatedSkill));
   }
 
-  void _insertNewSkill() async {
-    Skill newSkill =
-        Skill(name: _nameController.text, source: _sourceController.text);
-    skillEditorBloc.add(InsertNewSkillEvent(newSkill));
-  }
+  
 
   void _createOrEditGoal() {
     if (_skill.currentGoalId == 0) {
@@ -225,13 +272,13 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     );
   }
 
-  Container _newSkillAreaBuilder() {
-    return Container(
-      child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-          child: _skillEditFormBuilder(_formKey)),
-    );
-  }
+  // Container _newSkillAreaBuilder() {
+  //   return Container(
+  //     child: Padding(
+  //         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+  //         child: _skillEditFormBuilder(_formKey)),
+  //   );
+  // }
 
   Container _skillEditingArea(Skill skill) {
     // _nameController.text = skill.name;
@@ -336,62 +383,5 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     return body;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-        builder: (BuildContext context) => skillEditorBloc,
-        child: BlocListener<SkillEditorBloc, SkillEditorState>(
-          bloc: skillEditorBloc,
-          listener: (context, state) {
-            if (state is UpdatedSkillState ||
-                state is DeletedSkillWithIdState) {
-              Navigator.of(context).pop();
-            }
-          },
-          child: Builder(builder: (BuildContext context) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Center(
-                  child: Text('New Skill'),
-                ),
-              ),
-              body: BlocBuilder<SkillEditorBloc, SkillEditorState>(
-                builder: (context, state) {
-                  Widget body;
-
-                  if (state is InitialSkillEditorState ||
-                      state is CreatingNewSkillState) {
-                    body = _newSkillAreaBuilder();
-                    // Editing
-                  } else if (state is EditingSkillState) {
-                    _skill = state.skill;
-                    _nameController.text = _skill.name;
-                    _sourceController.text = _skill.source;
-                    body = _skillEditingArea(_skill);
-                  } else if (state is SkillRetrievedForEditingState) {
-                    _skill = state.skill;
-                    body = _skillEditingArea(_skill);
-                    // Skill updated
-                  } else if (state is UpdatedSkillState ||
-                      state is DeletedSkillWithIdState) {
-                    body = Center(
-                      child: CircularProgressIndicator(),
-                    );
-
-                    // Procressing
-                  } else if (state is NewSkillInsertingState ||
-                      state is UpdatingSkillState ||
-                      state is DeletingSkillWithIdState ||
-                      state is SkillEditorCrudInProgressState) {
-                    body = Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return body;
-                },
-              ),
-            );
-          }),
-        ));
-  }
+  
 }
