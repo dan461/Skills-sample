@@ -16,6 +16,7 @@ import 'features/skills/domain/usecases/sessionUseCases.dart';
 import 'features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
+import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
@@ -28,8 +29,9 @@ void init() {
 
   locator.registerFactory(() => SkillsBloc(getAllSkills: locator()));
 
+  locator.registerFactory(() => NewskillBloc(insertNewSkillUC: locator()));
+
   locator.registerFactory(() => SkillEditorBloc(
-      insertNewSkillUC: locator(),
       updateSkill: locator(),
       getSkillById: locator(),
       deleteSkillWithId: locator()));
