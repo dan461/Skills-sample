@@ -74,6 +74,19 @@ class GetEventsForSession extends UseCase<List<SkillEvent>, SessionByIdParams> {
   }
 }
 
+class GetCompletedEventsForSkill extends UseCase<List<SkillEvent>, GetSkillParams>{
+  final SkillEventRepository repo;
+
+  GetCompletedEventsForSkill(this.repo);
+
+  @override
+  Future<Either<Failure, List<SkillEvent>>> call(GetSkillParams params) {
+    
+    return null;
+  }
+  
+}
+
 class GetEventMapsForSession extends UseCase<List<Map>, SessionByIdParams> {
   final SkillEventRepository repo;
 
