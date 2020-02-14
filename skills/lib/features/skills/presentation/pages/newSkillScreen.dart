@@ -153,13 +153,13 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   Row _priorityRow() {
     return Row(
       children: <Widget>[
-        Text('Priority: ', style: Theme.of(context).textTheme.subhead),
+        Text('Priority: ', style: Theme.of(context).textTheme.body1),
         DropdownButton<String>(
             value: _priorityString,
             items: PRIORITIES.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(value, style: Theme.of(context).textTheme.body1),
               );
             }).toList(),
             onChanged: (String newValue) {
@@ -179,11 +179,11 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
           children: <Widget>[
             Text(
               'Proficiency: ',
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.body1,
             ),
             Text(
               _profString,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.body1,
             ),
           ],
         ),
@@ -255,7 +255,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
         GestureDetector(
           child: Text(
             _selectedInstrument,
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.body1,
           ),
           onTap: _showInstrumentsList,
         )
