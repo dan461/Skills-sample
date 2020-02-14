@@ -65,3 +65,6 @@ const PRIORITIES = [
 
 // NewSkillScreen
 const String SELECT_INST = 'Select an Instrument (required)';
+
+// SkillCell
+const String NEVER_PRACTICED = 'last: Never';

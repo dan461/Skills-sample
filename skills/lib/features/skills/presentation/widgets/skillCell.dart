@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/core/constants.dart';
+import 'package:skills/core/textStyles.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 
@@ -13,11 +14,15 @@ class SkillCell extends StatelessWidget {
     var string;
     if (skill.lastPracDate
         .isAtSameMomentAs(DateTime.fromMicrosecondsSinceEpoch(0))) {
-      string = 'last: Never';
+      string = NEVER_PRACTICED;
     } else {
       string = DateFormat.yMMMd().format(skill.lastPracDate);
     }
     return string;
+  }
+
+  bool get showPracticeAlert {
+    return lastPracString == NEVER_PRACTICED;
   }
 
   TextTheme thisTheme;
@@ -68,7 +73,10 @@ class SkillCell extends StatelessWidget {
           style: thisTheme.subhead,
           overflow: TextOverflow.ellipsis,
         ),
-        Text(lastPracString, style: thisTheme.subtitle)
+        Text(lastPracString,
+            style: lastPracString == NEVER_PRACTICED
+                ? TextStyles.subtitleRedStyle
+                : thisTheme.subtitle)
       ],
     );
   }
@@ -77,7 +85,7 @@ class SkillCell extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Source: ${skill.source}', style: thisTheme.subtitle),
+        Text('Source: ${skill.source}'),
         // Text(lastPracString, style: thisTheme.subtitle)
         Text('${skill.instrument}')
       ],
