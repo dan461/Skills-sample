@@ -33,7 +33,8 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   _NewSkillScreenState(this.bloc);
 
   bool get _doneEnabled {
-    return _nameController.text.isNotEmpty && _selectedInstrument != SELECT_INST;
+    return _nameController.text.isNotEmpty &&
+        _selectedInstrument != SELECT_INST;
   }
 
   @override
@@ -66,7 +67,8 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
               body: BlocBuilder<NewskillBloc, NewSkillState>(
                   builder: (context, state) {
                 Widget body;
-                if (state is InitialNewSkillState || state is NewSkillInsertedState) {
+                if (state is InitialNewSkillState ||
+                    state is NewSkillInsertedState) {
                   body = _newSkillFormBuilder(_formKey);
                 } else if (state is CreatingNewSkillState) {
                   body = Center(
@@ -81,61 +83,70 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
         ));
   }
 
+  // BUILDERS
+
   Form _newSkillFormBuilder(Key formKey) {
     return Form(
       autovalidate: true,
       key: formKey,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: _typeButtons(),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-            child: TextFormField(
-              textCapitalization: TextCapitalization.sentences,
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-              onChanged: (_) {
-                setDoneButtonEnabled();
-              },
-              validator: (value) {
-                // _doneEnabled =
-                //     value.isNotEmpty && _sourceController.text.isNotEmpty;
-                if (value.isEmpty) {
-                  // _doneEnabled = false;
-                  return 'Name Required';
-                } else
-                  return null;
-              },
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: _typeButtons(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-            child: TextFormField(
-              textCapitalization: TextCapitalization.sentences,
-              controller: _sourceController,
-              decoration: InputDecoration(labelText: 'Source'),
-              onChanged: (_) {
-                setDoneButtonEnabled();
-              },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+              child: _nameField(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
-            child: _instrumentPicker(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: _proficiencyRow(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _priorityRow(),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 20),
+              child: _sourceField(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+              child: _instrumentPicker(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 38, 8, 8),
+              child: _proficiencyRow(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _priorityRow(),
+            )
+          ],
+        ),
       ),
+    );
+  }
+
+  TextFormField _nameField() {
+    return TextFormField(
+      textCapitalization: TextCapitalization.sentences,
+      controller: _nameController,
+      decoration: InputDecoration(labelText: 'Name'),
+      onChanged: (_) {
+        setDoneButtonEnabled();
+      },
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Name Required';
+        } else
+          return null;
+      },
+    );
+  }
+
+  TextFormField _sourceField() {
+    return TextFormField(
+      textCapitalization: TextCapitalization.sentences,
+      controller: _sourceController,
+      decoration: InputDecoration(labelText: 'Source'),
+      onChanged: (_) {
+        setDoneButtonEnabled();
+      },
     );
   }
 
@@ -160,9 +171,9 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
     );
   }
 
-  Row _proficiencyRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  Column _proficiencyRow() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Row(
           children: <Widget>[
@@ -176,17 +187,27 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
             ),
           ],
         ),
-        Slider(
-            min: 0,
-            max: 10,
-            value: currentProfValue,
-            divisions: 10,
-            onChanged: (newValue) {
-              setState(() {
-                currentProfValue = newValue;
-                _profString = newValue.toString();
-              });
-            })
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('0'),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.75,
+              child: Slider(
+                  min: 0,
+                  max: 10,
+                  value: currentProfValue,
+                  divisions: 10,
+                  onChanged: (newValue) {
+                    setState(() {
+                      currentProfValue = newValue;
+                      _profString = newValue.toInt().toString();
+                    });
+                  }),
+            ),
+            Text('10'),
+          ],
+        )
       ],
     );
   }
@@ -231,10 +252,6 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   Row _instrumentPicker() {
     return Row(
       children: <Widget>[
-        Text(
-          'For: ',
-          style: Theme.of(context).textTheme.subhead,
-        ),
         GestureDetector(
           child: Text(
             _selectedInstrument,
@@ -245,6 +262,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
       ],
     );
   }
+
 // ACTIONS
 
   void _showInstrumentsList() async {
@@ -257,8 +275,6 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
       _selectedInstrument = selected ?? _selectedInstrument;
     });
   }
-
-  void _doneTapped() {}
 
   void setDoneButtonEnabled() {}
 
