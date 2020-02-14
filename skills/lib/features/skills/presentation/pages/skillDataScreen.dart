@@ -2,28 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/core/constants.dart';
+import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 
 class SkillDataScreen extends StatefulWidget {
+  final SkillDataBloc bloc;
+
+  const SkillDataScreen({Key key, this.bloc}) : super(key: key);
   @override
-  _SkillDataScreenState createState() => _SkillDataScreenState();
+  _SkillDataScreenState createState() => _SkillDataScreenState(bloc);
 }
 
 class _SkillDataScreenState extends State<SkillDataScreen> {
+final SkillDataBloc bloc;
 
+  _SkillDataScreenState(this.bloc);
 
 String get lastPracString {
     var string;
-    if (skillEditorBloc.skill.lastPracDate
+    if (bloc.skill.lastPracDate
         .isAtSameMomentAs(DateTime.fromMicrosecondsSinceEpoch(0))) {
       string = NEVER_PRACTICED;
     } else {
-      string = DateFormat.yMMMd().format(skillEditorBloc.skill.lastPracDate);
+      string = DateFormat.yMMMd().format(bloc.skill.lastPracDate);
     }
     return string;
   }
 
   String get startDateString {
-    return DateFormat.yMMMd().format(skillEditorBloc.skill.startDate);
+    return DateFormat.yMMMd().format(bloc.skill.startDate);
   }
 
   @override
