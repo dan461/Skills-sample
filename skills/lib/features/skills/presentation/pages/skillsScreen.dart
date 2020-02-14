@@ -80,6 +80,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
             } else if (state is AllSkillsLoaded) {
               // bloc.skills = state.skills;
               body = Container(
+                color: Colors.white,
                 child: SkillsList(
                   skills: bloc.skills,
                   callback: callback == null ? editSkill : callback,

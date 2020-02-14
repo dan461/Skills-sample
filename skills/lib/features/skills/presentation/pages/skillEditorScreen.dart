@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_state.dart';
 import 'goalEditorScreen.dart';
 import 'newGoalScreen.dart';
+import 'package:skills/core/constants.dart';
 
 class SkillEditorScreen extends StatefulWidget {
   final SkillEditorBloc skillEditorBloc;
@@ -27,6 +29,21 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _sourceController = TextEditingController();
 
+  String get lastPracString {
+    var string;
+    if (skillEditorBloc.skill.lastPracDate
+        .isAtSameMomentAs(DateTime.fromMicrosecondsSinceEpoch(0))) {
+      string = NEVER_PRACTICED;
+    } else {
+      string = DateFormat.yMMMd().format(skillEditorBloc.skill.lastPracDate);
+    }
+    return string;
+  }
+
+  String get startDateString {
+    return DateFormat.yMMMd().format(skillEditorBloc.skill.startDate);
+  }
+
   final _formKey = GlobalKey<FormState>();
   _SkillEditorScreenState({@required this.skillEditorBloc});
 
@@ -42,6 +59,8 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
   dispose() {
     super.dispose();
   }
+
+  bool isEditing = false;
 
   bool get _doneEnabled {
     bool shouldEnable;
@@ -70,7 +89,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
             return Scaffold(
               appBar: AppBar(
                 title: Center(
-                  child: Text('New Skill'),
+                  child: Text('Edit Skill'),
                 ),
               ),
               body: BlocBuilder<SkillEditorBloc, SkillEditorState>(
@@ -81,29 +100,23 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
-                    
-                  } 
+                  }
                   // Editing
                   else if (state is EditingSkillState) {
                     _skill = state.skill;
                     _nameController.text = _skill.name;
                     _sourceController.text = _skill.source;
                     body = _skillEditingArea(_skill);
-                  } 
-                  
-                  else if (state is SkillRetrievedForEditingState) {
+                    // body = _infoViewBuilder(skillEditorBloc.skill);
+                  } else if (state is SkillRetrievedForEditingState) {
                     _skill = state.skill;
                     body = _skillEditingArea(_skill);
                     // Skill updated
-                  } 
-                  
-                  else if (state is UpdatedSkillState ||
+                  } else if (state is UpdatedSkillState ||
                       state is DeletedSkillWithIdState) {
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
-
-                  
                   }
                   return body;
                 },
@@ -113,106 +126,7 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
         ));
   }
 
-  void setDoneButtonEnabled() {
-    bool shouldEnable;
-    if (skillEditorBloc.state is EditingSkillState) {
-      shouldEnable = _nameController.text != _skill.name ||
-          _sourceController.text != _skill.source;
-    }
-
-    if (_doneEnabled != shouldEnable) {
-      setState(() {
-        // _doneEnabled = shouldEnable;
-      });
-    }
-  }
-
-  void _doneTapped() {
-    if (skillEditorBloc.state is EditingSkillState ||
-        skillEditorBloc.state is SkillRetrievedForEditingState) {
-      _updateSkill();
-    }
-  }
-
-  void _deleteTapped() async {
-    await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Delete this Skill?'),
-            content: Text(
-              'Deleting this Skill will also delete any goals associated with it. Any past events of this Skill will remain.',
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text('Delete'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _deleteSkill();
-                },
-              )
-            ],
-          );
-        });
-  }
-
-  void _deleteSkill() async {
-    skillEditorBloc.add(DeleteSkillWithIdEvent(skillId: _skill.skillId));
-  }
-
-  void _updateSkill() async {
-    Skill updatedSkill = Skill(
-        skillId: _skill.skillId,
-        name: _nameController.text,
-        source: _sourceController.text,
-        startDate: _skill.startDate,
-        totalTime: _skill.totalTime,
-        lastPracDate: _skill.lastPracDate,
-        currentGoalId: _skill.currentGoalId,
-        goalText: _skill.goalText);
-
-    skillEditorBloc.add(UpdateSkillEvent(skill: updatedSkill));
-  }
-
-  
-
-  void _createOrEditGoal() {
-    if (_skill.currentGoalId == 0) {
-      _goToNewGoalScreen(_skill.skillId, _skill.name);
-    } else {
-      _goToGoalEditor(_skill.skillId, _skill.name, _skill.currentGoalId);
-    }
-  }
-
-  void _goToNewGoalScreen(int skillId, String skillName) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return NewGoalScreen(
-        skillId: skillId,
-        skillName: skillName,
-      );
-    }));
-
-    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
-  }
-
-  void _goToGoalEditor(int skillId, String skillName, int goalId) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return GoalEditorScreen(
-        skillId: skillId,
-        skillName: skillName,
-        goalId: goalId,
-      );
-    }));
-
-    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
-  }
+  // BUILDERS
 
   Form _skillEditFormBuilder(Key formKey) {
     return Form(
@@ -271,14 +185,6 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
       ),
     );
   }
-
-  // Container _newSkillAreaBuilder() {
-  //   return Container(
-  //     child: Padding(
-  //         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-  //         child: _skillEditFormBuilder(_formKey)),
-  //   );
-  // }
 
   Container _skillEditingArea(Skill skill) {
     // _nameController.text = skill.name;
@@ -383,5 +289,102 @@ class _SkillEditorScreenState extends State<SkillEditorScreen> {
     return body;
   }
 
-  
+  void setDoneButtonEnabled() {
+    bool shouldEnable;
+    if (skillEditorBloc.state is EditingSkillState) {
+      shouldEnable = _nameController.text != _skill.name ||
+          _sourceController.text != _skill.source;
+    }
+
+    if (_doneEnabled != shouldEnable) {
+      setState(() {
+        // _doneEnabled = shouldEnable;
+      });
+    }
+  }
+
+  void _doneTapped() {
+    if (skillEditorBloc.state is EditingSkillState ||
+        skillEditorBloc.state is SkillRetrievedForEditingState) {
+      _updateSkill();
+    }
+  }
+
+  void _deleteTapped() async {
+    await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Delete this Skill?'),
+            content: Text(
+              'Deleting this Skill will also delete any goals associated with it. Any past events of this Skill will remain.',
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Delete'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _deleteSkill();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _deleteSkill() async {
+    skillEditorBloc.add(DeleteSkillWithIdEvent(skillId: _skill.skillId));
+  }
+
+  void _updateSkill() async {
+    Skill updatedSkill = Skill(
+        skillId: _skill.skillId,
+        name: _nameController.text,
+        source: _sourceController.text,
+        startDate: _skill.startDate,
+        totalTime: _skill.totalTime,
+        lastPracDate: _skill.lastPracDate,
+        currentGoalId: _skill.currentGoalId,
+        goalText: _skill.goalText);
+
+    skillEditorBloc.add(UpdateSkillEvent(skill: updatedSkill));
+  }
+
+  void _createOrEditGoal() {
+    if (_skill.currentGoalId == 0) {
+      _goToNewGoalScreen(_skill.skillId, _skill.name);
+    } else {
+      _goToGoalEditor(_skill.skillId, _skill.name, _skill.currentGoalId);
+    }
+  }
+
+  void _goToNewGoalScreen(int skillId, String skillName) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewGoalScreen(
+        skillId: skillId,
+        skillName: skillName,
+      );
+    }));
+
+    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
+  }
+
+  void _goToGoalEditor(int skillId, String skillName, int goalId) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return GoalEditorScreen(
+        skillId: skillId,
+        skillName: skillName,
+        goalId: goalId,
+      );
+    }));
+
+    skillEditorBloc.add(GetSkillByIdEvent(id: skillId));
+  }
 }

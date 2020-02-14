@@ -314,7 +314,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         children: <Widget>[
           FlatButton(
             // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
-            child: Text('Month'),
+            child: Text('Month', style: TextStyle(color: Colors.white),),
             onPressed: () {
               _modeSelected(CalendarMode.month);
             },
@@ -322,7 +322,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           FlatButton(
             // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
             child: Text(
-              'Week',
+              'Week', style: TextStyle(color: Colors.white),
             ),
             onPressed: () {
               _modeSelected(CalendarMode.week);
@@ -330,7 +330,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           ),
           FlatButton(
             // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
-            child: Text('Day'),
+            child: Text('Day', style: TextStyle(color: Colors.white),),
             onPressed: () {
               _modeSelected(CalendarMode.day);
             },
@@ -394,7 +394,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
   Container headerBuilder() {
     return Container(
-      color: Colors.green,
+      // color: Colors.green,
       height: 35,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -403,7 +403,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
             onPressed: () {
               _onPeriodChange(-1);
             },
-            child: Icon(Icons.chevron_left),
+            child: Icon(Icons.chevron_left, color: Colors.white,),
           ),
           Center(
             child: Text(
@@ -411,14 +411,14 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
                   ' ' +
                   control.keyDate.year.toString(),
               textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 18, color: Colors.black),
+              style: TextStyle(fontSize: 18, color: Colors.white),
             ),
           ),
           FlatButton(
             onPressed: () {
               _onPeriodChange(1);
             },
-            child: Icon(Icons.chevron_right),
+            child: Icon(Icons.chevron_right, color: Colors.white,),
           ),
         ],
       ),
