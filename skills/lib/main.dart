@@ -22,9 +22,9 @@ class _SkillsAppState extends State<SkillsApp> {
       theme: ThemeData(
           // brightness: Brightness.dark,
 
-          primaryColor: Colors.green,
+          primaryColor: Colors.blue[800],
           accentColor: Colors.lightGreenAccent,
-          scaffoldBackgroundColor: Colors.white,
+          scaffoldBackgroundColor: Colors.blue[800],
           textTheme: Theme.of(context)
               .textTheme
               .copyWith(subhead: new TextStyle(fontWeight: FontWeight.w600))),
