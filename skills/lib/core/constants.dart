@@ -68,3 +68,22 @@ const String SELECT_INST = 'Select an Instrument (required)';
 
 // SkillCell
 const String NEVER_PRACTICED = 'last: Never';
+
+// Calendar
+const String SUN_ABBR = 'Sun';
+const String MON_ABBR = 'Mon';
+const String TUE_ABBR = 'Tue';
+const String WED_ABBR = 'Wed';
+const String THU_ABBR = 'Thu';
+const String FRI_ABBR = 'Fri';
+const String SAT_ABBR = 'Sat';
+
+const DAYS_ABBR = [
+  SUN_ABBR,
+  MON_ABBR,
+  TUE_ABBR,
+  WED_ABBR,
+  THU_ABBR,
+  FRI_ABBR,
+  SAT_ABBR
+];
