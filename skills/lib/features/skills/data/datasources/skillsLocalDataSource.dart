@@ -165,14 +165,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
-    DateTime today = DateTime.utc(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    
     final SkillModel skillModel = SkillModel(
       name: skill.name,
       type: skill.type,
       source: skill.source,
       instrument: skill.instrument,
-      startDate: today,
+      startDate: skill.startDate,
       totalTime: 0,
       lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
       currentGoalId: 0,

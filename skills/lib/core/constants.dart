@@ -62,3 +62,6 @@ const PRIORITIES = [
   HIGH_PRIORITY,
   HIGHEST_PRIORITY
 ];
+
+// NewSkillScreen
+const String SELECT_INST = 'Select an Instrument (required)';

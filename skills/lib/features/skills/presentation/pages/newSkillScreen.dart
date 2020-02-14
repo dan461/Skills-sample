@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/enums.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/instrumentsScreen.dart';
-import 'package:skills/service_locator.dart';
 
 class NewSkillScreen extends StatefulWidget {
   final NewskillBloc bloc;
@@ -23,7 +23,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   TextEditingController _sourceController = TextEditingController();
 
   SkillType _selectedType = SkillType.composition;
-  String _selectedInstrument = 'Select an Instrument (required)';
+  String _selectedInstrument = SELECT_INST;
   String _profString = 'Rate 1 - 10';
   double currentProfValue = 0;
   String _priorityString = NORMAL_PRIORITY;
@@ -33,15 +33,15 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   _NewSkillScreenState(this.bloc);
 
   bool get _doneEnabled {
-    return true;
+    return _nameController.text.isNotEmpty && _selectedInstrument != SELECT_INST;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        builder: (BuildContext context) => locator<NewskillBloc>(),
+        builder: (BuildContext context) => bloc,
         child: BlocListener<NewskillBloc, NewSkillState>(
-          bloc: locator<NewskillBloc>(),
+          bloc: bloc,
           listener: (context, state) {
             if (state is NewSkillInsertedState) {
               Navigator.of(context).pop();
@@ -59,14 +59,14 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
                     child: Text('Done!'),
                     onPressed: _doneEnabled
                         ? () {
-                            _doneTapped();
+                            _insertNewSkill();
                           }
                         : null),
               ],
               body: BlocBuilder<NewskillBloc, NewSkillState>(
                   builder: (context, state) {
                 Widget body;
-                if (state is InitialNewSkillState) {
+                if (state is InitialNewSkillState || state is NewSkillInsertedState) {
                   body = _newSkillFormBuilder(_formKey);
                 } else if (state is CreatingNewSkillState) {
                   body = Center(
@@ -144,7 +144,7 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
       children: <Widget>[
         Text('Priority: ', style: Theme.of(context).textTheme.subhead),
         DropdownButton<String>(
-          value: _priorityString,
+            value: _priorityString,
             items: PRIORITIES.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -263,8 +263,15 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   void setDoneButtonEnabled() {}
 
   void _insertNewSkill() async {
-    // Skill newSkill =
-    //     Skill(name: _nameController.text, source: _sourceController.text);
-    // skillEditorBloc.add(InsertNewSkillEvent(newSkill));
+    Skill newSkill = Skill(
+      name: _nameController.text,
+      type: skillTypeToString(_selectedType),
+      source: _sourceController.text ?? '',
+      startDate: TickTock.today(),
+      instrument: _selectedInstrument,
+      proficiency: currentProfValue.toInt(),
+      priority: PRIORITIES.indexOf(_priorityString),
+    );
+    bloc.add(CreateNewSkillEvent(newSkill));
   }
 }
