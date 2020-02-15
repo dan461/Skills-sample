@@ -166,7 +166,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
-    
+
     final SkillModel skillModel = SkillModel(
       name: skill.name,
       type: skill.type,
@@ -496,9 +496,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId) {
-    // TODO: implement getCompletedActivitiesForSkill
-    return null;
+  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(skillEventsTable,
+        where: 'skillId = ? AND isComplete = 1', whereArgs: [skillId]);
+
+    List<SkillEvent> events = [];
+    for (var map in maps) {
+      events.add(SkillEventModel.fromMap(map));
+    }
+    return events;
   }
 
   // TODO - dead code?
@@ -548,8 +555,6 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
     return maps;
   }
-
-  
 
   // Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
   //   final Database db = await database;

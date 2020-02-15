@@ -26,10 +26,13 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
   Stream<SkillDataState> mapEventToState(
     SkillDataEvent event,
   ) async* {
-    if (event is GetEventsForSkillEvent){
+    if (event is GetEventsForSkillEvent) {
       yield SkillDataGettingEventsState();
-      final eventsOrFail = await getCompletedEventsForSkill(GetSkillParams(id: event.skillId));
-      yield eventsOrFail.fold((failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE), (activities){
+      final eventsOrFail =
+          await getCompletedEventsForSkill(GetSkillParams(id: event.skillId));
+      yield eventsOrFail
+          .fold((failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE),
+              (activities) {
         completedActivities = activities;
         return SkillDataEventsLoadedState();
       });
