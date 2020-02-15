@@ -4,7 +4,12 @@ abstract class SkillDataState extends Equatable {
   const SkillDataState();
 }
 
-class SkillDataInitial extends SkillDataState {
+class SkillDataInitialState extends SkillDataState {
+  @override
+  List<Object> get props => [];
+}
+
+class SkillDataGettingEventsState extends SkillDataState {
   @override
   List<Object> get props => [];
 }
@@ -12,4 +17,13 @@ class SkillDataInitial extends SkillDataState {
 class SkillDataEventsLoadedState extends SkillDataState {
   @override
   List<Object> get props => [];
+}
+
+class SkillDataErrorState extends SkillDataState {
+  final String message;
+
+  SkillDataErrorState(this.message);
+
+  @override
+  List<Object> get props => [message];
 }

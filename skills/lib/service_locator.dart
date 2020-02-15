@@ -5,6 +5,7 @@ import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'features/skills/data/repos/goalsRepositoryImpl.dart';
@@ -30,6 +31,8 @@ void init() {
   locator.registerFactory(() => SkillsBloc(getAllSkills: locator()));
 
   locator.registerFactory(() => NewskillBloc(insertNewSkillUC: locator()));
+
+  locator.registerFactory(() => SkillDataBloc(getCompletedEventsForSkill: locator()));
 
   locator.registerFactory(() => SkillEditorBloc(
       updateSkill: locator(),
@@ -91,6 +94,7 @@ void init() {
   locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
   locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
   locator.registerLazySingleton(() => GetEventsForSession(locator()));
+  locator.registerLazySingleton(() => GetCompletedEventsForSkill(locator()));
   locator.registerLazySingleton(() => GetEventMapsForSession(locator()));
   locator.registerLazySingleton(() => CompleteSessionAndEvents(locator()));
   // locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));

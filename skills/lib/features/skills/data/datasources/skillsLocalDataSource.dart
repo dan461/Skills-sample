@@ -41,6 +41,7 @@ abstract class SkillsLocalDataSource {
   Future<int> deleteEventById(int id);
   Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
   Future<List<SkillEvent>> getEventsForSession(int sessionId);
+  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId);
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events);
   Future<List<Map>> getEventMapsForSession(int sessionId);
 }
@@ -494,6 +495,12 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return events;
   }
 
+  @override
+  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId) {
+    // TODO: implement getCompletedActivitiesForSkill
+    return null;
+  }
+
   // TODO - dead code?
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
     // final Database db = await database;
@@ -541,6 +548,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
     return maps;
   }
+
+  
 
   // Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
   //   final Database db = await database;
