@@ -166,7 +166,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
       curve: Curves.fastOutSlowIn,
       alignment: Alignment(0, -1),
       vsync: this,
-      child: _calendarBuilder(),
+      child: Container(color: Colors.blue[800], child: _calendarBuilder()),
     );
   }
 

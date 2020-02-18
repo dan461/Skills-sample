@@ -90,33 +90,36 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
       autovalidate: true,
       key: formKey,
       child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: _typeButtons(),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-              child: _nameField(),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 20),
-              child: _sourceField(),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
-              child: _instrumentPicker(),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 38, 8, 8),
-              child: _proficiencyRow(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _priorityRow(),
-            )
-          ],
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _typeButtons(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+                child: _nameField(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 8, 20),
+                child: _sourceField(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+                child: _instrumentPicker(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 38, 8, 8),
+                child: _proficiencyRow(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _priorityRow(),
+              )
+            ],
+          ),
         ),
       ),
     );
