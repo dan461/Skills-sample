@@ -31,7 +31,7 @@ class CompletedActivitiesCell extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(activity.skillString,
+                    Text('$dateString',
                         style: Theme.of(context).textTheme.subhead),
                     Text('$durationString min.',
                         style: Theme.of(context).textTheme.subhead),
@@ -40,8 +40,8 @@ class CompletedActivitiesCell extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('source', style: Theme.of(context).textTheme.body1),
-                    Text('completed: $dateString', style: Theme.of(context).textTheme.body1)
+                    Text('Notes: This is where the notes would go.',
+                        style: Theme.of(context).textTheme.body1),
                   ],
                 ),
               ])),

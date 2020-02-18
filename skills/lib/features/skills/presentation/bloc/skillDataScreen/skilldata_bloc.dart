@@ -37,5 +37,9 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
         return SkillDataEventsLoadedState();
       });
     }
+
+    else if (event is UpdateExistingSkillEvent){
+      
+    }
   }
 }

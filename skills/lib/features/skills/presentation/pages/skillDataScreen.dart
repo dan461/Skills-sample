@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/enums.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/widgets/completedActivitiesCell.dart';
+import 'package:skills/features/skills/presentation/widgets/skillForm.dart';
 
 class SkillDataScreen extends StatefulWidget {
   final SkillDataBloc bloc;
@@ -36,6 +38,8 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     return DateFormat.yMMMd().format(bloc.skill.startDate);
   }
 
+  bool _isEditing = false;
+
   @override
   Widget build(BuildContext context) {
     Widget body;
@@ -49,11 +53,19 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('title'),
+              title: Text(bloc.skill.type),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  color: Colors.white,
+                  onPressed: _onEditTapped,
+                )
+              ],
             ),
             body: BlocBuilder<SkillDataBloc, SkillDataState>(
               builder: (context, state) {
-                if (state is InitialNewSkillState) {
+                if (state is InitialNewSkillState ||
+                    state is SkillDataGettingEventsState) {
                   body = Center(
                     child: CircularProgressIndicator(),
                   );
@@ -70,7 +82,51 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     );
   }
 
+  void _onEditTapped() {
+    setState(() {
+      _isEditing = true;
+    });
+  }
+
   Widget _contentBuilder() {
+    if (_isEditing)
+      return _editorViewBuilder();
+    else
+      return _infoViewBuilder();
+  }
+
+  Widget _editorViewBuilder() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            SkillForm(
+              skill: bloc.skill,
+              cancelCallback: _cancelEditing,
+              doneCallback: _doneEditing,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: _eventsListBuilder(),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _cancelEditing() {
+    setState(() {
+      _isEditing = false;
+    });
+  }
+
+  void _doneEditing(Skill skill) {
+    bloc.add(UpdateExistingSkillEvent(skill: skill));
+  }
+
+  Widget _infoViewBuilder() {
     return Container(
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
@@ -151,19 +207,20 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   }
 
   Widget _completedEventsList() {
-    if (bloc.completedActivities.isNotEmpty){
+    if (bloc.completedActivities.isNotEmpty) {
       return ListView.builder(
-        shrinkWrap: true,
-        itemCount: bloc.completedActivities.length,
-        itemBuilder: (context, index) {
-          return CompletedActivitiesCell(
-              activity: bloc.completedActivities[index],
-              tapCallback: _onActivityTapped);
-        });
+          shrinkWrap: true,
+          itemCount: bloc.completedActivities.length,
+          itemBuilder: (context, index) {
+            return CompletedActivitiesCell(
+                activity: bloc.completedActivities[index],
+                tapCallback: _onActivityTapped);
+          });
     } else {
-      return Center(child: Text('No completed activities'),);
+      return Center(
+        child: Text('No completed activities'),
+      );
     }
-    
   }
 
   void _onActivityTapped(SkillEvent event) {}

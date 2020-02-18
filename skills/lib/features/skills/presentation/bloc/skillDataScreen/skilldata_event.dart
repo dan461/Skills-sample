@@ -12,3 +12,12 @@ class GetEventsForSkillEvent extends SkillDataEvent {
   @override
   List<Object> get props => null;
 }
+
+class UpdateExistingSkillEvent extends SkillDataEvent {
+  final Skill skill;
+
+  UpdateExistingSkillEvent({@required this.skill});
+
+  @override
+  List<Object> get props => [skill];
+}

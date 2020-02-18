@@ -27,3 +27,8 @@ class SkillDataErrorState extends SkillDataState {
   @override
   List<Object> get props => [message];
 }
+
+class UpdatedExistingSkillState extends SkillDataState {
+  @override
+  List<Object> get props => [];
+}
