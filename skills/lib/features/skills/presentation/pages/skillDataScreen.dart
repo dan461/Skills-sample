@@ -7,8 +7,14 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_event.dart';
 import 'package:skills/features/skills/presentation/widgets/completedActivitiesCell.dart';
 import 'package:skills/features/skills/presentation/widgets/skillForm.dart';
+import 'package:skills/service_locator.dart';
+
+import 'goalEditorScreen.dart';
+import 'newGoalScreen.dart';
 
 class SkillDataScreen extends StatefulWidget {
   final SkillDataBloc bloc;
@@ -85,12 +91,6 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     );
   }
 
-  void _onEditTapped() {
-    setState(() {
-      _isEditing = true;
-    });
-  }
-
   Widget _contentBuilder() {
     if (_isEditing)
       return _editorViewBuilder();
@@ -117,19 +117,6 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         ),
       ),
     );
-  }
-
-  void _cancelEditing() {
-    setState(() {
-      _isEditing = false;
-    });
-  }
-
-  void _doneEditing(Skill skill) {
-    setState(() {
-      bloc.add(UpdateExistingSkillEvent(skill: skill));
-      _isEditing = false;
-    });
   }
 
   Widget _infoViewBuilder() {
@@ -243,8 +230,6 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     }
   }
 
-  void _onActivityTapped(SkillEvent event) {}
-
   Widget _goalInfoRow(Skill skill) {
     return Container(
       decoration: BoxDecoration(
@@ -255,20 +240,25 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
       // alignment: Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[Text('Goal: (tap to edit)')],
-            ),
-            Text(
-              bloc.skill.goalText,
-              style: Theme.of(context).textTheme.subhead,
-              maxLines: 2,
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+        child: GestureDetector(
+          onTap: () {
+            _onGoalSectionTapped(bloc.skill.currentGoalId);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[Text('Goal: (tap to edit)')],
+              ),
+              Text(
+                bloc.skill.goalText,
+                style: Theme.of(context).textTheme.subhead,
+                maxLines: 2,
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -337,5 +327,63 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         ],
       ),
     );
+  }
+
+  // ACTIONS
+
+  void _onEditTapped() {
+    setState(() {
+      _isEditing = true;
+    });
+  }
+
+  void _cancelEditing() {
+    setState(() {
+      _isEditing = false;
+    });
+  }
+
+  void _doneEditing(Skill skill) {
+    setState(() {
+      bloc.add(UpdateExistingSkillEvent(skill: skill));
+      _isEditing = false;
+    });
+  }
+
+  void _onActivityTapped(SkillEvent event) {}
+
+  void _onGoalSectionTapped(int goalId) {
+    if (goalId == 0)
+      _goToNewGoalScreen(bloc.skill.skillId, bloc.skill.name);
+    else
+      _goToGoalEditor(bloc.skill.skillId, bloc.skill.name, goalId);
+  }
+
+  void _goToNewGoalScreen(int skillId, String skillName) async {
+    // bool refresh = false;
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NewGoalScreen(
+        skillId: skillId,
+        skillName: skillName,
+      );
+    }));
+    locator<SkillEditorBloc>().add(GetSkillByIdEvent(id: skillId));
+
+    // TODO - make this conditional
+    bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
+  }
+
+  void _goToGoalEditor(int skillId, String skillName, int goalId) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return GoalEditorScreen(
+        skillId: skillId,
+        skillName: skillName,
+        goalId: goalId,
+      );
+    }));
+
+    locator<SkillEditorBloc>().add(GetSkillByIdEvent(id: skillId));
+    // TODO - make this conditional
+    bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
   }
 }
