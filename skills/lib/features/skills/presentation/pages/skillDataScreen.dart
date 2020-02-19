@@ -54,13 +54,6 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(bloc.skill.type),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  color: Colors.white,
-                  onPressed: _isEditing ? null : _onEditTapped,
-                )
-              ],
             ),
             body: BlocBuilder<SkillDataBloc, SkillDataState>(
               builder: (context, state) {
@@ -116,10 +109,10 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
               cancelCallback: _cancelEditing,
               doneCallback: _doneEditing,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: _eventsListBuilder(),
-            )
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 8.0),
+            //   child: _eventsListBuilder(),
+            // )
           ],
         ),
       ),
@@ -143,14 +136,26 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     return Container(
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          _infoSectionBuilder(),
+          _goalInfoRow(bloc.skill),
+          Expanded(
+            child: _eventsListBuilder(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _infoSectionBuilder() {
+    return Container(
+      color: Colors.teal[300],
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: _nameRow(bloc.skill),
-            ),
+            _nameRow(bloc.skill),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: _sourceInstrRow(bloc.skill),
@@ -159,11 +164,6 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
             _startDateRow(),
             _timeRow(bloc.skill),
             _profPrioRow(bloc.skill),
-            _goalInfoRow(bloc.skill),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: _eventsListBuilder(),
-            )
           ],
         ),
       ),
@@ -172,12 +172,20 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   Widget _nameRow(Skill skill) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
           skill.name,
           style: Theme.of(context).textTheme.headline,
         ),
+        Container(
+            height: 30,
+            width: 60,
+            child: FlatButton(
+              textColor: Colors.blueAccent,
+              onPressed: _onEditTapped,
+              child: Text('Edit'),
+            )),
       ],
     );
   }
@@ -200,12 +208,11 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   Widget _eventsListBuilder() {
     return Container(
-      decoration: BoxDecoration(
-          border: Border(top: BorderSide(width: 1.0, color: Colors.grey[400]))),
+      color: Colors.cyan[200],
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: <Widget>[
                 Text('Recent Practice Activity',
@@ -239,20 +246,30 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   void _onActivityTapped(SkillEvent event) {}
 
   Widget _goalInfoRow(Skill skill) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Container(
-        color: Colors.grey[100],
-        alignment: Alignment.centerLeft,
-        child: Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 4),
-            child: Text(
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.blue[200],
+          border: Border(
+              top: BorderSide(width: 0.0, color: Colors.grey[400]),
+              bottom: BorderSide(width: 0.0, color: Colors.grey[400]))),
+      // alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[Text('Goal: (tap to edit)')],
+            ),
+            Text(
               bloc.skill.goalText,
               style: Theme.of(context).textTheme.subhead,
               maxLines: 2,
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
-            )),
+            ),
+          ],
+        ),
       ),
     );
   }
