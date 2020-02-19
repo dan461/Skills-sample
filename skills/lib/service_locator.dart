@@ -32,7 +32,10 @@ void init() {
 
   locator.registerFactory(() => NewskillBloc(insertNewSkillUC: locator()));
 
-  locator.registerFactory(() => SkillDataBloc(getCompletedEventsForSkill: locator()));
+  locator.registerFactory(() => SkillDataBloc(
+      getCompletedEventsForSkill: locator(),
+      updateSkill: locator(),
+      getSkillById: locator()));
 
   locator.registerFactory(() => SkillEditorBloc(
       updateSkill: locator(),

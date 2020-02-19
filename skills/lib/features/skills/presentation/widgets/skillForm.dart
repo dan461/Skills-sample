@@ -197,12 +197,17 @@ class _SkillFormState extends State<SkillForm> {
   Row _instrumentPicker() {
     return Row(
       children: <Widget>[
-        GestureDetector(
-          child: Text(
-            _selectedInstrument,
-            style: Theme.of(context).textTheme.body1,
+        Material(
+          color: Colors.transparent,
+          shape:
+              Border(bottom: BorderSide(width: 1.0, color: Colors.grey[400])),
+          child: InkWell(
+            child: Text(
+              _selectedInstrument,
+              style: Theme.of(context).textTheme.subhead,
+            ),
+            onTap: _showInstrumentsList,
           ),
-          onTap: _showInstrumentsList,
         )
       ],
     );
@@ -278,13 +283,18 @@ class _SkillFormState extends State<SkillForm> {
 
   void _onDone() {
     Skill newSkill = Skill(
+      skillId: skill.skillId,
       name: _nameController.text,
       type: _selectedType,
       source: _sourceController.text ?? '',
-      startDate: skill.startDate ?? TickTock.today(),
       instrument: _selectedInstrument,
-      proficiency: currentProfValue.toInt(),
+      startDate: skill.startDate ?? TickTock.today(),
+      totalTime: skill.totalTime,
+      lastPracDate: skill.lastPracDate,
+      currentGoalId: skill.currentGoalId,
+      goalText: skill.goalText,
       priority: PRIORITIES.indexOf(_priorityString),
+      proficiency: currentProfValue.toInt(),
     );
 
     doneCallback(newSkill);

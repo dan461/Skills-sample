@@ -201,6 +201,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> updateSkill(Skill skill) async {
     final Database db = await database;
     final SkillModel skillModel = SkillModel(
+      skillId: skill.skillId,
       name: skill.name,
       type: skill.type,
       source: skill.source,

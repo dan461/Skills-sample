@@ -32,3 +32,8 @@ class UpdatedExistingSkillState extends SkillDataState {
   @override
   List<Object> get props => [];
 }
+
+class SkillRefreshedState extends SkillDataState {
+  @override
+  List<Object> get props => [];
+}

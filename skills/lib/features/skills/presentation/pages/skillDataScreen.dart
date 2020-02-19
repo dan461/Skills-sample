@@ -58,7 +58,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
                 IconButton(
                   icon: Icon(Icons.edit),
                   color: Colors.white,
-                  onPressed: _onEditTapped,
+                  onPressed: _isEditing ? null : _onEditTapped,
                 )
               ],
             ),
@@ -69,8 +69,18 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
                   body = Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (state is SkillDataEventsLoadedState) {
+                }
+                // Events loaded || Skill refreshed
+                else if (state is SkillDataEventsLoadedState ||
+                    state is SkillRefreshedState) {
                   body = _contentBuilder();
+                }
+                // Skill updated
+                else if (state is UpdatedExistingSkillState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                  bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
                 }
 
                 return body;
@@ -123,7 +133,10 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   }
 
   void _doneEditing(Skill skill) {
-    bloc.add(UpdateExistingSkillEvent(skill: skill));
+    setState(() {
+      bloc.add(UpdateExistingSkillEvent(skill: skill));
+      _isEditing = false;
+    });
   }
 
   Widget _infoViewBuilder() {

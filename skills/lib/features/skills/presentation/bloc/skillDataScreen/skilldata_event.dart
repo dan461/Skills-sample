@@ -21,3 +21,12 @@ class UpdateExistingSkillEvent extends SkillDataEvent {
   @override
   List<Object> get props => [skill];
 }
+
+class RefreshSkillByIdEvent extends SkillDataEvent {
+  final int skillId;
+
+  RefreshSkillByIdEvent({@required this.skillId});
+
+  @override
+  List<Object> get props => [skillId];
+}
