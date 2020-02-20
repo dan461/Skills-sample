@@ -248,7 +248,19 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                children: <Widget>[Text('Goal: (tap to edit)')],
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Goal: (tap to edit)'),
+                  Container(
+                    height: 30,
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        _goToNewGoalScreen(bloc.skill.skillId, bloc.skill.name);
+                      },
+                    ),
+                  )
+                ],
               ),
               Text(
                 bloc.skill.goalText,
@@ -360,21 +372,21 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   }
 
   void _goToNewGoalScreen(int skillId, String skillName) async {
-    // bool refresh = false;
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    bool refresh =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return NewGoalScreen(
         skillId: skillId,
         skillName: skillName,
       );
     }));
-    locator<SkillEditorBloc>().add(GetSkillByIdEvent(id: skillId));
 
-    // TODO - make this conditional
-    bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
+    if (refresh != null)
+      bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
   }
 
   void _goToGoalEditor(int skillId, String skillName, int goalId) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    bool refresh =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return GoalEditorScreen(
         skillId: skillId,
         skillName: skillName,
@@ -382,8 +394,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
       );
     }));
 
-    locator<SkillEditorBloc>().add(GetSkillByIdEvent(id: skillId));
-    // TODO - make this conditional
-    bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
+    if (refresh != null)
+      bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
   }
 }

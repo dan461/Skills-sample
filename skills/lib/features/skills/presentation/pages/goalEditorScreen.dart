@@ -366,7 +366,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
           bloc: _goalEditorBloc,
           listener: (context, state) {
             if (state is GoalUpdatedState || state is GoalDeletedState) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(true);
             }
           },
           child: Scaffold(
