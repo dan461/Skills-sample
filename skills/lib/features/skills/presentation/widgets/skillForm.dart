@@ -41,10 +41,12 @@ class _SkillFormState extends State<SkillForm> {
   double currentProfValue = 0;
   String _priorityString = NORMAL_PRIORITY;
 
-  bool get _doneEnabled {
-    return _nameController.text.isNotEmpty &&
-        _selectedInstrument != SELECT_INST;
-  }
+  // bool get _doneEnabled {
+  //   return _nameController.text.isNotEmpty &&
+  //       _selectedInstrument != SELECT_INST;
+  // }
+
+  bool _doneEnabled = false;
 
   bool get _isEditing {
     return skill != null;
@@ -74,17 +76,6 @@ class _SkillFormState extends State<SkillForm> {
         ),
       ),
     );
-  }
-
-  // Widget _contentBuilder() {
-  //   if (_isEditing)
-  //     return _editorColumn();
-  //   else
-  //     return _newSkillColumn();
-  // }
-
-  Widget _editorColumn() {
-    return Column();
   }
 
   Widget _newSkillColumn() {
@@ -124,7 +115,8 @@ class _SkillFormState extends State<SkillForm> {
       alignment: MainAxisAlignment.center,
       children: <Widget>[
         FlatButton(onPressed: _onCancel, child: Text('Cancel')),
-        FlatButton(onPressed: _onDone, child: Text('Done')),
+        FlatButton(
+            onPressed: _doneEnabled ? _onDone : null, child: Text('Done')),
       ],
     );
   }
@@ -188,9 +180,6 @@ class _SkillFormState extends State<SkillForm> {
       textCapitalization: TextCapitalization.sentences,
       controller: _sourceController,
       decoration: InputDecoration(labelText: 'Source'),
-      onChanged: (_) {
-        setDoneButtonEnabled();
-      },
     );
   }
 
@@ -277,25 +266,64 @@ class _SkillFormState extends State<SkillForm> {
 
   // ACTIONS
 
-  void _onCancel() {
-    cancelCallback();
+  void _onCancel() async {
+    if (_doneEnabled) {
+      await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Discard changes?'),
+              content: Text('Do you want to cancel and lose your changes?'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Dismiss'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text('Continue'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    cancelCallback();
+                  },
+                )
+              ],
+            );
+          });
+    } else
+      cancelCallback();
   }
 
   void _onDone() {
-    Skill newSkill = Skill(
-      skillId: skill.skillId,
-      name: _nameController.text,
-      type: _selectedType,
-      source: _sourceController.text ?? '',
-      instrument: _selectedInstrument,
-      startDate: skill.startDate ?? TickTock.today(),
-      totalTime: skill.totalTime,
-      lastPracDate: skill.lastPracDate,
-      currentGoalId: skill.currentGoalId,
-      goalText: skill.goalText,
-      priority: PRIORITIES.indexOf(_priorityString),
-      proficiency: currentProfValue.toInt(),
-    );
+    Skill newSkill;
+    if (_isEditing) {
+      newSkill = Skill(
+        skillId: skill.skillId,
+        name: _nameController.text,
+        type: _selectedType,
+        source: _sourceController.text ?? '',
+        instrument: _selectedInstrument,
+        startDate: skill.startDate ?? TickTock.today(),
+        totalTime: skill.totalTime,
+        lastPracDate: skill.lastPracDate,
+        currentGoalId: skill.currentGoalId,
+        goalText: skill.goalText,
+        priority: PRIORITIES.indexOf(_priorityString),
+        proficiency: currentProfValue.toInt(),
+      );
+    } else {
+      newSkill = Skill(
+        name: _nameController.text,
+        type: _selectedType,
+        source: _sourceController.text ?? '',
+        startDate: TickTock.today(),
+        instrument: _selectedInstrument,
+        priority: PRIORITIES.indexOf(_priorityString),
+        proficiency: currentProfValue.toInt(),
+      );
+    }
 
     doneCallback(newSkill);
   }
@@ -308,8 +336,14 @@ class _SkillFormState extends State<SkillForm> {
 
     setState(() {
       _selectedInstrument = selected ?? _selectedInstrument;
+      setDoneButtonEnabled();
     });
   }
 
-  void setDoneButtonEnabled() {}
+  void setDoneButtonEnabled() {
+    setState(() {
+      _doneEnabled =
+          _nameController.text.isNotEmpty && _selectedInstrument != SELECT_INST;
+    });
+  }
 }
