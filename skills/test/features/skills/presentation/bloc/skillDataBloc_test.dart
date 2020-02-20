@@ -1,12 +1,10 @@
 import 'package:skills/core/constants.dart';
-import 'package:skills/core/enums.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
-import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 
@@ -15,14 +13,21 @@ import '../../mockClasses.dart';
 void main() {
   SkillDataBloc sut;
   MockGetCompletedEventsForSkill mockGetCompletedEventsForSkill;
+  MockUpdateSkillUC mockUpdateSkillUC;
+  MockGetSkillByIdUC mockGetSkillByIdUC;
   SkillEvent testEvent;
 
   List<SkillEvent> eventsList;
 
   setUp(() {
     mockGetCompletedEventsForSkill = MockGetCompletedEventsForSkill();
+    mockUpdateSkillUC = MockUpdateSkillUC();
+    mockGetSkillByIdUC = MockGetSkillByIdUC();
     sut = SkillDataBloc(
-        getCompletedEventsForSkill: mockGetCompletedEventsForSkill);
+        getCompletedEventsForSkill: mockGetCompletedEventsForSkill,
+        updateSkill: mockUpdateSkillUC,
+        getSkillById: mockGetSkillByIdUC);
+
     testEvent = SkillEvent(
         eventId: 1,
         skillId: 1,
@@ -39,17 +44,108 @@ void main() {
     expect(sut.initialState, equals(SkillDataInitialState()));
   });
 
-  test(
-      'test that bloc emits [SkillDataGettingEventsState, SkillDataEventsLoadedState]',
-      () {
-    when(mockGetCompletedEventsForSkill(GetSkillParams(id: 1)))
-        .thenAnswer((_) async => Right(eventsList));
-    final expected = [
-      SkillDataInitialState(),
-      SkillDataGettingEventsState(),
-      SkillDataEventsLoadedState()
-    ];
-    expectLater(sut, emitsInOrder(expected));
-    sut.add(GetEventsForSkillEvent(skillId: 1));
+  group('GetEventsForSkillEvent: - ', () {
+    test(
+        'test that bloc emits [SkillDataCrudProcessingState, SkillDataEventsLoadedState] when GetEventsForSkillEvent is added',
+        () {
+      when(mockGetCompletedEventsForSkill(GetSkillParams(id: 1)))
+          .thenAnswer((_) async => Right(eventsList));
+      final expected = [
+        SkillDataInitialState(),
+        SkillDataCrudProcessingState(),
+        SkillDataEventsLoadedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(GetEventsForSkillEvent(skillId: 1));
+    });
+
+    test(
+        'test that bloc emits [SkillDataCrudProcessingState, SkillDataErrorState] when cache failure after GetEventsForSkillEvent is added',
+        () {
+      when(mockGetCompletedEventsForSkill(GetSkillParams(id: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        SkillDataInitialState(),
+        SkillDataCrudProcessingState(),
+        SkillDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(GetEventsForSkillEvent(skillId: 1));
+    });
+  });
+
+  group('UpdateExistingSkillEvent: - ', () {
+    final testSkill = Skill(
+      name: 'test',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+
+    test(
+        'test that bloc emits [SkillDataCrudProcessingState, UpdatedExistingSkillState] after UpdateExistingSkillEvent is added ',
+        () {
+      when(mockUpdateSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+          .thenAnswer((_) async => Right(1));
+      final expected = [
+        SkillDataInitialState(),
+        SkillDataCrudProcessingState(),
+        UpdatedExistingSkillState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateExistingSkillEvent(skill: testSkill));
+    });
+
+    test(
+        'test that bloc emits [SkillDataCrudProcessingState, SkillDataErrorState] after cache failure when UpdateExistingSkillEvent is added ',
+        () {
+      when(mockUpdateSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        SkillDataInitialState(),
+        SkillDataCrudProcessingState(),
+        SkillDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateExistingSkillEvent(skill: testSkill));
+    });
+  });
+
+  group('RefreshSkillByIdEvent: - ', () {
+    final testSkill = Skill(
+      skillId: 1,
+      name: 'test',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+
+    test(
+        'test that bloc emits [SkillDataCrudProcessingState, SkillRefreshedState] after RefreshSkillByIdEvent is added ',
+        () {
+      when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
+          .thenAnswer((_) async => Right(testSkill));
+      final expected = [
+        SkillDataInitialState(),
+        SkillDataCrudProcessingState(),
+        SkillRefreshedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(RefreshSkillByIdEvent(skillId: 1));
+    });
+
+    test(
+        'test that bloc emits [SkillDataCrudProcessingState, SkillDataErrorState] after cache failure when RefreshSkillByIdEvent is added ',
+        () {
+      when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        SkillDataInitialState(),
+        SkillDataCrudProcessingState(),
+        SkillDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(RefreshSkillByIdEvent(skillId: 1));
+    });
   });
 }

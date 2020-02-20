@@ -16,7 +16,12 @@ void main() {
     useCase = GetAllSkills(mockSkillsRepo);
   });
 
-  final testSkill = Skill(name: 'test', source: 'test');
+  final testSkill = Skill(
+    name: 'test',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
   final List<Skill> skillsList = [testSkill];
 
   test(

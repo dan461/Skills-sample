@@ -44,7 +44,12 @@ void main() {
   // }
 
   group('Skills CRUD tests', () {
-    final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
+    final SkillModel skillModel = SkillModel(
+      name: 'test',
+      source: 'testing',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
     final List<SkillModel> skillModelList = [skillModel];
     final Skill tSkill = skillModel;
 
@@ -72,6 +77,8 @@ void main() {
           skillId: 1,
           name: 'new',
           source: 'new',
+          type: 'composition',
+          startDate: DateTime.fromMillisecondsSinceEpoch(0),
           lastPracDate: DateTime.fromMillisecondsSinceEpoch(0));
       when(mockLocalDataSource.insertNewSkill(tSkill))
           .thenAnswer((_) async => newSkill);

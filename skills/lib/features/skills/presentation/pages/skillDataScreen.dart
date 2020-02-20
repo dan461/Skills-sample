@@ -64,7 +64,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
             body: BlocBuilder<SkillDataBloc, SkillDataState>(
               builder: (context, state) {
                 if (state is InitialNewSkillState ||
-                    state is SkillDataGettingEventsState) {
+                    state is SkillDataCrudProcessingState) {
                   body = Center(
                     child: CircularProgressIndicator(),
                   );

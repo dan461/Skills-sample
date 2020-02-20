@@ -9,7 +9,6 @@ import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bl
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
 import 'package:skills/features/skills/presentation/pages/skillDataScreen.dart';
-import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
 import 'package:skills/service_locator.dart';
 
@@ -173,16 +172,16 @@ class _SkillsScreenState extends State<SkillsScreen> {
     bloc.add(GetAllSkillsEvent());
   }
 
-  void editSkill(Skill skill) async {
-    final editor = SkillEditorScreen(
-      skillEditorBloc: locator<SkillEditorBloc>(),
-    );
-    editor.skillEditorBloc.add(EditSkillEvent(skill));
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return editor;
-    }));
-    bloc.add(GetAllSkillsEvent());
-  }
+  // void editSkill(Skill skill) async {
+  //   final editor = SkillEditorScreen(
+  //     skillEditorBloc: locator<SkillEditorBloc>(),
+  //   );
+  //   editor.skillEditorBloc.add(EditSkillEvent(skill));
+  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+  //     return editor;
+  //   }));
+  //   bloc.add(GetAllSkillsEvent());
+  // }
 }
 
 class SkillsList extends StatefulWidget {

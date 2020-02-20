@@ -9,7 +9,7 @@ class SkillDataInitialState extends SkillDataState {
   List<Object> get props => [];
 }
 
-class SkillDataGettingEventsState extends SkillDataState {
+class SkillDataCrudProcessingState extends SkillDataState {
   @override
   List<Object> get props => [];
 }

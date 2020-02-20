@@ -32,7 +32,7 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
     SkillDataEvent event,
   ) async* {
     if (event is GetEventsForSkillEvent) {
-      yield SkillDataGettingEventsState();
+      yield SkillDataCrudProcessingState();
       final eventsOrFail =
           await getCompletedEventsForSkill(GetSkillParams(id: event.skillId));
       yield eventsOrFail
@@ -44,7 +44,7 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
     }
     // Update Skill
     else if (event is UpdateExistingSkillEvent) {
-      yield SkillDataGettingEventsState();
+      yield SkillDataCrudProcessingState();
       final updateOrFail =
           await updateSkill(SkillInsertOrUpdateParams(skill: event.skill));
       yield updateOrFail.fold(
@@ -53,7 +53,7 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
     }
     // Refresh skill from cache
     else if (event is RefreshSkillByIdEvent) {
-      yield SkillDataGettingEventsState();
+      yield SkillDataCrudProcessingState();
       final skillOrFail = await getSkillById(GetSkillParams(id: event.skillId));
       yield skillOrFail
           .fold((failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE),
