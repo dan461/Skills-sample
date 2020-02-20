@@ -124,6 +124,18 @@ class _SkillsScreenState extends State<SkillsScreen> {
               const PopupMenuItem<SkillSortOption>(
                 value: SkillSortOption.lastPracDate,
                 child: Text('Last Practiced'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.instrument,
+                child: Text('Instrument'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.priority,
+                child: Text('Priority'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.proficiency,
+                child: Text('Proficiency'),
               )
             ]);
   }

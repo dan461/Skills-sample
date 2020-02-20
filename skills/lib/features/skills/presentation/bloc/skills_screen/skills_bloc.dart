@@ -8,7 +8,14 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
 import './bloc.dart';
 
-enum SkillSortOption { name, source, lastPracDate }
+enum SkillSortOption {
+  name,
+  source,
+  lastPracDate,
+  instrument,
+  priority,
+  proficiency,
+}
 
 class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
   List<Skill> skills;
@@ -33,6 +40,16 @@ class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
       case SkillSortOption.lastPracDate:
         comparator =
             (Skill a, Skill b) => a.lastPracDate.compareTo(b.lastPracDate);
+        break;
+      case SkillSortOption.instrument:
+        comparator = (Skill a, Skill b) => a.instrument.compareTo(b.instrument);
+        break;
+      case SkillSortOption.priority:
+        comparator = (Skill a, Skill b) => a.priority.compareTo(b.priority);
+        break;
+      case SkillSortOption.proficiency:
+        comparator =
+            (Skill a, Skill b) => a.proficiency.compareTo(b.proficiency);
         break;
     }
     skills.sort(comparator);
