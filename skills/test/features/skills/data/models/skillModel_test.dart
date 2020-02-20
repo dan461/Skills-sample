@@ -29,7 +29,7 @@ void main() {
       'name': "test",
       'type': 'composition',
       'source': "testing",
-      'instrument': 'Guitar',
+      'instrument': 'Guitar (Classical)',
       'startDate': 0,
       'totalTime': 1,
       'lastPracDate': 0,
@@ -47,7 +47,7 @@ void main() {
     },
   );
 
-  group('fromMap', () {
+  group('fromMap: - ', () {
     test(
       'should return a valid SkillModel from a Map',
       () async {
@@ -59,7 +59,7 @@ void main() {
     );
   });
 
-  group('toMap', () {
+  group('toMap: - ', () {
     test('should return a valid Map from a SkillModel', () async {
       final result = sut.toMap();
       final expectedMap = {
@@ -67,7 +67,7 @@ void main() {
         'name': "test",
         'type': 'composition',
         'source': "testing",
-        'instrument': 'Guitar',
+        'instrument': 'Guitar (Classical)',
         'startDate': 0,
         'totalTime': 1,
         'lastPracDate': 0,
