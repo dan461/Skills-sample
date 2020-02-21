@@ -139,6 +139,30 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "skillId INTEGER, sessionId INTEGER, date INTEGER, duration INTEGER, isComplete INTEGER, skillString TEXT, "
       "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
+
+  void _addGoalTextToGoals() async {
+    final Database db = await database;
+    await db.execute("ALTER TABLE goals ADD COLUMN goalText text");
+  }
+
+  void _dropGoalTextFromSkills() async {
+    final Database db = await database;
+    await db.execute("PRAGMA foreign_keys=OFF");
+    await db.execute("BEGIN TRANSACTION");
+    await db.execute(
+        "CREATE TABLE IF NOT EXISTS tempSkills(skillId $primaryKey, name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, "
+        "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)");
+    await db.execute(
+        "INSERT INTO tempSkills(skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency) "
+        "SELECT skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency "
+        "FROM skills");
+
+    await db.execute("DROP TABLE skills");
+    await db.execute("ALTER TABLE tempSkills RENAME TO skills");
+    await db.execute("COMMIT");
+    await db.execute("PRAGMA foreign_keys=ON");
+  }
+
 // ******* SKILLS *********
   @override
   Future<List<SkillModel>> getAllSkills() async {
