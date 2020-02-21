@@ -122,7 +122,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   // table creation
   final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
-      "name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, goalText TEXT, priority INTEGER, proficiency INTEGER)";
+      "name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)";
 
   final String _createGoalTable = "$createTable goals(goalId $primaryKey, "
       "skillId INTEGER, fromDate INTEGER, toDate INTEGER, isComplete INTEGER, timeBased INTEGER, "
