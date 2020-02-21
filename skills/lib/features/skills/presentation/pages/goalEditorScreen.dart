@@ -95,80 +95,60 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
       print('no focus');
   }
 
-  void goalIsChanged(String key, dynamic value) {
-    Map changeMap = Map.from(_goalEditorBloc.goalModel.toMap());
-    changeMap.update(key, (_) {
-      return value;
-    });
-    // bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => _goalEditorBloc,
+      child: Builder(builder: (BuildContext context) {
+        return BlocListener(
+          bloc: _goalEditorBloc,
+          listener: (context, state) {
+            if (state is GoalUpdatedState || state is GoalDeletedState) {
+              Navigator.of(context).pop(true);
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(),
+            body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
+              builder: (context, state) {
+                Widget body;
+
+                if (state is EmptyGoalEditorState ||
+                    state is GoalCrudInProgressState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } 
+                
+                else if (state is GoalEditorGoalReturnedState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                  _setScreenValues(state.goal);
+                  // _goalEditorBloc.goal = state.goal;
+                  _goalEditorBloc.add(EditGoalEvent());
+                } 
+                
+                else if (state is GoalEditorEditingState) {
+                  body = _goalEditArea();
+                } 
+                
+                else if (state is GoalUpdatedState ||
+                    state is GoalDeletedState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return body;
+              },
+            ),
+          ),
+        );
+      }),
+    );
   }
 
-  void _setDoneButtonEnabled() {
-    bool timeOrTaskSet;
-    if (_isTimeBased)
-      timeOrTaskSet = _goalMinutes > 0;
-    else
-      timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
-
-    _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
-  }
-
-  void _updateGoal() async {
-    // TODO - finish this
-    Goal updatedGoal = Goal(
-        goalId: _goalEditorBloc.theGoal.goalId,
-        skillId: _goalEditorBloc.theGoal.skillId,
-        fromDate: _startDate,
-        toDate: _endDate,
-        timeBased: _isTimeBased,
-        goalTime: _goalMinutes,
-        timeRemaining: _goalMinutes,
-        isComplete: false,
-        desc: _isTimeBased ? "none" : _goalDescTextController.text);
-
-    _goalEditorBloc.add(UpdateGoalEvent(updatedGoal));
-  }
-
-  void _selectStartDate() async {
-    DateTime lastDate = _endDate ?? TickTock.today().add(Duration(days: 365));
-
-    DateTime initialDate =
-        TickTock.today().isBefore(lastDate) ? TickTock.today() : lastDate;
-
-    DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: TickTock.today().subtract(Duration(days: 365)),
-        lastDate: lastDate);
-
-    if (pickedDate != null) {
-      goalIsChanged('fromDate', pickedDate.millisecondsSinceEpoch);
-      setState(() {
-        _startDate =
-            DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
-      });
-    }
-  }
-
-  void _selectEndDate() async {
-    DateTime firstDate =
-        _startDate ?? TickTock.today().subtract(Duration(days: 365));
-
-    DateTime initialDate =
-        TickTock.today().isAfter(firstDate) ? TickTock.today() : _startDate;
-
-    DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: firstDate,
-        lastDate: TickTock.today().add(Duration(days: 365)));
-
-    if (pickedDate != null) {
-      setState(() {
-        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
-      });
-    }
-  }
+  // BUILDERS
 
   Widget _goalDetailAreaBuilder() {
     Widget area;
@@ -357,51 +337,81 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => _goalEditorBloc,
-      child: Builder(builder: (BuildContext context) {
-        return BlocListener(
-          bloc: _goalEditorBloc,
-          listener: (context, state) {
-            if (state is GoalUpdatedState || state is GoalDeletedState) {
-              Navigator.of(context).pop(true);
-            }
-          },
-          child: Scaffold(
-            appBar: AppBar(),
-            body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
-              builder: (context, state) {
-                Widget body;
+// ACTIONS
 
-                if (state is EmptyGoalEditorState ||
-                    state is GoalCrudInProgressState) {
-                  body = Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is GoalEditorGoalReturnedState) {
-                  body = Center(
-                    child: CircularProgressIndicator(),
-                  );
-                  _setScreenValues(state.goal);
-                  // _goalEditorBloc.goal = state.goal;
-                  _goalEditorBloc.add(EditGoalEvent());
-                } else if (state is GoalEditorEditingState) {
-                  body = _goalEditArea();
-                } else if (state is GoalUpdatedState ||
-                    state is GoalDeletedState) {
-                  body = Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return body;
-              },
-            ),
-          ),
-        );
-      }),
-    );
+  void goalIsChanged(String key, dynamic value) {
+    Map changeMap = Map.from(_goalEditorBloc.goalModel.toMap());
+    changeMap.update(key, (_) {
+      return value;
+    });
+    // bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
+  }
+
+  void _setDoneButtonEnabled() {
+    bool timeOrTaskSet;
+    if (_isTimeBased)
+      timeOrTaskSet = _goalMinutes > 0;
+    else
+      timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
+
+    _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+  }
+
+  void _updateGoal() async {
+    // TODO - finish this
+    Goal updatedGoal = Goal(
+        goalId: _goalEditorBloc.theGoal.goalId,
+        skillId: _goalEditorBloc.theGoal.skillId,
+        fromDate: _startDate,
+        toDate: _endDate,
+        timeBased: _isTimeBased,
+        goalTime: _goalMinutes,
+        timeRemaining: _goalMinutes,
+        isComplete: false,
+        desc: _isTimeBased ? "none" : _goalDescTextController.text);
+
+    _goalEditorBloc.add(UpdateGoalEvent(updatedGoal));
+  }
+
+  void _selectStartDate() async {
+    DateTime lastDate = _endDate ?? TickTock.today().add(Duration(days: 365));
+
+    DateTime initialDate =
+        TickTock.today().isBefore(lastDate) ? TickTock.today() : lastDate;
+
+    DateTime pickedDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: TickTock.today().subtract(Duration(days: 365)),
+        lastDate: lastDate);
+
+    if (pickedDate != null) {
+      goalIsChanged('fromDate', pickedDate.millisecondsSinceEpoch);
+      setState(() {
+        _startDate =
+            DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+      });
+    }
+  }
+
+  void _selectEndDate() async {
+    DateTime firstDate =
+        _startDate ?? TickTock.today().subtract(Duration(days: 365));
+
+    DateTime initialDate =
+        TickTock.today().isAfter(firstDate) ? TickTock.today() : _startDate;
+
+    DateTime pickedDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: TickTock.today().add(Duration(days: 365)));
+
+    if (pickedDate != null) {
+      setState(() {
+        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+      });
+    }
   }
 
   void _setScreenValues(Goal goal) {
