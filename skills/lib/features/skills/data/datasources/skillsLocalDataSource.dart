@@ -192,7 +192,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       totalTime: 0,
       lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
       currentGoalId: 0,
-      goalText: "Goal: none",
+      // goalText: "Goal: none",
       priority: skill.priority,
       proficiency: skill.proficiency,
     );
@@ -226,7 +226,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       totalTime: skill.totalTime,
       lastPracDate: skill.lastPracDate,
       currentGoalId: skill.currentGoalId,
-      goalText: skill.goalText,
+      // goalText: skill.goalText,
       priority: skill.priority,
       proficiency: skill.proficiency,
     );

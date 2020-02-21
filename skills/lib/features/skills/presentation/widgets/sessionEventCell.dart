@@ -25,8 +25,7 @@ class SessionEventCell extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(skill.goalText,
-                      style: Theme.of(context).textTheme.body1),
+                  Text(goal.goalText, style: Theme.of(context).textTheme.body1),
                 ],
               ),
               Row(

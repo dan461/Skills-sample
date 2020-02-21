@@ -114,7 +114,7 @@ class SkillCell extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
-          skill.goalText,
+          'NEED GOALTEXT',
           style: thisTheme.subtitle,
           overflow: TextOverflow.ellipsis,
         )

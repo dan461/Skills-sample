@@ -13,7 +13,7 @@ class SkillModel extends Skill {
       int totalTime,
       DateTime lastPracDate,
       int currentGoalId,
-      String goalText,
+      // String goalText,
       int priority,
       int proficiency})
       : super(
@@ -26,7 +26,7 @@ class SkillModel extends Skill {
           totalTime: totalTime,
           lastPracDate: lastPracDate,
           currentGoalId: currentGoalId,
-          goalText: goalText,
+          // goalText: goalText,
           priority: priority,
           proficiency: proficiency,
         );
@@ -44,7 +44,7 @@ class SkillModel extends Skill {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']).toUtc()
           : DateTime.fromMillisecondsSinceEpoch(map['startDate']).toUtc(),
       currentGoalId: map['goalId'],
-      goalText: map['goalText'],
+      // goalText: map['goalText'],
       priority: map['priority'],
       proficiency: map['proficiency'],
     );
@@ -61,7 +61,7 @@ class SkillModel extends Skill {
       'totalTime': totalTime,
       'lastPracDate': lastPracDate.millisecondsSinceEpoch,
       'goalId': currentGoalId,
-      'goalText': goalText,
+      // 'goalText': goalText,
       'priority': priority,
       'proficiency': proficiency
     };
@@ -78,7 +78,7 @@ class SkillModel extends Skill {
         totalTime,
         lastPracDate,
         currentGoalId,
-        goalText,
+        // goalText,
         priority,
         proficiency
       ];

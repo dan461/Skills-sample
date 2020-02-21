@@ -174,7 +174,8 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   }
 
   Widget _sourceInstrRow(Skill skill) {
-    String sourceString = skill.source.isNotEmpty ? skill.source : 'source: none';
+    String sourceString =
+        skill.source.isNotEmpty ? skill.source : 'source: none';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -260,7 +261,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
                 ],
               ),
               Text(
-                bloc.skill.goalText,
+                'NEED GOAL TEXT',
                 style: Theme.of(context).textTheme.subhead,
                 maxLines: 2,
                 textAlign: TextAlign.start,

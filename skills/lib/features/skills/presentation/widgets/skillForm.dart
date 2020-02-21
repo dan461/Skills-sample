@@ -309,7 +309,7 @@ class _SkillFormState extends State<SkillForm> {
         totalTime: skill.totalTime,
         lastPracDate: skill.lastPracDate,
         currentGoalId: skill.currentGoalId,
-        goalText: skill.goalText,
+        // goalText: skill.goalText,
         priority: PRIORITIES.indexOf(_priorityString),
         proficiency: currentProfValue.toInt(),
       );

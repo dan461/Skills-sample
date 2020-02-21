@@ -544,7 +544,7 @@ class SessionEventCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(skill.goalText,
+                  Text(goal.goalText,
                       style: Theme.of(context).textTheme.body1),
                 ],
               ),
