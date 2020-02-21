@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 
 class GoalModel extends Goal {
@@ -10,6 +11,7 @@ class GoalModel extends Goal {
       @required bool timeBased,
       @required bool isComplete,
       @required int goalTime,
+      String goalText,
       int timeRemaining,
       String desc})
       : super(
@@ -20,6 +22,7 @@ class GoalModel extends Goal {
             isComplete: isComplete,
             timeBased: timeBased,
             goalTime: goalTime,
+            goalText: goalText,
             timeRemaining: timeRemaining,
             desc: desc);
 
@@ -32,6 +35,7 @@ class GoalModel extends Goal {
         timeBased: map['timeBased'] == 0 ? false : true,
         isComplete: map['isComplete'] == 0 ? false : true,
         goalTime: map['goalTime'],
+        goalText: map['goalText'],
         timeRemaining: map['timeRemaining'],
         desc: map['desc']);
   }
@@ -45,9 +49,61 @@ class GoalModel extends Goal {
       'isComplete': isComplete,
       'timeBased': timeBased,
       'goalTime': goalTime,
+      'goalText': goalText,
       'timeRemaining': timeRemaining,
       'desc': desc
     };
+  }
+
+  static String translateGoal(Goal goal) {
+    String translation;
+    final durationString = createDurationString(goal.fromDate, goal.toDate);
+
+    if (goal.timeBased) {
+      final timeString = createGoalTimeString(goal.goalTime);
+      translation = 'Goal: $timeString $durationString.';
+    } else {
+      var desc = goal.desc;
+      translation = 'Goal: $desc $durationString.';
+    }
+
+    return translation;
+  }
+
+  static String createGoalTimeString(int time) {
+    String timeString;
+
+    String hours;
+    String min;
+    if (time < 60) {
+      min = time.toString();
+      timeString = '$min minutes';
+    } else if (time == 60) {
+      timeString = '1 hour';
+    } else {
+      hours = (time / 60).floor().toString();
+      timeString = '$hours hrs';
+      if (time % 60 != 0) {
+        min = (time % 60).toString();
+        timeString = '$hours hrs $min min';
+      }
+    }
+
+    return timeString;
+  }
+
+  static String createDurationString(DateTime from, DateTime to) {
+    String durationString;
+
+    // final fromDate = DateTime.fromMillisecondsSinceEpoch(from);
+    final fromString = DateFormat.MMMd().format(from);
+    if (from == to) {
+      durationString = 'on $fromString';
+    } else {
+      final toString = DateFormat.MMMd().format(to);
+      durationString = 'between $fromString and $toString';
+    }
+    return durationString;
   }
 
   @override
@@ -59,6 +115,7 @@ class GoalModel extends Goal {
         isComplete,
         timeBased,
         goalTime,
+        goalText,
         timeRemaining,
         desc
       ];

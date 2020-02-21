@@ -9,6 +9,7 @@ class Goal extends Equatable {
   final bool isComplete;
   final bool timeBased;
   final int goalTime;
+  final String goalText;
   final int timeRemaining;
   final String desc;
 
@@ -20,6 +21,7 @@ class Goal extends Equatable {
       @required this.isComplete,
       @required this.timeBased,
       @required this.goalTime,
+      this.goalText,
       this.timeRemaining,
       this.desc})
       : super();
@@ -33,6 +35,7 @@ class Goal extends Equatable {
         isComplete,
         timeBased,
         goalTime,
+        goalText,
         timeRemaining,
         desc
       ];

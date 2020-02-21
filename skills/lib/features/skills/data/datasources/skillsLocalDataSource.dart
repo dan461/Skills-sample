@@ -126,7 +126,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   final String _createGoalTable = "$createTable goals(goalId $primaryKey, "
       "skillId INTEGER, fromDate INTEGER, toDate INTEGER, isComplete INTEGER, timeBased INTEGER, "
-      "goalTime INTEGER, timeRemaining INTEGER, desc TEXT, "
+      "goalTime INTEGER, goalText TEXT, timeRemaining INTEGER, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
   final String _createSessionsTable =
@@ -265,6 +265,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeBased: goal.timeBased,
         isComplete: false,
         goalTime: goal.goalTime,
+        goalText: GoalModel.translateGoal(goal),
         timeRemaining: goal.goalTime,
         desc: goal.desc != null ? goal.desc : "");
 
@@ -286,6 +287,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeBased: goal.timeBased,
         isComplete: goal.isComplete,
         goalTime: goal.goalTime,
+        goalText: GoalModel.translateGoal(goal),
         timeRemaining: goal.timeRemaining,
         desc: goal.desc);
     int updates = await db.update(goalsTable, goalModel.toMap(),
