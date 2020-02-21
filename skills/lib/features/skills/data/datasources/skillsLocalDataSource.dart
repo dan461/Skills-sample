@@ -163,6 +163,22 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return null;
   }
 
+  Future<Map<String, dynamic>> getSkillInfoById(int id) async {
+    // final Database db = await database;
+    SkillModel skill = await getSkillById(id);
+    if (skill != null) {
+      Map<String, dynamic> map = {'skill': skill};
+      GoalModel goal = await getGoalById(skill.currentGoalId);
+      if (goal != null) {
+        map.addAll(
+            {'goalText': 'goal translation', 'goalComplete': goal.isComplete});
+      }
+
+      return map;
+    } else
+      return null;
+  }
+
   @override
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
