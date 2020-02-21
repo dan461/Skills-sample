@@ -207,10 +207,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     if (!_showEventCreator) {
       body = SizedBox();
     } else {
-      Map<String, dynamic> map = {
-        'skill': bloc.selectedSkill,
-        'goal': bloc.currentGoal
-      };
+      // Map<String, dynamic> map = {
+      //   'skill': bloc.selectedSkill,
+      //   'goal': bloc.currentGoal
+      // };
       body = EventCreator(
           eventMap: currentEventMap,
           addEventCallback: _addEvent,

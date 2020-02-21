@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:skills/core/enums.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_event.dart';
 import 'package:skills/features/skills/presentation/widgets/completedActivitiesCell.dart';
 import 'package:skills/features/skills/presentation/widgets/skillForm.dart';
-import 'package:skills/service_locator.dart';
 
 import 'goalEditorScreen.dart';
 import 'newGoalScreen.dart';

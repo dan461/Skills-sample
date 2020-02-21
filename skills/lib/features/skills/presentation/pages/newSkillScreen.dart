@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/core/constants.dart';
-import 'package:skills/core/enums.dart';
-import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
-import 'package:skills/features/skills/presentation/pages/instrumentsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/skillForm.dart';
 
 class NewSkillScreen extends StatefulWidget {

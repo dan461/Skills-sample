@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
 
@@ -27,7 +26,7 @@ class _EventCreatorState extends State<EventCreator> {
   final AddEventCallback addEventCallback;
   final CancelEventCreateCallback cancelEventCreateCallback;
   Skill _selectedSkill;
-  Goal _currentGoal;
+  // Goal _currentGoal;
 
   TextEditingController _eventDurationTextControl = TextEditingController();
   bool _addButtonEnabled = false;
@@ -39,14 +38,14 @@ class _EventCreatorState extends State<EventCreator> {
   initState() {
     super.initState();
     _selectedSkill = eventMap['skill'];
-    _currentGoal = eventMap['goal'];
+    // _currentGoal = eventMap['goal'];
   }
 
   @override
   dispose() {
     super.dispose();
     _selectedSkill = null;
-    _currentGoal = null;
+    // _currentGoal = null;
   }
 
   int get _eventDuration {

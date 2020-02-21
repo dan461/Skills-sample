@@ -100,7 +100,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     changeMap.update(key, (_) {
       return value;
     });
-    bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
+    // bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
   }
 
   void _setDoneButtonEnabled() {

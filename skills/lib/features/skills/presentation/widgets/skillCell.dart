@@ -103,11 +103,11 @@ class SkillCell extends StatelessWidget {
     );
   }
 
-  Row _instrumentRow() {
-    return Row(
-      children: <Widget>[Text('${skill.instrument}')],
-    );
-  }
+  // Row _instrumentRow() {
+  //   return Row(
+  //     children: <Widget>[Text('${skill.instrument}')],
+  //   );
+  // }
 
   Row _goalRow() {
     return Row(

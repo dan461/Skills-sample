@@ -21,7 +21,7 @@ void main() {
   MockGetEventsForSessionUC mockGetEventsForSessionUC;
   MockGetMapsForSessionsInDateRange mockGetMapsForSessionsInDateRange;
 
-  MockCalendarControl mockCalendarControl;
+  // MockCalendarControl mockCalendarControl;
   Session testSession;
   Session testSession1;
   Session testSession2;
