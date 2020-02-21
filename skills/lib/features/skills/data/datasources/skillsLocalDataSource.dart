@@ -41,6 +41,7 @@ abstract class SkillsLocalDataSource {
   Future<int> deleteEventById(int id);
   Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
   Future<List<SkillEvent>> getEventsForSession(int sessionId);
+  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId);
   Future<List<Map>> getInfoForEvents(List<SkillEvent> events);
   Future<List<Map>> getEventMapsForSession(int sessionId);
 }
@@ -111,7 +112,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   static final String primaryKey = "INTEGER PRIMARY KEY";
   // static final String idKey = "id $primaryKey, ";
-  static final String integer = "INTEGER";
+  // static final String integer = "INTEGER";
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // static final String skillId = 'skillId';
@@ -121,21 +122,21 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   // table creation
   final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
-      "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId $integer, goalText TEXT)";
+      "name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, goalText TEXT, priority INTEGER, proficiency INTEGER)";
 
   final String _createGoalTable = "$createTable goals(goalId $primaryKey, "
-      "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
-      "goalTime $integer, timeRemaining $integer, desc TEXT, "
+      "skillId INTEGER, fromDate INTEGER, toDate INTEGER, isComplete INTEGER, timeBased INTEGER, "
+      "goalTime INTEGER, timeRemaining INTEGER, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
   final String _createSessionsTable =
       "$createTable sessions(sessionId $primaryKey, "
-      "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
+      "date INTEGER, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
       "isScheduled INTEGER, isComplete INTEGER)";
 
   final String _createSkillEventsTable =
       "$createTable skillEvents(eventId $primaryKey, "
-      "skillId $integer, sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
+      "skillId INTEGER, sessionId INTEGER, date INTEGER, duration INTEGER, isComplete INTEGER, skillString TEXT, "
       "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
 // ******* SKILLS *********
@@ -165,16 +166,20 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
-    DateTime today = DateTime.utc(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
     final SkillModel skillModel = SkillModel(
-        name: skill.name,
-        source: skill.source,
-        startDate: today,
-        totalTime: 0,
-        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
-        currentGoalId: 0,
-        goalText: "Goal: none");
+      name: skill.name,
+      type: skill.type,
+      source: skill.source,
+      instrument: skill.instrument,
+      startDate: skill.startDate,
+      totalTime: 0,
+      lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
+      currentGoalId: 0,
+      goalText: "Goal: none",
+      priority: skill.priority,
+      proficiency: skill.proficiency,
+    );
 
     int id = await db.insert(skillsTable, skillModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -196,14 +201,19 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> updateSkill(Skill skill) async {
     final Database db = await database;
     final SkillModel skillModel = SkillModel(
-        skillId: skill.skillId,
-        name: skill.name,
-        source: skill.source,
-        startDate: skill.startDate,
-        totalTime: skill.totalTime,
-        lastPracDate: skill.lastPracDate,
-        currentGoalId: skill.currentGoalId,
-        goalText: skill.goalText);
+      skillId: skill.skillId,
+      name: skill.name,
+      type: skill.type,
+      source: skill.source,
+      instrument: skill.instrument,
+      startDate: skill.startDate,
+      totalTime: skill.totalTime,
+      lastPracDate: skill.lastPracDate,
+      currentGoalId: skill.currentGoalId,
+      goalText: skill.goalText,
+      priority: skill.priority,
+      proficiency: skill.proficiency,
+    );
     int updates = await db.update(skillsTable, skillModel.toMap(),
         where: 'skillId = ?', whereArgs: [skillModel.skillId]);
     return updates;
@@ -479,6 +489,19 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final Database db = await database;
     List<Map> maps = await db.query(skillEventsTable,
         where: 'sessionId = ?', whereArgs: [sessionId]);
+    List<SkillEvent> events = [];
+    for (var map in maps) {
+      events.add(SkillEventModel.fromMap(map));
+    }
+    return events;
+  }
+
+  @override
+  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(skillEventsTable,
+        where: 'skillId = ? AND isComplete = 1', whereArgs: [skillId]);
+
     List<SkillEvent> events = [];
     for (var map in maps) {
       events.add(SkillEventModel.fromMap(map));

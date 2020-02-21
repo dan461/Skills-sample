@@ -5,6 +5,7 @@ import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
 import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'features/skills/data/repos/goalsRepositoryImpl.dart';
@@ -16,6 +17,7 @@ import 'features/skills/domain/usecases/sessionUseCases.dart';
 import 'features/skills/domain/usecases/skillEventsUseCases.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
+import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
@@ -28,8 +30,14 @@ void init() {
 
   locator.registerFactory(() => SkillsBloc(getAllSkills: locator()));
 
+  locator.registerFactory(() => NewskillBloc(insertNewSkillUC: locator()));
+
+  locator.registerFactory(() => SkillDataBloc(
+      getCompletedEventsForSkill: locator(),
+      updateSkill: locator(),
+      getSkillById: locator()));
+
   locator.registerFactory(() => SkillEditorBloc(
-      insertNewSkillUC: locator(),
       updateSkill: locator(),
       getSkillById: locator(),
       deleteSkillWithId: locator()));
@@ -89,6 +97,7 @@ void init() {
   locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
   locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
   locator.registerLazySingleton(() => GetEventsForSession(locator()));
+  locator.registerLazySingleton(() => GetCompletedEventsForSkill(locator()));
   locator.registerLazySingleton(() => GetEventMapsForSession(locator()));
   locator.registerLazySingleton(() => CompleteSessionAndEvents(locator()));
   // locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));

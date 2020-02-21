@@ -16,7 +16,12 @@ void main() {
     sut = UpdateSkill(mockSkillsRepo);
   });
 
-  final testSkill = Skill(name: 'test', source: 'test');
+  final testSkill = Skill(
+    name: 'test',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
 
   test('should update skill and return int for number of changes made',
       () async {

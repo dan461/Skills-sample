@@ -20,10 +20,14 @@ class _SkillsAppState extends State<SkillsApp> {
     return MaterialApp(
       home: DbManager(),
       theme: ThemeData(
-        primaryColor: Colors.green,
-        accentColor: Colors.lightGreenAccent,
-        scaffoldBackgroundColor: Colors.white,
-      ),
+          // brightness: Brightness.dark,
+          backgroundColor: Colors.white,
+          primaryColor: Colors.blue[800],
+          accentColor: Colors.lightGreenAccent,
+          // scaffoldBackgroundColor: Colors.blue[800],
+          textTheme: Theme.of(context)
+              .textTheme
+              .copyWith(subhead: new TextStyle(fontWeight: FontWeight.w600))),
     );
   }
 }

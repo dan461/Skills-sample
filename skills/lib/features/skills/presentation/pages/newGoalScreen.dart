@@ -342,7 +342,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
       child: BlocListener<NewgoalBloc, NewgoalState>(
         listener: (context, state) {
           if (state is GoalAddedToSkillState) {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           }
         },
         child: Builder(builder: (BuildContext context) {

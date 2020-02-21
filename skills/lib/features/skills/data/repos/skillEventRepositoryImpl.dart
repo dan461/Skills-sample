@@ -33,7 +33,8 @@ class SkillEventRepositoryImpl implements SkillEventRepository {
   }
 
   @override
-  Future<Either<Failure, int>> updateEvent(Map<String, dynamic> changeMap, eventId) async {
+  Future<Either<Failure, int>> updateEvent(
+      Map<String, dynamic> changeMap, eventId) async {
     return Right(await localDataSource.updateEvent(changeMap, eventId));
   }
 
@@ -41,6 +42,12 @@ class SkillEventRepositoryImpl implements SkillEventRepository {
   Future<Either<Failure, List<SkillEvent>>> getEventsForSession(
       int sessionId) async {
     return Right(await localDataSource.getEventsForSession(sessionId));
+  }
+
+  @override
+  Future<Either<Failure, List<SkillEvent>>> getCompletedActivitiesForSkill(
+      int skillId) async {
+    return Right(await localDataSource.getCompletedActivitiesForSkill(skillId));
   }
 
   // TODO - dead code?
@@ -51,7 +58,8 @@ class SkillEventRepositoryImpl implements SkillEventRepository {
   }
 
   @override
-  Future<Either<Failure, List<Map>>> getEventMapsForSession(int sessionId) async {
+  Future<Either<Failure, List<Map>>> getEventMapsForSession(
+      int sessionId) async {
     return Right(await localDataSource.getEventMapsForSession(sessionId));
   }
 }

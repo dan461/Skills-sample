@@ -9,7 +9,7 @@ import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
 
 class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
-  final InsertNewSkill insertNewSkillUC;
+  
   final UpdateSkill updateSkill;
   final GetSkillById getSkillById;
   final DeleteSkillWithId deleteSkillWithId;
@@ -17,7 +17,7 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
   Skill skill;
 
   SkillEditorBloc(
-      {@required this.insertNewSkillUC,
+      {
       @required this.updateSkill,
       @required this.getSkillById,
       @required this.deleteSkillWithId});
@@ -29,36 +29,29 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
   Stream<SkillEditorState> mapEventToState(
     SkillEditorEvent event,
   ) async* {
-    if (event is CreateSkillEvent) {
-      yield CreatingNewSkillState();
-    } else if (event is EditSkillEvent) {
+    if (event is EditSkillEvent) {
       skill = event.skill;
       yield EditingSkillState(event.skill);
-    } else if (event is InsertNewSkillEvent) {
-      yield NewSkillInsertingState();
-      final failureOrNewId = await insertNewSkillUC(
-          SkillInsertOrUpdateParams(skill: event.newSkill));
-      yield failureOrNewId
-          .fold((failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
-              (newSkill) {
-        skill = newSkill;
-
-        return EditingSkillState(skill);
-      });
-    } else if (event is GetSkillByIdEvent) {
+    } 
+    
+    else if (event is GetSkillByIdEvent) {
       yield SkillEditorCrudInProgressState();
       final failureOrSkill = await getSkillById(GetSkillParams(id: event.id));
       yield failureOrSkill.fold(
           (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
           (skill) => SkillRetrievedForEditingState(skill));
-    } else if (event is UpdateSkillEvent) {
+    } 
+    
+    else if (event is UpdateSkillEvent) {
       yield UpdatingSkillState();
       final failureOrUpdates =
           await updateSkill(SkillInsertOrUpdateParams(skill: event.skill));
       yield failureOrUpdates.fold(
           (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
           (updates) => UpdatedSkillState());
-    } else if (event is DeleteSkillWithIdEvent) {
+    } 
+    
+    else if (event is DeleteSkillWithIdEvent) {
       yield DeletingSkillWithIdState();
       final failureOrResponse =
           await deleteSkillWithId(SkillDeleteParams(skillId: event.skillId));

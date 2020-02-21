@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
-import 'package:skills/features/skills/presentation/pages/skillEditorScreen.dart';
+import 'package:skills/features/skills/presentation/pages/skillDataScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
 import 'package:skills/service_locator.dart';
+
+import 'newSkillScreen.dart';
 
 typedef SelectionCallback(Skill skill);
 
@@ -77,9 +79,10 @@ class _SkillsScreenState extends State<SkillsScreen> {
             } else if (state is AllSkillsLoaded) {
               // bloc.skills = state.skills;
               body = Container(
+                color: Colors.white,
                 child: SkillsList(
                   skills: bloc.skills,
-                  callback: callback == null ? editSkill : callback,
+                  callback: callback == null ? viewSkill : callback,
                 ),
               );
             } else {
@@ -118,6 +121,18 @@ class _SkillsScreenState extends State<SkillsScreen> {
               const PopupMenuItem<SkillSortOption>(
                 value: SkillSortOption.lastPracDate,
                 child: Text('Last Practiced'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.instrument,
+                child: Text('Instrument'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.priority,
+                child: Text('Priority'),
+              ),
+              const PopupMenuItem<SkillSortOption>(
+                value: SkillSortOption.proficiency,
+                child: Text('Proficiency'),
               )
             ]);
   }
@@ -135,26 +150,36 @@ class _SkillsScreenState extends State<SkillsScreen> {
   }
 
   void addSkill() async {
-    final editor = SkillEditorScreen(
-      skillEditorBloc: locator<SkillEditorBloc>(),
-    );
-    editor.skillEditorBloc.add(CreateSkillEvent());
+    // final newSkillScreen = NewSkillScreen(bloc: locator<NewskillBloc>());
+
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return editor;
+      return NewSkillScreen(bloc: locator<NewskillBloc>());
     }));
+
     bloc.add(GetAllSkillsEvent());
   }
 
-  void editSkill(Skill skill) async {
-    final editor = SkillEditorScreen(
-      skillEditorBloc: locator<SkillEditorBloc>(),
-    );
-    editor.skillEditorBloc.add(EditSkillEvent(skill));
+  void viewSkill(Skill skill) async {
+    final skillScreen = SkillDataScreen(bloc: locator<SkillDataBloc>());
+    skillScreen.bloc.skill = skill;
+    skillScreen.bloc.add(GetEventsForSkillEvent(skillId: skill.skillId));
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return editor;
+      return skillScreen;
     }));
+
     bloc.add(GetAllSkillsEvent());
   }
+
+  // void editSkill(Skill skill) async {
+  //   final editor = SkillEditorScreen(
+  //     skillEditorBloc: locator<SkillEditorBloc>(),
+  //   );
+  //   editor.skillEditorBloc.add(EditSkillEvent(skill));
+  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+  //     return editor;
+  //   }));
+  //   bloc.add(GetAllSkillsEvent());
+  // }
 }
 
 class SkillsList extends StatefulWidget {

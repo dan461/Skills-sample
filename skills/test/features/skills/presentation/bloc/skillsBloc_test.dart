@@ -12,10 +12,30 @@ import '../../mockClasses.dart';
 void main() {
   SkillsBloc sut;
   MockGetAllSkillsUC mockGetAllSkillsUC;
-  Skill testSkill1 = Skill(name: 'Zulu', source: 'test');
-  Skill testSkill2 = Skill(name: 'Delta', source: 'test');
-  Skill testSkill3 = Skill(name: 'Alpha', source: 'test');
-  Skill testSkill4 = Skill(name: 'Lima', source: 'test');
+  Skill testSkill1 = Skill(
+    name: 'Zulu',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  Skill testSkill2 = Skill(
+    name: 'Delta',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  Skill testSkill3 = Skill(
+    name: 'Alpha',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  Skill testSkill4 = Skill(
+    name: 'Lima',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
   List<Skill> skillsList;
 
   setUp(() {
@@ -25,10 +45,30 @@ void main() {
       getAllSkills: mockGetAllSkillsUC,
     );
 
-    testSkill1 = Skill(name: 'Zulu', source: 'test');
-    testSkill2 = Skill(name: 'Delta', source: 'test');
-    testSkill3 = Skill(name: 'Alpha', source: 'test');
-    testSkill4 = Skill(name: 'Lima', source: 'test');
+    testSkill1 = Skill(
+      name: 'Zulu',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    testSkill2 = Skill(
+      name: 'Delta',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    testSkill3 = Skill(
+      name: 'Alpha',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    testSkill4 = Skill(
+      name: 'Lima',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
     skillsList = [testSkill1, testSkill2, testSkill3, testSkill4];
   });
 

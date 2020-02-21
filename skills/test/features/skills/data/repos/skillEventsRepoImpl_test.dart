@@ -68,7 +68,7 @@ void main() {
 
     test('updateEventById - returns int of number of row changes, should be 1',
         () async {
-          Map<String, dynamic> changeMap = {'isCompleted' : 1};
+      Map<String, dynamic> changeMap = {'isCompleted': 1};
       when(mockLocalDataSource.updateEvent(changeMap, 1))
           .thenAnswer((_) async => 1);
       final result = await sut.updateEvent(changeMap, 1);
@@ -78,9 +78,21 @@ void main() {
 
     test('getEventsForSession - returns a list of SkillEvents', () async {
       final eventsList = [testEvent];
-      when(mockLocalDataSource.getEventsForSession(1)).thenAnswer((_) async => eventsList);
+      when(mockLocalDataSource.getEventsForSession(1))
+          .thenAnswer((_) async => eventsList);
       final result = await sut.getEventsForSession(1);
       verify(mockLocalDataSource.getEventsForSession(1));
+      expect(result, equals(Right(eventsList)));
+    });
+
+    test(
+        'getCompletedActivitiesForSkill - returns a list of completed activities for a Skill',
+        () async {
+      final eventsList = [testEvent];
+      when(mockLocalDataSource.getCompletedActivitiesForSkill(1))
+          .thenAnswer((_) async => eventsList);
+      final result = await sut.getCompletedActivitiesForSkill(1);
+      verify(mockLocalDataSource.getCompletedActivitiesForSkill(1));
       expect(result, equals(Right(eventsList)));
     });
   });

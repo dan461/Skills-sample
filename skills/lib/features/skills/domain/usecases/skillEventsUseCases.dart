@@ -57,8 +57,7 @@ class UpdateSkillEventUC extends UseCase<int, SkillEventUpdateParams> {
   UpdateSkillEventUC(this.repo);
 
   @override
-  Future<Either<Failure, int>> call(
-      SkillEventUpdateParams params) async {
+  Future<Either<Failure, int>> call(SkillEventUpdateParams params) async {
     return await repo.updateEvent(params.changeMap, params.eventId);
   }
 }
@@ -71,6 +70,18 @@ class GetEventsForSession extends UseCase<List<SkillEvent>, SessionByIdParams> {
   Future<Either<Failure, List<SkillEvent>>> call(
       SessionByIdParams params) async {
     return await repo.getEventsForSession(params.sessionId);
+  }
+}
+
+class GetCompletedEventsForSkill
+    extends UseCase<List<SkillEvent>, GetSkillParams> {
+  final SkillEventRepository repo;
+
+  GetCompletedEventsForSkill(this.repo);
+
+  @override
+  Future<Either<Failure, List<SkillEvent>>> call(GetSkillParams params) async {
+    return await repo.getCompletedActivitiesForSkill(params.id);
   }
 }
 

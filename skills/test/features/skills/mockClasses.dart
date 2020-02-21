@@ -64,6 +64,9 @@ class MockInsertNewEventUC extends Mock implements InsertNewSkillEventUC {}
 
 class MockGetEventByIdUC extends Mock implements GetEventByIdUC {}
 
+class MockGetCompletedEventsForSkill extends Mock
+    implements GetCompletedEventsForSkill {}
+
 class MockDeleteEventByIdUC extends Mock implements DeleteEventByIdUC {}
 
 class MockUpdateEventUC extends Mock implements UpdateSkillEventUC {}
