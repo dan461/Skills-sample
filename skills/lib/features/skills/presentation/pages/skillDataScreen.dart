@@ -137,7 +137,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   Widget _infoSectionBuilder() {
     return Container(
-      color: Colors.teal[300],
+      // color: Colors.teal[300],
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -178,11 +178,12 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   }
 
   Widget _sourceInstrRow(Skill skill) {
+    String sourceString = skill.source.isNotEmpty ? skill.source : 'source: none';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
-          skill.source,
+          sourceString,
           style: Theme.of(context).textTheme.subhead,
         ),
         Text(
