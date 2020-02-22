@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
+  // Future<List<Map<String, dynamic>>> getAllSkillsInfo();
   Future<SkillModel> getSkillById(int id);
   Future<Map<String, dynamic>> getSkillGoalMapById(int id);
   Future<Skill> insertNewSkill(Skill skill);
@@ -200,12 +201,39 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query(skillsTable);
-
-    return List.generate(maps.length, (i) {
+    List<SkillModel> skills = List.generate(maps.length, (i) {
       return SkillModel.fromMap(maps[i]);
     });
-    // return null;
+    for (var skill in skills) {
+      if (skill.currentGoalId != 0) {
+        Goal goal = await getGoalById(skill.currentGoalId);
+        skill.goal = goal;
+      }
+    }
+
+    return skills;
   }
+
+  // Future<List<Map<String, dynamic>>> getAllSkillsInfo() async {
+  //   final Database db = await database;
+  //   List<Map> skillsInfo = await db.rawQuery(
+  //       "SELECT skills.skillId, skills.name, skills.type, skills.source, skills.instrument, "
+  //       "skills.startDate, skills.totalTime, skills.lastPracDate, skills.goalId, skills.priority,"
+  //       "skills.proficiency, goals.goalText FROM skills LEFT JOIN goals ON skills.goalId = goals.goalId");
+
+  //   List<Map<String, dynamic>> infoMaps = [];
+  //   for (var map in skillsInfo) {
+  //     String goalText = map['goalText'] != null ? map['goalText'] : 'None';
+  //     Skill skill = SkillModel.fromMap(map);
+  //     Map<String, dynamic> skillInfoMap = {
+  //       'skill': skill,
+  //       'goalText': goalText
+  //     };
+  //     infoMaps.add(skillInfoMap);
+  //   }
+
+  //   return infoMaps;
+  // }
 
   @override
   Future<SkillModel> getSkillById(int id) async {

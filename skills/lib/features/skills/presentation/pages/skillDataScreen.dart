@@ -40,6 +40,10 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     return DateFormat.yMMMd().format(bloc.skill.startDate);
   }
 
+  String get goalString {
+    return bloc.goal == null ? 'None' : bloc.goal.goalText;
+  }
+
   bool _isEditing = false;
 
   @override
@@ -261,7 +265,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
                 ],
               ),
               Text(
-                'NEED GOAL TEXT',
+                goalString,
                 style: Theme.of(context).textTheme.subhead,
                 maxLines: 2,
                 textAlign: TextAlign.start,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
@@ -15,7 +16,8 @@ class SkillModel extends Skill {
       int currentGoalId,
       // String goalText,
       int priority,
-      int proficiency})
+      int proficiency,
+      Goal goal})
       : super(
           skillId: skillId,
           name: name,
@@ -29,6 +31,7 @@ class SkillModel extends Skill {
           // goalText: goalText,
           priority: priority,
           proficiency: proficiency,
+          goal: goal
         );
 
   factory SkillModel.fromMap(Map<String, dynamic> map) {
@@ -80,6 +83,7 @@ class SkillModel extends Skill {
         currentGoalId,
         // goalText,
         priority,
-        proficiency
+        proficiency,
+        goal
       ];
 }
