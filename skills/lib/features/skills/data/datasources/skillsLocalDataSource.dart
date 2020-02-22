@@ -218,16 +218,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return null;
   }
 
-  Future<Map<String, dynamic>> getSkillInfoById(int id) async {
+  Future<Map<String, dynamic>> getSkillGoalMapById(int id) async {
     // final Database db = await database;
     SkillModel skill = await getSkillById(id);
     if (skill != null) {
-      Map<String, dynamic> map = {'skill': skill};
+      // Map<String, dynamic> map = {'skill': skill};
       GoalModel goal = await getGoalById(skill.currentGoalId);
-      if (goal != null) {
-        map.addAll(
-            {'goalText': 'goal translation', 'goalComplete': goal.isComplete});
-      }
+      Map<String, dynamic> map = {'skill': skill, 'goal' : goal};
+      // if (goal != null) {
+      //   map.addEntries({'goal' : goal})
+      // }
 
       return map;
     } else
@@ -612,18 +612,20 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
     List<Map> maps = [];
     for (var event in events) {
-      SkillModel skill = await getSkillById(event.skillId);
+      // SkillModel skill = await getSkillById(event.skillId);
 
-      GoalModel goal;
-      if (skill.currentGoalId != 0) {
-        goal = await getGoalById(skill.currentGoalId);
-      }
+      // GoalModel goal;
+      // if (skill.currentGoalId != 0) {
+      //   goal = await getGoalById(skill.currentGoalId);
+      // }
 
       Map<String, dynamic> eventMap = {
         'event': event,
-        'skill': skill,
-        'goal': goal ?? 'none',
+        // 'skill': skill,
+        // 'goal': goal ?? 'none',
       };
+      Map<String, dynamic> skillMap = await getSkillGoalMapById(event.skillId);
+      eventMap.addAll(skillMap);
       maps.add(eventMap);
     }
 

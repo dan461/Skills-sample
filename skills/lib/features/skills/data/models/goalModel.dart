@@ -27,6 +27,7 @@ class GoalModel extends Goal {
             desc: desc);
 
   factory GoalModel.fromMap(Map<String, dynamic> map) {
+    
     return GoalModel(
         goalId: map['goalId'],
         skillId: map['skillId'],
@@ -35,7 +36,8 @@ class GoalModel extends Goal {
         timeBased: map['timeBased'] == 0 ? false : true,
         isComplete: map['isComplete'] == 0 ? false : true,
         goalTime: map['goalTime'],
-        goalText: map['goalText'],
+        //TODO - temp, remove this
+        goalText: map['goalText'] ?? 'update this goal',
         timeRemaining: map['timeRemaining'],
         desc: map['desc']);
   }
