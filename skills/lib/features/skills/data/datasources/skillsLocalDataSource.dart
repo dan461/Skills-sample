@@ -68,6 +68,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   final String skillEventsTable = 'skillEvents';
   // final String sessionSkillsTable = 'session_skills';
 
+  bool needsMigration = true;
+
   Future<Database> get database async {
     Directory docsDir = await getApplicationDocumentsDirectory();
     String path = join(docsDir.path, "Skills.db");
@@ -78,6 +80,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         if (_database == null) {
           _database = await openDatabase(path,
               version: dbVersion, onOpen: _onOpen, onCreate: _onCreate);
+        }
+        if (needsMigration) {
+          await _addGoalTextToGoals();
+          await _dropGoalTextFromSkills();
         }
       });
     }
@@ -93,6 +99,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   void _onCreate(Database db, int version) async {
+    needsMigration = false;
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
     await db.execute(_createSessionsTable);
@@ -140,27 +147,51 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
 
-  void _addGoalTextToGoals() async {
+  // MIGRATIONS
+  Future<void> _addGoalTextToGoals() async {
     final Database db = await database;
-    await db.execute("ALTER TABLE goals ADD COLUMN goalText text");
+
+    bool hasGoalText = await _checkTableForColumn(goalsTable, 'goalText');
+    if (hasGoalText == false) {
+      await db.execute("ALTER TABLE goals ADD COLUMN goalText text");
+    }
   }
 
-  void _dropGoalTextFromSkills() async {
+  Future<void> _dropGoalTextFromSkills() async {
     final Database db = await database;
-    await db.execute("PRAGMA foreign_keys=OFF");
-    await db.execute("BEGIN TRANSACTION");
-    await db.execute(
-        "CREATE TABLE IF NOT EXISTS tempSkills(skillId $primaryKey, name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, "
-        "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)");
-    await db.execute(
-        "INSERT INTO tempSkills(skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency) "
-        "SELECT skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency "
-        "FROM skills");
 
-    await db.execute("DROP TABLE skills");
-    await db.execute("ALTER TABLE tempSkills RENAME TO skills");
-    await db.execute("COMMIT");
-    await db.execute("PRAGMA foreign_keys=ON");
+    bool hasGoalText = await _checkTableForColumn(skillsTable, 'goalText');
+    if (hasGoalText) {
+      await db.execute("PRAGMA foreign_keys=OFF");
+      await db.execute("BEGIN TRANSACTION");
+      await db.execute(
+          "CREATE TABLE IF NOT EXISTS tempSkills(skillId $primaryKey, name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, "
+          "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)");
+      await db.execute(
+          "INSERT INTO tempSkills(skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency) "
+          "SELECT skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency "
+          "FROM skills");
+
+      await db.execute("DROP TABLE skills");
+      await db.execute("ALTER TABLE tempSkills RENAME TO skills");
+      await db.execute("COMMIT");
+      await db.execute("PRAGMA foreign_keys=ON");
+    }
+  }
+
+  Future<bool> _checkTableForColumn(String table, String columnName) async {
+    final Database db = await database;
+    bool columnFound = false;
+    await db.transaction((txn) async {
+      List<Map> columnsList = await txn.rawQuery("pragma table_info($table)");
+      for (var column in columnsList) {
+        if (column['name'] == columnName) {
+          columnFound = true;
+          break;
+        }
+      }
+    });
+    return columnFound;
   }
 
 // ******* SKILLS *********
