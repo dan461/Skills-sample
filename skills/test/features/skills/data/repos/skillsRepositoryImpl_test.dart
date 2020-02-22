@@ -1,6 +1,7 @@
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/data/repos/skillsRepositoryImpl.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:dartz/dartz.dart';
@@ -68,6 +69,24 @@ void main() {
 
       verify(mockLocalDataSource.getSkillById(1));
       expect(result, equals(Right(tSkill)));
+    });
+
+    test('getSkillGoalMapById - returns a Map with a Skill and Goal', () async {
+      final testGoal = Goal(
+          skillId: 1,
+          goalTime: 1,
+          fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+          toDate: DateTime.fromMillisecondsSinceEpoch(0),
+          isComplete: false,
+          timeBased: true);
+
+      Map<String, dynamic> testMap = {'skill': tSkill, 'goal': testGoal};
+
+      when(mockLocalDataSource.getSkillGoalMapById(1))
+          .thenAnswer((_) async => testMap);
+          final result = await repositoryImpl.getSkillGoalMapById(1);
+          verify(mockLocalDataSource.getSkillGoalMapById(1));
+          expect(result, equals(Right(testMap)));
     });
 
     test(

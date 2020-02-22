@@ -58,3 +58,15 @@ class GetSkillById extends UseCase<Skill, GetSkillParams> {
     return await repo.getSkillById(params.id);
   }
 }
+
+class GetSkillGoalMapById extends UseCase<Map<String, dynamic>, GetSkillParams> {
+  final SkillRepository repo;
+
+  GetSkillGoalMapById(this.repo);
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> call(GetSkillParams params) {
+    
+    return repo.getSkillGoalMapById(params.id);
+  }
+  
+}

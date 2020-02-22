@@ -17,6 +17,7 @@ abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
   Future<SkillModel> getSkillById(int id);
+  Future<Map<String, dynamic>> getSkillGoalMapById(int id);
   Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
   Future<int> updateSkill(Skill skill);
@@ -146,7 +147,6 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "skillId INTEGER, sessionId INTEGER, date INTEGER, duration INTEGER, isComplete INTEGER, skillString TEXT, "
       "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
-
   // MIGRATIONS
   Future<void> _addGoalTextToGoals() async {
     final Database db = await database;
@@ -218,13 +218,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return null;
   }
 
+  @override
   Future<Map<String, dynamic>> getSkillGoalMapById(int id) async {
     // final Database db = await database;
     SkillModel skill = await getSkillById(id);
     if (skill != null) {
       // Map<String, dynamic> map = {'skill': skill};
       GoalModel goal = await getGoalById(skill.currentGoalId);
-      Map<String, dynamic> map = {'skill': skill, 'goal' : goal};
+      Map<String, dynamic> map = {'skill': skill, 'goal': goal};
       // if (goal != null) {
       //   map.addEntries({'goal' : goal})
       // }

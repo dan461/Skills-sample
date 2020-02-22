@@ -42,6 +42,8 @@ class MockDeleteSkillUC extends Mock implements DeleteSkillWithId {}
 
 class MockGetSkillByIdUC extends Mock implements GetSkillById {}
 
+class MockGetSkillGoalMapById extends Mock implements GetSkillGoalMapById {}
+
 class MockGetAllSkillsUC extends Mock implements GetAllSkills {}
 
 class MockGetSkillById extends Mock implements GetSkillById {}
