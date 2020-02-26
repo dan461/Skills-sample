@@ -75,17 +75,22 @@ class _SkillFormState extends State<SkillForm> {
 // CHANGE LISTENERS
   void _nameChangeListener() {
     if (_isEditing) changeMonitor.nameText = _nameController.text;
+    setDoneButtonEnabled();
   }
 
   void _sourceChangeListener() {
     if (_isEditing) changeMonitor.sourceText = _sourceController.text;
+    setDoneButtonEnabled();
   }
 
   void _skillTypeChanged(String value) {
     setState(() {
       _selectedType = value;
     });
-    if (_isEditing) changeMonitor.skillType = value;
+    if (_isEditing){
+      changeMonitor.skillType = value;
+      setDoneButtonEnabled();
+    } 
   }
 
   void _priorityChanged(String value) {
@@ -93,8 +98,11 @@ class _SkillFormState extends State<SkillForm> {
       _priorityString = value;
     });
 
-    if (_isEditing)
+    if (_isEditing){
       changeMonitor.priorityValue = PRIORITIES.indexOf(_priorityString);
+      setDoneButtonEnabled();
+    }
+      
   }
 
   void _proficiencyChanged(double value) {
@@ -103,7 +111,10 @@ class _SkillFormState extends State<SkillForm> {
       _profString = value.toInt().toString();
     });
 
-    if (_isEditing) changeMonitor.proficiencyValue = currentProfValue.toInt();
+    if (_isEditing){
+      changeMonitor.proficiencyValue = currentProfValue.toInt();
+      setDoneButtonEnabled();
+    } 
   }
 
 // BUILD
@@ -201,9 +212,9 @@ class _SkillFormState extends State<SkillForm> {
       textCapitalization: TextCapitalization.sentences,
       controller: _nameController,
       decoration: InputDecoration(labelText: 'Name'),
-      onChanged: (_) {
-        setDoneButtonEnabled();
-      },
+      // onChanged: (_) {
+      //   setDoneButtonEnabled();
+      // },
       validator: (value) {
         if (value.isEmpty) {
           return 'Name Required';
@@ -378,8 +389,11 @@ class _SkillFormState extends State<SkillForm> {
 
   void setDoneButtonEnabled() {
     setState(() {
-      _doneEnabled =
-          _nameController.text.isNotEmpty && _selectedInstrument != SELECT_INST;
+      if (_isEditing) {
+        _doneEnabled = changeMonitor.hasChanged;
+      } else
+        _doneEnabled = _nameController.text.isNotEmpty &&
+            _selectedInstrument != SELECT_INST;
     });
   }
 }

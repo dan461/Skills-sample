@@ -4,12 +4,14 @@ class SkillChangeMonitor {
   final Skill skill;
 
   SkillChangeMonitor(this.skill) {
-    nameText = skill.name;
-    sourceText = skill.source;
-    instrumentText = skill.instrument;
-    skillType = skill.type;
-    priorityValue = skill.priority;
-    proficiencyValue = skill.proficiency;
+    if (skill != null) {
+      nameText = skill.name;
+      sourceText = skill.source;
+      instrumentText = skill.instrument;
+      skillType = skill.type;
+      priorityValue = skill.priority;
+      proficiencyValue = skill.proficiency;
+    }
   }
 
   bool get hasChanged {
