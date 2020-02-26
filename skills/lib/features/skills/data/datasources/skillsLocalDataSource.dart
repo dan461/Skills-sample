@@ -300,20 +300,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap) async {
     final Database db = await database;
-    // final SkillModel skillModel = SkillModel(
-    //   skillId: skill.skillId,
-    //   name: skill.name,
-    //   type: skill.type,
-    //   source: skill.source,
-    //   instrument: skill.instrument,
-    //   startDate: skill.startDate,
-    //   totalTime: skill.totalTime,
-    //   lastPracDate: skill.lastPracDate,
-    //   currentGoalId: skill.currentGoalId,
-    //   // goalText: skill.goalText,
-    //   priority: skill.priority,
-    //   proficiency: skill.proficiency,
-    // );
+    
     int updates = await db.update(skillsTable, changeMap,
         where: 'skillId = ?', whereArgs: [skillId]);
     return updates;

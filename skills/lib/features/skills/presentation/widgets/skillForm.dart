@@ -25,8 +25,8 @@ class SkillForm extends StatefulWidget {
       @required this.doneEditingCallback})
       : super(key: key);
   @override
-  _SkillFormState createState() =>
-      _SkillFormState(skill, cancelCallback, doneEditingCallback, createSkillCallback);
+  _SkillFormState createState() => _SkillFormState(
+      skill, cancelCallback, doneEditingCallback, createSkillCallback);
 }
 
 class _SkillFormState extends State<SkillForm> {
@@ -35,7 +35,8 @@ class _SkillFormState extends State<SkillForm> {
   final SkillFormOnCreateSkillCallback createSkillCallback;
   final SkillFormOnDoneEditingCallback doneEditingCallback;
 
-  _SkillFormState(this.skill, this.cancelCallback, this.doneEditingCallback, this.createSkillCallback) {
+  _SkillFormState(this.skill, this.cancelCallback, this.doneEditingCallback,
+      this.createSkillCallback) {
     changeMonitor = SkillChangeMonitor(skill);
   }
 
@@ -91,10 +92,10 @@ class _SkillFormState extends State<SkillForm> {
     setState(() {
       _selectedType = value;
     });
-    if (_isEditing){
+    if (_isEditing) {
       changeMonitor.skillType = value;
       setDoneButtonEnabled();
-    } 
+    }
   }
 
   void _priorityChanged(String value) {
@@ -102,11 +103,10 @@ class _SkillFormState extends State<SkillForm> {
       _priorityString = value;
     });
 
-    if (_isEditing){
+    if (_isEditing) {
       changeMonitor.priorityValue = PRIORITIES.indexOf(_priorityString);
       setDoneButtonEnabled();
     }
-      
   }
 
   void _proficiencyChanged(double value) {
@@ -115,10 +115,10 @@ class _SkillFormState extends State<SkillForm> {
       _profString = value.toInt().toString();
     });
 
-    if (_isEditing){
+    if (_isEditing) {
       changeMonitor.proficiencyValue = currentProfValue.toInt();
       setDoneButtonEnabled();
-    } 
+    }
   }
 
 // BUILD
@@ -349,20 +349,6 @@ class _SkillFormState extends State<SkillForm> {
     if (_isEditing) {
       Map<String, dynamic> changeMap = changeMonitor.toMap();
       doneEditingCallback(changeMap);
-      // newSkill = Skill(
-      //   skillId: skill.skillId,
-      //   name: _nameController.text,
-      //   type: _selectedType,
-      //   source: _sourceController.text ?? '',
-      //   instrument: _selectedInstrument,
-      //   startDate: skill.startDate ?? TickTock.today(),
-      //   totalTime: skill.totalTime,
-      //   lastPracDate: skill.lastPracDate,
-      //   currentGoalId: skill.currentGoalId,
-      //   // goalText: skill.goalText,
-      //   priority: PRIORITIES.indexOf(_priorityString),
-      //   proficiency: currentProfValue.toInt(),
-      // );
     } else {
       newSkill = Skill(
         name: _nameController.text,
@@ -375,8 +361,6 @@ class _SkillFormState extends State<SkillForm> {
       );
       createSkillCallback(newSkill);
     }
-
-    
   }
 
   void _showInstrumentsList() async {
