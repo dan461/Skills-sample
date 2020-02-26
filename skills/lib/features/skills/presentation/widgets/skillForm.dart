@@ -4,6 +4,7 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/core/enums.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/helpers/skillChangeMonitor.dart';
 import 'package:skills/features/skills/presentation/pages/instrumentsScreen.dart';
 
 typedef SkillFormOnCancelCallback();
@@ -25,12 +26,16 @@ class SkillForm extends StatefulWidget {
       _SkillFormState(skill, cancelCallback, doneCallback);
 }
 
+
+
 class _SkillFormState extends State<SkillForm> {
   final Skill skill;
   final SkillFormOnCancelCallback cancelCallback;
   final SkillFormOnDoneCallback doneCallback;
 
-  _SkillFormState(this.skill, this.cancelCallback, this.doneCallback);
+  _SkillFormState(this.skill, this.cancelCallback, this.doneCallback) {
+    changes = SkillChangeMonitor(skill);
+  }
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _sourceController = TextEditingController();
@@ -40,7 +45,9 @@ class _SkillFormState extends State<SkillForm> {
   String _profString = 'Rate 1 - 10';
   double currentProfValue = 0;
   String _priorityString = NORMAL_PRIORITY;
+  SkillChangeMonitor changes;
 
+  
   // bool get _doneEnabled {
   //   return _nameController.text.isNotEmpty &&
   //       _selectedInstrument != SELECT_INST;
@@ -56,6 +63,7 @@ class _SkillFormState extends State<SkillForm> {
   void initState() {
     if (_isEditing) {
       _nameController.text = skill.name;
+      _nameController.addListener(_nameChangeListener);
       _sourceController.text = skill.source;
       _selectedType = skill.type;
       _selectedInstrument = skill.instrument;
@@ -64,6 +72,10 @@ class _SkillFormState extends State<SkillForm> {
       _priorityString = PRIORITIES[skill.priority];
     }
     super.initState();
+  }
+
+  void _nameChangeListener() {
+    changes.nameText = _nameController.text;
   }
 
   @override
