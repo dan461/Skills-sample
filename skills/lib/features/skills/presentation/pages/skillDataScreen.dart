@@ -108,7 +108,8 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
             SkillForm(
               skill: bloc.skill,
               cancelCallback: _cancelEditing,
-              doneCallback: _doneEditing,
+              createSkillCallback: null,
+              doneEditingCallback: _doneEditing,
             ),
             // Padding(
             //   padding: const EdgeInsets.only(top: 8.0),
@@ -361,9 +362,9 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     });
   }
 
-  void _doneEditing(Skill skill) {
+  void _doneEditing(Map<String, dynamic> changeMap) {
     setState(() {
-      bloc.add(UpdateExistingSkillEvent(skill: skill));
+      bloc.add(UpdateExistingSkillEvent(skillId: bloc.skill.skillId, changeMap: changeMap));
       _isEditing = false;
     });
   }

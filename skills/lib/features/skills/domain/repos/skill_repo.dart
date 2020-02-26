@@ -11,7 +11,8 @@ abstract class SkillRepository {
   // Future<Either<Failure, int>> insertNewSkill(Skill skill);
   Future<Either<Failure, Skill>> insertNewSkill(Skill skill);
   Future<Either<Failure, int>> deleteSkillWithId(int skillId);
-  Future<Either<Failure, int>> updateSkill(Skill skill);
+  Future<Either<Failure, int>> updateSkill(
+      int skillId, Map<String, dynamic> changeMap);
   // Future<Either<Failure, int>> updateSkill(int skillId, Map changeMap);
 
   // Future<Either<Failure, List<Skill>>> downloadAllSkills();

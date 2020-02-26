@@ -52,7 +52,7 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
     else if (event is UpdateExistingSkillEvent) {
       yield SkillDataCrudProcessingState();
       final updateOrFail =
-          await updateSkill(SkillInsertOrUpdateParams(skill: event.skill));
+          await updateSkill(SkillUpdateParams(skillId: event.skillId, changeMap: event.changeMap));
       yield updateOrFail.fold(
           (failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE),
           (updateId) => UpdatedExistingSkillState());

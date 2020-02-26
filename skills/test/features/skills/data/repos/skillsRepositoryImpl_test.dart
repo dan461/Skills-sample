@@ -53,6 +53,7 @@ void main() {
     );
     final List<SkillModel> skillModelList = [skillModel];
     final Skill tSkill = skillModel;
+    Map<String, dynamic> testMap = {'name' : 'test'};
 
     test('getAllSkills - returns a List of SkillModels', () async {
       when(mockLocalDataSource.getAllSkills())
@@ -118,9 +119,9 @@ void main() {
 
     test('updateSkill - returns an int for number of changes to Skill',
         () async {
-      when(mockLocalDataSource.updateSkill(tSkill)).thenAnswer((_) async => 1);
-      final result = await repositoryImpl.updateSkill(tSkill);
-      verify(mockLocalDataSource.updateSkill(tSkill));
+      when(mockLocalDataSource.updateSkill(tSkill.skillId, testMap)).thenAnswer((_) async => 1);
+      final result = await repositoryImpl.updateSkill(tSkill.skillId, testMap);
+      verify(mockLocalDataSource.updateSkill(tSkill.skillId, testMap));
       expect(result, equals(Right(1)));
     });
   });

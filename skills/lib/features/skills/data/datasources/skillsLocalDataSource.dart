@@ -21,7 +21,7 @@ abstract class SkillsLocalDataSource {
   Future<Map<String, dynamic>> getSkillGoalMapById(int id);
   Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
-  Future<int> updateSkill(Skill skill);
+  Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap);
   Future<GoalModel> getGoalById(int id);
   Future<Goal> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
@@ -298,24 +298,24 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateSkill(Skill skill) async {
+  Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap) async {
     final Database db = await database;
-    final SkillModel skillModel = SkillModel(
-      skillId: skill.skillId,
-      name: skill.name,
-      type: skill.type,
-      source: skill.source,
-      instrument: skill.instrument,
-      startDate: skill.startDate,
-      totalTime: skill.totalTime,
-      lastPracDate: skill.lastPracDate,
-      currentGoalId: skill.currentGoalId,
-      // goalText: skill.goalText,
-      priority: skill.priority,
-      proficiency: skill.proficiency,
-    );
-    int updates = await db.update(skillsTable, skillModel.toMap(),
-        where: 'skillId = ?', whereArgs: [skillModel.skillId]);
+    // final SkillModel skillModel = SkillModel(
+    //   skillId: skill.skillId,
+    //   name: skill.name,
+    //   type: skill.type,
+    //   source: skill.source,
+    //   instrument: skill.instrument,
+    //   startDate: skill.startDate,
+    //   totalTime: skill.totalTime,
+    //   lastPracDate: skill.lastPracDate,
+    //   currentGoalId: skill.currentGoalId,
+    //   // goalText: skill.goalText,
+    //   priority: skill.priority,
+    //   proficiency: skill.proficiency,
+    // );
+    int updates = await db.update(skillsTable, changeMap,
+        where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 

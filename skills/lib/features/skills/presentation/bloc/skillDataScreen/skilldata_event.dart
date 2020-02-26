@@ -14,12 +14,13 @@ class GetEventsForSkillEvent extends SkillDataEvent {
 }
 
 class UpdateExistingSkillEvent extends SkillDataEvent {
-  final Skill skill;
+  final int skillId;
+  final Map<String, dynamic> changeMap;
 
-  UpdateExistingSkillEvent({@required this.skill});
+  UpdateExistingSkillEvent({@required this.skillId, @required this.changeMap});
 
   @override
-  List<Object> get props => [skill];
+  List<Object> get props => [changeMap];
 }
 
 class RefreshSkillByIdEvent extends SkillDataEvent {

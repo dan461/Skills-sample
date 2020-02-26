@@ -16,14 +16,14 @@ class DeleteSkillWithId extends UseCase<int, SkillDeleteParams> {
   }
 }
 
-class UpdateSkill extends UseCase<int, SkillInsertOrUpdateParams> {
+class UpdateSkill extends UseCase<int, SkillUpdateParams> {
   final SkillRepository repo;
 
   UpdateSkill(this.repo);
 
   @override
-  Future<Either<Failure, int>> call(SkillInsertOrUpdateParams params) async {
-    return await repo.updateSkill(params.skill);
+  Future<Either<Failure, int>> call(SkillUpdateParams params) async {
+    return await repo.updateSkill(params.skillId, params.changeMap);
   }
 }
 
