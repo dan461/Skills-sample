@@ -26,15 +26,13 @@ class SkillForm extends StatefulWidget {
       _SkillFormState(skill, cancelCallback, doneCallback);
 }
 
-
-
 class _SkillFormState extends State<SkillForm> {
   final Skill skill;
   final SkillFormOnCancelCallback cancelCallback;
   final SkillFormOnDoneCallback doneCallback;
 
   _SkillFormState(this.skill, this.cancelCallback, this.doneCallback) {
-    changes = SkillChangeMonitor(skill);
+    changeMonitor = SkillChangeMonitor(skill);
   }
 
   TextEditingController _nameController = TextEditingController();
@@ -45,9 +43,8 @@ class _SkillFormState extends State<SkillForm> {
   String _profString = 'Rate 1 - 10';
   double currentProfValue = 0;
   String _priorityString = NORMAL_PRIORITY;
-  SkillChangeMonitor changes;
+  SkillChangeMonitor changeMonitor;
 
-  
   // bool get _doneEnabled {
   //   return _nameController.text.isNotEmpty &&
   //       _selectedInstrument != SELECT_INST;
@@ -65,6 +62,7 @@ class _SkillFormState extends State<SkillForm> {
       _nameController.text = skill.name;
       _nameController.addListener(_nameChangeListener);
       _sourceController.text = skill.source;
+      _sourceController.addListener(_sourceChangeListener);
       _selectedType = skill.type;
       _selectedInstrument = skill.instrument;
       _profString = skill.proficiency.toString();
@@ -74,10 +72,41 @@ class _SkillFormState extends State<SkillForm> {
     super.initState();
   }
 
+// CHANGE LISTENERS
   void _nameChangeListener() {
-    changes.nameText = _nameController.text;
+    if (_isEditing) changeMonitor.nameText = _nameController.text;
   }
 
+  void _sourceChangeListener() {
+    if (_isEditing) changeMonitor.sourceText = _sourceController.text;
+  }
+
+  void _skillTypeChanged(String value) {
+    setState(() {
+      _selectedType = value;
+    });
+    if (_isEditing) changeMonitor.skillType = value;
+  }
+
+  void _priorityChanged(String value) {
+    setState(() {
+      _priorityString = value;
+    });
+
+    if (_isEditing)
+      changeMonitor.priorityValue = PRIORITIES.indexOf(_priorityString);
+  }
+
+  void _proficiencyChanged(double value) {
+    setState(() {
+      currentProfValue = value;
+      _profString = value.toInt().toString();
+    });
+
+    if (_isEditing) changeMonitor.proficiencyValue = currentProfValue.toInt();
+  }
+
+// BUILD
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -90,6 +119,7 @@ class _SkillFormState extends State<SkillForm> {
     );
   }
 
+// BUILDERS
   Widget _newSkillColumn() {
     return Column(
       children: <Widget>[
@@ -144,9 +174,7 @@ class _SkillFormState extends State<SkillForm> {
               value: skillTypeToString(SkillType.composition),
               groupValue: _selectedType,
               onChanged: (String value) {
-                setState(() {
-                  _selectedType = value;
-                });
+                _skillTypeChanged(value);
               },
             ),
             Text('Compostion'),
@@ -158,9 +186,7 @@ class _SkillFormState extends State<SkillForm> {
               value: skillTypeToString(SkillType.exercise),
               groupValue: _selectedType,
               onChanged: (String value) {
-                setState(() {
-                  _selectedType = value;
-                });
+                _skillTypeChanged(value);
               },
             ),
             Text('Exercise'),
@@ -227,9 +253,7 @@ class _SkillFormState extends State<SkillForm> {
               );
             }).toList(),
             onChanged: (String newValue) {
-              setState(() {
-                _priorityString = newValue;
-              });
+              _priorityChanged(newValue);
             })
       ],
     );
@@ -263,10 +287,7 @@ class _SkillFormState extends State<SkillForm> {
                   value: currentProfValue,
                   divisions: 10,
                   onChanged: (newValue) {
-                    setState(() {
-                      currentProfValue = newValue;
-                      _profString = newValue.toInt().toString();
-                    });
+                    _proficiencyChanged(newValue);
                   }),
             ),
             Text('10'),
@@ -311,6 +332,8 @@ class _SkillFormState extends State<SkillForm> {
   void _onDone() {
     Skill newSkill;
     if (_isEditing) {
+      Map<String, dynamic> changeMap = changeMonitor.toMap();
+
       newSkill = Skill(
         skillId: skill.skillId,
         name: _nameController.text,
@@ -348,6 +371,7 @@ class _SkillFormState extends State<SkillForm> {
 
     setState(() {
       _selectedInstrument = selected ?? _selectedInstrument;
+      changeMonitor.instrumentText = _selectedInstrument;
       setDoneButtonEnabled();
     });
   }
