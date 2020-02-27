@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 
+import 'goal.dart';
+
 
 
 class Skill extends Equatable {
@@ -13,9 +15,10 @@ class Skill extends Equatable {
   final int totalTime;
   final DateTime lastPracDate;
   final int currentGoalId;
-  final String goalText;
+  // final String goalText;
   final int priority;
   final int proficiency;
+  Goal goal;
 
   Skill({
     this.skillId,
@@ -27,9 +30,10 @@ class Skill extends Equatable {
     this.totalTime,
     this.lastPracDate,
     this.currentGoalId,
-    this.goalText,
+    // this.goalText,
     this.priority,
     this.proficiency,
+    this.goal
   }) : super();
 
   @override
@@ -43,8 +47,9 @@ class Skill extends Equatable {
         totalTime,
         lastPracDate,
         currentGoalId,
-        goalText,
+        // goalText,
         priority,
-        proficiency
+        proficiency,
+        goal
       ];
 }

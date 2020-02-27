@@ -42,14 +42,14 @@ class SkillEditorBloc extends Bloc<SkillEditorEvent, SkillEditorState> {
           (skill) => SkillRetrievedForEditingState(skill));
     } 
     
-    else if (event is UpdateSkillEvent) {
-      yield UpdatingSkillState();
-      final failureOrUpdates =
-          await updateSkill(SkillInsertOrUpdateParams(skill: event.skill));
-      yield failureOrUpdates.fold(
-          (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
-          (updates) => UpdatedSkillState());
-    } 
+    // else if (event is UpdateSkillEvent) {
+    //   yield UpdatingSkillState();
+    //   final failureOrUpdates =
+    //       await updateSkill(SkillInsertOrUpdateParams(skill: event.skill));
+    //   yield failureOrUpdates.fold(
+    //       (failure) => SkillEditorErrorState(CACHE_FAILURE_MESSAGE),
+    //       (updates) => UpdatedSkillState());
+    // } 
     
     else if (event is DeleteSkillWithIdEvent) {
       yield DeletingSkillWithIdState();

@@ -16,10 +16,12 @@ import 'package:path_provider/path_provider.dart';
 abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
+  // Future<List<Map<String, dynamic>>> getAllSkillsInfo();
   Future<SkillModel> getSkillById(int id);
+  Future<Map<String, dynamic>> getSkillGoalMapById(int id);
   Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
-  Future<int> updateSkill(Skill skill);
+  Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap);
   Future<GoalModel> getGoalById(int id);
   Future<Goal> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
@@ -68,6 +70,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   final String skillEventsTable = 'skillEvents';
   // final String sessionSkillsTable = 'session_skills';
 
+  bool needsMigration = true;
+
   Future<Database> get database async {
     Directory docsDir = await getApplicationDocumentsDirectory();
     String path = join(docsDir.path, "Skills.db");
@@ -78,6 +82,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         if (_database == null) {
           _database = await openDatabase(path,
               version: dbVersion, onOpen: _onOpen, onCreate: _onCreate);
+        }
+        if (needsMigration) {
+          await _addGoalTextToGoals();
+          await _dropGoalTextFromSkills();
         }
       });
     }
@@ -93,6 +101,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   void _onCreate(Database db, int version) async {
+    needsMigration = false;
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
     await db.execute(_createSessionsTable);
@@ -111,22 +120,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   static final String primaryKey = "INTEGER PRIMARY KEY";
-  // static final String idKey = "id $primaryKey, ";
-  // static final String integer = "INTEGER";
-  static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
-  // static final String skillId = 'skillId';
-  // static final String sessionId = 'sessionId';
-  // static final String goalId = 'goalId';
-  // static final String eventId = 'eventId';
+  static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // table creation
   final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
-      "name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, goalText TEXT, priority INTEGER, proficiency INTEGER)";
+      "name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)";
 
   final String _createGoalTable = "$createTable goals(goalId $primaryKey, "
       "skillId INTEGER, fromDate INTEGER, toDate INTEGER, isComplete INTEGER, timeBased INTEGER, "
-      "goalTime INTEGER, timeRemaining INTEGER, desc TEXT, "
+      "goalTime INTEGER, goalText TEXT, timeRemaining INTEGER, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
   final String _createSessionsTable =
@@ -139,17 +142,70 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       "skillId INTEGER, sessionId INTEGER, date INTEGER, duration INTEGER, isComplete INTEGER, skillString TEXT, "
       "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
+  //  ************ MIGRATIONS ****************
+  Future<void> _addGoalTextToGoals() async {
+    final Database db = await database;
+
+    bool hasGoalText = await _checkTableForColumn(goalsTable, 'goalText');
+    if (hasGoalText == false) {
+      await db.execute("ALTER TABLE goals ADD COLUMN goalText text");
+    }
+  }
+
+  Future<void> _dropGoalTextFromSkills() async {
+    final Database db = await database;
+
+    bool hasGoalText = await _checkTableForColumn(skillsTable, 'goalText');
+    if (hasGoalText) {
+      await db.execute("PRAGMA foreign_keys=OFF");
+      await db.execute("BEGIN TRANSACTION");
+      await db.execute(
+          "CREATE TABLE IF NOT EXISTS tempSkills(skillId $primaryKey, name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, "
+          "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)");
+      await db.execute(
+          "INSERT INTO tempSkills(skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency) "
+          "SELECT skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency "
+          "FROM skills");
+
+      await db.execute("DROP TABLE skills");
+      await db.execute("ALTER TABLE tempSkills RENAME TO skills");
+      await db.execute("COMMIT");
+      await db.execute("PRAGMA foreign_keys=ON");
+    }
+  }
+
+  Future<bool> _checkTableForColumn(String table, String columnName) async {
+    final Database db = await database;
+    bool columnFound = false;
+    await db.transaction((txn) async {
+      List<Map> columnsList = await txn.rawQuery("pragma table_info($table)");
+      for (var column in columnsList) {
+        if (column['name'] == columnName) {
+          columnFound = true;
+          break;
+        }
+      }
+    });
+    return columnFound;
+  }
+
 // ******* SKILLS *********
   @override
   Future<List<SkillModel>> getAllSkills() async {
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query(skillsTable);
-
-    return List.generate(maps.length, (i) {
+    List<SkillModel> skills = List.generate(maps.length, (i) {
       return SkillModel.fromMap(maps[i]);
     });
-    // return null;
+    for (var skill in skills) {
+      if (skill.currentGoalId != 0) {
+        Goal goal = await getGoalById(skill.currentGoalId);
+        skill.goal = goal;
+      }
+    }
+
+    return skills;
   }
 
   @override
@@ -163,16 +219,12 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return null;
   }
 
-  Future<Map<String, dynamic>> getSkillInfoById(int id) async {
-    // final Database db = await database;
+  @override
+  Future<Map<String, dynamic>> getSkillGoalMapById(int id) async {
     SkillModel skill = await getSkillById(id);
     if (skill != null) {
-      Map<String, dynamic> map = {'skill': skill};
       GoalModel goal = await getGoalById(skill.currentGoalId);
-      if (goal != null) {
-        map.addAll(
-            {'goalText': 'goal translation', 'goalComplete': goal.isComplete});
-      }
+      Map<String, dynamic> map = {'skill': skill, 'goal': goal};
 
       return map;
     } else
@@ -192,7 +244,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       totalTime: 0,
       lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
       currentGoalId: 0,
-      goalText: "Goal: none",
+      // goalText: "Goal: none",
       priority: skill.priority,
       proficiency: skill.proficiency,
     );
@@ -214,24 +266,11 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateSkill(Skill skill) async {
+  Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap) async {
     final Database db = await database;
-    final SkillModel skillModel = SkillModel(
-      skillId: skill.skillId,
-      name: skill.name,
-      type: skill.type,
-      source: skill.source,
-      instrument: skill.instrument,
-      startDate: skill.startDate,
-      totalTime: skill.totalTime,
-      lastPracDate: skill.lastPracDate,
-      currentGoalId: skill.currentGoalId,
-      goalText: skill.goalText,
-      priority: skill.priority,
-      proficiency: skill.proficiency,
-    );
-    int updates = await db.update(skillsTable, skillModel.toMap(),
-        where: 'skillId = ?', whereArgs: [skillModel.skillId]);
+
+    int updates = await db.update(skillsTable, changeMap,
+        where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 
@@ -265,6 +304,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeBased: goal.timeBased,
         isComplete: false,
         goalTime: goal.goalTime,
+        goalText: GoalModel.translateGoal(goal),
         timeRemaining: goal.goalTime,
         desc: goal.desc != null ? goal.desc : "");
 
@@ -286,6 +326,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeBased: goal.timeBased,
         isComplete: goal.isComplete,
         goalTime: goal.goalTime,
+        goalText: GoalModel.translateGoal(goal),
         timeRemaining: goal.timeRemaining,
         desc: goal.desc);
     int updates = await db.update(goalsTable, goalModel.toMap(),
@@ -555,73 +596,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
     List<Map> maps = [];
     for (var event in events) {
-      SkillModel skill = await getSkillById(event.skillId);
-
-      GoalModel goal;
-      if (skill.currentGoalId != 0) {
-        goal = await getGoalById(skill.currentGoalId);
-      }
-
       Map<String, dynamic> eventMap = {
         'event': event,
-        'skill': skill,
-        'goal': goal ?? 'none',
       };
+      Map<String, dynamic> skillMap = await getSkillGoalMapById(event.skillId);
+      eventMap.addAll(skillMap);
       maps.add(eventMap);
     }
 
     return maps;
   }
-
-  // Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
-  //   final Database db = await database;
-
-  //   List<Map> maps = [];
-  //   for (var event in events) {
-  //     // Get the id for the Skill's current goal, so only that one will be selected
-
-  //     List<Map> currentGoalMapList = await db.query(skillsTable,
-  //         columns: ['goalId'],
-  //         where: 'skillId = ?',
-  //         whereArgs: [event.skillId]);
-
-  //     var currentGoalId = currentGoalMapList.first['goalId'];
-
-  //     var query;
-  //     if (currentGoalId > 0) {
-  //         query =
-  //         "SELECT name, source, goalText, timeRemaining FROM $skillsTable "
-  //         "INNER JOIN $goalsTable ON skills.skillId = goals.skillId "
-  //         "WHERE skills.skillId = ?";
-  //     } else {
-  //       query = "SELECT name, source FROM $skillsTable WHERE skillId = ?";
-  //     }
-
-  //     List<Map> infomaps =
-  //         await db.rawQuery(query, [event.skillId]);
-
-  //     var skillName = '';
-  //     var skillSource = '';
-  //     var goalText = '';
-  //     var time = 0;
-
-  //     if (infomaps.isNotEmpty) {
-  //       skillName = infomaps.first['name'];
-  //       skillSource = infomaps.first['source'];
-  //       goalText = infomaps.first['goalText'] ?? 'None';
-  //       time = infomaps.first['timeRemaining'] ?? 0;
-  //     }
-
-  //     Map<String, dynamic> eventMap = {
-  //       'event': event,
-  //       'skillName': skillName,
-  //       'source': skillSource,
-  //       'goalText': goalText,
-  //       'time': time
-  //     };
-  //     maps.add(eventMap);
-  //   }
-
-  //   return maps;
-  // }
 }

@@ -1,5 +1,6 @@
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -15,6 +16,7 @@ void main() {
   MockGetCompletedEventsForSkill mockGetCompletedEventsForSkill;
   MockUpdateSkillUC mockUpdateSkillUC;
   MockGetSkillByIdUC mockGetSkillByIdUC;
+  MockGetSkillGoalMapById mockGetSkillGoalMapById;
   SkillEvent testEvent;
 
   List<SkillEvent> eventsList;
@@ -23,10 +25,13 @@ void main() {
     mockGetCompletedEventsForSkill = MockGetCompletedEventsForSkill();
     mockUpdateSkillUC = MockUpdateSkillUC();
     mockGetSkillByIdUC = MockGetSkillByIdUC();
+    mockGetSkillGoalMapById = MockGetSkillGoalMapById();
+
     sut = SkillDataBloc(
         getCompletedEventsForSkill: mockGetCompletedEventsForSkill,
         updateSkill: mockUpdateSkillUC,
-        getSkillById: mockGetSkillByIdUC);
+        getSkillById: mockGetSkillByIdUC,
+        getSkillGoalMapById: mockGetSkillGoalMapById);
 
     testEvent = SkillEvent(
         eventId: 1,
@@ -76,16 +81,18 @@ void main() {
 
   group('UpdateExistingSkillEvent: - ', () {
     final testSkill = Skill(
+      skillId: 1,
       name: 'test',
       source: 'test',
       type: 'composition',
       startDate: DateTime.fromMillisecondsSinceEpoch(0),
     );
-
+    Map<String, dynamic> testMap = {'name': 'new name'};
     test(
         'test that bloc emits [SkillDataCrudProcessingState, UpdatedExistingSkillState] after UpdateExistingSkillEvent is added ',
         () {
-      when(mockUpdateSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+      when(mockUpdateSkillUC(SkillUpdateParams(
+              skillId: testSkill.skillId, changeMap: testMap)))
           .thenAnswer((_) async => Right(1));
       final expected = [
         SkillDataInitialState(),
@@ -93,13 +100,14 @@ void main() {
         UpdatedExistingSkillState()
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(UpdateExistingSkillEvent(skill: testSkill));
+      sut.add(UpdateExistingSkillEvent(skillId: testSkill.skillId, changeMap: testMap));
     });
 
     test(
         'test that bloc emits [SkillDataCrudProcessingState, SkillDataErrorState] after cache failure when UpdateExistingSkillEvent is added ',
         () {
-      when(mockUpdateSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
+      when(mockUpdateSkillUC(SkillUpdateParams(
+              skillId: testSkill.skillId, changeMap: testMap)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
         SkillDataInitialState(),
@@ -107,7 +115,7 @@ void main() {
         SkillDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(UpdateExistingSkillEvent(skill: testSkill));
+      sut.add(UpdateExistingSkillEvent(skillId: testSkill.skillId, changeMap: testMap));
     });
   });
 
@@ -120,11 +128,21 @@ void main() {
       startDate: DateTime.fromMillisecondsSinceEpoch(0),
     );
 
+    final testGoal = Goal(
+      skillId: 1,
+      goalTime: 1,
+      fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+      toDate: DateTime.fromMillisecondsSinceEpoch(0),
+      isComplete: false,
+      timeBased: true);
+
+  final testMap = {'skill': testSkill, 'goal': testGoal};
+
     test(
         'test that bloc emits [SkillDataCrudProcessingState, SkillRefreshedState] after RefreshSkillByIdEvent is added ',
         () {
-      when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
-          .thenAnswer((_) async => Right(testSkill));
+      when(mockGetSkillGoalMapById(GetSkillParams(id: 1)))
+          .thenAnswer((_) async => Right(testMap));
       final expected = [
         SkillDataInitialState(),
         SkillDataCrudProcessingState(),
@@ -137,7 +155,7 @@ void main() {
     test(
         'test that bloc emits [SkillDataCrudProcessingState, SkillDataErrorState] after cache failure when RefreshSkillByIdEvent is added ',
         () {
-      when(mockGetSkillByIdUC(GetSkillParams(id: 1)))
+      when(mockGetSkillGoalMapById(GetSkillParams(id: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
         SkillDataInitialState(),

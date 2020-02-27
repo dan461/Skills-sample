@@ -35,7 +35,8 @@ void init() {
   locator.registerFactory(() => SkillDataBloc(
       getCompletedEventsForSkill: locator(),
       updateSkill: locator(),
-      getSkillById: locator()));
+      getSkillById: locator(),
+      getSkillGoalMapById: locator()));
 
   locator.registerFactory(() => SkillEditorBloc(
       updateSkill: locator(),
@@ -73,7 +74,9 @@ void init() {
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
+  // locator.registerLazySingleton(() => GetAllSkillsInfoMaps(locator()));
   locator.registerLazySingleton(() => GetSkillById(locator()));
+  locator.registerLazySingleton(() => GetSkillGoalMapById(locator()));
   locator.registerLazySingleton(() => InsertNewSkill(locator()));
   locator.registerLazySingleton(() => UpdateSkill(locator()));
   locator.registerLazySingleton(() => DeleteSkillWithId(locator()));

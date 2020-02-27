@@ -115,7 +115,7 @@ class _EventCreatorState extends State<EventCreator> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[Text(_selectedSkill.goalText)],
+              children: <Widget>[Text('NEED GOALTEXT')],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

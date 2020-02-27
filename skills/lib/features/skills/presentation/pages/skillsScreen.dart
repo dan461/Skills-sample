@@ -162,6 +162,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
   void viewSkill(Skill skill) async {
     final skillScreen = SkillDataScreen(bloc: locator<SkillDataBloc>());
     skillScreen.bloc.skill = skill;
+    skillScreen.bloc.goal = skill.goal;
     skillScreen.bloc.add(GetEventsForSkillEvent(skillId: skill.skillId));
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return skillScreen;

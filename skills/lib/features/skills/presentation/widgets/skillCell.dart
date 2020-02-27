@@ -110,11 +110,12 @@ class SkillCell extends StatelessWidget {
   // }
 
   Row _goalRow() {
+    String goalText = skill.goal != null ? skill.goal.goalText : 'None';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
-          skill.goalText,
+          goalText,
           style: thisTheme.subtitle,
           overflow: TextOverflow.ellipsis,
         )

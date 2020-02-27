@@ -58,7 +58,10 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   // BUILDERS
 
   Widget _newSkillFormBuilder() {
-    return SkillForm(cancelCallback: _onCancel, doneCallback: _insertNewSkill);
+    return SkillForm(
+        cancelCallback: _onCancel,
+        createSkillCallback: _insertNewSkill,
+        doneEditingCallback: null);
   }
 
 // ACTIONS

@@ -1,6 +1,7 @@
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/data/repos/skillsRepositoryImpl.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:dartz/dartz.dart';
@@ -52,6 +53,7 @@ void main() {
     );
     final List<SkillModel> skillModelList = [skillModel];
     final Skill tSkill = skillModel;
+    Map<String, dynamic> testMap = {'name' : 'test'};
 
     test('getAllSkills - returns a List of SkillModels', () async {
       when(mockLocalDataSource.getAllSkills())
@@ -68,6 +70,24 @@ void main() {
 
       verify(mockLocalDataSource.getSkillById(1));
       expect(result, equals(Right(tSkill)));
+    });
+
+    test('getSkillGoalMapById - returns a Map with a Skill and Goal', () async {
+      final testGoal = Goal(
+          skillId: 1,
+          goalTime: 1,
+          fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+          toDate: DateTime.fromMillisecondsSinceEpoch(0),
+          isComplete: false,
+          timeBased: true);
+
+      Map<String, dynamic> testMap = {'skill': tSkill, 'goal': testGoal};
+
+      when(mockLocalDataSource.getSkillGoalMapById(1))
+          .thenAnswer((_) async => testMap);
+          final result = await repositoryImpl.getSkillGoalMapById(1);
+          verify(mockLocalDataSource.getSkillGoalMapById(1));
+          expect(result, equals(Right(testMap)));
     });
 
     test(
@@ -99,9 +119,9 @@ void main() {
 
     test('updateSkill - returns an int for number of changes to Skill',
         () async {
-      when(mockLocalDataSource.updateSkill(tSkill)).thenAnswer((_) async => 1);
-      final result = await repositoryImpl.updateSkill(tSkill);
-      verify(mockLocalDataSource.updateSkill(tSkill));
+      when(mockLocalDataSource.updateSkill(tSkill.skillId, testMap)).thenAnswer((_) async => 1);
+      final result = await repositoryImpl.updateSkill(tSkill.skillId, testMap);
+      verify(mockLocalDataSource.updateSkill(tSkill.skillId, testMap));
       expect(result, equals(Right(1)));
     });
   });

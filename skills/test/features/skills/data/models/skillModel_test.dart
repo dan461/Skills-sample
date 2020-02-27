@@ -19,7 +19,7 @@ void main() {
       totalTime: 1,
       lastPracDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
       currentGoalId: 1,
-      goalText: "none",
+      // goalText: "none",
       priority: 3,
       proficiency: 8,
     );
@@ -34,7 +34,6 @@ void main() {
       'totalTime': 1,
       'lastPracDate': 0,
       'goalId': 1,
-      'goalText': "none",
       'priority': 3,
       'proficiency': 8
     };
@@ -72,7 +71,6 @@ void main() {
         'totalTime': 1,
         'lastPracDate': 0,
         'goalId': 1,
-        'goalText': "none",
         'priority': 3,
         'proficiency': 8
       };

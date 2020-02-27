@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/appearance.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
@@ -38,6 +39,10 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   String get startDateString {
     return DateFormat.yMMMd().format(bloc.skill.startDate);
+  }
+
+  String get goalString {
+    return bloc.goal == null ? 'None' : bloc.goal.goalText;
   }
 
   bool _isEditing = false;
@@ -103,7 +108,8 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
             SkillForm(
               skill: bloc.skill,
               cancelCallback: _cancelEditing,
-              doneCallback: _doneEditing,
+              createSkillCallback: null,
+              doneEditingCallback: _doneEditing,
             ),
             // Padding(
             //   padding: const EdgeInsets.only(top: 8.0),
@@ -174,7 +180,8 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   }
 
   Widget _sourceInstrRow(Skill skill) {
-    String sourceString = skill.source.isNotEmpty ? skill.source : 'source: none';
+    String sourceString =
+        skill.source.isNotEmpty ? skill.source : 'source: none';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -192,7 +199,10 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   Widget _eventsListBuilder() {
     return Container(
-      color: Colors.cyan[200],
+      // color: Colors.cyan[200],
+      decoration: BoxDecoration(
+        gradient: GradientFromBottom(accentColor: Colors.cyan[800], baseColor: Colors.cyan[700])
+      ),
       child: Column(
         children: <Widget>[
           Padding(
@@ -260,7 +270,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
                 ],
               ),
               Text(
-                bloc.skill.goalText,
+                goalString,
                 style: Theme.of(context).textTheme.subhead,
                 maxLines: 2,
                 textAlign: TextAlign.start,
@@ -352,9 +362,9 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     });
   }
 
-  void _doneEditing(Skill skill) {
+  void _doneEditing(Map<String, dynamic> changeMap) {
     setState(() {
-      bloc.add(UpdateExistingSkillEvent(skill: skill));
+      bloc.add(UpdateExistingSkillEvent(skillId: bloc.skill.skillId, changeMap: changeMap));
       _isEditing = false;
     });
   }

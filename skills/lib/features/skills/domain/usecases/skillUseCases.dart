@@ -9,23 +9,21 @@ class DeleteSkillWithId extends UseCase<int, SkillDeleteParams> {
   final SkillRepository repo;
 
   DeleteSkillWithId(this.repo);
-  
+
   @override
   Future<Either<Failure, int>> call(SkillDeleteParams params) async {
-    
     return await repo.deleteSkillWithId(params.skillId);
   }
-  
 }
 
-class UpdateSkill extends UseCase<int, SkillInsertOrUpdateParams> {
+class UpdateSkill extends UseCase<int, SkillUpdateParams> {
   final SkillRepository repo;
 
   UpdateSkill(this.repo);
 
   @override
-  Future<Either<Failure, int>> call(SkillInsertOrUpdateParams params) async {
-    return await repo.updateSkill(params.skill);
+  Future<Either<Failure, int>> call(SkillUpdateParams params) async {
+    return await repo.updateSkill(params.skillId, params.changeMap);
   }
 }
 
@@ -49,6 +47,18 @@ class GetAllSkills extends UseCase<List<Skill>, NoParams> {
   }
 }
 
+// class GetAllSkillsInfoMaps
+//     extends UseCase<List<Map<String, dynamic>>, NoParams> {
+//   final SkillRepository repo;
+
+//   GetAllSkillsInfoMaps(this.repo);
+//   @override
+//   Future<Either<Failure, List<Map<String, dynamic>>>> call(
+//       NoParams params) async {
+//     return await repo.getAllSkillsInfo();
+//   }
+// }
+
 class GetSkillById extends UseCase<Skill, GetSkillParams> {
   final SkillRepository repo;
 
@@ -56,5 +66,16 @@ class GetSkillById extends UseCase<Skill, GetSkillParams> {
 
   Future<Either<Failure, Skill>> call(GetSkillParams params) async {
     return await repo.getSkillById(params.id);
+  }
+}
+
+class GetSkillGoalMapById
+    extends UseCase<Map<String, dynamic>, GetSkillParams> {
+  final SkillRepository repo;
+
+  GetSkillGoalMapById(this.repo);
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> call(GetSkillParams params) {
+    return repo.getSkillGoalMapById(params.id);
   }
 }
