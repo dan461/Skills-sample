@@ -5,13 +5,17 @@ import 'package:skills/features/skills/domain/entities/session.dart';
 
 typedef SessionFormOnCancelCallback();
 typedef SessionFormOnCreateSessionCallback(Session session);
+typedef SessionFormOnDeleteSessionCallback();
+typedef SessionFormCompleteSessionCallback();
 typedef SessionFormOnDoneEditingCallback(Map<String, dynamic> changeMap);
 
 class SessionForm extends StatefulWidget {
   final Session session;
   final DateTime sessionDate;
   final SessionFormOnCancelCallback cancelCallback;
+  final SessionFormOnDeleteSessionCallback onDeleteSessionCallback;
   final SessionFormOnCreateSessionCallback onCreateSessionCallback;
+  final SessionFormCompleteSessionCallback completeSessionCallback;
   final SessionFormOnDoneEditingCallback onDoneEditingCallback;
 
   const SessionForm({
@@ -19,24 +23,40 @@ class SessionForm extends StatefulWidget {
     this.session,
     this.sessionDate,
     this.cancelCallback,
+    this.onDeleteSessionCallback,
     this.onCreateSessionCallback,
+    this.completeSessionCallback,
     this.onDoneEditingCallback,
   }) : super(key: key);
 
   @override
-  _SessionFormState createState() => _SessionFormState(session, sessionDate,
-      cancelCallback, onCreateSessionCallback, onDoneEditingCallback);
+  _SessionFormState createState() => _SessionFormState(
+      session,
+      sessionDate,
+      cancelCallback,
+      onCreateSessionCallback,
+      onDoneEditingCallback,
+      onDeleteSessionCallback,
+      completeSessionCallback);
 }
 
 class _SessionFormState extends State<SessionForm> {
   final Session session;
   final DateTime sessionDate;
   final SessionFormOnCancelCallback cancelCallback;
+  final SessionFormOnDeleteSessionCallback onDeleteSessionCallback;
   final SessionFormOnCreateSessionCallback onCreateSessionCallback;
+  final SessionFormCompleteSessionCallback completeSessionCallback;
   final SessionFormOnDoneEditingCallback onDoneEditingCallback;
 
-  _SessionFormState(this.session, this.sessionDate, this.cancelCallback,
-      this.onCreateSessionCallback, this.onDoneEditingCallback) {
+  _SessionFormState(
+      this.session,
+      this.sessionDate,
+      this.cancelCallback,
+      this.onCreateSessionCallback,
+      this.onDoneEditingCallback,
+      this.onDeleteSessionCallback,
+      this.completeSessionCallback) {
     if (_isEditing) _selectedStartTime = session.startTime;
   }
 
@@ -45,7 +65,7 @@ class _SessionFormState extends State<SessionForm> {
   DateTime _selectedDate;
   TimeOfDay _selectedStartTime;
 
-  bool _doneEnabled = false;
+  bool _doneEnabled = true;
 
   bool get _isEditing {
     return session != null;
@@ -146,7 +166,7 @@ class _SessionFormState extends State<SessionForm> {
 
   Row _durationRow() {
     return Row(
-      children: <Widget>[Text('duration')],
+      children: <Widget>[Text('duration picker')],
     );
   }
 
@@ -224,16 +244,69 @@ class _SessionFormState extends State<SessionForm> {
     } else
       cancelCallback();
   }
-  void _onDone(){
-    if (_isEditing){
+
+  void _onDone() {
+    if (_isEditing) {
       // get change map, call callback
       // onDoneEditingCallback()
     } else {
       // create new Session
     }
   }
-  void _onDelete(){}
-  void _onComplete(){}
+
+  void _onDelete() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Delete this Session?'),
+            content: Text('Are you sure you want to delete this session?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Dismiss'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Continue'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onDeleteSessionCallback();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _onComplete() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Complete this Session?'),
+            content: Text('Do you want to mark this session as completed?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Dismiss'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Continue'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  completeSessionCallback();
+                },
+              )
+            ],
+          );
+        });
+  }
 
   void _pickNewDate() async {
     DateTime pickedDate = await showDatePicker(

@@ -94,6 +94,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               sessionDate: bloc.sessionDate,
               cancelCallback: _onCancelEdit,
               onDoneEditingCallback: _onDoneEditing,
+              onDeleteSessionCallback: _onDeleteSession,
+              completeSessionCallback: _onMarkSessionComplete,
             )
             // Padding(
             //   padding: const EdgeInsets.only(top: 8.0),
@@ -105,9 +107,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  void _onDoneEditing(Map<String, dynamic> changeMap){
-
-  }
+  
 
   Widget _infoViewBuilder() {
     return Container(
@@ -274,6 +274,17 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     setState(() {
       _isEditing = false;
     });
+  }
+
+  void _onDoneEditing(Map<String, dynamic> changeMap){
+
+  }
+
+  void _onDeleteSession(){
+    bloc.add(DeleteSessionWithIdEvent(id: bloc.session.sessionId));
+  }
+  void _onMarkSessionComplete(){
+    bloc.add(CompleteSessionEvent());
   }
 
   void _eventTapped(Map<String, dynamic> map) {
