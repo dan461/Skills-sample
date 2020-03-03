@@ -24,6 +24,7 @@ class SkillForm extends StatefulWidget {
       @required this.createSkillCallback,
       @required this.doneEditingCallback})
       : super(key: key);
+
   @override
   _SkillFormState createState() => _SkillFormState(
       skill, cancelCallback, doneEditingCallback, createSkillCallback);
@@ -345,12 +346,12 @@ class _SkillFormState extends State<SkillForm> {
   }
 
   void _onDone() {
-    Skill newSkill;
+    
     if (_isEditing) {
       Map<String, dynamic> changeMap = changeMonitor.toMap();
       doneEditingCallback(changeMap);
     } else {
-      newSkill = Skill(
+     Skill newSkill = Skill(
         name: _nameController.text,
         type: _selectedType,
         source: _sourceController.text ?? '',

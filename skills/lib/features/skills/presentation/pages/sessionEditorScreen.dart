@@ -220,7 +220,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 style: Theme.of(context).textTheme.title,
               ),
               onTap: () {
-                _pickNewDate();
+                // _pickNewDate();
               },
             ),
           ),
@@ -445,23 +445,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     });
   }
 
-  void _pickNewDate() async {
-    DateTime pickedDate = await showDatePicker(
-      context: context,
-      initialDate: bloc.sessionDate,
-      firstDate: bloc.sessionDate.subtract(Duration(days: 365)),
-      lastDate: bloc.sessionDate.add(
-        Duration(days: 365),
-      ),
-    );
-    
-    if (pickedDate != null) {
-      pickedDate.toUtc();
-      setState(() {
-        bloc.changeDate(pickedDate);
-      });
-    }
-  }
+  
 
   void _completeTapped() async {
     AlertDialog alert;

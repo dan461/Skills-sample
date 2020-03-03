@@ -19,6 +19,7 @@ import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart'
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
+import 'features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
@@ -58,6 +59,14 @@ void init() {
       insertEventsForSessionUC: locator(),
       getEventsForSession: locator(),
       getEventMapsForSession: locator()));
+
+  locator.registerFactory(() => SessiondataBloc(
+      updateSessionWithId: locator(),
+      deleteSessionWithId: locator(),
+      getEventMapsForSession: locator(),
+      insertEventsForSession: locator(),
+      completeSessionAndEvents: locator(),
+      deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SessionEditorBloc(
       updateSessionWithId: locator(),
