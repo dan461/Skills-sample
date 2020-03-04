@@ -163,16 +163,43 @@ class _SessionFormState extends State<SessionForm> {
             },
           ),
         ),
+        _statusBox()
       ],
     );
+  }
+
+  Widget _statusBox() {
+    Widget box = SizedBox();
+    if (_isEditing) {
+      if (session.isComplete) {
+        box = Text(
+          "Completed",
+          style: TextStyle(color: Colors.green, fontSize: 18),
+        );
+      } else {
+        box = Material(
+          shape:
+              Border(bottom: BorderSide(color: Colors.blue[100], width: 1.0)),
+          child: InkWell(
+            child: Text(
+              "Scheduled",
+              style: TextStyle(color: Colors.grey, fontSize: 18),
+            ),
+            onTap: () {
+              _onComplete();
+            },
+          ),
+        );
+      }
+    }
+    return box;
   }
 
   Row _timeRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        _timeSelectionBox(
-            'Start: ', _startTimeString, _selectStartTime),
+        _timeSelectionBox('Start: ', _startTimeString, _selectStartTime),
       ],
     );
   }
@@ -228,8 +255,7 @@ class _SessionFormState extends State<SessionForm> {
     var timeString = session.openTime.toString();
     return Row(
       children: <Widget>[
-        Text('Available: $timeString min.',
-            style: TextStyles.subheadDisabled)
+        Text('Available: $timeString min.', style: TextStyles.subheadDisabled)
       ],
     );
   }
@@ -264,7 +290,6 @@ class _SessionFormState extends State<SessionForm> {
       children: <Widget>[
         FlatButton(onPressed: _onCancel, child: Text('Cancel')),
         FlatButton(onPressed: _onDelete, child: Text('Delete')),
-        FlatButton(onPressed: _onComplete, child: Text('Complete')),
         FlatButton(
             onPressed: _doneEnabled ? _onDone : null, child: Text('Done')),
       ],
