@@ -36,6 +36,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   Session session;
   DateTime sessionDate;
   TimeOfDay selectedStartTime;
+  
 
   List<Map> eventMapsForListView = [];
 
@@ -56,6 +57,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   ) async* {
     if (event is GetActivitiesForSessionEvent) {
       session = event.session;
+      
       sessionDate = session.date;
       selectedStartTime = session.startTime;
       yield SessionDataCrudInProgressState();
@@ -65,6 +67,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
       yield eventMapsOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
         eventMapsForListView = maps;
+        session.openTime = availableTime;
         _countCompletedEvents();
         return SessionDataEventsLoadedState();
       });    

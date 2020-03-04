@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/core/tickTock.dart';
@@ -64,6 +65,7 @@ class _SessionFormState extends State<SessionForm> {
 
   DateTime _selectedDate;
   TimeOfDay _selectedStartTime;
+  Duration selectedDuration;
 
   bool _doneEnabled = true;
 
@@ -82,6 +84,18 @@ class _SessionFormState extends State<SessionForm> {
         : _selectedStartTime.format(context);
   }
 
+  String get _durationString {
+    var durationIntString = selectedDuration.inMinutes.toString();
+    return '$durationIntString min.';
+  }
+
+  @override
+  void initState() {
+    selectedDuration =
+        _isEditing ? Duration(minutes: session.duration) : Duration(minutes: 5);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -96,26 +110,29 @@ class _SessionFormState extends State<SessionForm> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8, top: 8),
           child: _nameField(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8, top: 24),
           child: _dateRowBuilder(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8, top: 24),
           child: _timeRow(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8, top: 24),
           child: _durationRow(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8, top: 24),
           child: _availableTimeRow(),
         ),
-        _bottomButtons()
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _bottomButtons(),
+        )
       ],
     );
   }
@@ -132,20 +149,17 @@ class _SessionFormState extends State<SessionForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-          child: Material(
-            shape:
-                Border(bottom: BorderSide(color: Colors.blue[100], width: 1.0)),
-            child: InkWell(
-              child: Text(
-                _selectedDateString,
-                style: Theme.of(context).textTheme.title,
-              ),
-              onTap: () {
-                _pickNewDate();
-              },
+        Material(
+          shape:
+              Border(bottom: BorderSide(color: Colors.blue[100], width: 1.0)),
+          child: InkWell(
+            child: Text(
+              _selectedDateString,
+              style: Theme.of(context).textTheme.title,
             ),
+            onTap: () {
+              _pickNewDate();
+            },
           ),
         ),
       ],
@@ -156,22 +170,61 @@ class _SessionFormState extends State<SessionForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Padding(
-            padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
-            child: _timeSelectionBox(
-                'Start: ', _startTimeString, _selectStartTime)),
+        _timeSelectionBox(
+            'Start: ', _startTimeString, _selectStartTime),
       ],
     );
   }
 
   Row _durationRow() {
+    // var durationString = session.duration.toString();
     return Row(
-      children: <Widget>[Text('duration picker')],
+      children: <Widget>[
+        Text(
+          'Duration: ',
+          style: Theme.of(context).textTheme.subhead,
+        ),
+        Material(
+          color: Colors.transparent,
+          shape:
+              Border(bottom: BorderSide(width: 1.0, color: Colors.grey[400])),
+          child: InkWell(
+            child: Text(
+              _durationString,
+              style: Theme.of(context).textTheme.subhead,
+            ),
+            onTap: _showDurationPicker,
+          ),
+        )
+      ],
     );
   }
 
+  void _showDurationPicker() async {
+    showDialog(
+        context: context, builder: (BuildContext context) => _durationPicker());
+  }
+
+  Widget _durationPicker() {
+    return CupertinoTimerPicker(
+      initialTimerDuration: Duration(minutes: 5),
+      onTimerDurationChanged: _onDurationChange,
+      mode: CupertinoTimerPickerMode.hm,
+      minuteInterval: 5,
+    );
+  }
+
+  void _onDurationChange(Duration duration) {
+    setState(() {
+      if (duration.inMinutes < 5) {
+        selectedDuration = Duration(minutes: 5);
+      } else
+        selectedDuration = duration;
+    });
+  }
+
   Row _availableTimeRow() {
-    var timeString = 'session.availableTime';
+    var timeString = session.openTime.toString();
     return Row(
       children: <Widget>[
         Text('Available: $timeString min.',
@@ -187,19 +240,22 @@ class _SessionFormState extends State<SessionForm> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(descText, style: Theme.of(context).textTheme.subhead),
-          InkWell(
-            child: Text(timeText, style: Theme.of(context).textTheme.subhead),
-            onTap: () {
-              callback();
-              // _setDoneBtnStatus();
-            },
+          Material(
+            color: Colors.transparent,
+            shape:
+                Border(bottom: BorderSide(width: 1.0, color: Colors.grey[400])),
+            child: InkWell(
+              child: Text(timeText, style: Theme.of(context).textTheme.subhead),
+              onTap: () {
+                callback();
+                // _setDoneBtnStatus();
+              },
+            ),
           )
         ],
       ),
     );
   }
-
-  Widget _durationSelector() {}
 
   ButtonBar _bottomButtons() {
     return ButtonBar(
