@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:skills/core/textStyles.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/presentation/helpers/sessionChangeMonitor.dart';
 
 typedef SessionFormOnCancelCallback();
 typedef SessionFormOnCreateSessionCallback(Session session);
@@ -60,6 +61,7 @@ class _SessionFormState extends State<SessionForm> {
       this.onDeleteSessionCallback,
       this.completeSessionCallback) {
     if (_isEditing) _selectedStartTime = session.startTime;
+    changeMonitor = SessionChangeMonitor(session);
   }
 
   TextEditingController _nameController = TextEditingController();
@@ -67,8 +69,9 @@ class _SessionFormState extends State<SessionForm> {
   DateTime _selectedDate;
   TimeOfDay _selectedStartTime;
   Duration selectedDuration;
+  SessionChangeMonitor changeMonitor;
 
-  bool _doneEnabled = true;
+  bool _doneEnabled = false;
 
   bool get _isEditing {
     return session != null;
@@ -94,7 +97,43 @@ class _SessionFormState extends State<SessionForm> {
   void initState() {
     selectedDuration =
         _isEditing ? Duration(minutes: session.duration) : Duration(minutes: 5);
+    _nameController.addListener(_nameChangeListener);
+
     super.initState();
+  }
+
+  // CHANGE LISTENERS
+  void _nameChangeListener() {
+    if (_isEditing) changeMonitor.nameText = _nameController.text;
+    setDoneButtonEnabled();
+  }
+
+  void _dateChanged(DateTime newDate) {
+    _selectedDate = newDate;
+    changeMonitor.date = newDate;
+    setDoneButtonEnabled();
+  }
+
+  void _startTimeChanged(TimeOfDay newStart) {
+    _selectedStartTime = newStart;
+    changeMonitor.startTime = newStart;
+    setDoneButtonEnabled();
+  }
+
+  void _durationChanged(Duration newDuration) {
+    if (newDuration.inMinutes < 5) {
+      selectedDuration = Duration(minutes: 5);
+    }
+    selectedDuration = newDuration;
+    changeMonitor.duration = newDuration.inMinutes;
+    setDoneButtonEnabled();
+  }
+
+  void _completedStatusChanged(bool completed) {
+    // TODO - this can only change from false to true, can't 'de-complete' a Session yet, callback probably not needed
+    changeMonitor.isComplete = completed;
+    // completeSessionCallback();
+    setDoneButtonEnabled();
   }
 
   @override
@@ -228,11 +267,6 @@ class _SessionFormState extends State<SessionForm> {
     );
   }
 
-  void _showDurationPicker() async {
-    showDialog(
-        context: context, builder: (BuildContext context) => _durationPicker());
-  }
-
   Widget _durationPicker() {
     return CupertinoTimerPicker(
       initialTimerDuration: Duration(minutes: 5),
@@ -240,15 +274,6 @@ class _SessionFormState extends State<SessionForm> {
       mode: CupertinoTimerPickerMode.hm,
       minuteInterval: 5,
     );
-  }
-
-  void _onDurationChange(Duration duration) {
-    setState(() {
-      if (duration.inMinutes < 5) {
-        selectedDuration = Duration(minutes: 5);
-      } else
-        selectedDuration = duration;
-    });
   }
 
   Row _availableTimeRow() {
@@ -297,6 +322,18 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   // ****** ACTIONS ***********
+
+  void _showDurationPicker() async {
+    showDialog(
+        context: context, builder: (BuildContext context) => _durationPicker());
+  }
+
+  void _onDurationChange(Duration duration) {
+    setState(() {
+      _durationChanged(duration);
+    });
+  }
+
   void _onCancel() async {
     if (_doneEnabled) {
       await showDialog(
@@ -382,7 +419,7 @@ class _SessionFormState extends State<SessionForm> {
                 child: Text('Continue'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  completeSessionCallback();
+                  _completedStatusChanged(true);
                 },
               )
             ],
@@ -401,9 +438,9 @@ class _SessionFormState extends State<SessionForm> {
     );
 
     if (pickedDate != null) {
-      pickedDate.toUtc();
+      pickedDate = pickedDate.toUtc();
       setState(() {
-        _selectedDate = pickedDate;
+        _dateChanged(pickedDate);
       });
     }
   }
@@ -417,13 +454,19 @@ class _SessionFormState extends State<SessionForm> {
       // TODO - Time validation
 
       setState(() {
-        // if (TickTock.timesAreEqual(selectedTime, bloc.selectedStartTime) ==
-        //     false) {
-        //   bloc.changeStartTime(selectedTime);
-        // }
+        _startTimeChanged(selectedTime);
       });
     }
 
     // _setDoneBtnStatus();
+  }
+
+  void setDoneButtonEnabled() {
+    setState(() {
+      if (_isEditing) {
+        _doneEnabled = changeMonitor.hasChanged;
+      } else
+        _doneEnabled = _nameController.text.isNotEmpty && _selectedDate != null;
+    });
   }
 }
