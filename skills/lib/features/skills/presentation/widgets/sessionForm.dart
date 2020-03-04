@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/textStyles.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
@@ -228,7 +229,7 @@ class _SessionFormState extends State<SessionForm> {
     return Row(
       children: <Widget>[
         Text('Available: $timeString min.',
-            style: Theme.of(context).textTheme.subhead)
+            style: TextStyles.subheadDisabled)
       ],
     );
   }
