@@ -18,6 +18,7 @@ class InsertNewSkillEventUC
   }
 }
 
+// TODO - this is set up to add multiple events at a time, which is no longer done. Change to add single event
 class InsertEventsForSessionUC
     extends UseCase<void, SkillEventMultiInsertParams> {
   final SkillEventRepository repo;

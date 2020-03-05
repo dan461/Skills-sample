@@ -219,9 +219,9 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   Widget _eventsHeaderBuilder() {
     int count =
-        bloc.eventMapsForListView.isEmpty ? 0 : bloc.completedEventsCount;
+        bloc.activityMapsForListView.isEmpty ? 0 : bloc.completedActivitiesCount;
     String suffix =
-        bloc.eventMapsForListView.isEmpty ? 'scheduled' : 'completed';
+        bloc.activityMapsForListView.isEmpty ? 'scheduled' : 'completed';
     String countString = count.toString() + ' $suffix';
 
     return Container(
@@ -249,7 +249,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   }
 
   ListView _eventsListBuilder() {
-    List sourceList = bloc.eventMapsForListView;
+    List sourceList = bloc.activityMapsForListView;
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {

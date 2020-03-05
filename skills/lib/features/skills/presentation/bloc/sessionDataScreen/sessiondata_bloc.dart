@@ -36,15 +36,21 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   Session session;
   DateTime sessionDate;
   TimeOfDay selectedStartTime;
-  
 
-  List<Map> eventMapsForListView = [];
+  List<Map> activityMapsForListView = [];
 
-  int completedEventsCount = 0;
+  int get completedActivitiesCount {
+    int count = 0;
+    for (var map in activityMapsForListView) {
+      SkillEvent event = map['event'];
+      if (event.isComplete) count++;
+    }
+    return count;
+  }
 
   int get availableTime {
     var time = session.duration ?? 0;
-    for (var map in eventMapsForListView) {
+    for (var map in activityMapsForListView) {
       var event = map['event'];
       time -= event.duration;
     }
@@ -56,32 +62,66 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     SessiondataEvent event,
   ) async* {
     if (event is GetActivitiesForSessionEvent) {
-      session = event.session;
-      
-      sessionDate = session.date;
-      selectedStartTime = session.startTime;
+      session ??= event.session;
+      sessionDate ??= session.date;
+      selectedStartTime ??= session.startTime;
       yield SessionDataCrudInProgressState();
 
       final eventMapsOrFailure = await getEventMapsForSession(
           SessionByIdParams(sessionId: session.sessionId));
       yield eventMapsOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-        eventMapsForListView = maps;
+        activityMapsForListView = maps;
         session.openTime = availableTime;
-        _countCompletedEvents();
         return SessionDataEventsLoadedState();
-      });    
-
-     
+      });
     }
-  }
 
-  void _countCompletedEvents() {
-    int count = 0;
-    for (var map in eventMapsForListView) {
-      SkillEvent event = map['event'];
-      if (event.isComplete) count++;
+    // Insert an Activity
+    else if (event is InsertActivityForSessionEvent) {
+      yield SessionDataCrudInProgressState();
+      final eventsOrFailure = await insertEventsForSession(
+          SkillEventMultiInsertParams(
+              events: [event.activity], newSessionId: session.sessionId));
+
+      yield eventsOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+          (results) => NewActivityCreatedState());
     }
-    completedEventsCount = count;
+
+    // Remove an Activity
+    else if (event is RemoveActivityFromSessionEvent) {
+      yield SessionDataCrudInProgressState();
+      final removedOrFailure = await deleteEventByIdUC(
+          SkillEventGetOrDeleteParams(eventId: event.eventId));
+      yield removedOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+          (id) => ActivityRemovedFromSessionState());
+    }
+
+    // Complete Session
+    else if (event is CompleteSessionEvent) {
+      yield SessionDataCrudInProgressState();
+      final completedOrFailure = await completeSessionAndEvents(
+          SessionCompleteParams(session.sessionId, session.date));
+      yield completedOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+          (response) => SessionCompletedState());
+    }
   }
 }
+
+// Refresh Activities after adding one
+// else if (event is RefreshActivitiesListEvent) {
+//   yield SessionDataCrudInProgressState();
+//   final refreshOrFail = await getEventMapsForSession(
+//       SessionByIdParams(sessionId: session.sessionId));
+//   yield refreshOrFail.fold(
+//       (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
+//     // _recieveActivityMaps(maps);
+//     activityMapsForListView = maps;
+//     session.openTime = availableTime;
+//     // _countCompletedActivities();
+//     return SessionDataEventsLoadedState();
+//   });
+// }

@@ -24,9 +24,7 @@ class UpdateSessionEvent extends SessiondataEvent {
 
 class CompleteSessionEvent extends SessiondataEvent {
   @override
-  
   List<Object> get props => [];
-  
 }
 
 class DeleteSessionWithIdEvent extends SessiondataEvent {
@@ -38,4 +36,25 @@ class DeleteSessionWithIdEvent extends SessiondataEvent {
   List<Object> get props => [id];
 }
 
+class InsertActivityForSessionEvent extends SessiondataEvent {
+  final SkillEvent activity;
 
+  InsertActivityForSessionEvent(this.activity);
+
+  @override
+  List<Object> get props => [activity];
+}
+
+class RemoveActivityFromSessionEvent extends SessiondataEvent {
+  final int eventId;
+
+  RemoveActivityFromSessionEvent(this.eventId);
+
+  @override
+  List<Object> get props => [eventId];
+}
+
+class RefreshActivitiesListEvent extends SessiondataEvent {
+  @override
+  List<Object> get props => null;
+}

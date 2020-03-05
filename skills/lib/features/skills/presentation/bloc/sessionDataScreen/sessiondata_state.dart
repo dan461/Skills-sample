@@ -28,7 +28,22 @@ class SessionDataErrorState extends SessiondataState {
   List<Object> get props => [message];
 }
 
+class SessionCompletedState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
 class SessionUpdatedState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
+class NewActivityCreatedState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
+class ActivityRemovedFromSessionState extends SessiondataState {
   @override
   List<Object> get props => null;
 }
