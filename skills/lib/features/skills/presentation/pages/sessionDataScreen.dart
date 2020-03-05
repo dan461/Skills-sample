@@ -21,7 +21,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   _SessionDataScreenState(this.bloc);
 
-  bool _isEditing = false;
+  // bool _isEditing = false;
 
   String get _sessionDateString {
     return DateFormat.yMMMd().format(bloc.session.date);
@@ -54,15 +54,17 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               appBar: AppBar(),
               body: BlocBuilder<SessiondataBloc, SessiondataState>(
                 builder: (context, state) {
-                  if (state is SessiondataInitial) {
+                  if (state is SessiondataInitial ||
+                      state is SessionDataCrudInProgressState) {
                     // TODO - showing spinner while events loading. Get events if getEvents UC hasn't been called?
                     body = Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  // Events loaded
-                  else if (state is SessionDataEventsLoadedState) {
+                  // Events loaded initially, reloaded after change or Session was updated
+                  else if (state is SessionDataEventsLoadedState ||
+                      state is SessionUpdatedAndRefreshedState) {
                     body = _contentBuilder();
                   }
 
@@ -77,7 +79,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   }
 
   Widget _contentBuilder() {
-    if (_isEditing)
+    if (bloc.isEditing)
       return _editorViewBuilder();
     else
       return _infoViewBuilder();
@@ -106,8 +108,6 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
       ),
     );
   }
-
-  
 
   Widget _infoViewBuilder() {
     return Container(
@@ -218,8 +218,9 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   }
 
   Widget _eventsHeaderBuilder() {
-    int count =
-        bloc.activityMapsForListView.isEmpty ? 0 : bloc.completedActivitiesCount;
+    int count = bloc.activityMapsForListView.isEmpty
+        ? 0
+        : bloc.completedActivitiesCount;
     String suffix =
         bloc.activityMapsForListView.isEmpty ? 'scheduled' : 'completed';
     String countString = count.toString() + ' $suffix';
@@ -266,24 +267,27 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _onEditTapped() {
     setState(() {
-      _isEditing = true;
+      bloc.isEditing = true;
     });
   }
 
   void _onCancelEdit() {
     setState(() {
-      _isEditing = false;
+      bloc.isEditing = false;
     });
   }
 
-  void _onDoneEditing(Map<String, dynamic> changeMap){
-
+  void _onDoneEditing(Map<String, dynamic> changeMap) {
+    setState(() {
+      bloc.add(UpdateSessionEvent(changeMap));
+    });
   }
 
-  void _onDeleteSession(){
+  void _onDeleteSession() {
     bloc.add(DeleteSessionWithIdEvent(id: bloc.session.sessionId));
   }
-  void _onMarkSessionComplete(){
+
+  void _onMarkSessionComplete() {
     bloc.add(CompleteSessionEvent());
   }
 
@@ -383,7 +387,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     }
   }
 
-  void _selectSkill(Skill skill) { 
+  void _selectSkill(Skill skill) {
     Navigator.of(context).pop(skill);
   }
 }

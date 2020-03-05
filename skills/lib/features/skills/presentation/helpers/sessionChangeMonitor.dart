@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
 class SessionChangeMonitor {
@@ -36,9 +37,9 @@ class SessionChangeMonitor {
 
     if (nameText != 'name') map['name'] = nameText;
 
-    if (!date.isAtSameMomentAs(session.date)) map['date'] = date;
+    if (!date.isAtSameMomentAs(session.date)) map['date'] = date.millisecondsSinceEpoch;
 
-    if (startTime != session.startTime) map['startTime'] = startTime;
+    if (startTime != session.startTime) map['startTime'] = TickTock.timeToInt(startTime);
 
     if (duration != session.duration) map['duration'] = duration;
 

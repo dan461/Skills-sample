@@ -6,6 +6,7 @@ import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:synchronized/synchronized.dart';
@@ -22,13 +23,17 @@ abstract class SkillsLocalDataSource {
   Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
   Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap);
+  // Goals
   Future<GoalModel> getGoalById(int id);
   Future<Goal> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
   Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
+  // Sessions
   Future<Session> insertNewSession(Session session);
   Future<int> updateSession(Map<String, dynamic> changeMap, int id);
+  Future<Session> updateAndRefreshSession(
+      Map<String, dynamic> changeMap, int id);
   Future<int> completeSessionAndEvents(int sessionId, DateTime date);
   Future<SessionModel> getSessionById(int id);
   Future<int> deleteSessionWithId(int id);
@@ -37,6 +42,7 @@ abstract class SkillsLocalDataSource {
       DateTime from, DateTime to); // for calendar month mode
   Future<List<Map>> getSessionMapsInDateRange(
       DateTime from, DateTime to); // for calendar week and day modes
+  // Events
   Future<SkillEventModel> insertNewEvent(SkillEvent event);
   Future<SkillEventModel> getEventById(int id);
   Future<int> updateEvent(Map<String, dynamic> changeMap, int eventId);
@@ -377,6 +383,24 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       print(update);
     }
     return response;
+  }
+
+  Future<Session> updateAndRefreshSession(
+      Map<String, dynamic> changeMap, int id) async {
+    final Database db = await database;
+    int response = await db.update(sessionsTable, changeMap,
+        where: 'sessionId = ?', whereArgs: [id]);
+
+    if (changeMap['isComplete'] != null) {
+      int eventsUpdate = await db.rawUpdate(
+          'UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $id');
+      List<Map> skillIds = await db.query(skillEventsTable,
+          columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
+    }
+    if (response != null){
+      Session refreshedSession = await getSessionById(id);
+      return refreshedSession;
+    } else return null;
   }
 
   Future<int> completeSessionAndEvents(

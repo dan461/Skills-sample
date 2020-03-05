@@ -6,6 +6,7 @@ abstract class SessionRepository {
   Future<Either<Failure, Session>> getSessionById(int id);
   Future<Either<Failure, Session>> insertNewSession(Session session);
   Future<Either<Failure, int>> updateSession(Map<String, dynamic> changeMap, int id);
+  Future<Either<Failure, Session>> updateAndRefreshSession(Map<String, dynamic> changeMap, int id);
   Future<Either<Failure, int>> deleteSessionById(int id);
   Future<Either<Failure, List<Session>>> getSessionsInMonth(DateTime month);
   Future<Either<Failure, List<Session>>> getSessionsInDateRange(DateTime from, DateTime to);

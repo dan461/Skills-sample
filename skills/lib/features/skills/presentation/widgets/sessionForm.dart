@@ -366,8 +366,7 @@ class _SessionFormState extends State<SessionForm> {
 
   void _onDone() {
     if (_isEditing) {
-      // get change map, call callback
-      // onDoneEditingCallback()
+      onDoneEditingCallback(changeMonitor.toMap());
     } else {
       // create new Session
     }

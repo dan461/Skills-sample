@@ -120,7 +120,17 @@ void main() {
       expect(result['isComplete'], equals(true));
     });
 
+    test('test that toMap returns a startTime value as in int, not a TimeOfDay', (){
+      sut.startTime = TimeOfDay(hour: 12, minute: 30);
+      Map<String, dynamic> result = sut.toMap();
+      expect(result['startTime'], isA<int>());
+    });
 
+    test('test that toMap returns a date value as in int, not a DateTime', (){
+      sut.date = DateTime.utc(2020, 2, 2);
+      Map<String, dynamic> result = sut.toMap();
+      expect(result['date'], isA<int>());
+    });
 
 
   });

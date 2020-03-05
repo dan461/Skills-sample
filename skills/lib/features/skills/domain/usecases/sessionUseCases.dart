@@ -62,6 +62,16 @@ class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
   }
 }
 
+class UpdateAndRefreshSessionWithId extends UseCase<Session, SessionUpdateParams> {
+  final SessionRepository repo;
+
+  UpdateAndRefreshSessionWithId(this.repo);
+  @override
+  Future<Either<Failure, Session>> call(SessionUpdateParams params) {
+    return repo.updateAndRefreshSession(params.changeMap, params.sessionId);
+  }
+}
+
 class CompleteSessionAndEvents extends UseCase<int, SessionCompleteParams> {
   final SessionRepository repo;
 

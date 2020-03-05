@@ -14,7 +14,7 @@ import '../../mockClasses.dart';
 void main() {
   SessiondataBloc sut;
   MockInsertEventsForSessionUC mockInsertEventsForSessionUC;
-  MockUpdateSessionWithId mockUpdateSessionWithId;
+  MockUpdateAndRefreshSessionWithId mockUpdateAndRefreshSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
   MockDeleteEventByIdUC mockDeleteEventByIdUC;
   MockGetEventMapsForSession mockGetEventMapsForSession;
@@ -25,14 +25,14 @@ void main() {
 
   setUp(() {
     mockInsertEventsForSessionUC = MockInsertEventsForSessionUC();
-    mockUpdateSessionWithId = MockUpdateSessionWithId();
+    mockUpdateAndRefreshSessionWithId = MockUpdateAndRefreshSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
     mockDeleteEventByIdUC = MockDeleteEventByIdUC();
     mockGetEventMapsForSession = MockGetEventMapsForSession();
     mockCompleteSessionAndEvents = MockCompleteSessionAndEvents();
 
     sut = SessiondataBloc(
-        updateSessionWithId: mockUpdateSessionWithId,
+        updateAndRefreshSessionWithId: mockUpdateAndRefreshSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
         getEventMapsForSession: mockGetEventMapsForSession,
         insertEventsForSession: mockInsertEventsForSessionUC,
@@ -133,6 +133,91 @@ void main() {
     });
   });
 
+  group('UpdateAndRefreshSessionWithId', (){
+    test('test that UpdateSessionWithId usecase is called', () async {
+      sut.add(UpdateSessionEvent(testChangeMap));
+      await untilCalled(mockUpdateAndRefreshSessionWithId(
+          SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)));
+      verify(mockUpdateAndRefreshSessionWithId(
+          SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)));
+    });
+
+    test(
+        'test that bloc emits [SessionDataCrudInProgressState, SessionUpdatedState] upon successful update',
+        () async {
+      when(mockUpdateAndRefreshSessionWithId(
+              SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
+          .thenAnswer((_) async => Right(testSession));
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionUpdatedAndRefreshedState(testSession)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateSessionEvent(testChangeMap));
+    });
+
+    test(
+        'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] upon cache failure during update',
+        () async {
+      when(mockUpdateAndRefreshSessionWithId(
+              SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(UpdateSessionEvent(testChangeMap));
+    });
+  });
+
+group('DeleteSession: ', () {
+    test('test that DeleteSession usecase is called', () async {
+      when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
+          .thenAnswer((_) async => Right(1));
+
+      sut.add(DeleteSessionWithIdEvent(id: 1));
+      await untilCalled(
+          mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)));
+      verify(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)));
+
+    });
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionDeletedState] upon successful delete',
+        () async {
+      when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
+          .thenAnswer((_) async => Right(1));
+
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDeletedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteSessionWithIdEvent(id: 1));
+
+     
+    });
+
+
+    test(
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] when delete fails',
+        () async {
+      when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(DeleteSessionWithIdEvent(id: 1));
+    });
+  });
   group('CompleteSessionAndEvents', () {
     test(
         'test that a completeSessionAndEvents is called when CompleteSessionEvent is added',

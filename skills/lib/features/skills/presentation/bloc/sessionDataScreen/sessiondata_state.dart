@@ -38,6 +38,19 @@ class SessionUpdatedState extends SessiondataState {
   List<Object> get props => null;
 }
 
+class SessionUpdatedAndRefreshedState extends SessiondataState {
+  final Session session;
+
+  SessionUpdatedAndRefreshedState(this.session);
+  @override
+  List<Object> get props => null;
+}
+
+class SessionDeletedState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
 class NewActivityCreatedState extends SessiondataState {
   @override
   List<Object> get props => null;

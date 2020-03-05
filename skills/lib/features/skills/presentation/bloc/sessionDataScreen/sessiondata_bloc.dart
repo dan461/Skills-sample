@@ -15,7 +15,7 @@ part 'sessiondata_event.dart';
 part 'sessiondata_state.dart';
 
 class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
-  final UpdateSessionWithId updateSessionWithId;
+  final UpdateAndRefreshSessionWithId updateAndRefreshSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
   final GetEventMapsForSession getEventMapsForSession;
   final InsertEventsForSessionUC insertEventsForSession;
@@ -23,7 +23,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   final DeleteEventByIdUC deleteEventByIdUC;
 
   SessiondataBloc(
-      {this.updateSessionWithId,
+      {this.updateAndRefreshSessionWithId,
       this.deleteSessionWithId,
       this.getEventMapsForSession,
       this.insertEventsForSession,
@@ -57,10 +57,13 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     return time;
   }
 
+  bool isEditing = false;
+
   @override
   Stream<SessiondataState> mapEventToState(
     SessiondataEvent event,
   ) async* {
+    // Get or refresh Activities for list
     if (event is GetActivitiesForSessionEvent) {
       session ??= event.session;
       sessionDate ??= session.date;
@@ -108,20 +111,32 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
           (response) => SessionCompletedState());
     }
+
+    // Update Session
+    else if (event is UpdateSessionEvent) {
+      yield SessionDataCrudInProgressState();
+      final updateOrFailure = await updateAndRefreshSessionWithId(
+          SessionUpdateParams(
+              sessionId: session.sessionId, changeMap: event.changeMap));
+      yield updateOrFailure
+          .fold((failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+              (refreshedSession) {
+        session = refreshedSession;
+        sessionDate = refreshedSession.date;
+        selectedStartTime = refreshedSession.startTime;
+        isEditing = false;
+        return SessionUpdatedAndRefreshedState(session);
+      });
+    }
+
+    // Delete Session
+    else if (event is DeleteSessionWithIdEvent) {
+      yield SessionDataCrudInProgressState();
+      final deleteOrFailure = await deleteSessionWithId(
+          SessionDeleteParams(sessionId: session.sessionId));
+      yield deleteOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+          (response) => SessionDeletedState());
+    }
   }
 }
-
-// Refresh Activities after adding one
-// else if (event is RefreshActivitiesListEvent) {
-//   yield SessionDataCrudInProgressState();
-//   final refreshOrFail = await getEventMapsForSession(
-//       SessionByIdParams(sessionId: session.sessionId));
-//   yield refreshOrFail.fold(
-//       (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-//     // _recieveActivityMaps(maps);
-//     activityMapsForListView = maps;
-//     session.openTime = availableTime;
-//     // _countCompletedActivities();
-//     return SessionDataEventsLoadedState();
-//   });
-// }

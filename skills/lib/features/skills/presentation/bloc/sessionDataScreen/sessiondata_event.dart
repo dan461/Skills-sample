@@ -27,6 +27,11 @@ class CompleteSessionEvent extends SessiondataEvent {
   List<Object> get props => [];
 }
 
+class RefreshSessionFromCacheEvent extends SessiondataEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class DeleteSessionWithIdEvent extends SessiondataEvent {
   final int id;
 
