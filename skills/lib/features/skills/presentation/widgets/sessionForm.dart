@@ -106,23 +106,57 @@ class _SessionFormState extends State<SessionForm> {
 
   void _dateChanged(DateTime newDate) {
     _selectedDate = newDate;
-    changeMonitor.date = newDate;
+    if (_isEditing) changeMonitor.date = newDate;
     setDoneButtonEnabled();
   }
 
   void _startTimeChanged(TimeOfDay newStart) {
     _selectedStartTime = newStart;
-    changeMonitor.startTime = newStart;
+    if (_isEditing) changeMonitor.startTime = newStart;
     setDoneButtonEnabled();
   }
 
   void _durationChanged(Duration newDuration) {
     if (newDuration.inMinutes < 5) {
       selectedDuration = Duration(minutes: 5);
-    }
-    selectedDuration = newDuration;
-    changeMonitor.duration = newDuration.inMinutes;
+      _showIncorrectDurationWarning(true);
+    } else if (_isEditing &&
+        newDuration.inMinutes < (session.duration - session.openTime)) {
+      _showIncorrectDurationWarning(false);
+      selectedDuration = Duration(minutes: session.duration);
+    } else
+      selectedDuration = newDuration;
+
+    if (_isEditing) changeMonitor.duration = newDuration.inMinutes;
     setDoneButtonEnabled();
+  }
+
+  void _showIncorrectDurationWarning(bool underFive) async {
+    String message;
+    if (underFive) {
+      message = 'The Session minimum is 5 minutes';
+    } else
+      message =
+          'Your Session needs to be at least as long as the activities scheduled in it.';
+
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Insufficient Duration'),
+            content: Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Got it'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showDurationPicker();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void _completedStatusChanged(bool completed) {
@@ -267,7 +301,9 @@ class _SessionFormState extends State<SessionForm> {
 
   Widget _durationPicker() {
     return CupertinoTimerPicker(
-      initialTimerDuration: Duration(minutes: 5),
+      initialTimerDuration: _isEditing
+          ? Duration(minutes: session.duration)
+          : Duration(minutes: 5),
       onTimerDurationChanged: _onDurationChange,
       mode: CupertinoTimerPickerMode.hm,
       minuteInterval: 5,
@@ -323,13 +359,32 @@ class _SessionFormState extends State<SessionForm> {
 
   void _showDurationPicker() async {
     showDialog(
-        context: context, builder: (BuildContext context) => _durationPicker());
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Container(height: 150, child: _durationPicker()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Set'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _durationChanged(selectedDuration);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void _onDurationChange(Duration duration) {
-    setState(() {
-      _durationChanged(duration);
-    });
+    selectedDuration = duration;
   }
 
   void _onCancel() async {
