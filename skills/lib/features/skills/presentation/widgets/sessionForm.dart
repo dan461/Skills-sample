@@ -89,6 +89,13 @@ class _SessionFormState extends State<SessionForm> {
     return '$durationIntString min.';
   }
 
+  int get _tentativeOpenTime {
+    if (selectedDuration.inMinutes < session.duration)
+      return session.openTime - (session.duration - selectedDuration.inMinutes);
+      else 
+      return session.openTime + (selectedDuration.inMinutes - session.duration);
+  }
+
   @override
   void initState() {
     selectedDuration =
@@ -213,7 +220,7 @@ class _SessionFormState extends State<SessionForm> {
     return TextFormField(
       textCapitalization: TextCapitalization.sentences,
       controller: _nameController,
-      decoration: InputDecoration(labelText: 'Name (optiona)'),
+      decoration: InputDecoration(labelText: 'Name (optional)'),
     );
   }
 
@@ -302,7 +309,7 @@ class _SessionFormState extends State<SessionForm> {
   Widget _durationPicker() {
     return CupertinoTimerPicker(
       initialTimerDuration: _isEditing
-          ? Duration(minutes: session.duration)
+          ? selectedDuration
           : Duration(minutes: 5),
       onTimerDurationChanged: _onDurationChange,
       mode: CupertinoTimerPickerMode.hm,
@@ -311,7 +318,7 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   Row _availableTimeRow() {
-    var timeString = session.openTime.toString();
+    var timeString = _tentativeOpenTime.toString();
     return Row(
       children: <Widget>[
         Text('Available: $timeString min.', style: TextStyles.subheadDisabled)
@@ -398,7 +405,7 @@ class _SessionFormState extends State<SessionForm> {
               content: Text('Do you want to cancel and lose your changes?'),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('Dismiss'),
+                  child: Text('No'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
