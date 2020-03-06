@@ -96,6 +96,10 @@ class _SessionFormState extends State<SessionForm> {
       return session.openTime + (selectedDuration.inMinutes - session.duration);
   }
 
+  int get _scheduledMinutes {
+    return session.duration - session.openTime;
+  }
+
   @override
   void initState() {
     selectedDuration =
@@ -180,7 +184,10 @@ class _SessionFormState extends State<SessionForm> {
     return Form(
         child: SingleChildScrollView(
       child: Container(
-        child: _sessionColumn(),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8, right: 8),
+          child: _sessionColumn(),
+        ),
       ),
     ));
   }
@@ -189,23 +196,23 @@ class _SessionFormState extends State<SessionForm> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 8, top: 8),
+          padding: const EdgeInsets.only(top: 8),
           child: _nameField(),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 8, top: 24),
+          padding: const EdgeInsets.only(top: 24),
           child: _dateRowBuilder(),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 8, top: 24),
+          padding: const EdgeInsets.only(top: 24),
           child: _timeRow(),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 8, top: 24),
+          padding: const EdgeInsets.only(top: 24),
           child: _durationRow(),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 8, top: 24),
+          padding: const EdgeInsets.only(top: 24),
           child: _availableTimeRow(),
         ),
         Padding(
@@ -318,10 +325,13 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   Row _availableTimeRow() {
-    var timeString = _tentativeOpenTime.toString();
+    var openTimeString = _tentativeOpenTime.toString();
+    var scheduledTimeString = _scheduledMinutes.toString();
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Available: $timeString min.', style: TextStyles.subheadDisabled)
+        Text('Available: $openTimeString min.', style: TextStyles.subheadDisabled),
+        Text('$scheduledTimeString min. of Activities scheduled', style: TextStyles.subheadDisabled)
       ],
     );
   }
@@ -355,7 +365,7 @@ class _SessionFormState extends State<SessionForm> {
       alignment: MainAxisAlignment.center,
       children: <Widget>[
         FlatButton(onPressed: _onCancel, child: Text('Cancel')),
-        FlatButton(onPressed: _onDelete, child: Text('Delete')),
+        FlatButton(onPressed: _onDelete, child: Text('Delete'), textColor: Colors.red),
         FlatButton(
             onPressed: _doneEnabled ? _onDone : null, child: Text('Done')),
       ],
