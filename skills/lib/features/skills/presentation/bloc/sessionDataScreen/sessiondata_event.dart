@@ -13,6 +13,16 @@ class GetActivitiesForSessionEvent extends SessiondataEvent {
   List<Object> get props => [session];
 }
 
+class BeginSessionEditingEvent extends SessiondataEvent {
+  @override
+  List<Object> get props => null;
+}
+
+class CancelSessionEditingEvent extends SessiondataEvent {
+  @override
+  List<Object> get props => null;
+}
+
 class UpdateSessionEvent extends SessiondataEvent {
   final Map<String, dynamic> changeMap;
 

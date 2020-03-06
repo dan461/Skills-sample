@@ -9,6 +9,16 @@ class SessiondataInitial extends SessiondataState {
   List<Object> get props => [];
 }
 
+class SessionEditingState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
+class SessionViewingState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
 class SessionDataCrudInProgressState extends SessiondataState {
   @override
   List<Object> get props => null;

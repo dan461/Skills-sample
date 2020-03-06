@@ -47,7 +47,11 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
       builder: (context) => bloc,
       child: BlocListener<SessiondataBloc, SessiondataState>(
         bloc: bloc,
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is SessionDeletedState) {
+            Navigator.of(context).pop();
+          }
+        },
         child: Builder(
           builder: (BuildContext context) {
             return Scaffold(
@@ -62,10 +66,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                     );
                   }
 
-                  // Events loaded initially, reloaded after change or Session was updated
+                  // Events loaded initially, reloaded after change or editing cancelled
                   else if (state is SessionDataEventsLoadedState ||
-                      state is SessionUpdatedAndRefreshedState) {
-                    body = _contentBuilder();
+                      state is SessionUpdatedAndRefreshedState ||
+                      state is SessionViewingState) {
+                    body = _infoViewBuilder();
+                  } else if (state is SessionEditingState) {
+                    body = _editorViewBuilder();
                   }
 
                   return body;
@@ -76,13 +83,6 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         ),
       ),
     );
-  }
-
-  Widget _contentBuilder() {
-    if (bloc.isEditing)
-      return _editorViewBuilder();
-    else
-      return _infoViewBuilder();
   }
 
   Widget _editorViewBuilder() {
@@ -97,12 +97,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               cancelCallback: _onCancelEdit,
               onDoneEditingCallback: _onDoneEditing,
               onDeleteSessionCallback: _onDeleteSession,
-              completeSessionCallback: _onMarkSessionComplete,
             )
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 8.0),
-            //   child: _eventsListBuilder(),
-            // )
           ],
         ),
       ),
@@ -267,13 +262,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _onEditTapped() {
     setState(() {
-      bloc.isEditing = true;
+      bloc.add(BeginSessionEditingEvent());
     });
   }
 
   void _onCancelEdit() {
     setState(() {
-      bloc.isEditing = false;
+      bloc.add(CancelSessionEditingEvent());
     });
   }
 
@@ -285,10 +280,6 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _onDeleteSession() {
     bloc.add(DeleteSessionWithIdEvent(id: bloc.session.sessionId));
-  }
-
-  void _onMarkSessionComplete() {
-    bloc.add(CompleteSessionEvent());
   }
 
   void _eventTapped(Map<String, dynamic> map) {

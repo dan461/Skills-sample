@@ -19,7 +19,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   final DeleteSessionWithId deleteSessionWithId;
   final GetEventMapsForSession getEventMapsForSession;
   final InsertEventsForSessionUC insertEventsForSession;
-  final CompleteSessionAndEvents completeSessionAndEvents;
+  // final CompleteSessionAndEvents completeSessionAndEvents;
   final DeleteEventByIdUC deleteEventByIdUC;
 
   SessiondataBloc(
@@ -27,7 +27,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
       this.deleteSessionWithId,
       this.getEventMapsForSession,
       this.insertEventsForSession,
-      this.completeSessionAndEvents,
+      // this.completeSessionAndEvents,
       this.deleteEventByIdUC});
 
   @override
@@ -56,8 +56,6 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     }
     return time;
   }
-
-  bool isEditing = false;
 
   @override
   Stream<SessiondataState> mapEventToState(
@@ -102,14 +100,13 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
           (id) => ActivityRemovedFromSessionState());
     }
 
-    // Complete Session
-    else if (event is CompleteSessionEvent) {
-      yield SessionDataCrudInProgressState();
-      final completedOrFailure = await completeSessionAndEvents(
-          SessionCompleteParams(session.sessionId, session.date));
-      yield completedOrFailure.fold(
-          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
-          (response) => SessionCompletedState());
+    // Start Editing
+    else if (event is BeginSessionEditingEvent) {
+      yield SessionEditingState();
+    }
+    // cancel editing
+    else if (event is CancelSessionEditingEvent) {
+      yield SessionViewingState();
     }
 
     // Update Session
@@ -124,7 +121,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
         session = refreshedSession;
         sessionDate = refreshedSession.date;
         selectedStartTime = refreshedSession.startTime;
-        isEditing = false;
+
         return SessionUpdatedAndRefreshedState(session);
       });
     }

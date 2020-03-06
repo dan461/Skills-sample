@@ -18,7 +18,7 @@ void main() {
   MockDeleteSessionWithId mockDeleteSessionWithId;
   MockDeleteEventByIdUC mockDeleteEventByIdUC;
   MockGetEventMapsForSession mockGetEventMapsForSession;
-  MockCompleteSessionAndEvents mockCompleteSessionAndEvents;
+
   Session testSession;
   SkillEvent testEvent;
   Map<String, dynamic> testChangeMap;
@@ -29,14 +29,12 @@ void main() {
     mockDeleteSessionWithId = MockDeleteSessionWithId();
     mockDeleteEventByIdUC = MockDeleteEventByIdUC();
     mockGetEventMapsForSession = MockGetEventMapsForSession();
-    mockCompleteSessionAndEvents = MockCompleteSessionAndEvents();
 
     sut = SessiondataBloc(
         updateAndRefreshSessionWithId: mockUpdateAndRefreshSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
         getEventMapsForSession: mockGetEventMapsForSession,
         insertEventsForSession: mockInsertEventsForSessionUC,
-        completeSessionAndEvents: mockCompleteSessionAndEvents,
         deleteEventByIdUC: mockDeleteEventByIdUC);
 
     testSession = Session(
@@ -133,7 +131,7 @@ void main() {
     });
   });
 
-  group('UpdateAndRefreshSessionWithId', (){
+  group('UpdateAndRefreshSessionWithId', () {
     test('test that UpdateSessionWithId usecase is called', () async {
       sut.add(UpdateSessionEvent(testChangeMap));
       await untilCalled(mockUpdateAndRefreshSessionWithId(
@@ -173,7 +171,7 @@ void main() {
     });
   });
 
-group('DeleteSession: ', () {
+  group('DeleteSession: ', () {
     test('test that DeleteSession usecase is called', () async {
       when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
           .thenAnswer((_) async => Right(1));
@@ -182,7 +180,6 @@ group('DeleteSession: ', () {
       await untilCalled(
           mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)));
       verify(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)));
-
     });
 
     test(
@@ -198,10 +195,7 @@ group('DeleteSession: ', () {
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(DeleteSessionWithIdEvent(id: 1));
-
-     
     });
-
 
     test(
         'test that bloc emits [SessionEditorCrudInProgressState, SessionEditorErrorState] when delete fails',
@@ -218,47 +212,6 @@ group('DeleteSession: ', () {
       sut.add(DeleteSessionWithIdEvent(id: 1));
     });
   });
-  group('CompleteSessionAndEvents', () {
-    test(
-        'test that a completeSessionAndEvents is called when CompleteSessionEvent is added',
-        () async {
-      sut.add(CompleteSessionEvent());
-      await untilCalled(mockCompleteSessionAndEvents(
-          SessionCompleteParams(testSession.sessionId, testSession.date)));
-      verify(mockCompleteSessionAndEvents(
-          SessionCompleteParams(testSession.sessionId, testSession.date)));
-    });
-
-    test(
-        'test that bloc emits [SessionDataCrudInProgressState, SessionCompletedState] after a Session is completed',
-        () async {
-      when(mockCompleteSessionAndEvents(
-              SessionCompleteParams(testSession.sessionId, testSession.date)))
-          .thenAnswer((_) async => Right(1));
-      final expected = [
-        SessiondataInitial(),
-        SessionDataCrudInProgressState(),
-        SessionCompletedState()
-      ];
-      expectLater(sut, emitsInOrder(expected));
-      sut.add(CompleteSessionEvent());
-    });
-
-    test(
-        'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failre after a Session is completed',
-        () async {
-      when(mockCompleteSessionAndEvents(
-              SessionCompleteParams(testSession.sessionId, testSession.date)))
-          .thenAnswer((_) async => Left(CacheFailure()));
-      final expected = [
-        SessiondataInitial(),
-        SessionDataCrudInProgressState(),
-        SessionDataErrorState(CACHE_FAILURE_MESSAGE)
-      ];
-      expectLater(sut, emitsInOrder(expected));
-      sut.add(CompleteSessionEvent());
-    });
-   });
 
   group('InsertEvents: ', () {
     var newTestEvent = SkillEvent(

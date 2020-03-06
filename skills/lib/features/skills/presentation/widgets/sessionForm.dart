@@ -9,7 +9,6 @@ import 'package:skills/features/skills/presentation/helpers/sessionChangeMonitor
 typedef SessionFormOnCancelCallback();
 typedef SessionFormOnCreateSessionCallback(Session session);
 typedef SessionFormOnDeleteSessionCallback();
-typedef SessionFormCompleteSessionCallback();
 typedef SessionFormOnDoneEditingCallback(Map<String, dynamic> changeMap);
 
 class SessionForm extends StatefulWidget {
@@ -18,7 +17,6 @@ class SessionForm extends StatefulWidget {
   final SessionFormOnCancelCallback cancelCallback;
   final SessionFormOnDeleteSessionCallback onDeleteSessionCallback;
   final SessionFormOnCreateSessionCallback onCreateSessionCallback;
-  final SessionFormCompleteSessionCallback completeSessionCallback;
   final SessionFormOnDoneEditingCallback onDoneEditingCallback;
 
   const SessionForm({
@@ -28,19 +26,18 @@ class SessionForm extends StatefulWidget {
     this.cancelCallback,
     this.onDeleteSessionCallback,
     this.onCreateSessionCallback,
-    this.completeSessionCallback,
     this.onDoneEditingCallback,
   }) : super(key: key);
 
   @override
   _SessionFormState createState() => _SessionFormState(
-      session,
-      sessionDate,
-      cancelCallback,
-      onCreateSessionCallback,
-      onDoneEditingCallback,
-      onDeleteSessionCallback,
-      completeSessionCallback);
+        session,
+        sessionDate,
+        cancelCallback,
+        onCreateSessionCallback,
+        onDoneEditingCallback,
+        onDeleteSessionCallback,
+      );
 }
 
 class _SessionFormState extends State<SessionForm> {
@@ -49,17 +46,16 @@ class _SessionFormState extends State<SessionForm> {
   final SessionFormOnCancelCallback cancelCallback;
   final SessionFormOnDeleteSessionCallback onDeleteSessionCallback;
   final SessionFormOnCreateSessionCallback onCreateSessionCallback;
-  final SessionFormCompleteSessionCallback completeSessionCallback;
   final SessionFormOnDoneEditingCallback onDoneEditingCallback;
 
   _SessionFormState(
-      this.session,
-      this.sessionDate,
-      this.cancelCallback,
-      this.onCreateSessionCallback,
-      this.onDoneEditingCallback,
-      this.onDeleteSessionCallback,
-      this.completeSessionCallback) {
+    this.session,
+    this.sessionDate,
+    this.cancelCallback,
+    this.onCreateSessionCallback,
+    this.onDoneEditingCallback,
+    this.onDeleteSessionCallback,
+  ) {
     if (_isEditing) _selectedStartTime = session.startTime;
     changeMonitor = SessionChangeMonitor(session);
   }
@@ -131,8 +127,10 @@ class _SessionFormState extends State<SessionForm> {
 
   void _completedStatusChanged(bool completed) {
     // TODO - this can only change from false to true, can't 'de-complete' a Session yet, callback probably not needed
-    changeMonitor.isComplete = completed;
-    // completeSessionCallback();
+    setState(() {
+      changeMonitor.isComplete = completed;
+    });
+
     setDoneButtonEnabled();
   }
 
@@ -210,7 +208,7 @@ class _SessionFormState extends State<SessionForm> {
   Widget _statusBox() {
     Widget box = SizedBox();
     if (_isEditing) {
-      if (session.isComplete) {
+      if (session.isComplete || changeMonitor.isComplete) {
         box = Text(
           "Completed",
           style: TextStyle(color: Colors.green, fontSize: 18),

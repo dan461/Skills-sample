@@ -65,7 +65,7 @@ void init() {
       deleteSessionWithId: locator(),
       getEventMapsForSession: locator(),
       insertEventsForSession: locator(),
-      completeSessionAndEvents: locator(),
+      // completeSessionAndEvents: locator(),
       deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SessionEditorBloc(
