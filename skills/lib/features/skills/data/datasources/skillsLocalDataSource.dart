@@ -28,7 +28,7 @@ abstract class SkillsLocalDataSource {
   Future<Goal> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
-  Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
+  Future<int> addGoalToSkill(int skillId, int goalId);
   // Sessions
   Future<Session> insertNewSession(Session session);
   Future<int> updateSession(Map<String, dynamic> changeMap, int id);
@@ -341,9 +341,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> addGoalToSkill(int skillId, int goalId, String goalText) async {
+  Future<int> addGoalToSkill(int skillId, int goalId) async {
     final Database db = await database;
-    Map<String, dynamic> changeMap = {'goalId': goalId, 'goalText': goalText};
+    Map<String, dynamic> changeMap = {'goalId': goalId};
     int updates = await db.update(skillsTable, changeMap,
         where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
@@ -397,10 +397,11 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       List<Map> skillIds = await db.query(skillEventsTable,
           columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
     }
-    if (response != null){
+    if (response != null) {
       Session refreshedSession = await getSessionById(id);
       return refreshedSession;
-    } else return null;
+    } else
+      return null;
   }
 
   Future<int> completeSessionAndEvents(

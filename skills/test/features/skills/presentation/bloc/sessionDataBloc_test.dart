@@ -183,7 +183,7 @@ void main() {
     });
 
     test(
-        'test that bloc emits [SessionEditorCrudInProgressState, SessionDeletedState] upon successful delete',
+        'test that bloc emits [SessionEditorCrudInProgressState, SessionWasDeletedState] upon successful delete',
         () async {
       when(mockDeleteSessionWithId(SessionDeleteParams(sessionId: 1)))
           .thenAnswer((_) async => Right(1));
@@ -191,7 +191,7 @@ void main() {
       final expected = [
         SessiondataInitial(),
         SessionDataCrudInProgressState(),
-        SessionDeletedState()
+        SessionWasDeletedState()
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(DeleteSessionWithIdEvent(id: 1));

@@ -51,6 +51,15 @@ class DeleteSessionWithIdEvent extends SessiondataEvent {
   List<Object> get props => [id];
 }
 
+class SkillSelectedForSessionEvent extends SessiondataEvent {
+  final Skill skill;
+
+  SkillSelectedForSessionEvent({@required this.skill});
+
+  @override
+  List<Object> get props => [skill];
+}
+
 class InsertActivityForSessionEvent extends SessiondataEvent {
   final SkillEvent activity;
 

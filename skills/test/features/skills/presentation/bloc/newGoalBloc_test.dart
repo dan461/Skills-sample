@@ -91,20 +91,20 @@ void main() {
   group('AddGoalToSkill', () {
     test('test that AddGoalToSkill is called', () async {
       when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+              AddGoalToSkillParams(skillId: 1, goalId: 1)))
           .thenAnswer((_) async => Right(1));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1));
       await untilCalled(mockAddGoalToSkill(
-          AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
+          AddGoalToSkillParams(skillId: 1, goalId: 1)));
       verify(mockAddGoalToSkill(
-          AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')));
+          AddGoalToSkillParams(skillId: 1, goalId: 1)));
     });
 
     test(
         'test that bloc emits [AddingGoalToSkillState, GoalAddedToSkillState] on successful add',
         () async {
       when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+              AddGoalToSkillParams(skillId: 1, goalId: 1)))
           .thenAnswer((_) async => Right(1));
       final expected = [
         InitialNewgoalState(),
@@ -112,14 +112,14 @@ void main() {
         GoalAddedToSkillState(newId: 1, goalText: 'none')
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1));
     });
 
     test(
         'test that bloc emits [AddingGoalToSkillState, GoalEditorErrorState] upon unsuccessful add',
         () async {
       when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1, goalText: 'goal')))
+              AddGoalToSkillParams(skillId: 1, goalId: 1)))
           .thenAnswer((_) async => prefix1.Left(CacheFailure()));
       final expected = [
         InitialNewgoalState(),
@@ -127,7 +127,7 @@ void main() {
         NewGoalErrorState(CACHE_FAILURE_MESSAGE)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1, goalText: 'goal'));
+      sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1));
     });
   });
 }

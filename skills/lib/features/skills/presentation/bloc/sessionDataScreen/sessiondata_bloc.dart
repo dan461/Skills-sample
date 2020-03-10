@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
@@ -109,6 +110,10 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
       yield SessionViewingState();
     }
 
+    else if (event is SkillSelectedForSessionEvent){
+      yield SkillSelectedForSessionState(event.skill);
+    }
+
     // Update Session
     else if (event is UpdateSessionEvent) {
       yield SessionDataCrudInProgressState();
@@ -133,7 +138,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
           SessionDeleteParams(sessionId: session.sessionId));
       yield deleteOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
-          (response) => SessionDeletedState());
+          (response) => SessionWasDeletedState());
     }
   }
 }

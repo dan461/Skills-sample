@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/session_editor_state.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
 
@@ -20,8 +22,6 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   final SessiondataBloc bloc;
 
   _SessionDataScreenState(this.bloc);
-
-  // bool _isEditing = false;
 
   String get _sessionDateString {
     return DateFormat.yMMMd().format(bloc.session.date);
@@ -48,7 +48,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
       child: BlocListener<SessiondataBloc, SessiondataState>(
         bloc: bloc,
         listener: (context, state) {
-          if (state is SessionDeletedState) {
+          if (state is SessionWasDeletedState) {
             Navigator.of(context).pop();
           }
         },
@@ -70,9 +70,12 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                   else if (state is SessionDataEventsLoadedState ||
                       state is SessionUpdatedAndRefreshedState ||
                       state is SessionViewingState) {
-                    body = _infoViewBuilder();
+                    body = _infoViewBuilder(showEventCreator: false);
                   } else if (state is SessionEditingState) {
                     body = _editorViewBuilder();
+                  } else if (state is SkillSelectedForSessionState) {
+                    body = _infoViewBuilder(
+                        showEventCreator: true, skill: state.skill);
                   }
 
                   return body;
@@ -104,10 +107,11 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  Widget _infoViewBuilder() {
+  Widget _infoViewBuilder({bool showEventCreator, Skill skill}) {
     return Container(
         child: Column(children: <Widget>[
       _infoSectionBuilder(),
+      _actvityCreator(showEventCreator, skill),
       _eventsSectionBuilder()
     ]));
   }
@@ -205,6 +209,30 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
     return icon;
   }
+
+  Row _actvityCreator(bool showCreator, Skill skill) {
+    Widget body;
+    if (!showCreator) {
+      body = SizedBox();
+    } else {
+      Map<String, dynamic> map = {
+        'skill': skill,
+        // 'goal': bloc.currentGoal
+      };
+      body = EventCreator(
+          eventMap: map,
+          addEventCallback: _addActivity,
+          cancelEventCreateCallback: _cancelActivityTapped);
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[body],
+    );
+  }
+
+  void _addActivity(int duration) {}
+
+  void _cancelActivityTapped() {}
 
   Column _eventsSectionBuilder() {
     return Column(
@@ -372,9 +400,9 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         });
     var selectedSkill = await Navigator.of(context).push(routeBuilder);
     if (selectedSkill != null) {
-      // setState(() {
-      //   bloc.add(SkillSelectedForExistingSessionEvent(skill: selectedSkill));
-      // });
+      setState(() {
+        bloc.add(SkillSelectedForSessionEvent(skill: selectedSkill));
+      });
     }
   }
 

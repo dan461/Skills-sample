@@ -56,7 +56,16 @@ class SessionUpdatedAndRefreshedState extends SessiondataState {
   List<Object> get props => null;
 }
 
-class SessionDeletedState extends SessiondataState {
+class SessionWasDeletedState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
+class SkillSelectedForSessionState extends SessiondataState {
+  final Skill skill;
+
+  SkillSelectedForSessionState(this.skill);
+  
   @override
   List<Object> get props => null;
 }
