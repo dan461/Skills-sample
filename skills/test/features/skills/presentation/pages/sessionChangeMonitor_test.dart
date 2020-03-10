@@ -99,13 +99,15 @@ void main() {
     test('test that toMap returns a correct map when Session date has changed', (){
       sut.date = DateTime.utc(2020, 2, 2);
       Map<String, dynamic> result = sut.toMap();
-      expect(result['date'], equals(DateTime.utc(2020, 2, 2)));
+      var matcher = sut.date.millisecondsSinceEpoch;
+      expect(result['date'], equals(matcher));
     });
 
     test('test that toMap returns a correct map when Session startTime has changed', (){
       sut.startTime = TimeOfDay(hour: 12, minute: 30);
       Map<String, dynamic> result = sut.toMap();
-      expect(result['startTime'], equals(TimeOfDay(hour: 12, minute: 30)));
+      var matcher = sut.startTime.hour * 60 + sut.startTime.minute;
+      expect(result['startTime'], equals(matcher));
     });
 
     test('test that toMap returns a correct map when Session duration has changed', (){

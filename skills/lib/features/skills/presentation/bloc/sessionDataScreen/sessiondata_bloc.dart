@@ -141,6 +141,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
               (refreshedSession) {
         session = refreshedSession;
         sessionDate = refreshedSession.date;
+        session.openTime = availableTime;
         selectedStartTime = refreshedSession.startTime;
 
         return SessionUpdatedAndRefreshedState(session);
