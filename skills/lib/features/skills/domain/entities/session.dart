@@ -11,8 +11,9 @@ class Session extends Equatable implements CalendarEvent {
   final int timeRemaining;
   final bool isScheduled;
   final bool isComplete;
-  Widget weekView;
+  Widget weekView; // ignored by sqlite/SessionModel
   Widget dayView; // ignored by sqlite/SessionModel
+  int openTime; // ignored by sqlite/SessionModel
 
   int get sessionduration {
     int minutes;
@@ -35,7 +36,8 @@ class Session extends Equatable implements CalendarEvent {
       @required this.isScheduled,
       @required this.isComplete,
       this.weekView,
-      this.dayView})
+      this.dayView,
+      this.openTime})
       : super();
 
   @override

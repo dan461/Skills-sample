@@ -23,10 +23,8 @@ class InsertNewGoalEvent extends NewgoalEvent {
 class AddGoalToSkillEvent extends NewgoalEvent {
   final int goalId;
   final int skillId;
-  final String goalText;
 
-  AddGoalToSkillEvent(
-      {@required this.goalText, @required this.goalId, @required this.skillId});
+  AddGoalToSkillEvent({@required this.goalId, @required this.skillId});
 
   @override
   List<Object> get props => [goalId, skillId];

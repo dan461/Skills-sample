@@ -83,6 +83,8 @@ class MockGetEventMapsForSession extends Mock
 
 class MockUpdateSessionWithId extends Mock implements UpdateSessionWithId {}
 
+class MockUpdateAndRefreshSessionWithId extends Mock implements UpdateAndRefreshSessionWithId {}
+
 class MockDeleteSessionWithId extends Mock implements DeleteSessionWithId {}
 
 class MockCompleteSessionAndEvents extends Mock

@@ -34,8 +34,7 @@ class NewgoalBloc extends Bloc<NewgoalEvent, NewgoalState> {
       yield AddingGoalToSkillState();
       final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams(
           skillId: event.skillId,
-          goalId: event.goalId,
-          goalText: event.goalText));
+          goalId: event.goalId));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newId) =>

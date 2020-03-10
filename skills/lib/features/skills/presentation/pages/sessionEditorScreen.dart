@@ -220,7 +220,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
                 style: Theme.of(context).textTheme.title,
               ),
               onTap: () {
-                _pickNewDate();
+                // _pickNewDate();
               },
             ),
           ),
@@ -231,22 +231,22 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
   Row _eventCreator() {
     Widget body;
-    if (!_showEventCreator) {
-      body = SizedBox();
-    } else {
-      Map<String, dynamic> map = {
-        'skill': bloc.selectedSkill,
-        'goal': bloc.currentGoal
-      };
-      body = EventCreator(
-          eventMap: map,
-          addEventCallback: _addEvent,
-          cancelEventCreateCallback: _cancelEventTapped);
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[body],
-    );
+    // if (!_showEventCreator) {
+    //   body = SizedBox();
+    // } else {
+    //   Map<String, dynamic> map = {
+    //     'skill': bloc.selectedSkill,
+    //     'goal': bloc.currentGoal
+    //   };
+    //   body = EventCreator(
+    //       eventMap: map,
+    //       addEventCallback: _addEvent,
+    //       cancelEventCreateCallback: _cancelEventTapped);
+    // }
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.center,
+    //   children: <Widget>[body],
+    // );
   }
 
   // ButtonBar _buttonsBuilder() {
@@ -445,23 +445,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     });
   }
 
-  void _pickNewDate() async {
-    DateTime pickedDate = await showDatePicker(
-      context: context,
-      initialDate: bloc.sessionDate,
-      firstDate: bloc.sessionDate.subtract(Duration(days: 365)),
-      lastDate: bloc.sessionDate.add(
-        Duration(days: 365),
-      ),
-    );
-    
-    if (pickedDate != null) {
-      pickedDate.toUtc();
-      setState(() {
-        bloc.changeDate(pickedDate);
-      });
-    }
-  }
+  
 
   void _completeTapped() async {
     AlertDialog alert;

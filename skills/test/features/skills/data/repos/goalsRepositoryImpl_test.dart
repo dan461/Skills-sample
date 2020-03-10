@@ -84,10 +84,9 @@ void main() {
 
   group('add goal to skill', () {
     test('testing adding a goal to a skill', () async {
-      when(mockLocalDataSource.addGoalToSkill(1, 1, 'goal'))
-          .thenAnswer((_) async => 1);
-      final result = await sut.addGoalToSkill(1, 1, 'goal');
-      verify(mockLocalDataSource.addGoalToSkill(1, 1, 'goal'));
+      when(mockLocalDataSource.addGoalToSkill(1, 1)).thenAnswer((_) async => 1);
+      final result = await sut.addGoalToSkill(1, 1);
+      verify(mockLocalDataSource.addGoalToSkill(1, 1));
       expect(result, equals(Right(1)));
     });
   });

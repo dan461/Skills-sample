@@ -15,10 +15,8 @@ class GoalCrudParams extends Params {
 class AddGoalToSkillParams extends Params {
   final int skillId;
   final int goalId;
-  final String goalText;
 
-  AddGoalToSkillParams(
-      {@required this.skillId, @required this.goalId, @required this.goalText});
+  AddGoalToSkillParams({@required this.skillId, @required this.goalId});
 }
 
 class GetSkillParams extends Params {

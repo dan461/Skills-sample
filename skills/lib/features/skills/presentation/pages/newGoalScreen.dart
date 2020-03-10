@@ -361,9 +361,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                 } else if (state is NewGoalInsertedState) {
                   // Need to update skill with currentGoalId and goalText
                   BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
-                      skillId: widget.skillId,
-                      goalId: state.newGoal.goalId,
-                      goalText: _goalTranslation));
+                      skillId: widget.skillId, goalId: state.newGoal.goalId));
                   body = Center(
                     child: CircularProgressIndicator(),
                   );

@@ -19,6 +19,7 @@ import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart'
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
+import 'features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 
@@ -59,6 +60,14 @@ void init() {
       getEventsForSession: locator(),
       getEventMapsForSession: locator()));
 
+  locator.registerFactory(() => SessiondataBloc(
+      updateAndRefreshSessionWithId: locator(),
+      deleteSessionWithId: locator(),
+      getEventMapsForSession: locator(),
+      insertEventsForSession: locator(),
+      // completeSessionAndEvents: locator(),
+      deleteEventByIdUC: locator()));
+
   locator.registerFactory(() => SessionEditorBloc(
       updateSessionWithId: locator(),
       deleteSessionWithId: locator(),
@@ -92,6 +101,7 @@ void init() {
   locator.registerLazySingleton(() => GetSessionsInDateRange(locator()));
   locator.registerLazySingleton(() => GetMapsForSessionsInDateRange(locator()));
   locator.registerLazySingleton(() => UpdateSessionWithId(locator()));
+  locator.registerLazySingleton(() => UpdateAndRefreshSessionWithId(locator()));
   locator.registerLazySingleton(() => DeleteSessionWithId(locator()));
 
   locator.registerLazySingleton(() => InsertNewSkillEventUC(locator()));
