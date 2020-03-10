@@ -98,11 +98,10 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
               events: [event.activity], newSessionId: session.sessionId));
 
       yield eventsOrFailure.fold(
-          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
-          (results) {
-            add(GetActivitiesForSessionEvent(session));
-            return NewActivityCreatedState();
-          });
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (results) {
+        add(GetActivitiesForSessionEvent(session));
+        return NewActivityCreatedState();
+      });
     }
 
     // Remove an Activity
@@ -111,8 +110,10 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
       final removedOrFailure = await deleteEventByIdUC(
           SkillEventGetOrDeleteParams(eventId: event.eventId));
       yield removedOrFailure.fold(
-          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
-          (id) => ActivityRemovedFromSessionState());
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (id) {
+        add(GetActivitiesForSessionEvent(session));
+        return ActivityRemovedFromSessionState();
+      });
     }
 
     // Start Editing
@@ -123,7 +124,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     else if (event is CancelSessionEditingEvent ||
         event is CancelSkillForSessionEvent) {
       yield SessionViewingState();
-    } 
+    }
     // Skill selected for the Session
     else if (event is SkillSelectedForSessionEvent) {
       yield SkillSelectedForSessionState(event.skill);

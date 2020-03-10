@@ -78,33 +78,30 @@ void main() {
   test(
       'test that insertEventsForSession usecase is called when createActivity is called',
       () async {
-    
-      Skill testSkill = Skill(
-        skillId: 1,
-        name: 'Delta',
-        source: 'test',
-        type: 'composition',
-        startDate: DateTime.fromMillisecondsSinceEpoch(0),
-      );
+    Skill testSkill = Skill(
+      skillId: 1,
+      name: 'Delta',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
 
-      var newTestEvent = SkillEvent(
-          skillId: testSkill.skillId,
-          sessionId: 1,
-          duration: 20,
-          date: DateTime.fromMillisecondsSinceEpoch(0),
-          isComplete: false,
-          skillString: testSkill.name);
-      List<SkillEvent> events = [newTestEvent];
-      
+    var newTestEvent = SkillEvent(
+        skillId: testSkill.skillId,
+        sessionId: 1,
+        duration: 20,
+        date: DateTime.fromMillisecondsSinceEpoch(0),
+        isComplete: false,
+        skillString: testSkill.name);
+    List<SkillEvent> events = [newTestEvent];
 
-      sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
-    
-      sut.createActivity(20, testSkill);
-      await untilCalled(mockInsertEventsForSessionUC(
-          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
-      verify(mockInsertEventsForSessionUC(
-          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
-          
+    sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
+
+    sut.createActivity(20, testSkill);
+    await untilCalled(mockInsertEventsForSessionUC(
+        SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+    verify(mockInsertEventsForSessionUC(
+        SkillEventMultiInsertParams(events: events, newSessionId: 1)));
   });
 
   test('test that countCompletedActivities returns correct count ', () async {
@@ -357,6 +354,28 @@ void main() {
       await untilCalled(
           mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
       verify(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
+    });
+
+    test(
+        'test that getEventMapsForSession is called after an Activity is removed from the Session',
+        () async {
+      var newTestEvent = SkillEvent(
+          skillId: 1,
+          sessionId: 1,
+          duration: 1,
+          date: DateTime.fromMillisecondsSinceEpoch(0),
+          isComplete: false,
+          skillString: 'test');
+      List<SkillEvent> events = [newTestEvent];
+      List<int> resultsList = [1];
+
+      when(mockInsertEventsForSessionUC(
+              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+          .thenAnswer((_) async => Right(resultsList));
+      sut.add(InsertActivityForSessionEvent(newTestEvent));
+      await untilCalled(
+          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
     });
 
     test(

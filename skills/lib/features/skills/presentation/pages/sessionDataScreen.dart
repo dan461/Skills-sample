@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/session_editor_state.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
@@ -60,7 +61,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                 builder: (context, state) {
                   if (state is SessiondataInitial ||
                       state is SessionDataCrudInProgressState ||
-                      state is NewActivityCreatedState) {
+                      state is NewActivityCreatedState || 
+                      state is ActivityRemovedFromSessionState) {
                     // TODO - showing spinner while events loading. Get events if getEvents UC hasn't been called?
                     body = Center(
                       child: CircularProgressIndicator(),
@@ -228,30 +230,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  void _addActivity(int duration, Skill skill) async {
-    if (duration > bloc.availableTime) {
-      await showDialog(
-          context: (context),
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('The selected duration exceeds the time available.'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    } else
-      bloc.createActivity(duration, skill);
-  }
-
-  void _cancelActivityTapped() {
-    bloc.add(CancelSkillForSessionEvent());
-  }
+  
 
   Column _eventsSectionBuilder() {
     return Column(
@@ -329,6 +308,31 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     bloc.add(DeleteSessionWithIdEvent(id: bloc.session.sessionId));
   }
 
+  void _addActivity(int duration, Skill skill) async {
+    if (duration > bloc.availableTime) {
+      await showDialog(
+          context: (context),
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('The selected duration exceeds the time available.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else
+      bloc.createActivity(duration, skill);
+  }
+
+  void _cancelActivityTapped() {
+    bloc.add(CancelSkillForSessionEvent());
+  }
+
   void _eventTapped(Map<String, dynamic> map) {
     showModalBottomSheet(
         context: context,
@@ -390,10 +394,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               child: Text('Delete'),
               onPressed: () {
                 Navigator.of(context).pop();
-                setState(() {
-                  // bloc.deleteEvent(map);
-                  // _doneButtonEnabled = true;
-                });
+                SkillEvent event = map['event'];
+                bloc.add(RemoveActivityFromSessionEvent(event.eventId));
               },
             )
           ],
