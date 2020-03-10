@@ -60,6 +60,11 @@ class SkillSelectedForSessionEvent extends SessiondataEvent {
   List<Object> get props => [skill];
 }
 
+class CancelSkillForSessionEvent extends SessiondataEvent {
+  @override
+  List<Object> get props => null;
+}
+
 class InsertActivityForSessionEvent extends SessiondataEvent {
   final SkillEvent activity;
 

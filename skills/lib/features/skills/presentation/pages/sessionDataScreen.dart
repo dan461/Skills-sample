@@ -59,7 +59,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               body: BlocBuilder<SessiondataBloc, SessiondataState>(
                 builder: (context, state) {
                   if (state is SessiondataInitial ||
-                      state is SessionDataCrudInProgressState) {
+                      state is SessionDataCrudInProgressState ||
+                      state is NewActivityCreatedState) {
                     // TODO - showing spinner while events loading. Get events if getEvents UC hasn't been called?
                     body = Center(
                       child: CircularProgressIndicator(),
@@ -215,10 +216,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     if (!showCreator) {
       body = SizedBox();
     } else {
-      Map<String, dynamic> map = {
-        'skill': skill,
-        // 'goal': bloc.currentGoal
-      };
+      Map<String, dynamic> map = {'skill': skill, 'goal': skill.goal};
       body = EventCreator(
           eventMap: map,
           addEventCallback: _addActivity,
@@ -230,9 +228,30 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  void _addActivity(int duration) {}
+  void _addActivity(int duration, Skill skill) async {
+    if (duration > bloc.availableTime) {
+      await showDialog(
+          context: (context),
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('The selected duration exceeds the time available.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else
+      bloc.createActivity(duration, skill);
+  }
 
-  void _cancelActivityTapped() {}
+  void _cancelActivityTapped() {
+    bloc.add(CancelSkillForSessionEvent());
+  }
 
   Column _eventsSectionBuilder() {
     return Column(

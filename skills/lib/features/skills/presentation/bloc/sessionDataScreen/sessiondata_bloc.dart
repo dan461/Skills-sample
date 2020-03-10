@@ -58,6 +58,17 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     return time;
   }
 
+  void createActivity(int eventDuration, Skill skill) {
+    final newActivity = SkillEvent(
+        skillId: skill.skillId,
+        sessionId: session.sessionId,
+        date: sessionDate,
+        duration: eventDuration,
+        isComplete: false,
+        skillString: skill.name);
+    add(InsertActivityForSessionEvent(newActivity));
+  }
+
   @override
   Stream<SessiondataState> mapEventToState(
     SessiondataEvent event,
@@ -88,7 +99,10 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
 
       yield eventsOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
-          (results) => NewActivityCreatedState());
+          (results) {
+            add(GetActivitiesForSessionEvent(session));
+            return NewActivityCreatedState();
+          });
     }
 
     // Remove an Activity
@@ -105,12 +119,13 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     else if (event is BeginSessionEditingEvent) {
       yield SessionEditingState();
     }
-    // cancel editing
-    else if (event is CancelSessionEditingEvent) {
+    // cancel editing or cancel adding an activity
+    else if (event is CancelSessionEditingEvent ||
+        event is CancelSkillForSessionEvent) {
       yield SessionViewingState();
-    }
-
-    else if (event is SkillSelectedForSessionEvent){
+    } 
+    // Skill selected for the Session
+    else if (event is SkillSelectedForSessionEvent) {
       yield SkillSelectedForSessionState(event.skill);
     }
 

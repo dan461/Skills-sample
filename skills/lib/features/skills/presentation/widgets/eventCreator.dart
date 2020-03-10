@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
 
-typedef AddEventCallback(int eventDuration);
+typedef AddEventCallback(int eventDuration, Skill skill);
 typedef CancelEventCreateCallback();
 
 class EventCreator extends StatefulWidget {
@@ -26,7 +27,8 @@ class _EventCreatorState extends State<EventCreator> {
   final AddEventCallback addEventCallback;
   final CancelEventCreateCallback cancelEventCreateCallback;
   Skill _selectedSkill;
-  // Goal _currentGoal;
+  Goal _currentGoal;
+  String _goalText;
 
   TextEditingController _eventDurationTextControl = TextEditingController();
   bool _addButtonEnabled = false;
@@ -38,14 +40,15 @@ class _EventCreatorState extends State<EventCreator> {
   initState() {
     super.initState();
     _selectedSkill = eventMap['skill'];
-    // _currentGoal = eventMap['goal'];
+    _currentGoal = eventMap['goal'];
+    _goalText = _currentGoal != null ? _currentGoal.goalText : "No goal";
   }
 
   @override
   dispose() {
     super.dispose();
     _selectedSkill = null;
-    // _currentGoal = null;
+    _currentGoal = null;
   }
 
   int get _eventDuration {
@@ -115,7 +118,7 @@ class _EventCreatorState extends State<EventCreator> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[Text('NEED GOALTEXT')],
+              children: <Widget>[Text(_goalText)],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -134,7 +137,7 @@ class _EventCreatorState extends State<EventCreator> {
                         child: Text('Add'),
                         onPressed: _addButtonEnabled
                             ? () {
-                                addEventCallback(_eventDuration);
+                                addEventCallback(_eventDuration, _selectedSkill);
                               }
                             : null),
                   ],

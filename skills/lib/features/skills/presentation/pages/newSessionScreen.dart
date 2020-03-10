@@ -390,7 +390,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     print('cancel');
   }
 
-  void _addEvent(int eventDuration) {
+  void _addEvent(int eventDuration, Skill skill) {
     bloc.eventDuration = eventDuration;
     bloc.createEvent(date);
     setState(() {

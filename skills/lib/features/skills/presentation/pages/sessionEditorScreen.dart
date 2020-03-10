@@ -231,22 +231,22 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
 
   Row _eventCreator() {
     Widget body;
-    if (!_showEventCreator) {
-      body = SizedBox();
-    } else {
-      Map<String, dynamic> map = {
-        'skill': bloc.selectedSkill,
-        'goal': bloc.currentGoal
-      };
-      body = EventCreator(
-          eventMap: map,
-          addEventCallback: _addEvent,
-          cancelEventCreateCallback: _cancelEventTapped);
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[body],
-    );
+    // if (!_showEventCreator) {
+    //   body = SizedBox();
+    // } else {
+    //   Map<String, dynamic> map = {
+    //     'skill': bloc.selectedSkill,
+    //     'goal': bloc.currentGoal
+    //   };
+    //   body = EventCreator(
+    //       eventMap: map,
+    //       addEventCallback: _addEvent,
+    //       cancelEventCreateCallback: _cancelEventTapped);
+    // }
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.center,
+    //   children: <Widget>[body],
+    // );
   }
 
   // ButtonBar _buttonsBuilder() {

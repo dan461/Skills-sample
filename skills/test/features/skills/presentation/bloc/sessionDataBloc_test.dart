@@ -6,6 +6,7 @@ import 'package:skills/core/tickTock.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/skillEvent.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
@@ -74,6 +75,38 @@ void main() {
     expect(sut.availableTime, 20);
   });
 
+  test(
+      'test that insertEventsForSession usecase is called when createActivity is called',
+      () async {
+    
+      Skill testSkill = Skill(
+        skillId: 1,
+        name: 'Delta',
+        source: 'test',
+        type: 'composition',
+        startDate: DateTime.fromMillisecondsSinceEpoch(0),
+      );
+
+      var newTestEvent = SkillEvent(
+          skillId: testSkill.skillId,
+          sessionId: 1,
+          duration: 20,
+          date: DateTime.fromMillisecondsSinceEpoch(0),
+          isComplete: false,
+          skillString: testSkill.name);
+      List<SkillEvent> events = [newTestEvent];
+      
+
+      sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
+    
+      sut.createActivity(20, testSkill);
+      await untilCalled(mockInsertEventsForSessionUC(
+          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+      verify(mockInsertEventsForSessionUC(
+          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+          
+  });
+
   test('test that countCompletedActivities returns correct count ', () async {
     SkillEvent testEvent2 = SkillEvent(
         skillId: 1,
@@ -88,6 +121,47 @@ void main() {
     sut.activityMapsForListView = testActivitiesList;
 
     expect(sut.completedActivitiesCount, equals(1));
+  });
+
+  test(
+      'test that bloc emits SessionEditingState after BeginSessionEditingEvent is added',
+      () async {
+    sut.add(BeginSessionEditingEvent());
+    final expected = [SessiondataInitial(), SessionEditingState()];
+    expectLater(sut, emitsInOrder(expected));
+  });
+
+  test(
+      'test that bloc emits SessionViewingState after CancelSessionEditingEvent is added',
+      () async {
+    sut.add(CancelSessionEditingEvent());
+    final expected = [SessiondataInitial(), SessionViewingState()];
+    expectLater(sut, emitsInOrder(expected));
+  });
+
+  test(
+      'test that bloc emits SessionViewingState after CancelSkillForSessionEvent is added',
+      () async {
+    sut.add(CancelSkillForSessionEvent());
+    final expected = [SessiondataInitial(), SessionViewingState()];
+    expectLater(sut, emitsInOrder(expected));
+  });
+
+  test(
+      'test that bloc emits SkillSelectedForSessionState after SkillSelectedForSessionEvent is added',
+      () async {
+    Skill testSkill = Skill(
+      name: 'Delta',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    sut.add(SkillSelectedForSessionEvent(skill: testSkill));
+    final expected = [
+      SessiondataInitial(),
+      SkillSelectedForSessionState(testSkill)
+    ];
+    expectLater(sut, emitsInOrder(expected));
   });
 
   group('GetEventMapsForSession: ', () {
@@ -230,6 +304,18 @@ void main() {
           SkillEventMultiInsertParams(events: events, newSessionId: 1)));
       verify(mockInsertEventsForSessionUC(
           SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+    });
+
+    test(
+        'test that getEventMapsForSession is called after an Activity is added to the Session',
+        () async {
+      when(mockInsertEventsForSessionUC(
+              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+          .thenAnswer((_) async => Right(resultsList));
+      sut.add(InsertActivityForSessionEvent(newTestEvent));
+      await untilCalled(
+          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
     });
 
     test(
