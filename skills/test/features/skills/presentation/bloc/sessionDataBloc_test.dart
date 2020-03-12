@@ -42,7 +42,6 @@ void main() {
         sessionId: 1,
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 30),
         duration: 30,
         isComplete: false,
         isScheduled: true);

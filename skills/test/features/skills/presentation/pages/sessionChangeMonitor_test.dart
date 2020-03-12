@@ -14,16 +14,16 @@ void main() {
     testSession = Session(
         date: DateTime.utc(2020, 2, 1),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 60,
         isScheduled: true,
         isComplete: false);
 
-        sut = SessionChangeMonitor(testSession);
+    sut = SessionChangeMonitor(testSession);
   });
 
-  group('hasChanged - ', (){
-    test('test that hasChanged bool is correct when no values have changed', (){
+  group('hasChanged - ', () {
+    test('test that hasChanged bool is correct when no values have changed',
+        () {
       expect(sut.hasChanged, false);
     });
 
@@ -68,72 +68,79 @@ void main() {
       expect(sut.hasChanged, false);
     });
 
-    test('test that hasChanged is correct after date has changed', (){
+    test('test that hasChanged is correct after date has changed', () {
       sut.date = DateTime.utc(2020, 2, 2);
       expect(sut.hasChanged, true);
     });
 
-    test('test that hasChanged is correct after startTime has changed', (){
+    test('test that hasChanged is correct after startTime has changed', () {
       sut.startTime = TimeOfDay(hour: 12, minute: 30);
       expect(sut.hasChanged, true);
     });
 
-    test('test that hasChanged is correct after duration has changed', (){
+    test('test that hasChanged is correct after duration has changed', () {
       sut.duration = 45;
       expect(sut.hasChanged, true);
     });
 
-    test('test that hasChanged is correct after isComplete has changed', (){
+    test('test that hasChanged is correct after isComplete has changed', () {
       sut.isComplete = true;
       expect(sut.hasChanged, true);
     });
   });
 
-  group('toMap - ', (){
-    test('test that toMap returns a correct map when Session name has changed', (){
+  group('toMap - ', () {
+    test('test that toMap returns a correct map when Session name has changed',
+        () {
       sut.nameText = 'test';
       Map<String, dynamic> result = sut.toMap();
       expect(result['name'], equals('test'));
     });
 
-    test('test that toMap returns a correct map when Session date has changed', (){
+    test('test that toMap returns a correct map when Session date has changed',
+        () {
       sut.date = DateTime.utc(2020, 2, 2);
       Map<String, dynamic> result = sut.toMap();
       var matcher = sut.date.millisecondsSinceEpoch;
       expect(result['date'], equals(matcher));
     });
 
-    test('test that toMap returns a correct map when Session startTime has changed', (){
+    test(
+        'test that toMap returns a correct map when Session startTime has changed',
+        () {
       sut.startTime = TimeOfDay(hour: 12, minute: 30);
       Map<String, dynamic> result = sut.toMap();
       var matcher = sut.startTime.hour * 60 + sut.startTime.minute;
       expect(result['startTime'], equals(matcher));
     });
 
-    test('test that toMap returns a correct map when Session duration has changed', (){
+    test(
+        'test that toMap returns a correct map when Session duration has changed',
+        () {
       sut.duration = 45;
       Map<String, dynamic> result = sut.toMap();
       expect(result['duration'], equals(45));
     });
 
-    test('test that toMap returns a correct map when Session isComplete has changed', (){
+    test(
+        'test that toMap returns a correct map when Session isComplete has changed',
+        () {
       sut.isComplete = true;
       Map<String, dynamic> result = sut.toMap();
       expect(result['isComplete'], equals(true));
     });
 
-    test('test that toMap returns a startTime value as in int, not a TimeOfDay', (){
+    test('test that toMap returns a startTime value as in int, not a TimeOfDay',
+        () {
       sut.startTime = TimeOfDay(hour: 12, minute: 30);
       Map<String, dynamic> result = sut.toMap();
       expect(result['startTime'], isA<int>());
     });
 
-    test('test that toMap returns a date value as in int, not a DateTime', (){
+    test('test that toMap returns a date value as in int, not a DateTime', () {
       sut.date = DateTime.utc(2020, 2, 2);
       Map<String, dynamic> result = sut.toMap();
       expect(result['date'], isA<int>());
     });
-
-
   });
 }

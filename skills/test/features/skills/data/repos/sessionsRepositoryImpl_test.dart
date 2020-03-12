@@ -20,7 +20,6 @@ void main() {
     testSessionModel = SessionModel(
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isScheduled: false,
@@ -29,7 +28,6 @@ void main() {
     testSession = Session(
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isComplete: false,
@@ -41,7 +39,6 @@ void main() {
         sessionId: 1,
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         duration: 1,
         timeRemaining: 1,
         isComplete: false,

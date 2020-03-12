@@ -45,7 +45,6 @@ void main() {
     testSession = Session(
         date: DateTime(2019, 12, 29),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         isComplete: false,
         isScheduled: true);
 
@@ -53,21 +52,18 @@ void main() {
         sessionId: 1,
         date: DateTime(2019, 12, 1),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         isComplete: false,
         isScheduled: true);
 
     testSession2 = Session(
         date: DateTime(2019, 12, 2),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         isComplete: false,
         isScheduled: true);
 
     testSession3 = Session(
         date: DateTime(2019, 12, 2),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
         isComplete: false,
         isScheduled: true);
 
@@ -204,24 +200,27 @@ void main() {
       when(mockGetMapsForSessionsInDateRange(
               SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Right(testMaps));
-          final expected = [InitialSchedulerState(), SessionsForRangeReturnedState(testMaps)];
+      final expected = [
+        InitialSchedulerState(),
+        SessionsForRangeReturnedState(testMaps)
+      ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(VisibleDateRangeChangeEvent(testDateRange));
-      
     });
 
     test(
         'test that test that GetSessionMapsInDateRange returns [SchedulerErrorState] on successful call',
         () async {
-      
       sut.calendarControl.currentMode = CalendarMode.day;
       when(mockGetMapsForSessionsInDateRange(
               SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Left(CacheFailure()));
-          final expected = [InitialSchedulerState(), SchedulerErrorState(CACHE_FAILURE_MESSAGE)];
+      final expected = [
+        InitialSchedulerState(),
+        SchedulerErrorState(CACHE_FAILURE_MESSAGE)
+      ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(VisibleDateRangeChangeEvent(testDateRange));
-      
     });
   });
 }

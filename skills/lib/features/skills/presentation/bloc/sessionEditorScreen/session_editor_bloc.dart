@@ -31,7 +31,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
       this.deleteEventByIdUC});
 
   TimeOfDay selectedStartTime;
-  TimeOfDay selectedFinishTime;
+
   DateTime sessionDate;
 
   Session sessionForEdit;
@@ -44,12 +44,10 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
 
   int get sessionDuration {
     int minutes;
-    if (selectedStartTime == null || selectedFinishTime == null)
+    if (selectedStartTime == null)
       minutes = 0;
     else {
-      int hours = selectedFinishTime.hour - selectedStartTime.hour;
-      minutes =
-          selectedFinishTime.minute - selectedStartTime.minute + hours * 60;
+      minutes = selectedStartTime.minute + selectedStartTime.hour * 60;
     }
     return minutes;
   }
@@ -101,16 +99,16 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     selectedStartTime = newTime;
   }
 
-  void changeFinishTime(TimeOfDay newTime) {
-    if (TickTock.timesAreEqual(newTime, sessionForEdit.endTime)) {
-      changeMap.remove('endTime');
-    } else {
-      int endInt = TickTock.timeToInt(newTime);
-      changeMap.addAll({'endTime': endInt});
-    }
+  // void changeFinishTime(TimeOfDay newTime) {
+  //   if (TickTock.timesAreEqual(newTime, sessionForEdit.endTime)) {
+  //     changeMap.remove('endTime');
+  //   } else {
+  //     int endInt = TickTock.timeToInt(newTime);
+  //     changeMap.addAll({'endTime': endInt});
+  //   }
 
-    selectedFinishTime = newTime;
-  }
+  //   selectedFinishTime = newTime;
+  // }
 
   void updateSession() {
     if (changeMap.isNotEmpty) {
@@ -174,7 +172,7 @@ class SessionEditorBloc extends Bloc<SessionEditorEvent, SessionEditorState> {
     if (event is BeginSessionEditingEvent) {
       sessionForEdit = event.session;
       selectedStartTime = sessionForEdit.startTime;
-      selectedFinishTime = sessionForEdit.endTime;
+
       sessionDate = sessionForEdit.date;
       // enableCompleteButton = !sessionForEdit.isComplete;
       yield SessionEditorCrudInProgressState();

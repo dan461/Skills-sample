@@ -356,7 +356,6 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     SessionModel sessionModel = SessionModel(
       date: session.date,
       startTime: session.startTime,
-      endTime: session.endTime,
       duration: session.duration,
       timeRemaining: session.timeRemaining,
       isComplete: session.isComplete,
