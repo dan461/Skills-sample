@@ -87,16 +87,12 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
   }
 
-  void _showSessionEditor(CalendarEvent event) async {
-    // SessionModel session = event;
+  void _showSessionEditor(CalendarEvent session) async {
+    
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      // SessionEditorScreen editor = SessionEditorScreen(
-      //   bloc: locator<SessionEditorBloc>(),
-      //   session: event,
-      // );
-      SessionDataScreen dataScreen =
-          SessionDataScreen(bloc: locator<SessiondataBloc>());
-          dataScreen.bloc.add(GetActivitiesForSessionEvent(event));
+      
+      SessionDataScreen dataScreen = locator<SessionDataScreen>();
+      dataScreen.bloc.add(GetActivitiesForSessionEvent(session));
       return dataScreen;
     }));
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));

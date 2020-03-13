@@ -22,6 +22,7 @@ import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
 import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
+import 'features/skills/presentation/pages/sessionDataScreen.dart';
 
 final locator = GetIt.instance;
 
@@ -80,6 +81,8 @@ void init() {
       getSessionsInDateRange: locator(),
       getEventsForSession: locator(),
       getMapsForSessionsInDateRange: locator()));
+
+  locator.registerFactory(() => SessionDataScreen(bloc: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));

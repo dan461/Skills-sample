@@ -14,7 +14,7 @@ import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
 class SessionDataScreen extends StatefulWidget {
   final SessiondataBloc bloc;
 
-  const SessionDataScreen({Key key, @required this.bloc}) : super(key: key);
+  const SessionDataScreen({Key key, this.bloc}) : super(key: key);
   @override
   _SessionDataScreenState createState() => _SessionDataScreenState(bloc);
 }
@@ -41,6 +41,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     return bloc.availableTime > 0;
   }
 
+  Widget _backArrow;
+
   @override
   Widget build(BuildContext context) {
     Widget body;
@@ -56,12 +58,14 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         child: Builder(
           builder: (BuildContext context) {
             return Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                leading: _backArrow,
+              ),
               body: BlocBuilder<SessiondataBloc, SessiondataState>(
                 builder: (context, state) {
                   if (state is SessiondataInitial ||
                       state is SessionDataCrudInProgressState ||
-                      state is NewActivityCreatedState || 
+                      state is NewActivityCreatedState ||
                       state is ActivityRemovedFromSessionState) {
                     // TODO - showing spinner while events loading. Get events if getEvents UC hasn't been called?
                     body = Center(
@@ -74,11 +78,14 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                       state is SessionUpdatedAndRefreshedState ||
                       state is SessionViewingState) {
                     body = _infoViewBuilder(showEventCreator: false);
+                    
                   } else if (state is SessionEditingState) {
                     body = _editorViewBuilder();
+                    
                   } else if (state is SkillSelectedForSessionState) {
                     body = _infoViewBuilder(
                         showEventCreator: true, skill: state.skill);
+                    
                   }
 
                   return body;
@@ -230,8 +237,6 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  
-
   Column _eventsSectionBuilder() {
     return Column(
       children: <Widget>[_eventsHeaderBuilder(), _eventsListBuilder()],
@@ -289,18 +294,21 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   void _onEditTapped() {
     setState(() {
       bloc.add(BeginSessionEditingEvent());
+      _backArrow = SizedBox();
     });
   }
 
   void _onCancelEdit() {
     setState(() {
       bloc.add(CancelSessionEditingEvent());
+      _backArrow = null;
     });
   }
 
   void _onDoneEditing(Map<String, dynamic> changeMap) {
     setState(() {
       bloc.add(UpdateSessionEvent(changeMap));
+      _backArrow = null;
     });
   }
 

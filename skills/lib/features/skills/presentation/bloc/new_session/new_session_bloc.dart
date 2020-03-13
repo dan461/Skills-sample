@@ -57,40 +57,37 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
         .millisecondsSinceEpoch;
   }
 
-  void createSession(DateTime date) {
-    Session newSession = Session(
-      date: date,
-      startTime: selectedStartTime,
-      endTime: selectedFinishTime,
-      duration: sessionDuration,
-      timeRemaining: sessionDuration,
-      isComplete: false,
-      isScheduled: false,
-    );
-    add(InsertNewSessionEvent(newSession: newSession));
-  }
+  // void createSession(DateTime date) {
+  //   Session newSession = Session(
+  //     date: date,
+  //     startTime: selectedStartTime,
+  //     endTime: selectedFinishTime,
+  //     duration: sessionDuration,
+  //     timeRemaining: sessionDuration,
+  //     isComplete: false,
+  //     isScheduled: false,
+  //   );
+  //   add(InsertNewSessionEvent(newSession: newSession));
+  // }
 
-  void updateSession() {
-    /* possible changes 
-      - new date
-      - new start time
-      - new end time
-      - new duration (should probably be a computed property of Session)
-      - isComplete status changed to true
-    */
+  // void updateSession() {
+  //   /* possible changes
+  //     - new date
+  //     - new start time
+  //     - new end time
+  //     - new duration (should probably be a computed property of Session)
+  //     - isComplete status changed to true
+  //   */
 
-    Map<String, dynamic> changeMap = {'sessionId': sessionForEdit.sessionId};
+  //   Map<String, dynamic> changeMap = {'sessionId': sessionForEdit.sessionId};
 
-    if (sessionDate != sessionForEdit.date) if (selectedStartTime !=
-        sessionForEdit.startTime)
-      changeMap.addEntries([MapEntry('startTime', selectedStartTime)]);
+  //   if (sessionDate != sessionForEdit.date) if (selectedStartTime !=
+  //       sessionForEdit.startTime)
+  //     changeMap.addEntries([MapEntry('startTime', selectedStartTime)]);
 
-    if (selectedFinishTime != sessionForEdit.endTime)
-      changeMap.addEntries([MapEntry('endTime', selectedFinishTime)]);
-
-    if (changeMap.isNotEmpty) {}
-    // add(UpdateSessionEvent())
-  }
+  //   if (changeMap.isNotEmpty) {}
+  //   // add(UpdateSessionEvent())
+  // }
 
   void createEvent(DateTime date) {
     final newEvent = SkillEvent(
@@ -133,15 +130,10 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
       yield failureOrNewSession.fold(
           (failure) => NewSessionErrorState(CACHE_FAILURE_MESSAGE), (session) {
         // _currentSession = session;
-        return NewSessionInsertedState(
-            newSession: session, events: pendingEvents);
+        return NewSessionInsertedState(newSession: session);
       });
     }
-    // // Update Session
-    // else if (event is UpdateSessionEvent) {
-    //   // use changeMap to update session
-    //   // create UpdateSession UC
-    // }
+
     //Skill selected
     else if (event is SkillSelectedForSessionEvent) {
       selectedSkill = event.skill;

@@ -5,6 +5,7 @@ import 'package:skills/core/textStyles.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/helpers/sessionChangeMonitor.dart';
+import 'package:skills/features/skills/presentation/pages/sessionDataScreen.dart';
 
 typedef SessionFormOnCancelCallback();
 typedef SessionFormOnCreateSessionCallback(Session session);
@@ -64,13 +65,17 @@ class _SessionFormState extends State<SessionForm> {
 
   DateTime _selectedDate;
   TimeOfDay _selectedStartTime;
-  Duration selectedDuration;
+  Duration _selectedDuration;
   SessionChangeMonitor changeMonitor;
 
   bool _doneEnabled = false;
 
   bool get _isEditing {
     return session != null;
+  }
+
+  int get _startingDuration {
+    return _isEditing ? session.duration : 5;
   }
 
   String get _selectedDateString {
@@ -85,25 +90,24 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   String get _durationString {
-    var durationIntString = selectedDuration.inMinutes.toString();
+    var durationIntString = _selectedDuration.inMinutes.toString();
     return '$durationIntString min.';
   }
 
   int get _tentativeOpenTime {
-    if (selectedDuration.inMinutes < session.duration)
-      return session.openTime - (session.duration - selectedDuration.inMinutes);
-      else 
-      return session.openTime + (selectedDuration.inMinutes - session.duration);
+    if (_selectedDuration.inMinutes < _startingDuration)
+      return session.openTime - (_startingDuration - _selectedDuration.inMinutes);
+    else
+      return session.openTime + (_selectedDuration.inMinutes - _startingDuration);
   }
 
   int get _scheduledMinutes {
-    return session.duration - session.openTime;
+    return _isEditing ? _startingDuration - session.openTime : 0;
   }
 
   @override
   void initState() {
-    selectedDuration =
-        _isEditing ? Duration(minutes: session.duration) : Duration(minutes: 5);
+    _selectedDuration = Duration(minutes: _startingDuration);
     _nameController.addListener(_nameChangeListener);
 
     super.initState();
@@ -129,14 +133,13 @@ class _SessionFormState extends State<SessionForm> {
 
   void _durationChanged(Duration newDuration) {
     if (newDuration.inMinutes < 5) {
-      selectedDuration = Duration(minutes: 5);
+      _selectedDuration = Duration(minutes: 5);
       _showIncorrectDurationWarning(true);
-    } else if (_isEditing &&
-        newDuration.inMinutes < (session.duration - session.openTime)) {
+    } else if (_isEditing && newDuration.inMinutes < (_scheduledMinutes)) {
       _showIncorrectDurationWarning(false);
-      selectedDuration = Duration(minutes: session.duration);
+      _selectedDuration = Duration(minutes: _startingDuration);
     } else
-      selectedDuration = newDuration;
+      _selectedDuration = newDuration;
 
     if (_isEditing) changeMonitor.duration = newDuration.inMinutes;
     setDoneButtonEnabled();
@@ -290,7 +293,7 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   Row _durationRow() {
-    // var durationString = session.duration.toString();
+    
     return Row(
       children: <Widget>[
         Text(
@@ -315,9 +318,8 @@ class _SessionFormState extends State<SessionForm> {
 
   Widget _durationPicker() {
     return CupertinoTimerPicker(
-      initialTimerDuration: _isEditing
-          ? selectedDuration
-          : Duration(minutes: 5),
+      initialTimerDuration:
+          _isEditing ? _selectedDuration : Duration(minutes: 5),
       onTimerDurationChanged: _onDurationChange,
       mode: CupertinoTimerPickerMode.hm,
       minuteInterval: 5,
@@ -325,13 +327,17 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   Row _availableTimeRow() {
-    var openTimeString = _tentativeOpenTime.toString();
+    var openTimeString = _isEditing
+        ? _tentativeOpenTime.toString()
+        : _selectedDuration.inMinutes.toString();
     var scheduledTimeString = _scheduledMinutes.toString();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Available: $openTimeString min.', style: TextStyles.subheadDisabled),
-        Text('$scheduledTimeString min. of Activities scheduled', style: TextStyles.subheadDisabled)
+        Text('Available: $openTimeString min.',
+            style: TextStyles.subheadDisabled),
+        Text('$scheduledTimeString min. of Activities scheduled',
+            style: TextStyles.subheadDisabled)
       ],
     );
   }
@@ -361,15 +367,26 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   ButtonBar _bottomButtons() {
+    String doneTitle;
+    Widget deleteButton;
+    if (_isEditing){
+      doneTitle = 'Done';
+      deleteButton = FlatButton(onPressed: _onDelete, child: Text('Delete'), textColor: Colors.red,);
+    } else {
+      doneTitle = 'Create Session';
+      deleteButton = SizedBox();
+    }
     return ButtonBar(
       alignment: MainAxisAlignment.center,
       children: <Widget>[
         FlatButton(onPressed: _onCancel, child: Text('Cancel')),
-        FlatButton(onPressed: _onDelete, child: Text('Delete'), textColor: Colors.red),
+        deleteButton,
         FlatButton(
-            onPressed: _doneEnabled ? _onDone : null, child: Text('Done')),
+            onPressed: _doneEnabled ? _onDone : null, child: Text(doneTitle)),
       ],
     );
+
+    
   }
 
   // ****** ACTIONS ***********
@@ -392,7 +409,7 @@ class _SessionFormState extends State<SessionForm> {
                 child: Text('Set'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _durationChanged(selectedDuration);
+                  _durationChanged(_selectedDuration);
                 },
               ),
             ],
@@ -401,7 +418,7 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   void _onDurationChange(Duration duration) {
-    selectedDuration = duration;
+    _selectedDuration = duration;
   }
 
   void _onCancel() async {
@@ -438,7 +455,13 @@ class _SessionFormState extends State<SessionForm> {
     if (_isEditing) {
       onDoneEditingCallback(changeMonitor.toMap());
     } else {
-      // create new Session
+      Session newSession = Session(
+          date: _selectedDate,
+          startTime: _selectedStartTime,
+          duration: _selectedDuration.inMinutes,
+          isComplete: false,
+          isScheduled: true);
+      onCreateSessionCallback(newSession);
     }
   }
 
@@ -535,7 +558,7 @@ class _SessionFormState extends State<SessionForm> {
       if (_isEditing) {
         _doneEnabled = changeMonitor.hasChanged;
       } else
-        _doneEnabled = _nameController.text.isNotEmpty && _selectedDate != null;
+        _doneEnabled = _selectedStartTime != null;
     });
   }
 }
