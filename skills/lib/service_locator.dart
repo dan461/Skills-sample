@@ -20,8 +20,6 @@ import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
-import 'features/skills/presentation/bloc/sessionEditorScreen/bloc.dart';
-import 'features/skills/presentation/bloc/skillEditorScreen/skilleditor_bloc.dart';
 import 'features/skills/presentation/pages/sessionDataScreen.dart';
 
 final locator = GetIt.instance;
@@ -39,11 +37,6 @@ void init() {
       updateSkill: locator(),
       getSkillById: locator(),
       getSkillGoalMapById: locator()));
-
-  locator.registerFactory(() => SkillEditorBloc(
-      updateSkill: locator(),
-      getSkillById: locator(),
-      deleteSkillWithId: locator()));
 
   locator.registerFactory(() => GoaleditorBloc(
       updateGoalUC: locator(),
@@ -63,14 +56,6 @@ void init() {
       getEventMapsForSession: locator(),
       insertEventsForSession: locator(),
       // completeSessionAndEvents: locator(),
-      deleteEventByIdUC: locator()));
-
-  locator.registerFactory(() => SessionEditorBloc(
-      updateSessionWithId: locator(),
-      deleteSessionWithId: locator(),
-      getEventMapsForSession: locator(),
-      insertEventsForSession: locator(),
-      completeSessionAndEvents: locator(),
       deleteEventByIdUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(
