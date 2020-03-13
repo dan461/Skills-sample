@@ -1,14 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:skills/core/constants.dart';
-import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
-import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
-import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
 
 class NewSessionScreen extends StatefulWidget {
@@ -26,12 +21,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   final NewSessionBloc bloc;
 
   _NewSessionScreenState(this.date, this.bloc);
-
-  bool _doneButtonEnabled = false;
-
-  bool get _showEventCreator {
-    return bloc.selectedSkill != null;
-  }
 
   @override
   void dispose() {
