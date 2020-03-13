@@ -6,7 +6,7 @@ class Session extends Equatable implements CalendarEvent {
   final int sessionId;
   final DateTime date;
   final TimeOfDay startTime;
-  final TimeOfDay endTime;
+
   final int duration;
   final int timeRemaining;
   final bool isScheduled;
@@ -17,11 +17,10 @@ class Session extends Equatable implements CalendarEvent {
 
   int get sessionduration {
     int minutes;
-    if (startTime == null || endTime == null)
+    if (startTime == null)
       minutes = 0;
     else {
-      int hours = endTime.hour - startTime.hour;
-      minutes = endTime.minute - startTime.minute + hours * 60;
+      minutes = startTime.minute + startTime.hour * 60;
     }
     return minutes;
   }
@@ -30,7 +29,6 @@ class Session extends Equatable implements CalendarEvent {
       {this.sessionId,
       @required this.date,
       @required this.startTime,
-      @required this.endTime,
       this.duration,
       this.timeRemaining,
       @required this.isScheduled,
@@ -45,7 +43,6 @@ class Session extends Equatable implements CalendarEvent {
         sessionId,
         date,
         startTime,
-        endTime,
         duration,
         timeRemaining,
         isComplete,

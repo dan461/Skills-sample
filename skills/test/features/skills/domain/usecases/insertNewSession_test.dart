@@ -20,14 +20,12 @@ void main() {
   final testSession = Session(
       date: DateTime.now(),
       startTime: TimeOfDay(hour: 12, minute: 0),
-      endTime: TimeOfDay(hour: 12, minute: 0),
       isComplete: false,
       isScheduled: true);
   final newSession = Session(
       sessionId: 1,
       date: DateTime.now(),
       startTime: TimeOfDay(hour: 12, minute: 0),
-      endTime: TimeOfDay(hour: 12, minute: 0),
       isComplete: false,
       isScheduled: true);
 

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/sessionEditorScreen/session_editor_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/sessionDataScreen.dart';
-import 'package:skills/features/skills/presentation/pages/sessionEditorScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
 import 'package:skills/service_locator.dart';
 
@@ -87,16 +84,12 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
   }
 
-  void _showSessionEditor(CalendarEvent event) async {
-    // SessionModel session = event;
+  void _showSessionEditor(CalendarEvent session) async {
+    
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      // SessionEditorScreen editor = SessionEditorScreen(
-      //   bloc: locator<SessionEditorBloc>(),
-      //   session: event,
-      // );
-      SessionDataScreen dataScreen =
-          SessionDataScreen(bloc: locator<SessiondataBloc>());
-          dataScreen.bloc.add(GetActivitiesForSessionEvent(event));
+      
+      SessionDataScreen dataScreen = locator<SessionDataScreen>();
+      dataScreen.bloc.add(GetActivitiesForSessionEvent(session));
       return dataScreen;
     }));
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));

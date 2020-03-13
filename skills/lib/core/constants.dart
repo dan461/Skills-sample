@@ -1,3 +1,7 @@
+// Route names
+const String SESSION_DATA_ROUTE = '/session_editor';
+
+
 const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
 const String SERVER_FAILURE_MESSAGE = 'Server Failure';
 

@@ -42,11 +42,11 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
         : bloc.selectedStartTime.format(context);
   }
 
-  String get _finishTimeString {
-    return bloc.selectedFinishTime == null
-        ? 'Select Time'
-        : bloc.selectedFinishTime.format(context);
-  }
+  // String get _finishTimeString {
+  //   return bloc.selectedFinishTime == null
+  //       ? 'Select Time'
+  //       : bloc.selectedFinishTime.format(context);
+  // }
 
   String get _durationString {
     String minutes = bloc.sessionDuration.toString();
@@ -174,7 +174,7 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
             children: <Widget>[
               _completedTextBuilder(),
               _dateRowBuilder(),
-              _timeSelectRow(),
+              // _timeSelectRow(),
               _timeRowBuilder(),
               _eventCreator(),
             ],
@@ -336,21 +336,21 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     );
   }
 
-  Row _timeSelectRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-            padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
-            child: _timeSelectionBox(
-                'Start: ', _startTimeString, _selectStartTime)),
-        Padding(
-            padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
-            child: _timeSelectionBox(
-                'Finish: ', _finishTimeString, _selectFinishTime)),
-      ],
-    );
-  }
+  // Row _timeSelectRow() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: <Widget>[
+  //       Padding(
+  //           padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
+  //           child: _timeSelectionBox(
+  //               'Start: ', _startTimeString, _selectStartTime)),
+  //       Padding(
+  //           padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
+  //           child: _timeSelectionBox(
+  //               'Finish: ', _finishTimeString, _selectFinishTime)),
+  //     ],
+  //   );
+  // }
 
   Container _timeSelectionBox(
       String descText, String timeText, Function callback) {
@@ -419,29 +419,29 @@ class _SessionEditorScreenState extends State<SessionEditorScreen> {
     _setDoneBtnStatus();
   }
 
-  void _selectFinishTime() async {
-    TimeOfDay selectedTime = await showTimePicker(
-      context: context,
-      initialTime: bloc.sessionForEdit.endTime,
-    );
+  // void _selectFinishTime() async {
+  //   TimeOfDay selectedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: bloc.sessionForEdit.endTime,
+  //   );
 
-    if (selectedTime != null) {
-      // TODO - Time validation
-      setState(() {
-        if (TickTock.timesAreEqual(selectedTime, bloc.selectedFinishTime) ==
-            false) {
-          bloc.changeFinishTime(selectedTime);
-        }
-      });
-    }
+  //   if (selectedTime != null) {
+  //     // TODO - Time validation
+  //     setState(() {
+  //       if (TickTock.timesAreEqual(selectedTime, bloc.selectedFinishTime) ==
+  //           false) {
+  //         bloc.changeFinishTime(selectedTime);
+  //       }
+  //     });
+  //   }
 
-    _setDoneBtnStatus();
-  }
+  //   _setDoneBtnStatus();
+  // }
 
   void _setDoneBtnStatus() {
     setState(() {
-      _doneButtonEnabled =
-          bloc.selectedStartTime != null && bloc.selectedFinishTime != null;
+      // _doneButtonEnabled =
+      //     bloc.selectedStartTime != null && bloc.selectedFinishTime != null;
     });
   }
 

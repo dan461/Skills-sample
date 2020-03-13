@@ -66,7 +66,7 @@ class _SessionCardState extends State<SessionCard> {
             child: IntrinsicHeight(
               child: Row(
                 children: <Widget>[
-                  _timeSection(session.startTime, session.endTime),
+                  _timeSection(session.startTime, session.startTime),
                   Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

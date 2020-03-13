@@ -7,7 +7,6 @@ class SessionModel extends Session {
       {int sessionId,
       @required DateTime date,
       @required TimeOfDay startTime,
-      @required TimeOfDay endTime,
       int duration,
       int timeRemaining,
       @required bool isScheduled,
@@ -16,7 +15,6 @@ class SessionModel extends Session {
             sessionId: sessionId,
             date: date,
             startTime: startTime,
-            endTime: endTime,
             duration: duration,
             timeRemaining: timeRemaining,
             isScheduled: isScheduled,
@@ -25,16 +23,14 @@ class SessionModel extends Session {
   factory SessionModel.fromMap(Map<String, dynamic> map) {
     // TODO - just in case a Session was made with an hour value not zero
     DateTime date = DateTime.fromMillisecondsSinceEpoch(map['date']).toUtc();
-    if (date.hour != 0)
-    {
-      date = date.subtract(Duration(hours:date.hour)); 
+    if (date.hour != 0) {
+      date = date.subtract(Duration(hours: date.hour));
     }
 
     return SessionModel(
         sessionId: map['sessionId'],
         date: date,
         startTime: TickTock.timeFromInt(map['startTime']),
-        endTime: TickTock.timeFromInt(map['endTime']),
         duration: map['duration'],
         timeRemaining: map['timeRemaining'],
         isScheduled: map['isScheduled'] == 0 ? false : true,
@@ -46,7 +42,6 @@ class SessionModel extends Session {
       'sessionId': sessionId,
       'date': date.millisecondsSinceEpoch,
       'startTime': TickTock.timeToInt(startTime),
-      'endTime': TickTock.timeToInt(endTime),
       'duration': duration,
       'timeRemaining': timeRemaining,
       'isScheduled': isScheduled,
@@ -59,7 +54,6 @@ class SessionModel extends Session {
         sessionId,
         date,
         startTime,
-        endTime,
         duration,
         timeRemaining,
         isComplete,

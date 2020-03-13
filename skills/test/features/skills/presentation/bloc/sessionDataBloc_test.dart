@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:skills/core/tickTock.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
@@ -42,7 +41,6 @@ void main() {
         sessionId: 1,
         date: DateTime.now(),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 30),
         duration: 30,
         isComplete: false,
         isScheduled: true);
