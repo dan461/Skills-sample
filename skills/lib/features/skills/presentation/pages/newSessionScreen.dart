@@ -48,17 +48,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     bloc.sessionDate ??= date;
   }
 
-  String get _startTimeString {
-    return bloc.selectedStartTime == null
-        ? 'Select Time'
-        : bloc.selectedStartTime.format(context);
-  }
-
-  String get _durationString {
-    String minutes = bloc.sessionDuration.toString();
-    return 'Duration: $minutes min.';
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -74,7 +63,10 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         child: Builder(
           builder: (BuildContext context) {
             return Scaffold(
-              appBar: AppBar(title: Text('New Session'), leading: SizedBox(),),
+              appBar: AppBar(
+                title: Text('New Session'),
+                leading: SizedBox(),
+              ),
               body: BlocBuilder<NewSessionBloc, NewSessionState>(
                 builder: (context, state) {
                   Widget body;
@@ -98,8 +90,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       ),
     );
   }
-
-  
 
   Container _contentBuilder() {
     return Container(

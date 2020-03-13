@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/dbManager.dart';
-import 'package:skills/features/skills/presentation/pages/homeScreen.dart';
 import 'package:skills/features/skills/presentation/pages/sessionDataScreen.dart';
 import 'package:skills/service_locator.dart' as locatorPrefix;
 import 'package:skills/service_locator.dart';

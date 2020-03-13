@@ -55,11 +55,7 @@ void init() {
         addGoalToSkill: locator(),
       ));
 
-  locator.registerFactory(() => NewSessionBloc(
-      insertNewSession: locator(),
-      insertEventsForSessionUC: locator(),
-      getEventsForSession: locator(),
-      getEventMapsForSession: locator()));
+  locator.registerFactory(() => NewSessionBloc(insertNewSession: locator()));
 
   locator.registerFactory(() => SessiondataBloc(
       updateAndRefreshSessionWithId: locator(),
