@@ -1,8 +1,8 @@
 import 'package:get_it/get_it.dart';
-import 'package:skills/features/skills/data/repos/skillEventRepositoryImpl.dart';
+import 'package:skills/features/skills/data/repos/activityRepositoryImpl.dart';
 import 'package:skills/features/skills/domain/repos/goal_repo.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
-import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
+import 'package:skills/features/skills/domain/repos/activity_repo.dart';
 import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
@@ -14,7 +14,7 @@ import 'features/skills/data/repos/skillsRepositoryImpl.dart';
 import 'features/skills/domain/repos/skill_repo.dart';
 import 'features/skills/domain/usecases/skillUseCases.dart';
 import 'features/skills/domain/usecases/sessionUseCases.dart';
-import 'features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'features/skills/domain/usecases/activityUseCases.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
@@ -53,14 +53,14 @@ void init() {
   locator.registerFactory(() => SessiondataBloc(
       updateAndRefreshSessionWithId: locator(),
       deleteSessionWithId: locator(),
-      getEventMapsForSession: locator(),
-      insertEventsForSession: locator(),
+      getActivityMapsForSession: locator(),
+      insertActivitiesForSession: locator(),
       // completeSessionAndEvents: locator(),
-      deleteEventByIdUC: locator()));
+      deleteActivityByIdUC: locator()));
 
   locator.registerFactory(() => SchedulerBloc(
       getSessionsInDateRange: locator(),
-      getEventsForSession: locator(),
+      getActiviesForSession: locator(),
       getMapsForSessionsInDateRange: locator()));
 
   locator.registerFactory(() => SessionDataScreen(bloc: locator()));
@@ -88,14 +88,14 @@ void init() {
   locator.registerLazySingleton(() => UpdateAndRefreshSessionWithId(locator()));
   locator.registerLazySingleton(() => DeleteSessionWithId(locator()));
 
-  locator.registerLazySingleton(() => InsertNewSkillEventUC(locator()));
-  locator.registerLazySingleton(() => InsertEventsForSessionUC(locator()));
-  locator.registerLazySingleton(() => GetEventByIdUC(locator()));
-  locator.registerLazySingleton(() => UpdateSkillEventUC(locator()));
-  locator.registerLazySingleton(() => DeleteEventByIdUC(locator()));
-  locator.registerLazySingleton(() => GetEventsForSession(locator()));
-  locator.registerLazySingleton(() => GetCompletedEventsForSkill(locator()));
-  locator.registerLazySingleton(() => GetEventMapsForSession(locator()));
+  locator.registerLazySingleton(() => InsertNewActivityUC(locator()));
+  locator.registerLazySingleton(() => InsertActivityForSessionUC(locator()));
+  locator.registerLazySingleton(() => GetActivityByIdUC(locator()));
+  locator.registerLazySingleton(() => UpdateActivityEventUC(locator()));
+  locator.registerLazySingleton(() => DeleteActivityByIdUC(locator()));
+  locator.registerLazySingleton(() => GetActivitiesForSession(locator()));
+  locator.registerLazySingleton(() => GetCompletedActivitiesForSkill(locator()));
+  locator.registerLazySingleton(() => GetActivityMapsForSession(locator()));
   locator.registerLazySingleton(() => CompleteSessionAndEvents(locator()));
   // locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));
 
@@ -106,8 +106,8 @@ void init() {
       () => GoalsRepositoryImpl(localDataSource: locator()));
   locator.registerLazySingleton<SessionRepository>(
       () => SessionsRepositoryImpl(localDataSource: locator()));
-  locator.registerLazySingleton<SkillEventRepository>(
-      () => SkillEventRepositoryImpl(localDataSource: locator()));
+  locator.registerLazySingleton<ActivityRepository>(
+      () => ActivityRepositoryImpl(localDataSource: locator()));
 
   // Data Sources
   locator.registerLazySingleton<SkillsLocalDataSource>(

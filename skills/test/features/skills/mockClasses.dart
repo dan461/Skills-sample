@@ -4,12 +4,12 @@ import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.da
 import 'package:skills/features/skills/data/datasources/skillsRemoteDataSource.dart';
 import 'package:skills/features/skills/domain/repos/goal_repo.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
-import 'package:skills/features/skills/domain/repos/skillEvent_repo.dart';
+import 'package:skills/features/skills/domain/repos/activity_repo.dart';
 import 'package:skills/features/skills/domain/repos/skill_repo.dart';
 import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
-import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 
 class MockLocalDataSource extends Mock implements SkillsLocalDataSource {}
@@ -60,30 +60,32 @@ class MockGetSessionsInDateRange extends Mock
 class MockGetMapsForSessionsInDateRange extends Mock
     implements GetMapsForSessionsInDateRange {}
 
-class MockEventsRepo extends Mock implements SkillEventRepository {}
+class MockActivitiesRepo extends Mock implements ActivityRepository {}
 
-class MockInsertNewEventUC extends Mock implements InsertNewSkillEventUC {}
+class MockinsertNewActivityUC extends Mock implements InsertNewActivityUC {}
 
-class MockGetEventByIdUC extends Mock implements GetEventByIdUC {}
+class MockGetActivityByIdUC extends Mock implements GetActivityByIdUC {}
 
-class MockGetCompletedEventsForSkill extends Mock
-    implements GetCompletedEventsForSkill {}
+class MockGetCompletedActivitiesForSkill extends Mock
+    implements GetCompletedActivitiesForSkill {}
 
-class MockDeleteEventByIdUC extends Mock implements DeleteEventByIdUC {}
+class MockDeleteActivityByIdUC extends Mock implements DeleteActivityByIdUC {}
 
-class MockUpdateEventUC extends Mock implements UpdateSkillEventUC {}
+class MockUpdateActivityUC extends Mock implements UpdateActivityEventUC {}
 
-class MockInsertEventsForSessionUC extends Mock
-    implements InsertEventsForSessionUC {}
+class MockInsertActivitiesForSessionUC extends Mock
+    implements InsertActivityForSessionUC {}
 
-class MockGetEventsForSessionUC extends Mock implements GetEventsForSession {}
+class MockGetActivitiesForSessionUC extends Mock
+    implements GetActivitiesForSession {}
 
-class MockGetEventMapsForSession extends Mock
-    implements GetEventMapsForSession {}
+class MockGetActivityMapsForSession extends Mock
+    implements GetActivityMapsForSession {}
 
 class MockUpdateSessionWithId extends Mock implements UpdateSessionWithId {}
 
-class MockUpdateAndRefreshSessionWithId extends Mock implements UpdateAndRefreshSessionWithId {}
+class MockUpdateAndRefreshSessionWithId extends Mock
+    implements UpdateAndRefreshSessionWithId {}
 
 class MockDeleteSessionWithId extends Mock implements DeleteSessionWithId {}
 

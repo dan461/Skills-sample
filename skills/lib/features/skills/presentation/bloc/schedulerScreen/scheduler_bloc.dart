@@ -3,9 +3,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
-import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import './bloc.dart';
@@ -15,7 +15,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     implements CalendarDataSource {
   final GetSessionsInDateRange getSessionsInDateRange;
   final GetMapsForSessionsInDateRange getMapsForSessionsInDateRange;
-  final GetEventsForSession getEventsForSession;
+  final GetActivitiesForSession getActiviesForSession;
 
   @override
   List calendarEvents;
@@ -45,7 +45,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
   SchedulerBloc(
       {this.getSessionsInDateRange,
-      this.getEventsForSession,
+      this.getActiviesForSession,
       this.getMapsForSessionsInDateRange}) {
     calendarControl.dataSource = this;
     calendarEvents = sessionsForRange;
@@ -151,9 +151,9 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     for (var map in sessionMaps) {
       Session thisSession = map['session'];
       // if (mode == CalendarMode.week)
-        thisSession.weekView = _makeWeekView(map);
+      thisSession.weekView = _makeWeekView(map);
       // else if (mode == CalendarMode.day)
-        thisSession.dayView = _makeDaySessionView(map);
+      thisSession.dayView = _makeDaySessionView(map);
 
       sessions.add(thisSession);
     }
@@ -162,7 +162,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
   Container _makeWeekView(Map sessionMap) {
     var session = sessionMap['session'];
-    var events = sessionMap['events'];
+    var activities = sessionMap['activities'];
 
     return Container(
       padding: EdgeInsets.only(left: 2, right: 6),
@@ -181,7 +181,7 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
               ),
               Text('${session.duration} min',
                   style: Theme.of(context).textTheme.body1),
-              Text('${events.length} actvities',
+              Text('${activities.length} actvities',
                   style: Theme.of(context).textTheme.body1),
               Text('${session.timeRemaining} min. open',
                   style: Theme.of(context).textTheme.body1)
@@ -194,10 +194,10 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
   Container _makeDaySessionView(Map sessionMap) {
     // Session session = sessionMap['session'];
-    List events = sessionMap['events'];
+    List activities = sessionMap['activities'];
 
     List<Row> rows = [_infoRow(sessionMap)];
-    for (var event in events) {
+    for (var event in activities) {
       rows.add(_activityRow(event));
     }
 
@@ -206,18 +206,18 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
 
   Row _infoRow(Map event) {
     Session session = event['session'];
-    List events = event['events'];
+    List activities = event['activities'];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text('${session.duration}min'),
         Text('${session.timeRemaining}min open'),
-        Text('${events.length} activities'),
+        Text('${activities.length} activities'),
       ],
     );
   }
 
-  Row _activityRow(SkillEvent event) {
+  Row _activityRow(Activity event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
@@ -230,14 +230,14 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   Future<List<Map>> _makeSessionMaps(List<Session> sessions) async {
     List<Map> sessionMaps = [];
     for (var session in sessions) {
-      List<SkillEvent> events = [];
-      var eventsOrFail = await getEventsForSession(
+      List<Activity> activities = [];
+      var activitiesOrFail = await getActiviesForSession(
           SessionByIdParams(sessionId: session.sessionId));
-      eventsOrFail.fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
+      activitiesOrFail.fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
           (result) {
-        events = result;
+        activities = result;
       });
-      Map<String, dynamic> sessionMap = {'session': session, 'events': events};
+      Map<String, dynamic> sessionMap = {'session': session, 'activities': activities};
       sessionMaps.add(sessionMap);
     }
 

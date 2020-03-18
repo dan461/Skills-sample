@@ -24,7 +24,7 @@ class SessionDataCrudInProgressState extends SessiondataState {
   List<Object> get props => null;
 }
 
-class SessionDataEventsLoadedState extends SessiondataState {
+class SessionDataActivitesLoadedState extends SessiondataState {
   @override
   List<Object> get props => null;
 }

@@ -5,7 +5,7 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 
@@ -13,16 +13,16 @@ import '../../mockClasses.dart';
 
 void main() {
   SkillDataBloc sut;
-  MockGetCompletedEventsForSkill mockGetCompletedEventsForSkill;
+  MockGetCompletedActivitiesForSkill mockGetCompletedEventsForSkill;
   MockUpdateSkillUC mockUpdateSkillUC;
   MockGetSkillByIdUC mockGetSkillByIdUC;
   MockGetSkillGoalMapById mockGetSkillGoalMapById;
-  SkillEvent testEvent;
+  Activity testEvent;
 
-  List<SkillEvent> eventsList;
+  List<Activity> eventsList;
 
   setUp(() {
-    mockGetCompletedEventsForSkill = MockGetCompletedEventsForSkill();
+    mockGetCompletedEventsForSkill = MockGetCompletedActivitiesForSkill();
     mockUpdateSkillUC = MockUpdateSkillUC();
     mockGetSkillByIdUC = MockGetSkillByIdUC();
     mockGetSkillGoalMapById = MockGetSkillGoalMapById();
@@ -33,7 +33,7 @@ void main() {
         getSkillById: mockGetSkillByIdUC,
         getSkillGoalMapById: mockGetSkillGoalMapById);
 
-    testEvent = SkillEvent(
+    testEvent = Activity(
         eventId: 1,
         skillId: 1,
         sessionId: 1,
@@ -100,7 +100,8 @@ void main() {
         UpdatedExistingSkillState()
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(UpdateExistingSkillEvent(skillId: testSkill.skillId, changeMap: testMap));
+      sut.add(UpdateExistingSkillEvent(
+          skillId: testSkill.skillId, changeMap: testMap));
     });
 
     test(
@@ -115,7 +116,8 @@ void main() {
         SkillDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(UpdateExistingSkillEvent(skillId: testSkill.skillId, changeMap: testMap));
+      sut.add(UpdateExistingSkillEvent(
+          skillId: testSkill.skillId, changeMap: testMap));
     });
   });
 
@@ -129,14 +131,14 @@ void main() {
     );
 
     final testGoal = Goal(
-      skillId: 1,
-      goalTime: 1,
-      fromDate: DateTime.fromMillisecondsSinceEpoch(0),
-      toDate: DateTime.fromMillisecondsSinceEpoch(0),
-      isComplete: false,
-      timeBased: true);
+        skillId: 1,
+        goalTime: 1,
+        fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+        toDate: DateTime.fromMillisecondsSinceEpoch(0),
+        isComplete: false,
+        timeBased: true);
 
-  final testMap = {'skill': testSkill, 'goal': testGoal};
+    final testMap = {'skill': testSkill, 'goal': testGoal};
 
     test(
         'test that bloc emits [SkillDataCrudProcessingState, SkillRefreshedState] after RefreshSkillByIdEvent is added ',

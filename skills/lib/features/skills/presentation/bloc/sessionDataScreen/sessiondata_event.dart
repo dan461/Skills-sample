@@ -66,7 +66,7 @@ class CancelSkillForSessionEvent extends SessiondataEvent {
 }
 
 class InsertActivityForSessionEvent extends SessiondataEvent {
-  final SkillEvent activity;
+  final Activity activity;
 
   InsertActivityForSessionEvent(this.activity);
 

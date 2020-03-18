@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 
-class SkillEventModel extends SkillEvent {
-  SkillEventModel(
+class ActivityModel extends Activity {
+  ActivityModel(
       {int eventId,
       @required int skillId,
       @required int sessionId,
@@ -19,8 +19,8 @@ class SkillEventModel extends SkillEvent {
             isComplete: isComplete,
             skillString: skillString);
 
-  factory SkillEventModel.fromMap(Map<String, dynamic> map) {
-    return SkillEventModel(
+  factory ActivityModel.fromMap(Map<String, dynamic> map) {
+    return ActivityModel(
       eventId: map['eventId'],
       skillId: map['skillId'],
       sessionId: map['sessionId'],

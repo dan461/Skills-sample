@@ -45,7 +45,7 @@ class SessionEventCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String durationString = map['event'].duration.toString();
+    String durationString = map['activity'].duration.toString();
     Skill skill = map['skill'];
     // Goal goal = map['goal'];
 

@@ -9,11 +9,11 @@ import '../../mockClasses.dart';
 
 void main() {
   InsertNewActivityUC sut;
-  MockActivitiesRepo mockActivitiesRepo;
+  MockActivitiesRepo mockEventsRepo;
 
   setUp(() {
-    mockActivitiesRepo = MockActivitiesRepo();
-    sut = InsertNewActivityUC(mockActivitiesRepo);
+    mockEventsRepo = MockActivitiesRepo();
+    sut = InsertNewActivityUC(mockEventsRepo);
   });
 
   test('test that class inserts a new event and returns a new event with an id',
@@ -35,11 +35,11 @@ void main() {
         isComplete: false,
         skillString: 'test');
 
-    when(mockActivitiesRepo.insertNewActivity(testEvent))
+    when(mockEventsRepo.insertNewActivity(testEvent))
         .thenAnswer((_) async => Right(newEvent));
     final result = await sut(ActivityInsertOrUpdateParams(activity: testEvent));
     expect(result, Right(newEvent));
-    verify(mockActivitiesRepo.insertNewActivity(testEvent));
-    verifyNoMoreInteractions(mockActivitiesRepo);
+    verify(mockEventsRepo.insertNewActivity(testEvent));
+    verifyNoMoreInteractions(mockEventsRepo);
   });
 }

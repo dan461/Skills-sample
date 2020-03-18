@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 
-class SkillEvent extends Equatable {
+class Activity extends Equatable {
   final int eventId;
   final int skillId;
   final int sessionId;
@@ -13,7 +13,7 @@ class SkillEvent extends Equatable {
   // or maybe don't actually delete Skills, just make them inactive
   final String skillString;
 
-  SkillEvent(
+  Activity(
       {this.eventId,
       @required this.skillId,
       @required this.sessionId,

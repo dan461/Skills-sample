@@ -1,14 +1,13 @@
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:skills/features/skills/data/models/skillEventModel.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/data/models/activityModel.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 
 void main() {
-  SkillEventModel sut;
+  ActivityModel sut;
   Map<String, dynamic> testMap;
 
   setUp(() {
-    sut = SkillEventModel(
+    sut = ActivityModel(
         eventId: 1,
         skillId: 1,
         sessionId: 1,
@@ -29,11 +28,11 @@ void main() {
   });
 
   test('should be subclass of SkillEvent', () async {
-    expect(sut, isA<SkillEvent>());
+    expect(sut, isA<Activity>());
   });
 
   test('fromMap returns a valid SkillEventModel', () async {
-    final result = SkillEventModel.fromMap(testMap);
+    final result = ActivityModel.fromMap(testMap);
     expect(sut, result);
   });
 

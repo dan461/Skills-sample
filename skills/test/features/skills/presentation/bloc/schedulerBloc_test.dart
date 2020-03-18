@@ -5,9 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
-import 'package:skills/features/skills/data/models/skillEventModel.dart';
+import 'package:skills/features/skills/data/models/activityModel.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
@@ -18,7 +18,7 @@ void main() {
   SchedulerBloc sut;
 
   MockGetSessionsInDateRange mockGetSessionsInDateRange;
-  MockGetEventsForSessionUC mockGetEventsForSessionUC;
+  MockGetActivitiesForSessionUC mockGetActivitiesForSessionUC;
   MockGetMapsForSessionsInDateRange mockGetMapsForSessionsInDateRange;
 
   // MockCalendarControl mockCalendarControl;
@@ -32,13 +32,13 @@ void main() {
 
   setUp(() {
     mockGetSessionsInDateRange = MockGetSessionsInDateRange();
-    mockGetEventsForSessionUC = MockGetEventsForSessionUC();
+    mockGetActivitiesForSessionUC = MockGetActivitiesForSessionUC();
     mockGetMapsForSessionsInDateRange = MockGetMapsForSessionsInDateRange();
     // mockCalendarControl = MockCalendarControl();
     // mockCalendarControl.currentMode = CalendarMode.month;
     sut = SchedulerBloc(
         getSessionsInDateRange: mockGetSessionsInDateRange,
-        getEventsForSession: mockGetEventsForSessionUC,
+        getActiviesForSession: mockGetActivitiesForSessionUC,
         getMapsForSessionsInDateRange: mockGetMapsForSessionsInDateRange);
     // sut.calendarControl = mockCalendarControl;
 
@@ -69,7 +69,7 @@ void main() {
 
     testList = [testSession];
 
-    SkillEventModel testEventModel = SkillEventModel(
+    ActivityModel testActivityModel = ActivityModel(
         eventId: 1,
         skillId: 1,
         sessionId: 1,
@@ -78,8 +78,8 @@ void main() {
         isComplete: false,
         skillString: 'test');
 
-    List<SkillEvent> eventsList = [testEventModel];
-    testSessionMap = {'session': testSession1, 'events': eventsList};
+    List<Activity> activitiesList = [testActivityModel];
+    testSessionMap = {'session': testSession1, 'activities': activitiesList};
   });
 
   test('test bloc initial state is correct', () {
@@ -193,7 +193,7 @@ void main() {
     });
 
     test(
-        'test that test that GetSessionMapsInDateRange returns [SessionsForRangeReturnedState] on successful call',
+        'test that GetSessionMapsInDateRange returns [SessionsForRangeReturnedState] on successful call',
         () async {
       List<Map> testMaps = [testSessionMap];
       sut.calendarControl.currentMode = CalendarMode.day;
@@ -209,7 +209,7 @@ void main() {
     });
 
     test(
-        'test that test that GetSessionMapsInDateRange returns [SchedulerErrorState] on successful call',
+        'test that GetSessionMapsInDateRange returns [SchedulerErrorState] on unsuccessful call',
         () async {
       sut.calendarControl.currentMode = CalendarMode.day;
       when(mockGetMapsForSessionsInDateRange(

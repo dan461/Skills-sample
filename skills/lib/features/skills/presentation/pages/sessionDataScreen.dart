@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
@@ -72,18 +72,15 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                   }
 
                   // Events loaded initially, reloaded after change or editing cancelled
-                  else if (state is SessionDataEventsLoadedState ||
+                  else if (state is SessionDataActivitesLoadedState ||
                       state is SessionUpdatedAndRefreshedState ||
                       state is SessionViewingState) {
                     body = _infoViewBuilder(showEventCreator: false);
-                    
                   } else if (state is SessionEditingState) {
                     body = _editorViewBuilder();
-                    
                   } else if (state is SkillSelectedForSessionState) {
                     body = _infoViewBuilder(
                         showEventCreator: true, skill: state.skill);
-                    
                   }
 
                   return body;
@@ -400,7 +397,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               child: Text('Delete'),
               onPressed: () {
                 Navigator.of(context).pop();
-                SkillEvent event = map['event'];
+                Activity event = map['activity'];
                 bloc.add(RemoveActivityFromSessionEvent(event.eventId));
               },
             )

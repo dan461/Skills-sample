@@ -1,22 +1,22 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
-import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
+import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import '../../mockClasses.dart';
 
 void main() {
-  InsertEventsForSessionUC sut;
-  MockEventsRepo mockEventsRepo;
+  InsertActivityForSessionUC sut;
+  MockActivitiesRepo mockEventsRepo;
 
   setUp(() {
-    mockEventsRepo = MockEventsRepo();
-    sut = InsertEventsForSessionUC(mockEventsRepo);
+    mockEventsRepo = MockActivitiesRepo();
+    sut = InsertActivityForSessionUC(mockEventsRepo);
   });
 
   test('test that class calls repo insertEvents()', () async {
-    final SkillEvent testEvent = SkillEvent(
+    final Activity testEvent = Activity(
         skillId: 1,
         sessionId: 1,
         date: DateTime.fromMillisecondsSinceEpoch(0),
@@ -25,12 +25,12 @@ void main() {
         skillString: 'test');
     final events = [testEvent];
     final list = [1];
-    when(mockEventsRepo.insertEvents(events, 1))
+    when(mockEventsRepo.insertActivities(events, 1))
         .thenAnswer((_) async => Right(list));
     final result =
-        await sut(SkillEventMultiInsertParams(events: events, newSessionId: 1));
+        await sut(ActivityMultiInsertParams(activities: events, newSessionId: 1));
     expect(result, Right(list));
-    verify(mockEventsRepo.insertEvents(events, 1));
+    verify(mockEventsRepo.insertActivities(events, 1));
     verifyNoMoreInteractions(mockEventsRepo);
   });
 }

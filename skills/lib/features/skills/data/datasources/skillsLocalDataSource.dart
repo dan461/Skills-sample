@@ -1,11 +1,11 @@
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
-import 'package:skills/features/skills/data/models/skillEventModel.dart';
+import 'package:skills/features/skills/data/models/activityModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:synchronized/synchronized.dart';
@@ -41,16 +41,16 @@ abstract class SkillsLocalDataSource {
       DateTime from, DateTime to); // for calendar month mode
   Future<List<Map>> getSessionMapsInDateRange(
       DateTime from, DateTime to); // for calendar week and day modes
-  // Events
-  Future<SkillEventModel> insertNewEvent(SkillEvent event);
-  Future<SkillEventModel> getEventById(int id);
-  Future<int> updateEvent(Map<String, dynamic> changeMap, int eventId);
-  Future<int> deleteEventById(int id);
-  Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
-  Future<List<SkillEvent>> getEventsForSession(int sessionId);
-  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId);
-  Future<List<Map>> getInfoForEvents(List<SkillEvent> events);
-  Future<List<Map>> getEventMapsForSession(int sessionId);
+  // Activities
+  Future<ActivityModel> insertNewActivity(Activity event);
+  Future<ActivityModel> getActivityById(int id);
+  Future<int> updateActivity(Map<String, dynamic> changeMap, int eventId);
+  Future<int> deleteActivityById(int id);
+  Future<List<int>> insertActivities(List<Activity> events, int newSessionId);
+  Future<List<Activity>> getActivitiesForSession(int sessionId);
+  Future<List<Activity>> getCompletedActivitiesForSkill(int skillId);
+  Future<List<Map>> getInfoForActivities(List<Activity> events);
+  Future<List<Map>> getActivityMapsForSession(int sessionId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -472,8 +472,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     List<Session> sessions = await getSessionsInDateRange(from, to);
     List<Map> sessionMaps = [];
     for (var session in sessions) {
-      List<SkillEvent> events = await getEventsForSession(session.sessionId);
-      Map<String, dynamic> sessionMap = {'session': session, 'events': events};
+      List<Activity> activities = await getActivitiesForSession(session.sessionId);
+      Map<String, dynamic> sessionMap = {'session': session, 'activities': activities};
       sessionMaps.add(sessionMap);
     }
 
@@ -502,7 +502,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   // ******* EVENTS *********
   @override
-  Future<int> deleteEventById(int id) async {
+  Future<int> deleteActivityById(int id) async {
     final Database db = await database;
     int result = await db
         .delete(skillEventsTable, where: 'eventId = ?', whereArgs: [id]);
@@ -510,20 +510,20 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<SkillEventModel> getEventById(int id) async {
+  Future<ActivityModel> getActivityById(int id) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillEventsTable,
         columns: null, where: 'eventId = ?', whereArgs: [id]);
     if (maps.length > 0) {
-      return SkillEventModel.fromMap(maps.first);
+      return ActivityModel.fromMap(maps.first);
     }
     return null;
   }
 
   @override
-  Future<SkillEventModel> insertNewEvent(SkillEvent event) async {
+  Future<ActivityModel> insertNewActivity(Activity event) async {
     final Database db = await database;
-    final model = SkillEventModel(
+    final model = ActivityModel(
         skillId: event.skillId,
         sessionId: event.sessionId,
         date: event.date,
@@ -533,17 +533,17 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int id = await db.insert(skillEventsTable, model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
 
-    final newEvent = await getEventById(id);
+    final newEvent = await getActivityById(id);
     return newEvent;
   }
 
   @override
-  Future<List<int>> insertEvents(
-      List<SkillEvent> events, int newSessionId) async {
+  Future<List<int>> insertActivities(
+      List<Activity> events, int newSessionId) async {
     final Database db = await database;
     var insertBatch = db.batch();
     for (var event in events) {
-      final model = SkillEventModel(
+      final model = ActivityModel(
           skillId: event.skillId,
           sessionId: newSessionId,
           date: event.date,
@@ -557,7 +557,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateEvent(Map<String, dynamic> changeMap, eventId) async {
+  Future<int> updateActivity(Map<String, dynamic> changeMap, eventId) async {
     final Database db = await database;
     int updates = await db.update(skillEventsTable, changeMap,
         where: 'eventId = ?', whereArgs: [eventId]);
@@ -565,32 +565,32 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<List<SkillEvent>> getEventsForSession(int sessionId) async {
+  Future<List<Activity>> getActivitiesForSession(int sessionId) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillEventsTable,
         where: 'sessionId = ?', whereArgs: [sessionId]);
-    List<SkillEvent> events = [];
+    List<Activity> events = [];
     for (var map in maps) {
-      events.add(SkillEventModel.fromMap(map));
+      events.add(ActivityModel.fromMap(map));
     }
     return events;
   }
 
   @override
-  Future<List<SkillEvent>> getCompletedActivitiesForSkill(int skillId) async {
+  Future<List<Activity>> getCompletedActivitiesForSkill(int skillId) async {
     final Database db = await database;
     List<Map> maps = await db.query(skillEventsTable,
         where: 'skillId = ? AND isComplete = 1', whereArgs: [skillId]);
 
-    List<SkillEvent> events = [];
+    List<Activity> events = [];
     for (var map in maps) {
-      events.add(SkillEventModel.fromMap(map));
+      events.add(ActivityModel.fromMap(map));
     }
     return events;
   }
 
   // TODO - dead code?
-  Future<List<Map>> getInfoForEvents(List<SkillEvent> events) async {
+  Future<List<Map>> getInfoForActivities(List<Activity> events) async {
     // final Database db = await database;
 
     List<Map> maps = [];
@@ -603,7 +603,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       }
 
       Map<String, dynamic> eventMap = {
-        'event': event,
+        'activity': event,
         'skill': skill,
         'goal': goal ?? 'none',
       };
@@ -614,17 +614,18 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<List<Map>> getEventMapsForSession(int sessionId) async {
-    List<SkillEvent> events = await getEventsForSession(sessionId);
+  Future<List<Map>> getActivityMapsForSession(int sessionId) async {
+    List<Activity> activities = await getActivitiesForSession(sessionId);
 
     List<Map> maps = [];
-    for (var event in events) {
-      Map<String, dynamic> eventMap = {
-        'event': event,
+    for (var activity in activities) {
+      Map<String, dynamic> activityMap = {
+        'activity': activity,
       };
-      Map<String, dynamic> skillMap = await getSkillGoalMapById(event.skillId);
-      eventMap.addAll(skillMap);
-      maps.add(eventMap);
+      Map<String, dynamic> skillMap =
+          await getSkillGoalMapById(activity.skillId);
+      activityMap.addAll(skillMap);
+      maps.add(activityMap);
     }
 
     return maps;

@@ -6,36 +6,36 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import '../../mockClasses.dart';
 
 void main() {
   SessiondataBloc sut;
-  MockInsertEventsForSessionUC mockInsertEventsForSessionUC;
+  MockInsertActivitiesForSessionUC mockInsertEventsForSessionUC;
   MockUpdateAndRefreshSessionWithId mockUpdateAndRefreshSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
-  MockDeleteEventByIdUC mockDeleteEventByIdUC;
-  MockGetEventMapsForSession mockGetEventMapsForSession;
+  MockDeleteActivityByIdUC mockDeleteEventByIdUC;
+  MockGetActivityMapsForSession mockGetEventMapsForSession;
 
   Session testSession;
-  SkillEvent testEvent;
+  Activity testEvent;
   Map<String, dynamic> testChangeMap;
 
   setUp(() {
-    mockInsertEventsForSessionUC = MockInsertEventsForSessionUC();
+    mockInsertEventsForSessionUC = MockInsertActivitiesForSessionUC();
     mockUpdateAndRefreshSessionWithId = MockUpdateAndRefreshSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
-    mockDeleteEventByIdUC = MockDeleteEventByIdUC();
-    mockGetEventMapsForSession = MockGetEventMapsForSession();
+    mockDeleteEventByIdUC = MockDeleteActivityByIdUC();
+    mockGetEventMapsForSession = MockGetActivityMapsForSession();
 
     sut = SessiondataBloc(
         updateAndRefreshSessionWithId: mockUpdateAndRefreshSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
-        getEventMapsForSession: mockGetEventMapsForSession,
-        insertEventsForSession: mockInsertEventsForSessionUC,
-        deleteEventByIdUC: mockDeleteEventByIdUC);
+        getActivityMapsForSession: mockGetEventMapsForSession,
+        insertActivitiesForSession: mockInsertEventsForSessionUC,
+        deleteActivityByIdUC: mockDeleteEventByIdUC);
 
     testSession = Session(
         sessionId: 1,
@@ -48,7 +48,7 @@ void main() {
     testChangeMap = {};
     sut.session = testSession;
 
-    testEvent = SkillEvent(
+    testEvent = Activity(
         skillId: 1,
         sessionId: 1,
         duration: 10,
@@ -58,14 +58,14 @@ void main() {
   });
 
   test('test that availableTime is correct', () async {
-    var testEvent = SkillEvent(
+    var testEvent = Activity(
         skillId: 1,
         sessionId: 1,
         duration: 10,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: 'test');
-    Map<String, dynamic> eventMap = {'event': testEvent};
+    Map<String, dynamic> eventMap = {'activity': testEvent};
 
     // sut.session = testSession;
     sut.activityMapsForListView = [eventMap];
@@ -84,34 +84,34 @@ void main() {
       startDate: DateTime.fromMillisecondsSinceEpoch(0),
     );
 
-    var newTestEvent = SkillEvent(
+    var newTestEvent = Activity(
         skillId: testSkill.skillId,
         sessionId: 1,
         duration: 20,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: testSkill.name);
-    List<SkillEvent> events = [newTestEvent];
+    List<Activity> events = [newTestEvent];
 
     sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
 
     sut.createActivity(20, testSkill);
     await untilCalled(mockInsertEventsForSessionUC(
-        SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+        ActivityMultiInsertParams(activities: events, newSessionId: 1)));
     verify(mockInsertEventsForSessionUC(
-        SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+        ActivityMultiInsertParams(activities: events, newSessionId: 1)));
   });
 
   test('test that countCompletedActivities returns correct count ', () async {
-    SkillEvent testEvent2 = SkillEvent(
+    Activity testEvent2 = Activity(
         skillId: 1,
         sessionId: 1,
         duration: 10,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: true,
         skillString: 'test');
-    Map<String, dynamic> map1 = {'event': testEvent};
-    Map<String, dynamic> map2 = {'event': testEvent2};
+    Map<String, dynamic> map1 = {'activity': testEvent};
+    Map<String, dynamic> map2 = {'activity': testEvent2};
     var testActivitiesList = [map1, map2];
     sut.activityMapsForListView = testActivitiesList;
 
@@ -178,7 +178,7 @@ void main() {
       final expected = [
         SessiondataInitial(),
         SessionDataCrudInProgressState(),
-        SessionDataEventsLoadedState()
+        SessionDataActivitesLoadedState()
       ];
       expectLater(sut, emitsInOrder(expected));
       sut.add(GetActivitiesForSessionEvent(testSession));
@@ -283,29 +283,29 @@ void main() {
   });
 
   group('InsertEvents: ', () {
-    var newTestEvent = SkillEvent(
+    var newTestEvent = Activity(
         skillId: 1,
         sessionId: 1,
         duration: 1,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: 'test');
-    List<SkillEvent> events = [newTestEvent];
+    List<Activity> events = [newTestEvent];
     List<int> resultsList = [1];
 
     test('test that InsertEvents usecase is called', () async {
       sut.add(InsertActivityForSessionEvent(newTestEvent));
       await untilCalled(mockInsertEventsForSessionUC(
-          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+          ActivityMultiInsertParams(activities: events, newSessionId: 1)));
       verify(mockInsertEventsForSessionUC(
-          SkillEventMultiInsertParams(events: events, newSessionId: 1)));
+          ActivityMultiInsertParams(activities: events, newSessionId: 1)));
     });
 
     test(
         'test that getEventMapsForSession is called after an Activity is added to the Session',
         () async {
       when(mockInsertEventsForSessionUC(
-              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+              ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
       await untilCalled(
@@ -317,7 +317,7 @@ void main() {
         'test that bloc emits [SessionDataCrudInProgressState, NewActivityCreatedState] upon successful event creation',
         () {
       when(mockInsertEventsForSessionUC(
-              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+              ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
 
       final expected = [
@@ -333,7 +333,7 @@ void main() {
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after InsertActivityForSessionEvent added',
         () {
       when(mockInsertEventsForSessionUC(
-              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+              ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
 
       final expected = [
@@ -350,25 +350,25 @@ void main() {
     test('test that DeleteEventById usecase is called', () async {
       sut.add(RemoveActivityFromSessionEvent(1));
       await untilCalled(
-          mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
-      verify(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)));
+          mockDeleteEventByIdUC(ActivityGetOrDeleteParams(activityId: 1)));
+      verify(mockDeleteEventByIdUC(ActivityGetOrDeleteParams(activityId: 1)));
     });
 
     test(
         'test that getEventMapsForSession is called after an Activity is removed from the Session',
         () async {
-      var newTestEvent = SkillEvent(
+      var newTestEvent = Activity(
           skillId: 1,
           sessionId: 1,
           duration: 1,
           date: DateTime.fromMillisecondsSinceEpoch(0),
           isComplete: false,
           skillString: 'test');
-      List<SkillEvent> events = [newTestEvent];
+      List<Activity> events = [newTestEvent];
       List<int> resultsList = [1];
 
       when(mockInsertEventsForSessionUC(
-              SkillEventMultiInsertParams(events: events, newSessionId: 1)))
+              ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
       await untilCalled(
@@ -379,7 +379,7 @@ void main() {
     test(
         'test that bloc emits [SessionDataCrudInProgressState, ActivityRemovedFromSessionState] on succesful removal after RemoveActivityFromSessionEvent is added',
         () {
-      when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
+      when(mockDeleteEventByIdUC(ActivityGetOrDeleteParams(activityId: 1)))
           .thenAnswer((_) async => Right(1));
 
       final expected = [
@@ -394,7 +394,7 @@ void main() {
     test(
         'test that bloc emits [SessionDataCrudInProgressState, ActivityRemovedFromSessionState] on cache failure after RemoveActivityFromSessionEvent is added',
         () {
-      when(mockDeleteEventByIdUC(SkillEventGetOrDeleteParams(eventId: 1)))
+      when(mockDeleteEventByIdUC(ActivityGetOrDeleteParams(activityId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
 
       final expected = [

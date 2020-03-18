@@ -8,16 +8,15 @@ import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import '../../mockClasses.dart';
 
 void main() {
-  GetActivitiesForSession sut;
+  GetActivityByIdUC sut;
   MockActivitiesRepo mockEventsRepo;
 
   setUp(() {
     mockEventsRepo = MockActivitiesRepo();
-    sut = GetActivitiesForSession(mockEventsRepo);
+    sut = GetActivityByIdUC(mockEventsRepo);
   });
 
-  test('test that usecase will return a list of SkillEvents for a Session',
-      () async {
+  test('test that class returns an activity with given id', () async {
     final Activity event = Activity(
         eventId: 1,
         skillId: 1,
@@ -27,13 +26,11 @@ void main() {
         isComplete: false,
         skillString: 'test');
 
-    final eventsList = [event];
-
-    when(mockEventsRepo.getActivitiesForSession(1))
-        .thenAnswer((_) async => Right(eventsList));
-    final result = await sut(SessionByIdParams(sessionId: 1));
-    expect(result, Right(eventsList));
-    verify(mockEventsRepo.getActivitiesForSession(1));
+    when(mockEventsRepo.getActivityById(1))
+        .thenAnswer((_) async => Right(event));
+    final result = await sut(ActivityGetOrDeleteParams(activityId: 1));
+    expect(result, Right(event));
+    verify(mockEventsRepo.getActivityById(1));
     verifyNoMoreInteractions(mockEventsRepo);
   });
 }

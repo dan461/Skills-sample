@@ -5,7 +5,7 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import './bloc.dart';
@@ -23,13 +23,11 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   Skill selectedSkill;
   Goal currentGoal;
   Session sessionForEdit;
-  var pendingEvents = <SkillEvent>[];
+  var pendingEvents = <Activity>[];
   var pendingEventMapsForListView = <Map>[];
   var eventMapsForSession = <Map>[];
 
   int eventDuration;
-
-  
 
   @override
   void onTransition(Transition<NewSessionEvent, NewSessionState> transition) {

@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
-import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
+import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/skillUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
@@ -15,14 +15,14 @@ part 'skilldata_event.dart';
 part 'skilldata_state.dart';
 
 class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
-  final GetCompletedEventsForSkill getCompletedEventsForSkill;
+  final GetCompletedActivitiesForSkill getCompletedEventsForSkill;
   final UpdateSkill updateSkill;
   final GetSkillById getSkillById;
   final GetSkillGoalMapById getSkillGoalMapById;
 
   Skill skill;
   Goal goal;
-  List<SkillEvent> completedActivities;
+  List<Activity> completedActivities;
 
   SkillDataBloc(
       {this.getCompletedEventsForSkill,
@@ -51,8 +51,8 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
     // Update Skill
     else if (event is UpdateExistingSkillEvent) {
       yield SkillDataCrudProcessingState();
-      final updateOrFail =
-          await updateSkill(SkillUpdateParams(skillId: event.skillId, changeMap: event.changeMap));
+      final updateOrFail = await updateSkill(SkillUpdateParams(
+          skillId: event.skillId, changeMap: event.changeMap));
       yield updateOrFail.fold(
           (failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE),
           (updateId) => UpdatedExistingSkillState());
@@ -60,10 +60,10 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
     // Refresh skill from cache
     else if (event is RefreshSkillByIdEvent) {
       yield SkillDataCrudProcessingState();
-      final skillMapOrFail = await getSkillGoalMapById(GetSkillParams(id: event.skillId));
-      yield skillMapOrFail
-          .fold((failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE),
-              (skillMap) {
+      final skillMapOrFail =
+          await getSkillGoalMapById(GetSkillParams(id: event.skillId));
+      yield skillMapOrFail.fold(
+          (failure) => SkillDataErrorState(CACHE_FAILURE_MESSAGE), (skillMap) {
         skill = skillMap['skill'];
         goal = skillMap['goal'];
         return SkillRefreshedState();

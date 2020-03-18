@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:skills/core/appearance.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/core/constants.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/widgets/completedActivitiesCell.dart';
@@ -201,8 +201,8 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
     return Container(
       // color: Colors.cyan[200],
       decoration: BoxDecoration(
-        gradient: GradientFromBottom(accentColor: Colors.cyan[800], baseColor: Colors.cyan[700])
-      ),
+          gradient: GradientFromBottom(
+              accentColor: Colors.cyan[800], baseColor: Colors.cyan[700])),
       child: Column(
         children: <Widget>[
           Padding(
@@ -364,12 +364,13 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   void _doneEditing(Map<String, dynamic> changeMap) {
     setState(() {
-      bloc.add(UpdateExistingSkillEvent(skillId: bloc.skill.skillId, changeMap: changeMap));
+      bloc.add(UpdateExistingSkillEvent(
+          skillId: bloc.skill.skillId, changeMap: changeMap));
       _isEditing = false;
     });
   }
 
-  void _onActivityTapped(SkillEvent event) {}
+  void _onActivityTapped(Activity event) {}
 
   void _onGoalSectionTapped(int goalId) {
     if (goalId == 0)

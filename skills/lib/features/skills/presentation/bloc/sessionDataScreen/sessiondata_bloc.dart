@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
-import 'package:skills/features/skills/domain/usecases/skillEventsUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 
 part 'sessiondata_event.dart';
@@ -18,18 +18,18 @@ part 'sessiondata_state.dart';
 class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   final UpdateAndRefreshSessionWithId updateAndRefreshSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
-  final GetEventMapsForSession getEventMapsForSession;
-  final InsertEventsForSessionUC insertEventsForSession;
+  final GetActivityMapsForSession getActivityMapsForSession;
+  final InsertActivityForSessionUC insertActivitiesForSession;
   // final CompleteSessionAndEvents completeSessionAndEvents;
-  final DeleteEventByIdUC deleteEventByIdUC;
+  final DeleteActivityByIdUC deleteActivityByIdUC;
 
   SessiondataBloc(
       {this.updateAndRefreshSessionWithId,
       this.deleteSessionWithId,
-      this.getEventMapsForSession,
-      this.insertEventsForSession,
+      this.getActivityMapsForSession,
+      this.insertActivitiesForSession,
       // this.completeSessionAndEvents,
-      this.deleteEventByIdUC});
+      this.deleteActivityByIdUC});
 
   @override
   SessiondataState get initialState => SessiondataInitial();
@@ -43,7 +43,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   int get completedActivitiesCount {
     int count = 0;
     for (var map in activityMapsForListView) {
-      SkillEvent event = map['event'];
+      Activity event = map['activity'];
       if (event.isComplete) count++;
     }
     return count;
@@ -52,18 +52,18 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   int get availableTime {
     var time = session.duration ?? 0;
     for (var map in activityMapsForListView) {
-      var event = map['event'];
+      var event = map['activity'];
       time -= event.duration;
     }
     return time;
   }
 
-  void createActivity(int eventDuration, Skill skill) {
-    final newActivity = SkillEvent(
+  void createActivity(int activityDuration, Skill skill) {
+    final newActivity = Activity(
         skillId: skill.skillId,
         sessionId: session.sessionId,
         date: sessionDate,
-        duration: eventDuration,
+        duration: activityDuration,
         isComplete: false,
         skillString: skill.name);
     add(InsertActivityForSessionEvent(newActivity));
@@ -80,24 +80,24 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
       selectedStartTime ??= session.startTime;
       yield SessionDataCrudInProgressState();
 
-      final eventMapsOrFailure = await getEventMapsForSession(
+      final activityMapsOrFailure = await getActivityMapsForSession(
           SessionByIdParams(sessionId: session.sessionId));
-      yield eventMapsOrFailure.fold(
+      yield activityMapsOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
         activityMapsForListView = maps;
         session.openTime = availableTime;
-        return SessionDataEventsLoadedState();
+        return SessionDataActivitesLoadedState();
       });
     }
 
     // Insert an Activity
     else if (event is InsertActivityForSessionEvent) {
       yield SessionDataCrudInProgressState();
-      final eventsOrFailure = await insertEventsForSession(
-          SkillEventMultiInsertParams(
-              events: [event.activity], newSessionId: session.sessionId));
+      final activitiesOrFailure = await insertActivitiesForSession(
+          ActivityMultiInsertParams(
+              activities: [event.activity], newSessionId: session.sessionId));
 
-      yield eventsOrFailure.fold(
+      yield activitiesOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (results) {
         add(GetActivitiesForSessionEvent(session));
         return NewActivityCreatedState();
@@ -107,8 +107,8 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
     // Remove an Activity
     else if (event is RemoveActivityFromSessionEvent) {
       yield SessionDataCrudInProgressState();
-      final removedOrFailure = await deleteEventByIdUC(
-          SkillEventGetOrDeleteParams(eventId: event.eventId));
+      final removedOrFailure = await deleteActivityByIdUC(
+          ActivityGetOrDeleteParams(activityId: event.eventId));
       yield removedOrFailure.fold(
           (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (id) {
         add(GetActivitiesForSessionEvent(session));

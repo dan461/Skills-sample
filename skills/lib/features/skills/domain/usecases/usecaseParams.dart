@@ -3,7 +3,7 @@ import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 
 class GoalCrudParams extends Params {
   final int id;
@@ -112,39 +112,39 @@ class SessionDeleteParams extends Params {
   List<Object> get props => [sessionId];
 }
 
-class SkillEventInsertOrUpdateParams extends Params {
-  final SkillEvent event;
+class ActivityInsertOrUpdateParams extends Params {
+  final Activity activity;
 
-  SkillEventInsertOrUpdateParams({@required this.event});
+  ActivityInsertOrUpdateParams({@required this.activity});
   @override
-  List<Object> get props => [event];
+  List<Object> get props => [activity];
 }
 
-class SkillEventUpdateParams extends Params {
+class ActivityUpdateParams extends Params {
   final Map<String, dynamic> changeMap;
-  final int eventId;
+  final int activityId;
 
-  SkillEventUpdateParams(this.changeMap, this.eventId);
+  ActivityUpdateParams(this.changeMap, this.activityId);
 
   @override
-  List<Object> get props => [changeMap, eventId];
+  List<Object> get props => [changeMap, activityId];
 }
 
-class SkillEventGetOrDeleteParams extends Params {
-  final int eventId;
+class ActivityGetOrDeleteParams extends Params {
+  final int activityId;
 
-  SkillEventGetOrDeleteParams({@required this.eventId});
+  ActivityGetOrDeleteParams({@required this.activityId});
   @override
-  List<Object> get props => [eventId];
+  List<Object> get props => [activityId];
 }
 
-class SkillEventMultiInsertParams extends Params {
-  final List<SkillEvent> events;
+class ActivityMultiInsertParams extends Params {
+  final List<Activity> activities;
   final int newSessionId;
 
-  SkillEventMultiInsertParams(
-      {@required this.events, @required this.newSessionId});
+  ActivityMultiInsertParams(
+      {@required this.activities, @required this.newSessionId});
 
   @override
-  List<Object> get props => [events];
+  List<Object> get props => [activities];
 }

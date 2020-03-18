@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 
-typedef CompletedActivityCellCallback(SkillEvent activity);
+typedef CompletedActivityCellCallback(Activity activity);
 
 class CompletedActivitiesCell extends StatelessWidget {
-  final SkillEvent activity;
+  final Activity activity;
   final CompletedActivityCellCallback tapCallback;
 
   const CompletedActivitiesCell(

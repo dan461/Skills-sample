@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 
 import '../../domain/entities/session.dart';
-
 
 class SessionCard extends StatefulWidget {
   final Map<String, dynamic> sessionMap;
@@ -26,10 +25,10 @@ class _SessionCardState extends State<SessionCard> {
   // TODO - should probably get this value somewhere else, maybe add to Session entity
   int get availableTime {
     Session session = sessionMap['session'];
-    List<SkillEvent> events = sessionMap['events'];
+    List<Activity> activities = sessionMap['activities'];
     var time = session.duration;
-    for (var event in events) {
-      time -= event.duration;
+    for (var activity in activities) {
+      time -= activity.duration;
     }
 
     return time;
@@ -50,7 +49,7 @@ class _SessionCardState extends State<SessionCard> {
   @override
   Widget build(BuildContext context) {
     Session session = sessionMap['session'];
-    List<SkillEvent> events = sessionMap['events'];
+    List<Activity> activities = sessionMap['activities'];
 
     return GestureDetector(
       onTap: () {
@@ -70,7 +69,8 @@ class _SessionCardState extends State<SessionCard> {
                   Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: _middleSectionBuilder(events, session.duration)),
+                        children: _middleSectionBuilder(
+                            activities, session.duration)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
@@ -142,26 +142,27 @@ class _SessionCardState extends State<SessionCard> {
     );
   }
 
-  List<Widget> _middleSectionBuilder(List<SkillEvent> events, int duration) {
+  List<Widget> _middleSectionBuilder(List<Activity> activities, int duration) {
     List<Widget> rows = [];
     rows.add(
-      _headerBuilder(events.length, duration),
+      _headerBuilder(activities.length, duration),
     );
-    if (events.isEmpty) {
+    if (activities.isEmpty) {
       Row emptyRow = Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(height: 30, child: Text('No events')),
+          Container(height: 30, child: Text('No activities')),
         ],
       );
       rows.add(emptyRow);
     } else {
-      for (var event in events) {
-        // create row for event
-        var text =
-            Text(event.skillString, style: Theme.of(context).textTheme.body2);
-        var timeText = Text('${event.duration} min', style: Theme.of(context).textTheme.body2);
+      for (var activity in activities) {
+        // create row for activity
+        var text = Text(activity.skillString,
+            style: Theme.of(context).textTheme.body2);
+        var timeText = Text('${activity.duration} min',
+            style: Theme.of(context).textTheme.body2);
         var newRow = Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
             child: Row(
