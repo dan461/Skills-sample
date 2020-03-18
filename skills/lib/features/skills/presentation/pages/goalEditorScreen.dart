@@ -108,7 +108,9 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             }
           },
           child: Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              leading: SizedBox(),
+            ),
             body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
               builder: (context, state) {
                 Widget body;
@@ -118,22 +120,16 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                   body = Center(
                     child: CircularProgressIndicator(),
                   );
-                } 
-                
-                else if (state is GoalEditorGoalReturnedState) {
+                } else if (state is GoalEditorGoalReturnedState) {
                   body = Center(
                     child: CircularProgressIndicator(),
                   );
                   _setScreenValues(state.goal);
                   // _goalEditorBloc.goal = state.goal;
                   _goalEditorBloc.add(EditGoalEvent());
-                } 
-                
-                else if (state is GoalEditorEditingState) {
+                } else if (state is GoalEditorEditingState) {
                   body = _goalEditArea();
-                } 
-                
-                else if (state is GoalUpdatedState ||
+                } else if (state is GoalUpdatedState ||
                     state is GoalDeletedState) {
                   body = Center(
                     child: CircularProgressIndicator(),
@@ -290,24 +286,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             // Segmented Control
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CupertinoSegmentedControl(
-                children: {
-                  0: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                    child: Text('Time'),
-                  ),
-                  1: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                    child: Text('Task'),
-                  ),
-                },
-                onValueChanged: (int val) {
-                  setState(() {
-                    _goalType = val;
-                  });
-                },
-                groupValue: _goalType,
-              ),
+              child: _goalTypeRow()
             ),
             // Duration or Task description
             Padding(
@@ -319,7 +298,9 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                 children: <Widget>[
                   RaisedButton(
                     child: Text('Cancel'),
-                    onPressed: () {},
+                    onPressed: () {
+                      _onCancelTapped();
+                    },
                   ),
                   RaisedButton(
                       child: Text('Done'),
@@ -334,6 +315,35 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Row _goalTypeRow() {
+    return Row(
+      children: <Widget>[
+        Text(
+          'Goal type:',
+          style: Theme.of(context).textTheme.subhead,
+        ),
+        CupertinoSegmentedControl(
+          children: {
+            0: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Text('Time'),
+            ),
+            1: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Text('Task'),
+            ),
+          },
+          onValueChanged: (int val) {
+            setState(() {
+              _goalType = val;
+            });
+          },
+          groupValue: _goalType,
+        ),
+      ],
     );
   }
 
@@ -355,6 +365,10 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
       timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
 
     _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+  }
+
+  void _onCancelTapped() {
+    Navigator.of(context).pop();
   }
 
   void _updateGoal() async {
