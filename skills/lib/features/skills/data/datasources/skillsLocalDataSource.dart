@@ -385,18 +385,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   Future<Session> updateAndRefreshSession(
       Map<String, dynamic> changeMap, int id) async {
+    //
     final Database db = await database;
     int response = await db.update(sessionsTable, changeMap,
         where: 'sessionId = ?', whereArgs: [id]);
 
-    if (changeMap['isComplete'] != null) {
-      int eventsUpdate = await db.rawUpdate(
-          'UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $id');
-      List<Map> skillIds = await db.query(skillEventsTable,
-          columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
-    }
     if (response != null) {
       Session refreshedSession = await getSessionById(id);
+      if (changeMap['isComplete'] == true) {
+        await completeSessionAndEvents(id, refreshedSession.date);
+      }
       return refreshedSession;
     } else
       return null;
@@ -411,7 +409,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int complete = await updateSession({'isComplete': 1}, sessionId);
 
     // set events complete
-    int update = await db.rawUpdate(
+    await db.rawUpdate(
         'UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $sessionId');
 
     // get skillIds of all Events
@@ -426,7 +424,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
           "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
     }
 
-    List<int> updates = await pracDateBatch.commit(noResult: true);
+    await pracDateBatch.commit(noResult: true);
 
     return complete;
   }
@@ -472,8 +470,12 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     List<Session> sessions = await getSessionsInDateRange(from, to);
     List<Map> sessionMaps = [];
     for (var session in sessions) {
-      List<Activity> activities = await getActivitiesForSession(session.sessionId);
-      Map<String, dynamic> sessionMap = {'session': session, 'activities': activities};
+      List<Activity> activities =
+          await getActivitiesForSession(session.sessionId);
+      Map<String, dynamic> sessionMap = {
+        'session': session,
+        'activities': activities
+      };
       sessionMaps.add(sessionMap);
     }
 
