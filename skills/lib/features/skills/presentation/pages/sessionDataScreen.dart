@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
+import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
+import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
+import 'package:skills/service_locator.dart';
 
 class SessionDataScreen extends StatefulWidget {
   final SessiondataBloc bloc;
@@ -117,7 +121,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         child: Column(children: <Widget>[
       _infoSectionBuilder(),
       _actvityCreator(showEventCreator, skill),
-      _eventsSectionBuilder()
+      _activitiesSectionBuilder()
     ]));
   }
 
@@ -126,6 +130,10 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
       child: Column(children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8),
+          child: _startButtonRow(),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: _dateRow(),
         ),
         Padding(
@@ -137,6 +145,21 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
           child: _availableTimeRow(),
         )
       ]),
+    );
+  }
+
+  Row _startButtonRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        FlatButton(
+            onPressed: _onStartSessionTapped,
+            textColor: Colors.blueAccent,
+            child: Text(
+              START_SESSION,
+              style: Theme.of(context).textTheme.subtitle,
+            ))
+      ],
     );
   }
 
@@ -234,13 +257,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  Column _eventsSectionBuilder() {
+  Column _activitiesSectionBuilder() {
     return Column(
-      children: <Widget>[_eventsHeaderBuilder(), _eventsListBuilder()],
+      children: <Widget>[_activitiesHeaderBuilder(), _activitiesListBuilder()],
     );
   }
 
-  Widget _eventsHeaderBuilder() {
+  Widget _activitiesHeaderBuilder() {
     int count = bloc.activityMapsForListView.isEmpty
         ? 0
         : bloc.completedActivitiesCount;
@@ -272,7 +295,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         ));
   }
 
-  ListView _eventsListBuilder() {
+  ListView _activitiesListBuilder() {
     List sourceList = bloc.activityMapsForListView;
     return ListView.builder(
       shrinkWrap: true,
@@ -434,5 +457,14 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _selectSkill(Skill skill) {
     Navigator.of(context).pop(skill);
+  }
+
+  void _onStartSessionTapped() async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      ActiveSessionScreen activeSessionScreen = locator<ActiveSessionScreen>();
+      activeSessionScreen.bloc.add(ActiveSessionLoadInfoEvent(
+          session: bloc.session, activityMaps: bloc.activityMapsForListView));
+      return activeSessionScreen;
+    }));
   }
 }

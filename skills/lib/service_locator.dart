@@ -7,6 +7,7 @@ import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
+import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 import 'features/skills/data/datasources/skillsLocalDataSource.dart';
 import 'features/skills/data/repos/goalsRepositoryImpl.dart';
 import 'features/skills/data/repos/sessionsRepositoryImpl.dart';
@@ -15,6 +16,7 @@ import 'features/skills/domain/repos/skill_repo.dart';
 import 'features/skills/domain/usecases/skillUseCases.dart';
 import 'features/skills/domain/usecases/sessionUseCases.dart';
 import 'features/skills/domain/usecases/activityUseCases.dart';
+import 'features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
@@ -63,7 +65,10 @@ void init() {
       getActiviesForSession: locator(),
       getMapsForSessionsInDateRange: locator()));
 
+  locator.registerFactory(() => ActiveSessionBloc());
+
   locator.registerFactory(() => SessionDataScreen(bloc: locator()));
+  locator.registerFactory(() => ActiveSessionScreen(bloc: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
