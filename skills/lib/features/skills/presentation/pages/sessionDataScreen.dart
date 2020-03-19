@@ -178,22 +178,24 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
           _startTimeString,
           style: Theme.of(context).textTheme.subhead,
         ),
-        Text(
-          _durationString,
-          style: Theme.of(context).textTheme.subhead,
-        )
       ],
     );
   }
 
   Row _availableTimeRow() {
     var timeString = bloc.availableTime.toString();
-    return Row(children: <Widget>[
-      Text(
-        'Available: $timeString min.',
-        style: Theme.of(context).textTheme.subhead,
-      )
-    ]);
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            _durationString,
+            style: Theme.of(context).textTheme.subhead,
+          ),
+          Text(
+            'Available: $timeString min.',
+            style: Theme.of(context).textTheme.subhead,
+          )
+        ]);
   }
 
   Icon _statusIconBuilder() {
