@@ -1,6 +1,6 @@
 part of 'sessiondata_bloc.dart';
 
-abstract class SessiondataEvent extends Equatable {
+abstract class SessiondataEvent extends SessionEvent {
   const SessiondataEvent();
 }
 

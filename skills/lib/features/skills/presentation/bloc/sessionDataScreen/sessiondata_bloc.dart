@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
@@ -11,11 +9,12 @@ import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
 
 part 'sessiondata_event.dart';
 part 'sessiondata_state.dart';
 
-class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
+class SessiondataBloc extends SessionBloc {
   final UpdateAndRefreshSessionWithId updateAndRefreshSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
   final GetActivityMapsForSession getActivityMapsForSession;
@@ -40,38 +39,38 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
 
   List<Map> activityMapsForListView = [];
 
-  int get completedActivitiesCount {
-    int count = 0;
-    for (var map in activityMapsForListView) {
-      Activity event = map['activity'];
-      if (event.isComplete) count++;
-    }
-    return count;
-  }
+  // int get completedActivitiesCount {
+  //   int count = 0;
+  //   for (var map in activityMapsForListView) {
+  //     Activity activity = map['activity'];
+  //     if (activity.isComplete) count++;
+  //   }
+  //   return count;
+  // }
 
-  int get availableTime {
-    var time = session.duration ?? 0;
-    for (var map in activityMapsForListView) {
-      var event = map['activity'];
-      time -= event.duration;
-    }
-    return time;
-  }
+  // int get availableTime {
+  //   var time = session.duration ?? 0;
+  //   for (var map in activityMapsForListView) {
+  //     var activity = map['activity'];
+  //     time -= activity.duration;
+  //   }
+  //   return time;
+  // }
 
-  void createActivity(int activityDuration, Skill skill) {
-    final newActivity = Activity(
-        skillId: skill.skillId,
-        sessionId: session.sessionId,
-        date: sessionDate,
-        duration: activityDuration,
-        isComplete: false,
-        skillString: skill.name);
-    add(InsertActivityForSessionEvent(newActivity));
-  }
+  // void createActivity(int activityDuration, Skill skill) {
+  //   final newActivity = Activity(
+  //       skillId: skill.skillId,
+  //       sessionId: session.sessionId,
+  //       date: sessionDate,
+  //       duration: activityDuration,
+  //       isComplete: false,
+  //       skillString: skill.name);
+  //   add(InsertActivityForSessionEvent(newActivity));
+  // }
 
   @override
-  Stream<SessiondataState> mapEventToState(
-    SessiondataEvent event,
+  Stream<SessionState> mapEventToState(
+    SessionEvent event,
   ) async* {
     // Get or refresh Activities for list
     if (event is GetActivitiesForSessionEvent) {
