@@ -9,6 +9,7 @@ import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart'
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
@@ -122,7 +123,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         child: Column(children: <Widget>[
       _infoSectionBuilder(),
       _actvityCreator(showEventCreator, skill),
-      _activitiesSectionBuilder()
+      _activitiesSection()
     ]));
   }
 
@@ -258,56 +259,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  Column _activitiesSectionBuilder() {
-    return Column(
-      children: <Widget>[_activitiesHeaderBuilder(), _activitiesListBuilder()],
-    );
-  }
-
-  Widget _activitiesHeaderBuilder() {
-    int count = bloc.activityMapsForListView.isEmpty
-        ? 0
-        : bloc.completedActivitiesCount;
-    String suffix =
-        bloc.activityMapsForListView.isEmpty ? 'scheduled' : 'completed';
-    String countString = count.toString() + ' $suffix';
-
-    return Container(
-        height: 40,
-        color: Colors.grey[200],
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text('Activities', style: Theme.of(context).textTheme.subhead),
-              Text('$countString', style: Theme.of(context).textTheme.subhead),
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: _plusButtonEnabled
-                    ? () {
-                        _showSkillsList();
-                      }
-                    : null,
-              )
-            ],
-          ),
-        ));
-  }
-
-  ListView _activitiesListBuilder() {
-    List sourceList = bloc.activityMapsForListView;
-    return ListView.builder(
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return SessionEventCell(
-          map: sourceList[index],
-          callback: _eventTapped,
-        );
-      },
-      itemCount: sourceList.length,
-    );
+  Widget _activitiesSection() {
+    return ActivitiesListSection(
+        activityMaps: bloc.activityMapsForListView,
+        completedActivitiesCount: bloc.completedActivitiesCount,
+        addTappedCallback: _showSkillsList,
+        eventTappedCallback: _eventTapped,
+        availableTime: bloc.availableTime);
   }
 
 // ******* ACTIONS *******
