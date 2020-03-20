@@ -6,22 +6,22 @@ abstract class ActiveSessionEvent extends SessionEvent {
 
 class ActiveSessionLoadInfoEvent extends ActiveSessionEvent {
   final Session session;
-  final List<Map> activityMaps;
+  final List<Activity> activities;
 
   ActiveSessionLoadInfoEvent(
-      {@required this.session, @required this.activityMaps});
+      {@required this.session, @required this.activities});
 
   @override
-  List<Object> get props => null;
+  List<Object> get props => [activities];
 }
 
 class ActivitySelectedForTimerEvent extends ActiveSessionEvent {
-  final Map<String, dynamic> selectedMap;
+  final Activity selectedActivity;
 
-  ActivitySelectedForTimerEvent({@required this.selectedMap});
+  ActivitySelectedForTimerEvent({@required this.selectedActivity});
 
   @override
-  List<Object> get props => [selectedMap];
+  List<Object> get props => [selectedActivity];
 }
 
 class ActivityTimerStoppedEvent extends ActiveSessionEvent {

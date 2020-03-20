@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 
 typedef ActivitiesSectionAddTappedCallback();
-typedef ActivitiesSectionEventTappedCallback(Map<String, dynamic> map);
+typedef ActivitiesSectionEventTappedCallback(Activity activity);
 
 class ActivitiesListSection extends StatefulWidget {
-  final List<Map> activityMaps;
+  final List<Activity> activities;
   final int completedActivitiesCount;
   final int availableTime;
   final ActivitiesSectionAddTappedCallback addTappedCallback;
@@ -13,7 +14,7 @@ class ActivitiesListSection extends StatefulWidget {
 
   const ActivitiesListSection(
       {Key key,
-      @required this.activityMaps,
+      @required this.activities,
       @required this.completedActivitiesCount,
       @required this.addTappedCallback,
       @required this.eventTappedCallback,
@@ -21,7 +22,7 @@ class ActivitiesListSection extends StatefulWidget {
       : super(key: key);
   @override
   _ActivitiesListSectionState createState() => _ActivitiesListSectionState(
-      activityMaps,
+      activities,
       completedActivitiesCount,
       addTappedCallback,
       eventTappedCallback,
@@ -29,13 +30,13 @@ class ActivitiesListSection extends StatefulWidget {
 }
 
 class _ActivitiesListSectionState extends State<ActivitiesListSection> {
-  final List<Map> activityMaps;
+  final List<Activity> activities;
   final int completedActivitiesCount;
   final int availableTime;
   final ActivitiesSectionAddTappedCallback addTappedCallback;
   final ActivitiesSectionEventTappedCallback eventTappedCallback;
 
-  _ActivitiesListSectionState(this.activityMaps, this.completedActivitiesCount,
+  _ActivitiesListSectionState(this.activities, this.completedActivitiesCount,
       this.addTappedCallback, this.eventTappedCallback, this.availableTime);
 
   bool get _plusButtonEnabled {
@@ -50,8 +51,8 @@ class _ActivitiesListSectionState extends State<ActivitiesListSection> {
   }
 
   Widget _activitiesHeaderBuilder() {
-    int count = activityMaps.isEmpty ? 0 : completedActivitiesCount;
-    String suffix = activityMaps.isEmpty ? 'scheduled' : 'completed';
+    int count = activities.isEmpty ? 0 : completedActivitiesCount;
+    String suffix = activities.isEmpty ? 'scheduled' : 'completed';
     String countString = count.toString() + ' $suffix';
 
     return Container(
@@ -79,12 +80,12 @@ class _ActivitiesListSectionState extends State<ActivitiesListSection> {
   }
 
   ListView _activitiesListBuilder() {
-    List sourceList = activityMaps;
+    List sourceList = activities;
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return SessionEventCell(
-          map: sourceList[index],
+          activity: sourceList[index],
           callback: eventTappedCallback,
         );
       },

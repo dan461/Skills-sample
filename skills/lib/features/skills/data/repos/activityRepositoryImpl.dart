@@ -45,6 +45,13 @@ class ActivityRepositoryImpl implements ActivityRepository {
   }
 
   @override
+  Future<Either<Failure, List<Activity>>> getActivitiesWithSkillsForSession(
+      int sessionId) async {
+    return Right(
+        await localDataSource.getActivitiesWithSkillsForSession(sessionId));
+  }
+
+  @override
   Future<Either<Failure, List<Activity>>> getCompletedActivitiesForSkill(
       int skillId) async {
     return Right(await localDataSource.getCompletedActivitiesForSkill(skillId));

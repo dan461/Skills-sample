@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
-typedef EventCellCallback(Map<String, dynamic> map);
+typedef EventCellCallback(Activity activity);
 
 class SessionEventCell extends StatelessWidget {
-  final Map<String, dynamic> map;
+  final Activity activity;
   final EventCellCallback callback;
   // final SkillEvent event;
 
-  const SessionEventCell({Key key, @required this.map, @required this.callback})
+  const SessionEventCell({Key key, @required this.activity, @required this.callback})
       : super(key: key);
 
   Widget goalSectionBuilder(Skill skill, BuildContext context) {
     Widget body = SizedBox();
-    var goal = map['goal'];
+    var goal = activity.skill.goal;
     if (goal is Goal) {
       String goalTimeString = goal.timeRemaining.toString();
       body = Card(
@@ -45,13 +46,13 @@ class SessionEventCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String durationString = map['activity'].duration.toString();
-    Skill skill = map['skill'];
+    String durationString = activity.duration.toString();
+    Skill skill = activity.skill;
     // Goal goal = map['goal'];
 
     return GestureDetector(
       onTap: () {
-        callback(map);
+        callback(activity);
       },
       child: Card(
         color: Colors.amber[300],

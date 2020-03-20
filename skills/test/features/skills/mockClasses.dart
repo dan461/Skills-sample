@@ -79,6 +79,9 @@ class MockInsertActivitiesForSessionUC extends Mock
 class MockGetActivitiesForSessionUC extends Mock
     implements GetActivitiesForSession {}
 
+class MockGetActivitiesWithSkillsForSessionUC extends Mock
+    implements GetActivitiesWithSkillsForSession {}
+
 class MockGetActivityMapsForSession extends Mock
     implements GetActivityMapsForSession {}
 

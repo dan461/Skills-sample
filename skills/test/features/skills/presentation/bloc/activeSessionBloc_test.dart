@@ -13,9 +13,9 @@ import '../../mockClasses.dart';
 void main() {
   ActiveSessionBloc sut;
   Session testSession;
-  List<Map> testMaps;
+  List<Activity> testActivitiesList;
   Activity testActivity;
-  Map<String, dynamic> activityMap;
+  
 
   setUp(() {
     sut = ActiveSessionBloc();
@@ -34,8 +34,8 @@ void main() {
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: 'test');
-    activityMap = {'activity': testActivity};
-    testMaps = [activityMap];
+    
+    testActivitiesList = [testActivity];
   });
 
   test('test for correct initial state', () {
@@ -46,11 +46,11 @@ void main() {
       'test for bloc emitting [ActiveSessionInfoLoadedState] after ActiveSessionLoadInfoEvent added',
       () async {
     sut.add(ActiveSessionLoadInfoEvent(
-        session: testSession, activityMaps: testMaps));
+        session: testSession, activities: testActivitiesList));
     final expected = [
       ActiveSessionInitial(),
       ActiveSessionInfoLoadedState(
-          activityMaps: testMaps, duration: testSession.duration)
+          activities: testActivitiesList, duration: testSession.duration)
     ];
     expectLater(sut, emitsInOrder(expected));
   });
@@ -58,10 +58,10 @@ void main() {
   test(
       'test for bloc emitting [ActivityReadyState] after ActivitySelectedForTimerEvent is added.',
       () async {
-    sut.add(ActivitySelectedForTimerEvent(selectedMap: activityMap));
+    sut.add(ActivitySelectedForTimerEvent(selectedActivity: testActivity));
     final expected = [
       ActiveSessionInitial(),
-      ActivityReadyState(activity: activityMap['activity'])
+      ActivityReadyState(activity: testActivity)
     ];
     expectLater(sut, emitsInOrder(expected));
   });

@@ -17,7 +17,8 @@ part 'sessiondata_state.dart';
 class SessiondataBloc extends SessionBloc {
   final UpdateAndRefreshSessionWithId updateAndRefreshSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
-  final GetActivityMapsForSession getActivityMapsForSession;
+  // final GetActivityMapsForSession getActivityMapsForSession;
+  final GetActivitiesWithSkillsForSession getActivitiesWithSkillsForSession;
   final InsertActivityForSessionUC insertActivitiesForSession;
   // final CompleteSessionAndEvents completeSessionAndEvents;
   final DeleteActivityByIdUC deleteActivityByIdUC;
@@ -25,7 +26,7 @@ class SessiondataBloc extends SessionBloc {
   SessiondataBloc(
       {this.updateAndRefreshSessionWithId,
       this.deleteSessionWithId,
-      this.getActivityMapsForSession,
+      this.getActivitiesWithSkillsForSession,
       this.insertActivitiesForSession,
       // this.completeSessionAndEvents,
       this.deleteActivityByIdUC});
@@ -37,7 +38,8 @@ class SessiondataBloc extends SessionBloc {
   DateTime sessionDate;
   TimeOfDay selectedStartTime;
 
-  List<Map> activityMapsForListView = [];
+  // List<Map> activityMapsForListView = [];
+  List<Activity> activitiesForSession = [];
 
   // int get completedActivitiesCount {
   //   int count = 0;
@@ -79,11 +81,11 @@ class SessiondataBloc extends SessionBloc {
       selectedStartTime ??= session.startTime;
       yield SessionDataCrudInProgressState();
 
-      final activityMapsOrFailure = await getActivityMapsForSession(
+      final activitiesOrFailure = await getActivitiesWithSkillsForSession(
           SessionByIdParams(sessionId: session.sessionId));
-      yield activityMapsOrFailure.fold(
-          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-        activityMapsForListView = maps;
+      yield activitiesOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (activities) {
+        activitiesForSession = activities;
         session.openTime = availableTime;
         return SessionDataActivitesLoadedState();
       });

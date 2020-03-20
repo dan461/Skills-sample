@@ -86,6 +86,17 @@ class GetCompletedActivitiesForSkill
   }
 }
 
+class GetActivitiesWithSkillsForSession extends UseCase<List<Activity>, SessionByIdParams>{
+  final ActivityRepository repo;
+
+  GetActivitiesWithSkillsForSession(this.repo);
+
+  @override
+  Future<Either<Failure, List<Activity>>> call(SessionByIdParams params) {
+    return repo.getActivitiesWithSkillsForSession(params.sessionId);
+  }
+}
+
 class GetActivityMapsForSession extends UseCase<List<Map>, SessionByIdParams> {
   final ActivityRepository repo;
 

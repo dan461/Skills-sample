@@ -11,13 +11,12 @@ part 'session_event.dart';
 part 'session_state.dart';
 
 class SessionBloc extends Bloc<SessionEvent, SessionState> {
-  List<Map> activityMapsForListView = [];
+  List<Activity> activitiesForSession = [];
   Session session;
 
   int get completedActivitiesCount {
     int count = 0;
-    for (var map in activityMapsForListView) {
-      Activity activity = map['activity'];
+    for (var activity in activitiesForSession) {
       if (activity.isComplete) count++;
     }
     return count;
@@ -25,8 +24,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
   int get availableTime {
     var time = session.duration ?? 0;
-    for (var map in activityMapsForListView) {
-      var activity = map['activity'];
+    for (var activity in activitiesForSession) {
       time -= activity.duration;
     }
     return time;

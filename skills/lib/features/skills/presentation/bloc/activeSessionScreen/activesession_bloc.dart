@@ -1,22 +1,18 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
-import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 
 part 'activesession_event.dart';
 part 'activesession_state.dart';
 
 class ActiveSessionBloc extends SessionBloc {
   Session session;
-  List<Map> activityMapsForListView = [];
-  Map<String, dynamic> selectedMap;
+  
+  Activity selectedActivity;
 
   @override
   ActiveSessionState get initialState => ActiveSessionInitial();
@@ -26,16 +22,16 @@ class ActiveSessionBloc extends SessionBloc {
     SessionEvent event,
   ) async* {
     if (event is ActiveSessionLoadInfoEvent) {
-      activityMapsForListView = event.activityMaps;
+      activitiesForSession = event.activities;
       session = event.session;
       yield ActiveSessionInfoLoadedState(
-          duration: session.duration, activityMaps: activityMapsForListView);
+          duration: session.duration, activities: activitiesForSession);
     }
 
     // Activity selected
     else if (event is ActivitySelectedForTimerEvent) {
-      selectedMap = event.selectedMap;
-      yield ActivityReadyState(activity: event.selectedMap['activity']);
+      selectedActivity = event.selectedActivity;
+      yield ActivityReadyState(activity: event.selectedActivity);
     }
 
     // Timer stopped

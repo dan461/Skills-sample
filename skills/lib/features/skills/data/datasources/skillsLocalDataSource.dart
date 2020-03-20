@@ -51,6 +51,7 @@ abstract class SkillsLocalDataSource {
   Future<List<Activity>> getCompletedActivitiesForSkill(int skillId);
   Future<List<Map>> getInfoForActivities(List<Activity> events);
   Future<List<Map>> getActivityMapsForSession(int sessionId);
+  Future<List<Activity>> getActivitiesWithSkillsForSession(int sessionId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -234,6 +235,16 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       return map;
     } else
       return null;
+  }
+
+  @override
+  Future<Skill> getSkillWithGoalById(int skillId) async {
+    SkillModel skill = await getSkillById(skillId);
+    if (skill != null && skill.currentGoalId != 0) {
+      GoalModel goal = await getGoalById(skill.currentGoalId);
+      skill.goal = goal;
+    }
+    return skill;
   }
 
   @override
@@ -631,5 +642,18 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     }
 
     return maps;
+  }
+
+  @override
+  Future<List<Activity>> getActivitiesWithSkillsForSession(
+      int sessionId) async {
+    List<Activity> activities = await getActivitiesForSession(sessionId);
+
+    for (var activity in activities) {
+      Skill skill = await getSkillWithGoalById(activity.skillId);
+      activity.skill = skill;
+    }
+
+    return activities;
   }
 }

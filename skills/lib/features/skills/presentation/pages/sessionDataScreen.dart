@@ -261,7 +261,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   Widget _activitiesSection() {
     return ActivitiesListSection(
-        activityMaps: bloc.activityMapsForListView,
+        activities: bloc.activitiesForSession,
         completedActivitiesCount: bloc.completedActivitiesCount,
         addTappedCallback: _showSkillsList,
         eventTappedCallback: _eventTapped,
@@ -320,7 +320,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     bloc.add(CancelSkillForSessionEvent());
   }
 
-  void _eventTapped(Map<String, dynamic> map) {
+  void _eventTapped(Activity activity) {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -333,13 +333,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                   ListTile(
                     title: Text('Edit (no function)'),
                     onTap: () {
-                      _editEventTapped(map);
+                      _editEventTapped(activity);
                     },
                   ),
                   ListTile(
                     title: Text('Delete'),
                     onTap: () {
-                      _deleteEventTapped(map);
+                      _deleteEventTapped(activity);
                     },
                   )
                 ],
@@ -356,14 +356,14 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         });
   }
 
-  void _editEventTapped(Map<String, dynamic> map) {
+  void _editEventTapped(Activity activity) {
     // setState(() {
     //   _bloc.selectedSkill = map['skill'];
     //   currentEventMap = map;
     // });
   }
 
-  void _deleteEventTapped(Map<String, dynamic> map) async {
+  void _deleteEventTapped(Activity activity) async {
     await showDialog<bool>(
       context: (context),
       barrierDismissible: false,
@@ -381,7 +381,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               child: Text('Delete'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Activity event = map['activity'];
+                Activity event = activity;
                 bloc.add(RemoveActivityFromSessionEvent(event.eventId));
               },
             )
@@ -422,7 +422,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       ActiveSessionScreen activeSessionScreen = locator<ActiveSessionScreen>();
       activeSessionScreen.bloc.add(ActiveSessionLoadInfoEvent(
-          session: bloc.session, activityMaps: bloc.activityMapsForListView));
+          session: bloc.session, activities: bloc.activitiesForSession));
       return activeSessionScreen;
     }));
   }

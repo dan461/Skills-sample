@@ -12,12 +12,12 @@ class ActiveSessionInitial extends ActiveSessionState {
 
 class ActiveSessionInfoLoadedState extends ActiveSessionState {
   final int duration;
-  final List<Map> activityMaps;
+  final List<Activity> activities;
 
   ActiveSessionInfoLoadedState(
-      {@required this.duration, @required this.activityMaps});
+      {@required this.duration, @required this.activities});
   @override
-  List<Object> get props => [duration, activityMaps];
+  List<Object> get props => [duration, activities];
 }
 
 class ActivityReadyState extends ActiveSessionState {

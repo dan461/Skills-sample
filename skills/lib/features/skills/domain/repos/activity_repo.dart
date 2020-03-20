@@ -10,7 +10,10 @@ abstract class ActivityRepository {
   Future<Either<Failure, int>> updateActivity(
       Map<String, dynamic> changeMap, eventId);
   Future<Either<Failure, int>> deleteActivityById(int id);
-  Future<Either<Failure, List<Activity>>> getActivitiesForSession(int sessionId);
+  Future<Either<Failure, List<Activity>>> getActivitiesForSession(
+      int sessionId);
+  Future<Either<Failure, List<Activity>>> getActivitiesWithSkillsForSession(
+      int sessionId);
   Future<Either<Failure, List<Activity>>> getCompletedActivitiesForSkill(
       int skillId);
   Future<Either<Failure, List<Map>>> getInfoForActivities(

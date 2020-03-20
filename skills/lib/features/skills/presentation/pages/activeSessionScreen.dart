@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
@@ -38,7 +39,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
               // Info loaded
               else if (state is ActiveSessionInfoLoadedState) {
                 body = _chooseActivityViewBuilder(
-                    state.duration, state.activityMaps);
+                    state.duration, state.activities);
               }
 
               return body;
@@ -49,7 +50,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
-  Column _chooseActivityViewBuilder(int duration, List<Map> maps) {
+  Column _chooseActivityViewBuilder(int duration, List<Activity> activities) {
     return Column(
       children: <Widget>[
         Padding(
@@ -60,7 +61,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
           padding: const EdgeInsets.all(8.0),
           child: _chooseRow(),
         ),
-        _activitiesSection()
+        _activitiesSection(activities)
       ],
     );
   }
@@ -85,9 +86,9 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
-  Widget _activitiesSection() {
+  Widget _activitiesSection(List<Activity> activities) {
     return ActivitiesListSection(
-        activityMaps: bloc.activityMapsForListView,
+        activities: activities,
         completedActivitiesCount: bloc.completedActivitiesCount,
         addTappedCallback: _showSkillsList,
         eventTappedCallback: _activityTapped,
@@ -121,8 +122,8 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     Navigator.of(context).pop(skill);
   }
 
-  void _activityTapped(Map<String, dynamic> map) {
-    bloc.add(ActivitySelectedForTimerEvent(selectedMap: map));
+  void _activityTapped(Activity activity) {
+    bloc.add(ActivitySelectedForTimerEvent(selectedActivity: activity));
   }
 }
 

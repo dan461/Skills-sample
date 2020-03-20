@@ -17,7 +17,9 @@ void main() {
   MockUpdateAndRefreshSessionWithId mockUpdateAndRefreshSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
   MockDeleteActivityByIdUC mockDeleteEventByIdUC;
-  MockGetActivityMapsForSession mockGetActivityMapsForSession;
+  // MockGetActivityMapsForSession mockGetActivityMapsForSession;
+  MockGetActivitiesWithSkillsForSessionUC
+      mockGetActivitiesWithSkillsForSessionUC;
 
   Session testSession;
   Activity testActivity;
@@ -28,12 +30,14 @@ void main() {
     mockUpdateAndRefreshSessionWithId = MockUpdateAndRefreshSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
     mockDeleteEventByIdUC = MockDeleteActivityByIdUC();
-    mockGetActivityMapsForSession = MockGetActivityMapsForSession();
+    mockGetActivitiesWithSkillsForSessionUC =
+        MockGetActivitiesWithSkillsForSessionUC();
 
     sut = SessiondataBloc(
         updateAndRefreshSessionWithId: mockUpdateAndRefreshSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
-        getActivityMapsForSession: mockGetActivityMapsForSession,
+        getActivitiesWithSkillsForSession:
+            mockGetActivitiesWithSkillsForSessionUC,
         insertActivitiesForSession: mockInsertActivitiesForSessionUC,
         deleteActivityByIdUC: mockDeleteEventByIdUC);
 
@@ -58,17 +62,7 @@ void main() {
   });
 
   test('test that availableTime is correct', () async {
-    var testEvent = Activity(
-        skillId: 1,
-        sessionId: 1,
-        duration: 10,
-        date: DateTime.fromMillisecondsSinceEpoch(0),
-        isComplete: false,
-        skillString: 'test');
-    Map<String, dynamic> eventMap = {'activity': testEvent};
-
-    // sut.session = testSession;
-    sut.activityMapsForListView = [eventMap];
+    sut.activitiesForSession = [testActivity];
 
     expect(sut.availableTime, 20);
   });
@@ -110,10 +104,9 @@ void main() {
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: true,
         skillString: 'test');
-    Map<String, dynamic> map1 = {'activity': testActivity};
-    Map<String, dynamic> map2 = {'activity': testActivity2};
-    var testActivitiesList = [map1, map2];
-    sut.activityMapsForListView = testActivitiesList;
+   
+    var testActivitiesList = [testActivity, testActivity2];
+    sut.activitiesForSession = testActivitiesList;
 
     expect(sut.completedActivitiesCount, equals(1));
   });
@@ -159,21 +152,21 @@ void main() {
     expectLater(sut, emitsInOrder(expected));
   });
 
-  group('GetEventMapsForSession: ', () {
+  group('GetActivitiesWithSkillsForSession: ', () {
     test(
-        'test that GetEventMapsForSession usecase is called after a GetActivitiesForSessionEvent is added',
+        'test that GetActivitiesWithSkillsForSession usecase is called after a GetActivitiesForSessionEvent is added',
         () async {
       sut.add(GetActivitiesForSessionEvent(testSession));
       await untilCalled(
-          mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)));
-      verify(mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)));
+          mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
     });
 
     test(
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataEventsLoadedState] when getting Activity maps after a GetActivitiesForSessionEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
-      when(mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)))
+      when(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Right([]));
       final expected = [
         SessiondataInitial(),
@@ -188,7 +181,7 @@ void main() {
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after a GetActivitiesForSessionEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
-      when(mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)))
+      when(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
         SessiondataInitial(),
@@ -302,15 +295,15 @@ void main() {
     });
 
     test(
-        'test that getEventMapsForSession is called after an Activity is added to the Session',
+        'test that getActivitiesWithSkillsForSessionUC is called after an Activity is added to the Session',
         () async {
       when(mockInsertActivitiesForSessionUC(
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
       await untilCalled(
-          mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)));
-      verify(mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)));
+          mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
     });
 
     test(
@@ -355,7 +348,7 @@ void main() {
     });
 
     test(
-        'test that getEventMapsForSession is called after an Activity is removed from the Session',
+        'test that getActivitiesWithSkillsForSessionUC is called after an Activity is removed from the Session',
         () async {
       var newTestEvent = Activity(
           skillId: 1,
@@ -372,8 +365,8 @@ void main() {
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
       await untilCalled(
-          mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)));
-      verify(mockGetActivityMapsForSession(SessionByIdParams(sessionId: 1)));
+          mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
     });
 
     test(
