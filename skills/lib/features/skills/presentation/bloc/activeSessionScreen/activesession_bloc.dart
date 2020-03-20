@@ -16,38 +16,10 @@ part 'activesession_state.dart';
 class ActiveSessionBloc extends SessionBloc {
   Session session;
   List<Map> activityMapsForListView = [];
+  Map<String, dynamic> selectedMap;
 
   @override
   ActiveSessionState get initialState => ActiveSessionInitial();
-
-  // int get completedActivitiesCount {
-  //   int count = 0;
-  //   for (var map in activityMapsForListView) {
-  //     Activity event = map['activity'];
-  //     if (event.isComplete) count++;
-  //   }
-  //   return count;
-  // }
-
-  // int get availableTime {
-  //   var time = session.duration ?? 0;
-  //   for (var map in activityMapsForListView) {
-  //     var event = map['activity'];
-  //     time -= event.duration;
-  //   }
-  //   return time;
-  // }
-
-  // void createActivity(int activityDuration, Skill skill) {
-  //   final newActivity = Activity(
-  //       skillId: skill.skillId,
-  //       sessionId: session.sessionId,
-  //       date: session.date,
-  //       duration: activityDuration,
-  //       isComplete: false,
-  //       skillString: skill.name);
-  //   add(InsertActivityForSessionEvent(newActivity));
-  // }
 
   @override
   Stream<ActiveSessionState> mapEventToState(
@@ -58,6 +30,22 @@ class ActiveSessionBloc extends SessionBloc {
       session = event.session;
       yield ActiveSessionInfoLoadedState(
           duration: session.duration, activityMaps: activityMapsForListView);
+    }
+
+    // Activity selected
+    else if (event is ActivitySelectedForTimerEvent) {
+      selectedMap = event.selectedMap;
+      yield ActivityReadyState(activity: event.selectedMap['activity']);
+    }
+
+    // Timer stopped
+    else if (event is ActivityTimerStoppedEvent) {
+      yield ActivityTimerStoppedState();
+    }
+
+    // Activity finished
+    else if (event is CurrentActivityFinishedEvent) { 
+      yield CurrentActivityFinishedState();
     }
   }
 }

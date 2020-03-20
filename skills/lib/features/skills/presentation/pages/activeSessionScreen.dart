@@ -90,7 +90,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
         activityMaps: bloc.activityMapsForListView,
         completedActivitiesCount: bloc.completedActivitiesCount,
         addTappedCallback: _showSkillsList,
-        eventTappedCallback: _eventTapped,
+        eventTappedCallback: _activityTapped,
         availableTime: bloc.availableTime);
   }
 
@@ -121,7 +121,9 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     Navigator.of(context).pop(skill);
   }
 
-  void _eventTapped(Map<String, dynamic> map) {}
+  void _activityTapped(Map<String, dynamic> map) {
+    bloc.add(ActivitySelectedForTimerEvent(selectedMap: map));
+  }
 }
 
 // class SessionScreen extends StatefulWidget {
