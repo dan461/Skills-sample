@@ -5,6 +5,7 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
@@ -50,7 +51,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     Widget body;
     return BlocProvider(
       builder: (context) => bloc,
-      child: BlocListener<SessiondataBloc, SessiondataState>(
+      child: BlocListener<SessiondataBloc, SessionState>(
         bloc: bloc,
         listener: (context, state) {
           if (state is SessionWasDeletedState) {
@@ -63,7 +64,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               appBar: AppBar(
                 leading: _backArrow,
               ),
-              body: BlocBuilder<SessiondataBloc, SessiondataState>(
+              body: BlocBuilder<SessiondataBloc, SessionState>(
                 builder: (context, state) {
                   if (state is SessiondataInitial ||
                       state is SessionDataCrudInProgressState ||
@@ -354,7 +355,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
             );
           });
     } else
-      bloc.createActivity(duration, skill);
+      bloc.createActivity(duration, skill, bloc.sessionDate);
   }
 
   void _cancelActivityTapped() {
