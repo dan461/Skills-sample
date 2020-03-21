@@ -73,6 +73,8 @@ class MockDeleteActivityByIdUC extends Mock implements DeleteActivityByIdUC {}
 
 class MockUpdateActivityUC extends Mock implements UpdateActivityEventUC {}
 
+class MockCompleteActivityUC extends Mock implements CompleteActivityUC {}
+
 class MockInsertActivitiesForSessionUC extends Mock
     implements InsertActivityForSessionUC {}
 

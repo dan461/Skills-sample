@@ -45,6 +45,8 @@ abstract class SkillsLocalDataSource {
   Future<ActivityModel> insertNewActivity(Activity event);
   Future<ActivityModel> getActivityById(int id);
   Future<int> updateActivity(Map<String, dynamic> changeMap, int eventId);
+  Future<int> completeActivity(
+      int activityId, DateTime date, int elapsedTime, int skillId);
   Future<int> deleteActivityById(int id);
   Future<List<int>> insertActivities(List<Activity> events, int newSessionId);
   Future<List<Activity>> getActivitiesForSession(int sessionId);
@@ -570,11 +572,27 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateActivity(Map<String, dynamic> changeMap, eventId) async {
+  Future<int> updateActivity(Map<String, dynamic> changeMap, activityId) async {
     final Database db = await database;
     int updates = await db.update(skillEventsTable, changeMap,
-        where: 'eventId = ?', whereArgs: [eventId]);
+        where: 'eventId = ?', whereArgs: [activityId]);
+
     return updates;
+  }
+
+  @override
+  Future<int> completeActivity(
+      int activityId, DateTime date, int elapsedTime, int skillId) async {
+    final Database db = await database;
+    Map<String, dynamic> changes = {'isComplete': 1, 'duration': elapsedTime};
+
+    int update = await db.update(skillEventsTable, changes,
+        where: 'eventId = ?', whereArgs: [activityId]);
+    int dateInt = date.millisecondsSinceEpoch;
+
+    await db.rawUpdate(
+        "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
+    return update;
   }
 
   @override

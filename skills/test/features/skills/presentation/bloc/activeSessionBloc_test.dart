@@ -12,13 +12,15 @@ import '../../mockClasses.dart';
 
 void main() {
   ActiveSessionBloc sut;
+  MockCompleteActivityUC mockCompleteActivityUC;
+
   Session testSession;
   List<Activity> testActivitiesList;
   Activity testActivity;
-  
 
   setUp(() {
-    sut = ActiveSessionBloc();
+    mockCompleteActivityUC = MockCompleteActivityUC();
+    sut = ActiveSessionBloc(completeActivityUC: mockCompleteActivityUC);
     testSession = Session(
         sessionId: 1,
         date: DateTime.now(),
@@ -34,7 +36,7 @@ void main() {
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: 'test');
-    
+
     testActivitiesList = [testActivity];
   });
 
@@ -81,12 +83,50 @@ void main() {
     expectLater(sut, emitsInOrder(expected));
   });
 
-  // CurrentActivityFinishedState
-  test(
-      'test for bloc emitting [CurrentActivityFinishedState] after CurrentActivityFinishedEvent is added.',
-      () async {
-    sut.add(CurrentActivityFinishedEvent(time: 20));
-    final expected = [ActiveSessionInitial(), CurrentActivityFinishedState()];
-    expectLater(sut, emitsInOrder(expected));
+  group('CompleteActivity - ', () {
+    test(
+        'test for CompleteActivity use case called after CurrentActivityFinishedEvent added',
+        () async {
+      sut.add(CurrentActivityFinishedEvent(
+          activity: testActivity, elapsedTime: 20));
+      await untilCalled(mockCompleteActivityUC(ActivityCompleteParams(
+          testActivity.eventId, testActivity.date, 20, testActivity.skillId)));
+      verify(mockCompleteActivityUC(ActivityCompleteParams(
+          testActivity.eventId, testActivity.date, 20, testActivity.skillId)));
+    });
+
+    test(
+        'test for bloc emitting [ActiveSessionProcessingState, CurrentActivityFinishedState] after CurrentActivityFinishedEvent is added.',
+        () async {
+      when(mockCompleteActivityUC(ActivityCompleteParams(testActivity.eventId,
+              testActivity.date, 20, testActivity.skillId)))
+          .thenAnswer((_) async => Right(1));
+
+      sut.add(CurrentActivityFinishedEvent(
+          activity: testActivity, elapsedTime: 20));
+      final expected = [
+        ActiveSessionInitial(),
+        ActiveSessionProcessingState(),
+        CurrentActivityFinishedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+    });
+
+    test(
+        'test for bloc emitting [ActiveSessionProcessingState, ActiveSessionErrorState] after cache failure when CurrentActivityFinishedEvent is added.',
+        () async {
+      when(mockCompleteActivityUC(ActivityCompleteParams(testActivity.eventId,
+              testActivity.date, 20, testActivity.skillId)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      sut.add(CurrentActivityFinishedEvent(
+          activity: testActivity, elapsedTime: 20));
+      final expected = [
+        ActiveSessionInitial(),
+        ActiveSessionProcessingState(),
+        ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+    });
   });
 }

@@ -63,6 +63,18 @@ class UpdateActivityEventUC extends UseCase<int, ActivityUpdateParams> {
   }
 }
 
+class CompleteActivityUC extends UseCase<int, ActivityCompleteParams> {
+  final ActivityRepository repo;
+
+  CompleteActivityUC(this.repo);
+
+  @override
+  Future<Either<Failure, int>> call(ActivityCompleteParams params) async {
+    return await repo.completeActivity(
+        params.activityId, params.date, params.elapsedTime, params.skillId);
+  }
+}
+
 class GetActivitiesForSession
     extends UseCase<List<Activity>, SessionByIdParams> {
   final ActivityRepository repo;
@@ -86,7 +98,8 @@ class GetCompletedActivitiesForSkill
   }
 }
 
-class GetActivitiesWithSkillsForSession extends UseCase<List<Activity>, SessionByIdParams>{
+class GetActivitiesWithSkillsForSession
+    extends UseCase<List<Activity>, SessionByIdParams> {
   final ActivityRepository repo;
 
   GetActivitiesWithSkillsForSession(this.repo);

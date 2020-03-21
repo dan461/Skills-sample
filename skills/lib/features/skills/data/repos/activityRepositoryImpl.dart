@@ -69,4 +69,11 @@ class ActivityRepositoryImpl implements ActivityRepository {
       int sessionId) async {
     return Right(await localDataSource.getActivityMapsForSession(sessionId));
   }
+
+  @override
+  Future<Either<Failure, int>> completeActivity(
+      int activityId, DateTime date, int elapsedTime, int skillId) async {
+    return Right(
+        await localDataSource.completeActivity(activityId, date, elapsedTime, skillId));
+  }
 }

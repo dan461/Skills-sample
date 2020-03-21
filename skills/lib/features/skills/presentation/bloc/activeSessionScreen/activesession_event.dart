@@ -30,10 +30,17 @@ class ActivityTimerStoppedEvent extends ActiveSessionEvent {
 }
 
 class CurrentActivityFinishedEvent extends ActiveSessionEvent {
-  final int time;
+  final Activity activity;
+  final int elapsedTime;
 
-  CurrentActivityFinishedEvent({@required this.time});
+  CurrentActivityFinishedEvent(
+      {@required this.activity, @required this.elapsedTime});
 
+  @override
+  List<Object> get props => [activity, elapsedTime];
+}
+
+class RefreshActivitiesEvent extends ActiveSessionState {
   @override
   List<Object> get props => null;
 }

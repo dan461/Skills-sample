@@ -10,6 +10,20 @@ class ActiveSessionInitial extends ActiveSessionState {
   List<Object> get props => [];
 }
 
+class ActiveSessionProcessingState extends ActiveSessionState {
+  @override
+  List<Object> get props => null;
+}
+
+class ActiveSessionErrorState extends ActiveSessionState {
+  final String message;
+
+  ActiveSessionErrorState(this.message);
+
+  @override
+  List<Object> get props => null;
+}
+
 class ActiveSessionInfoLoadedState extends ActiveSessionState {
   final int duration;
   final List<Activity> activities;
