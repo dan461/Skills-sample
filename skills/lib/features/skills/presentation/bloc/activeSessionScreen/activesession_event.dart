@@ -40,7 +40,7 @@ class CurrentActivityFinishedEvent extends ActiveSessionEvent {
   List<Object> get props => [activity, elapsedTime];
 }
 
-class RefreshActivitiesEvent extends ActiveSessionState {
+class ActiveSessionRefreshActivitiesEvent extends ActiveSessionEvent {
   @override
   List<Object> get props => null;
 }

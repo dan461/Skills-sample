@@ -66,7 +66,9 @@ void init() {
       getActiviesForSession: locator(),
       getMapsForSessionsInDateRange: locator()));
 
-  locator.registerFactory(() => ActiveSessionBloc(completeActivityUC: locator()));
+  locator.registerFactory(() => ActiveSessionBloc(
+      completeActivityUC: locator(),
+      getActivitiesWithSkillsForSessionUC: locator()));
 
   locator.registerFactory(() => SessionDataScreen(bloc: locator()));
   locator.registerFactory(() => ActiveSessionScreen(bloc: locator()));
@@ -101,9 +103,11 @@ void init() {
   locator.registerLazySingleton(() => CompleteActivityUC(locator()));
   locator.registerLazySingleton(() => DeleteActivityByIdUC(locator()));
   locator.registerLazySingleton(() => GetActivitiesForSession(locator()));
-  locator.registerLazySingleton(() => GetCompletedActivitiesForSkill(locator()));
+  locator
+      .registerLazySingleton(() => GetCompletedActivitiesForSkill(locator()));
   // locator.registerLazySingleton(() => GetActivityMapsForSession(locator()));
-  locator.registerLazySingleton(() => GetActivitiesWithSkillsForSession(locator()));
+  locator.registerLazySingleton(
+      () => GetActivitiesWithSkillsForSession(locator()));
   locator.registerLazySingleton(() => CompleteSessionAndEvents(locator()));
   // locator.registerLazySingleton(() => GetSkillInfoForEvent(locator(), locator()));
 

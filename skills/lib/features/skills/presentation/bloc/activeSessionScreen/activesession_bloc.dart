@@ -63,5 +63,19 @@ class ActiveSessionBloc extends SessionBloc {
           (update) => CurrentActivityFinishedState());
       // yield CurrentActivityFinishedState();
     }
+
+    // Refresh activities
+    else if (event is ActiveSessionRefreshActivitiesEvent) {
+      yield ActiveSessionProcessingState();
+
+      final refreshOrFailure = await getActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: session.sessionId));
+      yield refreshOrFailure
+          .fold((failure) => ActiveSessionErrorState(CACHE_FAILURE_MESSAGE),
+              (activities) {
+        activitiesForSession = activities;
+        return ActiveSessionActivitiesRefreshedState(activities);
+      });
+    }
   }
 }
