@@ -42,11 +42,52 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
                     state.duration, state.activities);
               }
 
+              // Activity selected
+              else if (state is ActivityReadyState) {
+                body = _timerViewBuilder(state.activity);
+              }
+
               return body;
             }),
           );
         }),
       ),
+    );
+  }
+
+  Widget _timerViewBuilder(Activity activity) {
+    var timeString = activity.duration.toString();
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(activity.skillString,
+                    style: Theme.of(context).textTheme.title),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('$timeString min.', style: Theme.of(context).textTheme.title),
+              )
+            ],
+          ),
+        ),
+        Row(children: <Widget>[
+          Center(
+              child: Container(
+                  width: 200, height: 150, child: Text('Timer here'))),
+        ]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(child: Text('START/STOP'), onPressed: null)
+          ],
+        ),
+      ],
     );
   }
 
