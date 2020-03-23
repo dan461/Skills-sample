@@ -68,7 +68,8 @@ void init() {
 
   locator.registerFactory(() => ActiveSessionBloc(
       completeActivityUC: locator(),
-      getActivitiesWithSkillsForSessionUC: locator()));
+      getActivitiesWithSkillsForSessionUC: locator(),
+      updateSessionWithId: locator()));
 
   locator.registerFactory(() => SessionDataScreen(bloc: locator()));
   locator.registerFactory(() => ActiveSessionScreen(bloc: locator()));

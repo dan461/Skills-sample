@@ -61,3 +61,8 @@ class ActiveSessionActivitiesRefreshedState extends ActiveSessionState {
   @override
   List<Object> get props => [activities];
 }
+
+class ActiveSessionCompletedState extends ActiveSessionState {
+  @override
+  List<Object> get props => null;
+}

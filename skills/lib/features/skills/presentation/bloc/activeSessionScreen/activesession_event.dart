@@ -53,3 +53,8 @@ class SkillSelectedForActiveSessionEvent extends ActiveSessionEvent {
   @override
   List<Object> get props => [skill];
 }
+
+class CompleteActiveSessionEvent extends ActiveSessionEvent {
+  @override
+  List<Object> get props => null;
+}

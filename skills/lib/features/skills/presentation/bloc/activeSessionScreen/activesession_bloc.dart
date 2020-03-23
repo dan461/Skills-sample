@@ -6,6 +6,7 @@ import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
+import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
 
@@ -15,14 +16,17 @@ part 'activesession_state.dart';
 class ActiveSessionBloc extends SessionBloc {
   final CompleteActivityUC completeActivityUC;
   final GetActivitiesWithSkillsForSession getActivitiesWithSkillsForSessionUC;
+  final UpdateSessionWithId updateSessionWithId;
 
   Session session;
 
   Activity selectedActivity;
+  int updatedSessionDuration;
 
   ActiveSessionBloc(
       {@required this.completeActivityUC,
-      @required this.getActivitiesWithSkillsForSessionUC});
+      @required this.getActivitiesWithSkillsForSessionUC,
+      @required this.updateSessionWithId});
 
   @override
   ActiveSessionState get initialState => ActiveSessionInitial();
@@ -76,6 +80,20 @@ class ActiveSessionBloc extends SessionBloc {
         activitiesForSession = activities;
         return ActiveSessionActivitiesRefreshedState(activities);
       });
+    }
+
+    // Complete Session
+    else if (event is CompleteActiveSessionEvent) {
+      yield ActiveSessionProcessingState();
+      int time = updatedSessionDuration != null
+          ? updatedSessionDuration
+          : session.duration;
+      Map<String, dynamic> changeMap = {'isComplete': true, 'duration': time};
+      final updateOrFailure = await updateSessionWithId(SessionUpdateParams(
+          sessionId: session.sessionId, changeMap: changeMap));
+      yield updateOrFailure.fold(
+          (failure) => ActiveSessionErrorState(CACHE_FAILURE_MESSAGE),
+          (update) => ActiveSessionCompletedState());
     }
   }
 }

@@ -6,8 +6,10 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import '../../mockClasses.dart';
 
 void main() {
@@ -15,19 +17,25 @@ void main() {
   MockCompleteActivityUC mockCompleteActivityUC;
   MockGetActivitiesWithSkillsForSessionUC
       mockGetActivitiesWithSkillsForSessionUC;
+  MockUpdateSessionWithId mockUpdateSessionWithId;
 
   Session testSession;
   List<Activity> testActivitiesList;
   Activity testActivity;
+  Map<String, dynamic> changeMap;
 
   setUp(() {
     mockCompleteActivityUC = MockCompleteActivityUC();
     mockGetActivitiesWithSkillsForSessionUC =
         MockGetActivitiesWithSkillsForSessionUC();
+    mockUpdateSessionWithId = MockUpdateSessionWithId();
+
     sut = ActiveSessionBloc(
         completeActivityUC: mockCompleteActivityUC,
         getActivitiesWithSkillsForSessionUC:
-            mockGetActivitiesWithSkillsForSessionUC);
+            mockGetActivitiesWithSkillsForSessionUC,
+        updateSessionWithId: mockUpdateSessionWithId);
+
     testSession = Session(
         sessionId: 1,
         date: DateTime.now(),
@@ -46,6 +54,8 @@ void main() {
         skillString: 'test');
 
     testActivitiesList = [testActivity];
+
+    changeMap = {'isComplete': true, 'duration': testSession.duration};
   });
 
   test('test for correct initial state', () {
@@ -136,49 +146,93 @@ void main() {
       ];
       expectLater(sut, emitsInOrder(expected));
     });
+  });
 
-    group('GetActivitiesWithSkillsForSession - ', () {
-      test(
-          'test for GetActivitiesWithSkillsForSession use case called after ActiveSessionRefreshActivitiesEvent added',
-          () async {
-        sut.add(ActiveSessionRefreshActivitiesEvent());
-        await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
-            SessionByIdParams(sessionId: testSession.sessionId)));
-        verify(mockGetActivitiesWithSkillsForSessionUC(
-            SessionByIdParams(sessionId: testSession.sessionId)));
-      });
+  group('GetActivitiesWithSkillsForSession - ', () {
+    test(
+        'test for GetActivitiesWithSkillsForSession use case called after ActiveSessionRefreshActivitiesEvent added',
+        () async {
+      sut.add(ActiveSessionRefreshActivitiesEvent());
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: testSession.sessionId)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: testSession.sessionId)));
+    });
 
-      test(
-          'test that bloc emits [ActiveSessionProcessingState, ActiveSessionActivitiesRefreshedState] after ActiveSessionRefreshActivitiesEvent added',
-          () async {
-        when(mockGetActivitiesWithSkillsForSessionUC(
-                SessionByIdParams(sessionId: testSession.sessionId)))
-            .thenAnswer((_) async => Right(testActivitiesList));
-        
-        sut.add(ActiveSessionRefreshActivitiesEvent());
-        final expected = [
-          ActiveSessionInitial(),
-          ActiveSessionProcessingState(),
-          ActiveSessionActivitiesRefreshedState(testActivitiesList)
-        ];
-        expectLater(sut, emitsInOrder(expected));
-      });
+    test(
+        'test that bloc emits [ActiveSessionProcessingState, ActiveSessionActivitiesRefreshedState] after ActiveSessionRefreshActivitiesEvent added',
+        () async {
+      when(mockGetActivitiesWithSkillsForSessionUC(
+              SessionByIdParams(sessionId: testSession.sessionId)))
+          .thenAnswer((_) async => Right(testActivitiesList));
 
-      test(
-          'test that bloc emits [ActiveSessionProcessingState, ActiveSessionErrorState] after cache failure when ActiveSessionRefreshActivitiesEvent added',
-          () async {
-        when(mockGetActivitiesWithSkillsForSessionUC(
-                SessionByIdParams(sessionId: testSession.sessionId)))
-            .thenAnswer((_) async => Left(CacheFailure()));
-        
-        sut.add(ActiveSessionRefreshActivitiesEvent());
-        final expected = [
-          ActiveSessionInitial(),
-          ActiveSessionProcessingState(),
-          ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
-        ];
-        expectLater(sut, emitsInOrder(expected));
-      });
+      sut.add(ActiveSessionRefreshActivitiesEvent());
+      final expected = [
+        ActiveSessionInitial(),
+        ActiveSessionProcessingState(),
+        ActiveSessionActivitiesRefreshedState(testActivitiesList)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+    });
+
+    test(
+        'test that bloc emits [ActiveSessionProcessingState, ActiveSessionErrorState] after cache failure when ActiveSessionRefreshActivitiesEvent added',
+        () async {
+      when(mockGetActivitiesWithSkillsForSessionUC(
+              SessionByIdParams(sessionId: testSession.sessionId)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      sut.add(ActiveSessionRefreshActivitiesEvent());
+      final expected = [
+        ActiveSessionInitial(),
+        ActiveSessionProcessingState(),
+        ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+    });
+  });
+
+  group('UpdateSessionWithId - ', () {
+    test(
+        'test for UpdateSessionWithId use case called after CompleteActiveSessionEvent added',
+        () async {
+      sut.add(CompleteActiveSessionEvent());
+      await untilCalled(mockUpdateSessionWithId(SessionUpdateParams(
+          sessionId: testSession.sessionId, changeMap: changeMap)));
+      verify(mockUpdateSessionWithId(SessionUpdateParams(
+          sessionId: testSession.sessionId, changeMap: changeMap)));
+    });
+
+    test(
+        'test that bloc emits [ActiveSessionProcessingState, CompleteActiveSessionEvent] after ActiveSessionRefreshActivitiesEvent added',
+        () async {
+      when(mockUpdateSessionWithId(SessionUpdateParams(
+              sessionId: testSession.sessionId, changeMap: changeMap)))
+          .thenAnswer((_) async => Right(1));
+
+      sut.add(CompleteActiveSessionEvent());
+      final expected = [
+        ActiveSessionInitial(),
+        ActiveSessionProcessingState(),
+        ActiveSessionCompletedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+    });
+
+    test(
+        'test that bloc emits [ActiveSessionProcessingState, ActiveSessionErrorState] after cache failure when CompleteActiveSessionEvent added',
+        () async {
+      when(mockUpdateSessionWithId(SessionUpdateParams(
+              sessionId: testSession.sessionId, changeMap: changeMap)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      sut.add(CompleteActiveSessionEvent());
+      final expected = [
+        ActiveSessionInitial(),
+        ActiveSessionProcessingState(),
+        ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
     });
   });
 }
