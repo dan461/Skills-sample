@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
@@ -32,7 +33,9 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
         listener: (context, state) {},
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              leading: SizedBox(),
+            ),
             body: BlocBuilder<ActiveSessionBloc, SessionState>(
                 builder: (context, state) {
               if (state is ActiveSessionInitial) {
@@ -49,6 +52,18 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
                 body = _timerViewBuilder(state.activity);
               }
 
+              // Activity finished
+              else if (state is CurrentActivityFinishedState) {
+                body = Center(child: CircularProgressIndicator());
+                bloc.add(ActiveSessionRefreshActivitiesEvent());
+              }
+
+              // Activities refreshed
+              else if (state is ActiveSessionActivitiesRefreshedState) {
+                body = _chooseActivityViewBuilder(
+                    state.duration, state.activities);
+              }
+
               return body;
             }),
           );
@@ -58,7 +73,10 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   Widget _timerViewBuilder(Activity activity) {
-    timer = Countdown(minutesToCount: bloc.selectedActivity.duration);
+    timer = Countdown(
+      minutesToCount: bloc.selectedActivity.duration,
+      finishedCallback: _currentActivityFinished,
+    );
     var timeString = activity.duration.toString();
     return Column(
       children: <Widget>[
@@ -98,9 +116,29 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
           padding: const EdgeInsets.all(8.0),
           child: _chooseRow(),
         ),
-        _activitiesSection(activities)
+        _activitiesSection(activities),
+        _buttonsRow()
       ],
     );
+  }
+
+  Row _buttonsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RaisedButton(child: Text(CANCEL), onPressed: _onCancelTapped),
+        ),
+        RaisedButton(child: Text(COMPLETE), onPressed: _onCompleteTapped)
+      ],
+    );
+  }
+
+  void _onCompleteTapped() {}
+
+  void _onCancelTapped() {
+    Navigator.of(context).pop(false);
   }
 
   Row _durationRow(int duration) {
@@ -160,7 +198,35 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   void _activityTapped(Activity activity) {
-    bloc.add(ActivitySelectedForTimerEvent(selectedActivity: activity));
+    if (activity.isComplete) {
+      _showAlreadyCompleteAlert();
+    } else
+      bloc.add(ActivitySelectedForTimerEvent(selectedActivity: activity));
+  }
+
+  void _showAlreadyCompleteAlert() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(ACTIVITY_IS_COMPLETED),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(OK),
+              ),
+            ],
+          );
+        });
+  }
+
+  void _currentActivityFinished(int elapsedTime) {
+    bloc.add(CurrentActivityFinishedEvent(
+        activity: bloc.selectedActivity,
+        elapsedTime: bloc.selectedActivity.duration));
   }
 }
 

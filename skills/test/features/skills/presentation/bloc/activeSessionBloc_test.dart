@@ -6,10 +6,8 @@ import 'package:skills/core/constants.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
-import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import '../../mockClasses.dart';
 
 void main() {
@@ -170,7 +168,8 @@ void main() {
       final expected = [
         ActiveSessionInitial(),
         ActiveSessionProcessingState(),
-        ActiveSessionActivitiesRefreshedState(testActivitiesList)
+        ActiveSessionActivitiesRefreshedState(
+            duration: testSession.duration, activities: testActivitiesList)
       ];
       expectLater(sut, emitsInOrder(expected));
     });

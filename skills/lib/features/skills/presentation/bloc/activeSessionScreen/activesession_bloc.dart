@@ -78,7 +78,8 @@ class ActiveSessionBloc extends SessionBloc {
           .fold((failure) => ActiveSessionErrorState(CACHE_FAILURE_MESSAGE),
               (activities) {
         activitiesForSession = activities;
-        return ActiveSessionActivitiesRefreshedState(activities);
+        return ActiveSessionActivitiesRefreshedState(
+            duration: session.duration, activities: activities);
       });
     }
 

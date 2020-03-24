@@ -419,11 +419,16 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   }
 
   void _onStartSessionTapped() async {
+    bool refresh =
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       ActiveSessionScreen activeSessionScreen = locator<ActiveSessionScreen>();
       activeSessionScreen.bloc.add(ActiveSessionLoadInfoEvent(
           session: bloc.session, activities: bloc.activitiesForSession));
       return activeSessionScreen;
     }));
+
+    if (refresh) {
+      bloc.add(GetActivitiesForSessionEvent(bloc.session));
+    }
   }
 }
