@@ -6,6 +6,7 @@ import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/act
 import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
+import 'package:skills/features/skills/presentation/widgets/countdown.dart';
 
 class ActiveSessionScreen extends StatefulWidget {
   final ActiveSessionBloc bloc;
@@ -19,6 +20,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   final ActiveSessionBloc bloc;
 
   _ActiveSessionScreenState(this.bloc);
+  Countdown timer;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   Widget _timerViewBuilder(Activity activity) {
+    timer = Countdown(minutesToCount: bloc.selectedActivity.duration);
     var timeString = activity.duration.toString();
     return Column(
       children: <Widget>[
@@ -71,22 +74,15 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('$timeString min.', style: Theme.of(context).textTheme.title),
+                child: Text('$timeString min.',
+                    style: Theme.of(context).textTheme.title),
               )
             ],
           ),
         ),
-        Row(children: <Widget>[
-          Center(
-              child: Container(
-                  width: 200, height: 150, child: Text('Timer here'))),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Expanded(child: Container(width: 200, height: 150, child: timer)),
         ]),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(child: Text('START/STOP'), onPressed: null)
-          ],
-        ),
       ],
     );
   }
