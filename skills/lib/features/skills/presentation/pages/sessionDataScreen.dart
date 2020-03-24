@@ -123,17 +123,17 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         child: Column(children: <Widget>[
       _infoSectionBuilder(),
       _actvityCreator(showEventCreator, skill),
-      _activitiesSection()
+      _activitiesSection(),
+      Padding(
+        padding: const EdgeInsets.all(8),
+        child: _startButtonRow(),
+      ),
     ]));
   }
 
   Widget _infoSectionBuilder() {
     return Container(
       child: Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: _startButtonRow(),
-        ),
         Padding(
           padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: _dateRow(),
@@ -150,19 +150,23 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  Row _startButtonRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        FlatButton(
-            onPressed: _onStartSessionTapped,
-            textColor: Colors.blueAccent,
-            child: Text(
-              START_SESSION,
-              style: Theme.of(context).textTheme.subtitle,
-            ))
-      ],
-    );
+  Widget _startButtonRow() {
+    if (bloc.session.isComplete)
+      return SizedBox();
+    else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FlatButton(
+              onPressed: _onStartSessionTapped,
+              textColor: Colors.blueAccent,
+              child: Text(
+                START_SESSION,
+                style: TextStyle(color: Colors.blue, fontSize: 20),
+              ))
+        ],
+      );
+    }
   }
 
   Row _dateRow() {
@@ -420,7 +424,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _onStartSessionTapped() async {
     bool refresh =
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       ActiveSessionScreen activeSessionScreen = locator<ActiveSessionScreen>();
       activeSessionScreen.bloc.add(ActiveSessionLoadInfoEvent(
           session: bloc.session, activities: bloc.activitiesForSession));

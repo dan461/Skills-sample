@@ -138,7 +138,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   void _onCompleteTapped() {}
 
   void _onCancelTapped() {
-    Navigator.of(context).pop(false);
+    Navigator.of(context).pop(true);
   }
 
   Row _durationRow(int duration) {
