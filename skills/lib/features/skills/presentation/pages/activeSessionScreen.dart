@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/core/stringConstants.dart';
@@ -22,6 +23,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
   _ActiveSessionScreenState(this.bloc);
   Countdown timer;
+  int _timerType = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +106,11 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
           child: Text(
               'Notes: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Expanded(child: Container(width: 200, height: 150, child: timer)),
-        ]),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _timerSelectionRow(),
+        ),
+        _timerRow()
       ],
     );
   }
@@ -128,6 +132,38 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
+  Row _timerRow() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Expanded(child: Container(width: 200, height: 150, child: timer)),
+    ]);
+  }
+
+  Row _timerSelectionRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        CupertinoSegmentedControl(
+          children: {
+            0: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Text('Timer'),
+            ),
+            1: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Text('Stopwatch'),
+            ),
+          },
+          onValueChanged: (int val) {
+            setState(() {
+              _timerType = val;
+            });
+          },
+          groupValue: _timerType,
+        )
+      ],
+    );
+  }
+
   Row _buttonsRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -139,16 +175,6 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
         RaisedButton(child: Text(COMPLETE), onPressed: _onCompleteTapped)
       ],
     );
-  }
-
-  void _onCompleteTapped() {}
-
-  void _onCancelTapped() {
-    Navigator.of(context).pop(true);
-  }
-
-  void _timerCancelled() {
-    bloc.add(ActivityTimerStoppedEvent());
   }
 
   Row _durationRow(int duration) {
@@ -180,6 +206,17 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   // ACTIONS
+
+  void _onCompleteTapped() {}
+
+  void _onCancelTapped() {
+    Navigator.of(context).pop(true);
+  }
+
+  void _timerCancelled() {
+    bloc.add(ActivityTimerStoppedEvent());
+  }
+
   void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
