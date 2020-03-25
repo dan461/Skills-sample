@@ -44,8 +44,11 @@ class ActivityReadyState extends ActiveSessionState {
 }
 
 class ActivityTimerStoppedState extends ActiveSessionState {
+  final Activity activity;
+
+  ActivityTimerStoppedState({@required this.activity});
   @override
-  List<Object> get props => null;
+  List<Object> get props => [activity];
 }
 
 class CurrentActivityFinishedState extends ActiveSessionState {
@@ -57,7 +60,8 @@ class ActiveSessionActivitiesRefreshedState extends ActiveSessionState {
   final int duration;
   final List<Activity> activities;
 
-  ActiveSessionActivitiesRefreshedState({@required this.activities, @required this.duration});
+  ActiveSessionActivitiesRefreshedState(
+      {@required this.activities, @required this.duration});
 
   @override
   List<Object> get props => [activities];

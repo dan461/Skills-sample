@@ -76,6 +76,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     timer = Countdown(
       minutesToCount: bloc.selectedActivity.duration,
       finishedCallback: _currentActivityFinished,
+      cancelCallback: _timerCancelled,
     );
     var timeString = activity.duration.toString();
     return Column(
@@ -94,9 +95,14 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text('$timeString min.',
                     style: Theme.of(context).textTheme.title),
-              )
+              ),
             ],
           ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+              'Notes: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'),
         ),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Expanded(child: Container(width: 200, height: 150, child: timer)),
@@ -141,6 +147,10 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     Navigator.of(context).pop(true);
   }
 
+  void _timerCancelled() {
+    bloc.add(ActivityTimerStoppedEvent());
+  }
+
   Row _durationRow(int duration) {
     String durationString = duration.toString();
     return Row(
@@ -155,8 +165,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text('Choose an Activity to start with',
-            style: Theme.of(context).textTheme.title)
+        Text(SELECT_ACTIVITY, style: Theme.of(context).textTheme.title)
       ],
     );
   }

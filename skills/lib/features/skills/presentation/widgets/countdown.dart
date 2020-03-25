@@ -5,28 +5,36 @@ import 'package:flutter/material.dart';
 import 'package:skills/core/stringConstants.dart';
 
 typedef CountdownTimerFinishedCallback(int timerDuration);
+typedef CountdownTimerCancelCallback();
 
 class Countdown extends StatefulWidget {
   final int minutesToCount;
   final CountdownTimerFinishedCallback finishedCallback;
+  final CountdownTimerCancelCallback cancelCallback;
 
   const Countdown(
-      {Key key, @required this.minutesToCount, @required this.finishedCallback})
+      {Key key,
+      @required this.minutesToCount,
+      @required this.finishedCallback,
+      @required this.cancelCallback})
       : super(key: key);
   @override
   _CountdownState createState() =>
-      _CountdownState(minutesToCount, finishedCallback);
+      _CountdownState(minutesToCount, finishedCallback, cancelCallback);
 }
 
 class _CountdownState extends State<Countdown> {
   final int minutesToCount;
   final CountdownTimerFinishedCallback finishedCallback;
+  final CountdownTimerCancelCallback cancelCallback;
+
   // int minutesToCount = 0;
   Timer _timer;
   int _remainingSeconds;
   String startStop = START;
 
-  _CountdownState(this.minutesToCount, this.finishedCallback);
+  _CountdownState(
+      this.minutesToCount, this.finishedCallback, this.cancelCallback);
 
   String get _timerString {
     _remainingSeconds ??= minutesToCount * 60;
@@ -156,12 +164,14 @@ class _CountdownState extends State<Countdown> {
               ],
             );
           });
+    } else {
+      cancelCallback();
     }
   }
 
   void _cancelTimerSession() {
     _timer.cancel();
-    Navigator.of(context).pop(false);
+    cancelCallback();
   }
 
   void _onFinishTapped() async {
@@ -179,7 +189,8 @@ class _CountdownState extends State<Countdown> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(TIMER_IS_INCOMPLETE),
-            content: Text('The timer has $_timerString remaining. Do you want you want to finish this activity?'),
+            content: Text(
+                'The timer has $_timerString remaining. Do you want you want to finish this activity?'),
             actions: <Widget>[
               FlatButton(
                 onPressed: () {
@@ -243,10 +254,12 @@ class _CountdownState extends State<Countdown> {
   }
 
   void _pauseTimer() {
-    _timer.cancel();
-    setState(() {
-      startStop = RESUME;
-    });
+    if (_timerRunning) {
+      _timer.cancel();
+      setState(() {
+        startStop = RESUME;
+      });
+    }
   }
 
   void _startTimer() {

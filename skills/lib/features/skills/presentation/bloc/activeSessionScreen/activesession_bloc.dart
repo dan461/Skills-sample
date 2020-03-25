@@ -50,7 +50,8 @@ class ActiveSessionBloc extends SessionBloc {
 
     // Timer stopped
     else if (event is ActivityTimerStoppedEvent) {
-      yield ActivityTimerStoppedState();
+      yield ActiveSessionInfoLoadedState(
+          duration: session.duration, activities: activitiesForSession);
     }
 
     // Activity finished

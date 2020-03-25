@@ -158,11 +158,11 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           FlatButton(
-              onPressed: _onStartSessionTapped,
+              onPressed: bloc.canBeginSession ? _onStartSessionTapped : null,
               textColor: Colors.blueAccent,
               child: Text(
                 BEGIN_SESSION,
-                style: TextStyle(color: Colors.blue, fontSize: 20),
+                style: TextStyle(fontSize: 20),
               ))
         ],
       );

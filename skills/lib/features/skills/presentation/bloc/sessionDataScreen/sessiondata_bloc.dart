@@ -41,34 +41,9 @@ class SessiondataBloc extends SessionBloc {
   // List<Map> activityMapsForListView = [];
   List<Activity> activitiesForSession = [];
 
-  // int get completedActivitiesCount {
-  //   int count = 0;
-  //   for (var map in activityMapsForListView) {
-  //     Activity activity = map['activity'];
-  //     if (activity.isComplete) count++;
-  //   }
-  //   return count;
-  // }
-
-  // int get availableTime {
-  //   var time = session.duration ?? 0;
-  //   for (var map in activityMapsForListView) {
-  //     var activity = map['activity'];
-  //     time -= activity.duration;
-  //   }
-  //   return time;
-  // }
-
-  // void createActivity(int activityDuration, Skill skill) {
-  //   final newActivity = Activity(
-  //       skillId: skill.skillId,
-  //       sessionId: session.sessionId,
-  //       date: sessionDate,
-  //       duration: activityDuration,
-  //       isComplete: false,
-  //       skillString: skill.name);
-  //   add(InsertActivityForSessionEvent(newActivity));
-  // }
+  bool get canBeginSession {
+    return completedActivitiesCount < activitiesForSession.length;
+  }
 
   @override
   Stream<SessionState> mapEventToState(
@@ -83,8 +58,9 @@ class SessiondataBloc extends SessionBloc {
 
       final activitiesOrFailure = await getActivitiesWithSkillsForSession(
           SessionByIdParams(sessionId: session.sessionId));
-      yield activitiesOrFailure.fold(
-          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (activities) {
+      yield activitiesOrFailure
+          .fold((failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+              (activities) {
         activitiesForSession = activities;
         session.openTime = availableTime;
         return SessionDataActivitesLoadedState();
