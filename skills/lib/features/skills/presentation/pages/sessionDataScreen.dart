@@ -161,7 +161,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               onPressed: _onStartSessionTapped,
               textColor: Colors.blueAccent,
               child: Text(
-                START_SESSION,
+                BEGIN_SESSION,
                 style: TextStyle(color: Colors.blue, fontSize: 20),
               ))
         ],

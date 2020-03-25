@@ -18,7 +18,7 @@ const String HOURS_ABBR = 'hrs.';
 const String MINUTES_ABBR = 'min.';
 const String SECONDS_ABBR = 'sec.';
 
-const String START_SESSION = 'Start Session';
+const String BEGIN_SESSION = 'Begin Session';
 const String COMPLETE = 'Complete';
 
 const String YES = 'Yes';
