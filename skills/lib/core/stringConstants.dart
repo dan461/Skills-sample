@@ -19,6 +19,9 @@ const String ACTIVITY_IS_COMPLETED = 'This activity has already been completed.'
 const String CANCEL_TIMER = 'Do you want to cancel this timer?';
 const String TIMER_IS_INCOMPLETE = 'The timer has not completed.';
 
+// Stopwatch
+const String CANCEL_STOPWATCH = 'Do you want to cancel this stopwatch?';
+
 // General time strings
 const String HOURS_ABBR = 'hrs.';
 const String MINUTES_ABBR = 'min.';

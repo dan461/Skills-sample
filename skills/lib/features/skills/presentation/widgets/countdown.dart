@@ -138,8 +138,9 @@ class _CountdownState extends State<Countdown> {
   }
 
   void _onCancelTapped() async {
-    _pauseTimer();
+    // _pauseTimer();
     if (_timerRunning || _remainingSeconds < (minutesToCount * 60)) {
+       _pauseTimer();
       await showDialog(
           context: context,
           barrierDismissible: false,

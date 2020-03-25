@@ -95,7 +95,10 @@ void main() {
       'test for bloc emitting [ActivityTimerStoppedState] after ActivityTimerStoppedEvent is added.',
       () async {
     sut.add(ActivityTimerStoppedEvent());
-    final expected = [ActiveSessionInitial(), ActivityTimerStoppedState()];
+    final expected = [
+      ActiveSessionInitial(),
+      ActivityTimerStoppedState(activity: testActivity)
+    ];
     expectLater(sut, emitsInOrder(expected));
   });
 

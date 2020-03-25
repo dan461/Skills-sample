@@ -9,6 +9,7 @@ import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart'
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/countdown.dart';
+import 'package:skills/features/skills/presentation/widgets/stopwatch.dart';
 
 class ActiveSessionScreen extends StatefulWidget {
   final ActiveSessionBloc bloc;
@@ -22,7 +23,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   final ActiveSessionBloc bloc;
 
   _ActiveSessionScreenState(this.bloc);
-  Countdown timer;
+  Widget timer;
   int _timerType = 0;
 
   @override
@@ -75,11 +76,6 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   Widget _timerViewBuilder(Activity activity) {
-    timer = Countdown(
-      minutesToCount: bloc.selectedActivity.duration,
-      finishedCallback: _currentActivityFinished,
-      cancelCallback: _timerCancelled,
-    );
     var timeString = activity.duration.toString();
     return Column(
       children: <Widget>[
@@ -132,10 +128,39 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
+  void _timerTypeSelected() {
+    if (_timerType == 0) {
+      timer = Countdown(
+        minutesToCount: bloc.selectedActivity.duration,
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timerCancelled,
+      );
+    } else {
+      timer = StopwatchWidget(
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timerCancelled,
+      );
+    }
+  }
+
   Row _timerRow() {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Expanded(child: Container(width: 200, height: 150, child: timer)),
-    ]);
+    if(timer == null){
+      _timerTypeSelected();
+    }
+    
+    if (_timerType == 0) {
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(child: Container(width: 200, height: 150, child: timer)),
+          ]);
+    } else {
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(child: Container(width: 200, height: 150, child: timer)),
+          ]);
+    }
   }
 
   Row _timerSelectionRow() {
@@ -156,6 +181,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
           onValueChanged: (int val) {
             setState(() {
               _timerType = val;
+              _timerTypeSelected();
             });
           },
           groupValue: _timerType,
