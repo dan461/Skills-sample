@@ -140,7 +140,7 @@ class _CountdownState extends State<Countdown> {
   void _onCancelTapped() async {
     // _pauseTimer();
     if (_timerRunning || _remainingSeconds < (minutesToCount * 60)) {
-       _pauseTimer();
+      _pauseTimer();
       await showDialog(
           context: context,
           barrierDismissible: false,
@@ -177,10 +177,39 @@ class _CountdownState extends State<Countdown> {
 
   void _onFinishTapped() async {
     _pauseTimer();
-    if (_remainingSeconds < (minutesToCount * _remainingSeconds))
+    if (_elapsedTime < 5) {
+      _showInsufficientTimeAlert();
+    } else if (_remainingSeconds < (minutesToCount * _remainingSeconds))
       _showIncompleteTimerAlert();
-    else
-      _showFinishTimerAlert();
+  }
+
+  void _showInsufficientTimeAlert() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(INSUFFICIENT_TIME),
+            content: Text(
+                ROUND_UP),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(CANCEL),
+                onPressed: () {
+                  _startTimer();
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(OK),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _finishActivity(5);
+                },
+              )
+            ],
+          );
+        });
   }
 
   void _showIncompleteTimerAlert() async {
@@ -203,7 +232,7 @@ class _CountdownState extends State<Countdown> {
               FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _finishActivity();
+                  _finishActivity(_elapsedTime);
                 },
                 child: Text(OK),
               )
@@ -230,7 +259,7 @@ class _CountdownState extends State<Countdown> {
               FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _finishActivity();
+                  _finishActivity(_elapsedTime);
                 },
                 child: Text(FINISH),
               )
@@ -239,8 +268,8 @@ class _CountdownState extends State<Countdown> {
         });
   }
 
-  void _finishActivity() {
-    finishedCallback(_elapsedTime);
+  void _finishActivity(int time) {
+    finishedCallback(time);
     // Navigator.of(context).pop();
     // setState(() {
     //   _timer.cancel();
