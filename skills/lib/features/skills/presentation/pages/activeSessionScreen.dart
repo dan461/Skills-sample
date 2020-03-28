@@ -23,8 +23,9 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   final ActiveSessionBloc bloc;
 
   _ActiveSessionScreenState(this.bloc);
-  Widget timer;
-  int _timerType = 0;
+  Widget timeTracker;
+  int _timeTrackerType = 0;
+  bool _timeTrackerShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
               // Activity selected
               else if (state is ActivityReadyState) {
-                body = _timerViewBuilder(state.activity);
+                body = _timeTrackingViewBuilder(state.activity);
               }
 
               // Activity finished
@@ -75,7 +76,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
-  Widget _timerViewBuilder(Activity activity) {
+  Widget _timeTrackingViewBuilder(Activity activity) {
     var timeString = activity.duration.toString();
     return Column(
       children: <Widget>[
@@ -104,9 +105,8 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _timerSelectionRow(),
-        ),
-        _timerRow()
+          child: _timeTrackerRow(),
+        )
       ],
     );
   }
@@ -128,66 +128,26 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
-  void _timerTypeSelected() {
-    if (_timerType == 0) {
-      timer = Countdown(
-        minutesToCount: bloc.selectedActivity.duration,
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timerCancelled,
-      );
-    } else {
-      timer = StopwatchWidget(
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timerCancelled,
-      );
+  Row _timeTrackerRow() {
+    if (timeTracker == null) {
+      _timeTrackerTypeSelected();
     }
-  }
 
-  Row _timerRow() {
-    if(timer == null){
-      _timerTypeSelected();
-    }
-    
-    if (_timerType == 0) {
+    if (_timeTrackerType == 0) {
       return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(child: Container(width: 200, height: 150, child: timer)),
+            Expanded(
+                child: Container(width: 200, height: 150, child: timeTracker)),
           ]);
     } else {
       return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(child: Container(width: 200, height: 150, child: timer)),
+            Expanded(
+                child: Container(width: 200, height: 150, child: timeTracker)),
           ]);
     }
-  }
-
-  Row _timerSelectionRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        CupertinoSegmentedControl(
-          children: {
-            0: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child: Text('Timer'),
-            ),
-            1: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child: Text('Stopwatch'),
-            ),
-          },
-          onValueChanged: (int val) {
-            setState(() {
-              _timerType = val;
-              _timerTypeSelected();
-            });
-          },
-          groupValue: _timerType,
-        )
-      ],
-    );
   }
 
   Row _buttonsRow() {
@@ -239,8 +199,47 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     Navigator.of(context).pop(true);
   }
 
-  void _timerCancelled() {
+  void _timeTrackerCancelled() {
+    setState(() {
+      _timeTrackerShown = false;
+    });
     bloc.add(ActivityTimerStoppedEvent());
+  }
+
+  void _countdownSelected() {
+    timeTracker = Countdown(
+      minutesToCount: bloc.selectedActivity.duration,
+      finishedCallback: _currentActivityFinished,
+      cancelCallback: _timeTrackerCancelled,
+    );
+    setState(() {
+      _timeTrackerShown = true;
+    });
+  }
+
+  void _stopwatchSelected() {
+    timeTracker = StopwatchWidget(
+      finishedCallback: _currentActivityFinished,
+      cancelCallback: _timeTrackerCancelled,
+    );
+    setState(() {
+      _timeTrackerShown = true;
+    });
+  }
+
+  void _timeTrackerTypeSelected() {
+    if (_timeTrackerType == 0) {
+      timeTracker = Countdown(
+        minutesToCount: bloc.selectedActivity.duration,
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timeTrackerCancelled,
+      );
+    } else {
+      timeTracker = StopwatchWidget(
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timeTrackerCancelled,
+      );
+    }
   }
 
   void _showSkillsList() async {
@@ -363,4 +362,61 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 //       });
 //     }
 //   }
+// }
+
+// Row _timerSelectionRow() {
+//   return Row(
+//     mainAxisAlignment: MainAxisAlignment.center,
+//     children: <Widget>[
+//       CupertinoSegmentedControl(
+//         children: {
+//           0: Padding(
+//             padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+//             child: Text('Timer'),
+//           ),
+//           1: Padding(
+//             padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+//             child: Text('Stopwatch'),
+//           ),
+//         },
+//         onValueChanged: (int val) {
+//           setState(() {
+//             _timerType = val;
+//             _timerTypeSelected();
+//           });
+//         },
+//         groupValue: _timerType,
+//       )
+//     ],
+//   );
+// }
+// Widget _timerSelectionSection() {
+//   Widget section;
+//   if (_timeTrackerShown)
+//     section = SizedBox();
+//   else {
+//     section = Column(
+//       children: <Widget>[
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text(
+//               'Select a timer or a stopwatch',
+//               style: Theme.of(context).textTheme.headline,
+//             ),
+//           ],
+//         ),
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             RaisedButton(child: Text('Timer'), onPressed: _timerSelected),
+//             RaisedButton(
+//                 child: Text('Stopwatch'), onPressed: _stopwatchSelected),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+
+//   return section;
 // }

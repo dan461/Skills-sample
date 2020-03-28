@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bc7b00c4-9def-4439-8ae6-cf6704fca498" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/skills/android/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/FMDB.build/FMDB-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/FMDB.build/FMDB-all-target-headers.hmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/Objects-normal/arm64/PathProviderPlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/Objects-normal/arm64/PathProviderPlugin.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/path_provider-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/path_provider-all-target-headers.hmap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqfliteOperation.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqfliteOperation.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqflitePlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqflitePlugin.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/sqflite-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/sqflite-all-target-headers.hmap" afterDir="false" />
@@ -15,11 +14,11 @@
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/GeneratedPluginRegistrant.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/GeneratedPluginRegistrant.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps~moduleonly" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps~moduleonly" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/126ec11c924351df3dadbb90a0485ac5-desc.xcbuild" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/126ec11c924351df3dadbb90a0485ac5-manifest.xcbuild" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/80ae8067a85d6c529c3498dd12e9a093-desc.xcbuild" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/80ae8067a85d6c529c3498dd12e9a093-manifest.xcbuild" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/BuildDescriptionCacheIndex-0800fe867371a6b91de750910604284f" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/BuildDescriptionCacheIndex-0800fe867371a6b91de750910604284f" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/build.db" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/build.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/lib/features/skills/presentation/pages/sessionEditorScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/skills/lib/features/skills/presentation/pages/sessionEditorScreen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/lib/features/skills/presentation/pages/activeSessionScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/skills/lib/features/skills/presentation/pages/activeSessionScreen.dart" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +61,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
+            <state relative-caret-position="95">
               <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
               <folding>
                 <element signature="e#0#70#0" expanded="true" />
@@ -74,8 +73,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="988">
-              <caret line="52" column="8" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="8" />
+            <state relative-caret-position="1140">
+              <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
               <folding>
                 <element signature="e#0#48#0" expanded="true" />
               </folding>
@@ -133,8 +132,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2794" />
-    <option name="y" value="132" />
+    <option name="x" value="3037" />
+    <option name="y" value="150" />
     <option name="width" value="1848" />
     <option name="height" value="1285" />
   </component>
@@ -145,7 +144,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -168,6 +166,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -283,10 +282,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2794" y="132" width="1848" height="1285" extended-state="0" />
+    <frame x="3037" y="150" width="1848" height="1285" extended-state="0" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.22978958" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.23200443" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
@@ -299,7 +298,7 @@
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49859312" weight="0.32905984" />
       <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49915588" weight="0.12215909" />
-      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5008441" side_tool="true" visible="true" weight="0.32905984" />
+      <window_info active="true" anchor="bottom" id="Event Log" order="5" sideWeight="0.5008441" side_tool="true" visible="true" weight="0.21880342" />
       <window_info anchor="bottom" id="Flutter Performance" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.49971864" visible="true" weight="0.32905984" />
@@ -495,36 +494,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/android/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#70#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="988">
-          <caret line="52" column="8" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="186">
@@ -544,6 +513,36 @@
           <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skills/android/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#70#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1140">
+          <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
           </folding>
         </state>
       </provider>
