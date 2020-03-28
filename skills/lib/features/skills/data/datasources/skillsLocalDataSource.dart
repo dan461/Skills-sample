@@ -386,11 +386,12 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     int response = await db.update(sessionsTable, changeMap,
         where: 'sessionId = ?', whereArgs: [id]);
 
-    if (changeMap['isComplete'] != null) {
+    bool sessionCompleted = changeMap['isComplete'] ?? false;
+    if (sessionCompleted) {
       int update = await db.rawUpdate(
           'UPDATE $skillEventsTable SET isComplete = 1 WHERE sessionId = $id');
-      List<Map> skillIds = await db.query(skillEventsTable,
-          columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
+      // List<Map> skillIds = await db.query(skillEventsTable,
+      //     columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
       print(update);
     }
     return response;

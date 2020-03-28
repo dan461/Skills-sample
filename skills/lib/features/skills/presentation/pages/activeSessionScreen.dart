@@ -34,7 +34,11 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
       builder: (context) => bloc,
       child: BlocListener<ActiveSessionBloc, SessionState>(
         bloc: bloc,
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is ActiveSessionCompletedState) {
+            Navigator.of(context).pop(true);
+          }
+        },
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
@@ -193,7 +197,13 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
   // ACTIONS
 
-  void _onCompleteTapped() {}
+  void _onCompleteTapped() {
+    if (bloc.allActivitiesComplete) {
+      _showCompleteSessionAlert();
+    } else {
+      _showCompleteSessionAndActivitiesAlert();
+    }
+  }
 
   void _onCancelTapped() {
     Navigator.of(context).pop(true);
@@ -273,6 +283,58 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
       _showAlreadyCompleteAlert();
     } else
       bloc.add(ActivitySelectedForTimerEvent(selectedActivity: activity));
+  }
+
+  void _showCompleteSessionAlert() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(COMPLETE_SESSION_QRY),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(CANCEL),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(COMPLETE_IT),
+                onPressed: () {
+                  bloc.add(CompleteActiveSessionEvent());
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _showCompleteSessionAndActivitiesAlert() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(INCOMPLETE_ACTIVITIES),
+            content: Text(COMPLETE_SESSION_AND_ACTS_QRY),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(CANCEL),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(COMPLETE_IT),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  bloc.add(CompleteActiveSessionEvent());
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void _showAlreadyCompleteAlert() async {

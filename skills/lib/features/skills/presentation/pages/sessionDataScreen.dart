@@ -11,7 +11,6 @@ import 'package:skills/features/skills/presentation/pages/activeSessionScreen.da
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
-import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
 import 'package:skills/service_locator.dart';
 

@@ -10,6 +10,7 @@ const String RESUME = 'Resume';
 const String OK = 'OK';
 const String YES = 'Yes';
 const String NO = 'No';
+const String COMPLETE_IT = 'Complete it!';
 
 // Countdown timer
 const String RESET_TIMER = 'Reset the timer?';
@@ -35,3 +36,7 @@ const String SECONDS_ABBR = 'sec.';
 const String SELECT_ACTIVITY = 'Select an Activity';
 const String BEGIN_SESSION = 'Begin Session';
 const String COMPLETE = 'Complete';
+const String COMPLETE_SESSION_QRY = 'Complete this Session?';
+const String INCOMPLETE_ACTIVITIES = 'This Session has activities that are not completed.';
+const String COMPLETE_SESSION_AND_ACTS_QRY = 'Complete this Session and all activities in it?';
+

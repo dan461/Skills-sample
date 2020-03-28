@@ -18,15 +18,19 @@ class ActiveSessionBloc extends SessionBloc {
   final GetActivitiesWithSkillsForSession getActivitiesWithSkillsForSessionUC;
   final UpdateSessionWithId updateSessionWithId;
 
+  ActiveSessionBloc(
+      {@required this.completeActivityUC,
+      @required this.getActivitiesWithSkillsForSessionUC,
+      @required this.updateSessionWithId});
+
   Session session;
 
   Activity selectedActivity;
   int updatedSessionDuration;
 
-  ActiveSessionBloc(
-      {@required this.completeActivityUC,
-      @required this.getActivitiesWithSkillsForSessionUC,
-      @required this.updateSessionWithId});
+  bool get allActivitiesComplete {
+    return completedActivitiesCount == activitiesForSession.length;
+  }
 
   @override
   ActiveSessionState get initialState => ActiveSessionInitial();
