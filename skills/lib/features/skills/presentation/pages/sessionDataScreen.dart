@@ -77,7 +77,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                   }
 
                   // Events loaded initially, reloaded after change or editing cancelled
-                  else if (state is SessionDataActivitesLoadedState ||
+                  else if (state is SessionDataInfoLoadedState ||
+                      state is SessionDataActivitesLoadedState ||
                       state is SessionUpdatedAndRefreshedState ||
                       state is SessionViewingState) {
                     body = _infoViewBuilder(showEventCreator: false);
@@ -431,7 +432,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     }));
 
     if (refresh) {
-      bloc.add(GetActivitiesForSessionEvent(bloc.session));
+      bloc.add(GetSessionAndActivitiesEvent(sessionId: bloc.session.sessionId));
     }
   }
 }

@@ -17,18 +17,19 @@ part 'sessiondata_state.dart';
 class SessiondataBloc extends SessionBloc {
   final UpdateAndRefreshSessionWithId updateAndRefreshSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
-  // final GetActivityMapsForSession getActivityMapsForSession;
+  final GetSessionAndActivities getSessionAndActivities;
   final GetActivitiesWithSkillsForSession getActivitiesWithSkillsForSession;
   final InsertActivityForSessionUC insertActivitiesForSession;
-  // final CompleteSessionAndEvents completeSessionAndEvents;
+  
   final DeleteActivityByIdUC deleteActivityByIdUC;
 
   SessiondataBloc(
       {this.updateAndRefreshSessionWithId,
       this.deleteSessionWithId,
+      this.getSessionAndActivities,
       this.getActivitiesWithSkillsForSession,
       this.insertActivitiesForSession,
-      // this.completeSessionAndEvents,
+      
       this.deleteActivityByIdUC});
 
   @override
@@ -49,11 +50,24 @@ class SessiondataBloc extends SessionBloc {
   Stream<SessionState> mapEventToState(
     SessionEvent event,
   ) async* {
-    // Get or refresh Activities for list
-    if (event is GetActivitiesForSessionEvent) {
-      session ??= event.session;
-      sessionDate ??= session.date;
-      selectedStartTime ??= session.startTime;
+    // Get Session or refresh after returning from ActiveSessionScreen
+    if (event is GetSessionAndActivitiesEvent) {
+      yield SessionDataCrudInProgressState();
+      final sessionOrFailure = await getSessionAndActivities(
+          SessionByIdParams(sessionId: event.sessionId));
+      yield sessionOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (ses) {
+        session = ses;
+        sessionDate ??= session.date;
+        selectedStartTime ??= session.startTime;
+        activitiesForSession = session.activities;
+        session.openTime = availableTime;
+        return SessionDataInfoLoadedState();
+      });
+    }
+
+    // Refresh Activities for list
+    else if (event is GetActivitiesForSessionEvent) {
       yield SessionDataCrudInProgressState();
 
       final activitiesOrFailure = await getActivitiesWithSkillsForSession(
@@ -107,7 +121,7 @@ class SessiondataBloc extends SessionBloc {
       yield SkillSelectedForSessionState(event.skill);
     }
 
-    // Update Session
+    // Update Session and refresh after editing
     else if (event is UpdateSessionEvent) {
       yield SessionDataCrudInProgressState();
       final updateOrFailure = await updateAndRefreshSessionWithId(

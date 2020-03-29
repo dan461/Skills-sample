@@ -35,6 +35,7 @@ abstract class SkillsLocalDataSource {
       Map<String, dynamic> changeMap, int id);
   Future<int> completeSessionAndEvents(int sessionId, DateTime date);
   Future<SessionModel> getSessionById(int id);
+  Future<Session> getSessionAndActivities(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
   Future<List<Session>> getSessionsInDateRange(
@@ -451,6 +452,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       return SessionModel.fromMap(maps.first);
     }
     return null;
+  }
+
+  Future<Session> getSessionAndActivities(int id) async {
+    SessionModel session = await getSessionById(id);
+    List<Activity> activities = await getActivitiesWithSkillsForSession(id) ?? [];
+    if (session != null) session.activities = activities;
+    return session;
   }
 
   Future<int> deleteSessionWithId(int id) async {

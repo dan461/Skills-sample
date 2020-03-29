@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
 
+import 'activity.dart';
+
 class Session extends Equatable implements CalendarEvent {
   final int sessionId;
   final DateTime date;
@@ -14,6 +16,7 @@ class Session extends Equatable implements CalendarEvent {
   Widget weekView; // ignored by sqlite/SessionModel
   Widget dayView; // ignored by sqlite/SessionModel
   int openTime; // ignored by sqlite/SessionModel
+  List<Activity> activities; // ignored by sqlite/SessionModel
 
   int get sessionduration {
     int minutes;
@@ -35,7 +38,8 @@ class Session extends Equatable implements CalendarEvent {
       @required this.isComplete,
       this.weekView,
       this.dayView,
-      this.openTime})
+      this.openTime,
+      this.activities})
       : super();
 
   @override

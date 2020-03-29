@@ -55,7 +55,7 @@ void init() {
   locator.registerFactory(() => SessiondataBloc(
       updateAndRefreshSessionWithId: locator(),
       deleteSessionWithId: locator(),
-      // getActivityMapsForSession: locator(),
+      getSessionAndActivities: locator(),
       getActivitiesWithSkillsForSession: locator(),
       insertActivitiesForSession: locator(),
       // completeSessionAndEvents: locator(),
@@ -91,6 +91,7 @@ void init() {
   locator.registerLazySingleton(() => AddGoalToSkill(locator()));
 
   locator.registerLazySingleton(() => InsertNewSession(locator()));
+  locator.registerLazySingleton(() => GetSessionAndActivities(locator()));
   locator.registerLazySingleton(() => GetSessionsInDateRange(locator()));
   locator.registerLazySingleton(() => GetMapsForSessionsInDateRange(locator()));
   locator.registerLazySingleton(() => UpdateSessionWithId(locator()));

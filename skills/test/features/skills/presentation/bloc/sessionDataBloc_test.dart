@@ -13,6 +13,7 @@ import '../../mockClasses.dart';
 
 void main() {
   SessiondataBloc sut;
+  MockGetSessionAndActivities mockGetSessionAndActivities;
   MockInsertActivitiesForSessionUC mockInsertActivitiesForSessionUC;
   MockUpdateAndRefreshSessionWithId mockUpdateAndRefreshSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
@@ -26,6 +27,7 @@ void main() {
   Map<String, dynamic> testChangeMap;
 
   setUp(() {
+    mockGetSessionAndActivities = MockGetSessionAndActivities();
     mockInsertActivitiesForSessionUC = MockInsertActivitiesForSessionUC();
     mockUpdateAndRefreshSessionWithId = MockUpdateAndRefreshSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
@@ -34,6 +36,7 @@ void main() {
         MockGetActivitiesWithSkillsForSessionUC();
 
     sut = SessiondataBloc(
+        getSessionAndActivities: mockGetSessionAndActivities,
         updateAndRefreshSessionWithId: mockUpdateAndRefreshSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
         getActivitiesWithSkillsForSession:
@@ -49,8 +52,12 @@ void main() {
         isComplete: false,
         isScheduled: true);
 
-    testChangeMap = {};
     sut.session = testSession;
+    
+    testChangeMap = {};
+
+
+    
 
     testActivity = Activity(
         skillId: 1,
@@ -62,6 +69,7 @@ void main() {
   });
 
   test('test that availableTime is correct', () async {
+    
     sut.activitiesForSession = [testActivity];
 
     expect(sut.availableTime, 20);
@@ -86,7 +94,7 @@ void main() {
         isComplete: false,
         skillString: testSkill.name);
     List<Activity> activities = [newTestActivity];
-
+    sut.session = testSession;
     sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
 
     sut.createActivity(20, testSkill, newTestActivity.date);
@@ -104,7 +112,7 @@ void main() {
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: true,
         skillString: 'test');
-   
+
     var testActivitiesList = [testActivity, testActivity2];
     sut.activitiesForSession = testActivitiesList;
 
@@ -152,21 +160,74 @@ void main() {
     expectLater(sut, emitsInOrder(expected));
   });
 
+  group('GetSessionAndActivities - ', () {
+    Session testSession2 = Session(
+        sessionId: 1,
+        date: DateTime.now(),
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        duration: 30,
+        isComplete: false,
+        isScheduled: true);
+        testSession2.activities = [];
+
+    test(
+        'test that GetSessionAndActivities use case is called after a GetSessionAndActivitiesEvent event is added.',
+        () async {
+      sut.add(GetSessionAndActivitiesEvent(sessionId: testSession.sessionId));
+      await untilCalled(mockGetSessionAndActivities(
+          SessionByIdParams(sessionId: testSession.sessionId)));
+      verify(mockGetSessionAndActivities(
+          SessionByIdParams(sessionId: testSession.sessionId)));
+    });
+
+    test(
+        'test that bloc emits [SessionDataCrudInProgressState, SessionDataInfoLoadedState] when getting Activity maps after a GetSessionAndActivities is added.',
+        () async {
+      // the events list returned by the repo can be an empty list, if there are no events
+      when(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Right(testSession2));
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDataInfoLoadedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(GetSessionAndActivitiesEvent(sessionId: 1));
+    });
+
+    test(
+        'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after a GetSessionAndActivities is added.',
+        () async {
+      // the events list returned by the repo can be an empty list, if there are no events
+      when(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(GetSessionAndActivitiesEvent(sessionId: 1));
+    });
+  });
+
   group('GetActivitiesWithSkillsForSession: ', () {
     test(
         'test that GetActivitiesWithSkillsForSession usecase is called after a GetActivitiesForSessionEvent is added',
         () async {
       sut.add(GetActivitiesForSessionEvent(testSession));
-      await untilCalled(
-          mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
-      verify(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
     });
 
     test(
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataEventsLoadedState] when getting Activity maps after a GetActivitiesForSessionEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
-      when(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)))
+      when(mockGetActivitiesWithSkillsForSessionUC(
+              SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Right([]));
       final expected = [
         SessiondataInitial(),
@@ -181,7 +242,8 @@ void main() {
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after a GetActivitiesForSessionEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
-      when(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)))
+      when(mockGetActivitiesWithSkillsForSessionUC(
+              SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
         SessiondataInitial(),
@@ -301,9 +363,10 @@ void main() {
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
-      await untilCalled(
-          mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
-      verify(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
     });
 
     test(
@@ -364,9 +427,10 @@ void main() {
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
-      await untilCalled(
-          mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
-      verify(mockGetActivitiesWithSkillsForSessionUC(SessionByIdParams(sessionId: 1)));
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
     });
 
     test(
