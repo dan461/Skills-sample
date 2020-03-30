@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
+import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
+import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
-import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
+import 'package:skills/service_locator.dart';
 
 class SessionDataScreen extends StatefulWidget {
   final SessiondataBloc bloc;
@@ -46,7 +51,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     Widget body;
     return BlocProvider(
       builder: (context) => bloc,
-      child: BlocListener<SessiondataBloc, SessiondataState>(
+      child: BlocListener<SessiondataBloc, SessionState>(
         bloc: bloc,
         listener: (context, state) {
           if (state is SessionWasDeletedState) {
@@ -59,7 +64,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               appBar: AppBar(
                 leading: _backArrow,
               ),
-              body: BlocBuilder<SessiondataBloc, SessiondataState>(
+              body: BlocBuilder<SessiondataBloc, SessionState>(
                 builder: (context, state) {
                   if (state is SessiondataInitial ||
                       state is SessionDataCrudInProgressState ||
@@ -72,7 +77,8 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                   }
 
                   // Events loaded initially, reloaded after change or editing cancelled
-                  else if (state is SessionDataActivitesLoadedState ||
+                  else if (state is SessionDataInfoLoadedState ||
+                      state is SessionDataActivitesLoadedState ||
                       state is SessionUpdatedAndRefreshedState ||
                       state is SessionViewingState) {
                     body = _infoViewBuilder(showEventCreator: false);
@@ -117,7 +123,11 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         child: Column(children: <Widget>[
       _infoSectionBuilder(),
       _actvityCreator(showEventCreator, skill),
-      _eventsSectionBuilder()
+      _activitiesSection(),
+      Padding(
+        padding: const EdgeInsets.all(8),
+        child: _startButtonRow(),
+      ),
     ]));
   }
 
@@ -125,7 +135,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     return Container(
       child: Column(children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: _dateRow(),
         ),
         Padding(
@@ -138,6 +148,25 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         )
       ]),
     );
+  }
+
+  Widget _startButtonRow() {
+    if (bloc.session.isComplete)
+      return SizedBox();
+    else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FlatButton(
+              onPressed: bloc.canBeginSession ? _onStartSessionTapped : null,
+              textColor: Colors.blueAccent,
+              child: Text(
+                BEGIN_SESSION,
+                style: TextStyle(fontSize: 20),
+              ))
+        ],
+      );
+    }
   }
 
   Row _dateRow() {
@@ -234,56 +263,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     );
   }
 
-  Column _eventsSectionBuilder() {
-    return Column(
-      children: <Widget>[_eventsHeaderBuilder(), _eventsListBuilder()],
-    );
-  }
-
-  Widget _eventsHeaderBuilder() {
-    int count = bloc.activityMapsForListView.isEmpty
-        ? 0
-        : bloc.completedActivitiesCount;
-    String suffix =
-        bloc.activityMapsForListView.isEmpty ? 'scheduled' : 'completed';
-    String countString = count.toString() + ' $suffix';
-
-    return Container(
-        height: 40,
-        color: Colors.grey[200],
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text('Activities', style: Theme.of(context).textTheme.subhead),
-              Text('$countString', style: Theme.of(context).textTheme.subhead),
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: _plusButtonEnabled
-                    ? () {
-                        _showSkillsList();
-                      }
-                    : null,
-              )
-            ],
-          ),
-        ));
-  }
-
-  ListView _eventsListBuilder() {
-    List sourceList = bloc.activityMapsForListView;
-    return ListView.builder(
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return SessionEventCell(
-          map: sourceList[index],
-          callback: _eventTapped,
-        );
-      },
-      itemCount: sourceList.length,
-    );
+  Widget _activitiesSection() {
+    return ActivitiesListSection(
+        activities: bloc.activitiesForSession,
+        completedActivitiesCount: bloc.completedActivitiesCount,
+        addTappedCallback: _showSkillsList,
+        eventTappedCallback: _eventTapped,
+        availableTime: bloc.availableTime);
   }
 
 // ******* ACTIONS *******
@@ -331,14 +317,14 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
             );
           });
     } else
-      bloc.createActivity(duration, skill);
+      bloc.createActivity(duration, skill, bloc.sessionDate);
   }
 
   void _cancelActivityTapped() {
     bloc.add(CancelSkillForSessionEvent());
   }
 
-  void _eventTapped(Map<String, dynamic> map) {
+  void _eventTapped(Activity activity) {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -351,13 +337,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
                   ListTile(
                     title: Text('Edit (no function)'),
                     onTap: () {
-                      _editEventTapped(map);
+                      _editEventTapped(activity);
                     },
                   ),
                   ListTile(
                     title: Text('Delete'),
                     onTap: () {
-                      _deleteEventTapped(map);
+                      _deleteEventTapped(activity);
                     },
                   )
                 ],
@@ -374,14 +360,14 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         });
   }
 
-  void _editEventTapped(Map<String, dynamic> map) {
+  void _editEventTapped(Activity activity) {
     // setState(() {
     //   _bloc.selectedSkill = map['skill'];
     //   currentEventMap = map;
     // });
   }
 
-  void _deleteEventTapped(Map<String, dynamic> map) async {
+  void _deleteEventTapped(Activity activity) async {
     await showDialog<bool>(
       context: (context),
       barrierDismissible: false,
@@ -399,7 +385,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               child: Text('Delete'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Activity event = map['activity'];
+                Activity event = activity;
                 bloc.add(RemoveActivityFromSessionEvent(event.eventId));
               },
             )
@@ -434,5 +420,19 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _selectSkill(Skill skill) {
     Navigator.of(context).pop(skill);
+  }
+
+  void _onStartSessionTapped() async {
+    bool refresh =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      ActiveSessionScreen activeSessionScreen = locator<ActiveSessionScreen>();
+      activeSessionScreen.bloc.add(ActiveSessionLoadInfoEvent(
+          session: bloc.session, activities: bloc.activitiesForSession));
+      return activeSessionScreen;
+    }));
+
+    if (refresh) {
+      bloc.add(GetSessionAndActivitiesEvent(sessionId: bloc.session.sessionId));
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
@@ -52,6 +53,17 @@ class GetSessionWithId extends UseCase<Session, SessionByIdParams> {
   }
 }
 
+class GetSessionAndActivities extends UseCase<Session, SessionByIdParams> {
+  final SessionRepository repo;
+
+  GetSessionAndActivities(this.repo);
+
+  @override
+  Future<Either<Failure, Session>> call(SessionByIdParams params) {
+    return repo.getSessionAndActivities(params.sessionId);
+  }
+}
+
 class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
   final SessionRepository repo;
 
@@ -62,7 +74,8 @@ class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
   }
 }
 
-class UpdateAndRefreshSessionWithId extends UseCase<Session, SessionUpdateParams> {
+class UpdateAndRefreshSessionWithId
+    extends UseCase<Session, SessionUpdateParams> {
   final SessionRepository repo;
 
   UpdateAndRefreshSessionWithId(this.repo);

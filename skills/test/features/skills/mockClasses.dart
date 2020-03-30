@@ -52,6 +52,9 @@ class MockInsertNewSessionUC extends Mock implements InsertNewSession {}
 
 class MockGetSessionWithIdUC extends Mock implements GetSessionWithId {}
 
+class MockGetSessionAndActivities extends Mock
+    implements GetSessionAndActivities {}
+
 class MockDeleteSessionWithIdUC extends Mock implements DeleteSessionWithId {}
 
 class MockGetSessionsInDateRange extends Mock
@@ -73,11 +76,16 @@ class MockDeleteActivityByIdUC extends Mock implements DeleteActivityByIdUC {}
 
 class MockUpdateActivityUC extends Mock implements UpdateActivityEventUC {}
 
+class MockCompleteActivityUC extends Mock implements CompleteActivityUC {}
+
 class MockInsertActivitiesForSessionUC extends Mock
     implements InsertActivityForSessionUC {}
 
 class MockGetActivitiesForSessionUC extends Mock
     implements GetActivitiesForSession {}
+
+class MockGetActivitiesWithSkillsForSessionUC extends Mock
+    implements GetActivitiesWithSkillsForSession {}
 
 class MockGetActivityMapsForSession extends Mock
     implements GetActivityMapsForSession {}

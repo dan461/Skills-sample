@@ -13,28 +13,35 @@ import '../../mockClasses.dart';
 
 void main() {
   SessiondataBloc sut;
-  MockInsertActivitiesForSessionUC mockInsertEventsForSessionUC;
+  MockGetSessionAndActivities mockGetSessionAndActivities;
+  MockInsertActivitiesForSessionUC mockInsertActivitiesForSessionUC;
   MockUpdateAndRefreshSessionWithId mockUpdateAndRefreshSessionWithId;
   MockDeleteSessionWithId mockDeleteSessionWithId;
   MockDeleteActivityByIdUC mockDeleteEventByIdUC;
-  MockGetActivityMapsForSession mockGetEventMapsForSession;
+  // MockGetActivityMapsForSession mockGetActivityMapsForSession;
+  MockGetActivitiesWithSkillsForSessionUC
+      mockGetActivitiesWithSkillsForSessionUC;
 
   Session testSession;
-  Activity testEvent;
+  Activity testActivity;
   Map<String, dynamic> testChangeMap;
 
   setUp(() {
-    mockInsertEventsForSessionUC = MockInsertActivitiesForSessionUC();
+    mockGetSessionAndActivities = MockGetSessionAndActivities();
+    mockInsertActivitiesForSessionUC = MockInsertActivitiesForSessionUC();
     mockUpdateAndRefreshSessionWithId = MockUpdateAndRefreshSessionWithId();
     mockDeleteSessionWithId = MockDeleteSessionWithId();
     mockDeleteEventByIdUC = MockDeleteActivityByIdUC();
-    mockGetEventMapsForSession = MockGetActivityMapsForSession();
+    mockGetActivitiesWithSkillsForSessionUC =
+        MockGetActivitiesWithSkillsForSessionUC();
 
     sut = SessiondataBloc(
+        getSessionAndActivities: mockGetSessionAndActivities,
         updateAndRefreshSessionWithId: mockUpdateAndRefreshSessionWithId,
         deleteSessionWithId: mockDeleteSessionWithId,
-        getActivityMapsForSession: mockGetEventMapsForSession,
-        insertActivitiesForSession: mockInsertEventsForSessionUC,
+        getActivitiesWithSkillsForSession:
+            mockGetActivitiesWithSkillsForSessionUC,
+        insertActivitiesForSession: mockInsertActivitiesForSessionUC,
         deleteActivityByIdUC: mockDeleteEventByIdUC);
 
     testSession = Session(
@@ -45,10 +52,14 @@ void main() {
         isComplete: false,
         isScheduled: true);
 
-    testChangeMap = {};
     sut.session = testSession;
+    
+    testChangeMap = {};
 
-    testEvent = Activity(
+
+    
+
+    testActivity = Activity(
         skillId: 1,
         sessionId: 1,
         duration: 10,
@@ -58,17 +69,8 @@ void main() {
   });
 
   test('test that availableTime is correct', () async {
-    var testEvent = Activity(
-        skillId: 1,
-        sessionId: 1,
-        duration: 10,
-        date: DateTime.fromMillisecondsSinceEpoch(0),
-        isComplete: false,
-        skillString: 'test');
-    Map<String, dynamic> eventMap = {'activity': testEvent};
-
-    // sut.session = testSession;
-    sut.activityMapsForListView = [eventMap];
+    
+    sut.activitiesForSession = [testActivity];
 
     expect(sut.availableTime, 20);
   });
@@ -84,36 +86,35 @@ void main() {
       startDate: DateTime.fromMillisecondsSinceEpoch(0),
     );
 
-    var newTestEvent = Activity(
+    var newTestActivity = Activity(
         skillId: testSkill.skillId,
         sessionId: 1,
         duration: 20,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: testSkill.name);
-    List<Activity> events = [newTestEvent];
-
+    List<Activity> activities = [newTestActivity];
+    sut.session = testSession;
     sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
 
-    sut.createActivity(20, testSkill);
-    await untilCalled(mockInsertEventsForSessionUC(
-        ActivityMultiInsertParams(activities: events, newSessionId: 1)));
-    verify(mockInsertEventsForSessionUC(
-        ActivityMultiInsertParams(activities: events, newSessionId: 1)));
+    sut.createActivity(20, testSkill, newTestActivity.date);
+    await untilCalled(mockInsertActivitiesForSessionUC(
+        ActivityMultiInsertParams(activities: activities, newSessionId: 1)));
+    verify(mockInsertActivitiesForSessionUC(
+        ActivityMultiInsertParams(activities: activities, newSessionId: 1)));
   });
 
   test('test that countCompletedActivities returns correct count ', () async {
-    Activity testEvent2 = Activity(
+    Activity testActivity2 = Activity(
         skillId: 1,
         sessionId: 1,
         duration: 10,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: true,
         skillString: 'test');
-    Map<String, dynamic> map1 = {'activity': testEvent};
-    Map<String, dynamic> map2 = {'activity': testEvent2};
-    var testActivitiesList = [map1, map2];
-    sut.activityMapsForListView = testActivitiesList;
+
+    var testActivitiesList = [testActivity, testActivity2];
+    sut.activitiesForSession = testActivitiesList;
 
     expect(sut.completedActivitiesCount, equals(1));
   });
@@ -159,21 +160,74 @@ void main() {
     expectLater(sut, emitsInOrder(expected));
   });
 
-  group('GetEventMapsForSession: ', () {
+  group('GetSessionAndActivities - ', () {
+    Session testSession2 = Session(
+        sessionId: 1,
+        date: DateTime.now(),
+        startTime: TimeOfDay(hour: 12, minute: 0),
+        duration: 30,
+        isComplete: false,
+        isScheduled: true);
+        testSession2.activities = [];
+
     test(
-        'test that GetEventMapsForSession usecase is called after a GetActivitiesForSessionEvent is added',
+        'test that GetSessionAndActivities use case is called after a GetSessionAndActivitiesEvent event is added.',
+        () async {
+      sut.add(GetSessionAndActivitiesEvent(sessionId: testSession.sessionId));
+      await untilCalled(mockGetSessionAndActivities(
+          SessionByIdParams(sessionId: testSession.sessionId)));
+      verify(mockGetSessionAndActivities(
+          SessionByIdParams(sessionId: testSession.sessionId)));
+    });
+
+    test(
+        'test that bloc emits [SessionDataCrudInProgressState, SessionDataInfoLoadedState] when getting Activity maps after a GetSessionAndActivities is added.',
+        () async {
+      // the events list returned by the repo can be an empty list, if there are no events
+      when(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Right(testSession2));
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDataInfoLoadedState()
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(GetSessionAndActivitiesEvent(sessionId: 1));
+    });
+
+    test(
+        'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after a GetSessionAndActivities is added.',
+        () async {
+      // the events list returned by the repo can be an empty list, if there are no events
+      when(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        SessiondataInitial(),
+        SessionDataCrudInProgressState(),
+        SessionDataErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(GetSessionAndActivitiesEvent(sessionId: 1));
+    });
+  });
+
+  group('GetActivitiesWithSkillsForSession: ', () {
+    test(
+        'test that GetActivitiesWithSkillsForSession usecase is called after a GetActivitiesForSessionEvent is added',
         () async {
       sut.add(GetActivitiesForSessionEvent(testSession));
-      await untilCalled(
-          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
-      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
     });
 
     test(
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataEventsLoadedState] when getting Activity maps after a GetActivitiesForSessionEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
-      when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
+      when(mockGetActivitiesWithSkillsForSessionUC(
+              SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Right([]));
       final expected = [
         SessiondataInitial(),
@@ -188,7 +242,8 @@ void main() {
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after a GetActivitiesForSessionEvent is added.',
         () async {
       // the events list returned by the repo can be an empty list, if there are no events
-      when(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)))
+      when(mockGetActivitiesWithSkillsForSessionUC(
+              SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
         SessiondataInitial(),
@@ -295,28 +350,29 @@ void main() {
 
     test('test that InsertEvents usecase is called', () async {
       sut.add(InsertActivityForSessionEvent(newTestEvent));
-      await untilCalled(mockInsertEventsForSessionUC(
+      await untilCalled(mockInsertActivitiesForSessionUC(
           ActivityMultiInsertParams(activities: events, newSessionId: 1)));
-      verify(mockInsertEventsForSessionUC(
+      verify(mockInsertActivitiesForSessionUC(
           ActivityMultiInsertParams(activities: events, newSessionId: 1)));
     });
 
     test(
-        'test that getEventMapsForSession is called after an Activity is added to the Session',
+        'test that getActivitiesWithSkillsForSessionUC is called after an Activity is added to the Session',
         () async {
-      when(mockInsertEventsForSessionUC(
+      when(mockInsertActivitiesForSessionUC(
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
-      await untilCalled(
-          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
-      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
     });
 
     test(
         'test that bloc emits [SessionDataCrudInProgressState, NewActivityCreatedState] upon successful event creation',
         () {
-      when(mockInsertEventsForSessionUC(
+      when(mockInsertActivitiesForSessionUC(
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
 
@@ -332,7 +388,7 @@ void main() {
     test(
         'test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] test that bloc emits [SessionDataCrudInProgressState, SessionDataErrorState] on cache failure after InsertActivityForSessionEvent added',
         () {
-      when(mockInsertEventsForSessionUC(
+      when(mockInsertActivitiesForSessionUC(
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
 
@@ -355,7 +411,7 @@ void main() {
     });
 
     test(
-        'test that getEventMapsForSession is called after an Activity is removed from the Session',
+        'test that getActivitiesWithSkillsForSessionUC is called after an Activity is removed from the Session',
         () async {
       var newTestEvent = Activity(
           skillId: 1,
@@ -367,13 +423,14 @@ void main() {
       List<Activity> events = [newTestEvent];
       List<int> resultsList = [1];
 
-      when(mockInsertEventsForSessionUC(
+      when(mockInsertActivitiesForSessionUC(
               ActivityMultiInsertParams(activities: events, newSessionId: 1)))
           .thenAnswer((_) async => Right(resultsList));
       sut.add(InsertActivityForSessionEvent(newTestEvent));
-      await untilCalled(
-          mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
-      verify(mockGetEventMapsForSession(SessionByIdParams(sessionId: 1)));
+      await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
+      verify(mockGetActivitiesWithSkillsForSessionUC(
+          SessionByIdParams(sessionId: 1)));
     });
 
     test(

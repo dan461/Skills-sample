@@ -20,6 +20,11 @@ class SessionsRepositoryImpl extends SessionRepository {
   }
 
   @override
+  Future<Either<Failure, Session>> getSessionAndActivities(int id) async {
+    return Right(await localDataSource.getSessionAndActivities(id));
+  }
+
+  @override
   Future<Either<Failure, Session>> insertNewSession(Session session) async {
     return Right(await localDataSource.insertNewSession(session));
   }
@@ -60,4 +65,6 @@ class SessionsRepositoryImpl extends SessionRepository {
     return Right(
         await localDataSource.completeSessionAndEvents(sessionId, date));
   }
+
+  
 }

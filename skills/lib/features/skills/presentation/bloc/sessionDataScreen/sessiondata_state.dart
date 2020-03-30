@@ -1,6 +1,6 @@
 part of 'sessiondata_bloc.dart';
 
-abstract class SessiondataState extends Equatable {
+abstract class SessiondataState extends SessionState {
   const SessiondataState();
 }
 
@@ -25,6 +25,11 @@ class SessionDataCrudInProgressState extends SessiondataState {
 }
 
 class SessionDataActivitesLoadedState extends SessiondataState {
+  @override
+  List<Object> get props => null;
+}
+
+class SessionDataInfoLoadedState extends SessiondataState {
   @override
   List<Object> get props => null;
 }
@@ -65,7 +70,7 @@ class SkillSelectedForSessionState extends SessiondataState {
   final Skill skill;
 
   SkillSelectedForSessionState(this.skill);
-  
+
   @override
   List<Object> get props => null;
 }

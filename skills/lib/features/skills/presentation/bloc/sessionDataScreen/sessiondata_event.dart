@@ -1,7 +1,16 @@
 part of 'sessiondata_bloc.dart';
 
-abstract class SessiondataEvent extends Equatable {
+abstract class SessiondataEvent extends SessionEvent {
   const SessiondataEvent();
+}
+
+class GetSessionAndActivitiesEvent extends SessiondataEvent {
+  final int sessionId;
+
+  GetSessionAndActivitiesEvent({@required this.sessionId});
+
+  @override
+  List<Object> get props => [sessionId];
 }
 
 class GetActivitiesForSessionEvent extends SessiondataEvent {

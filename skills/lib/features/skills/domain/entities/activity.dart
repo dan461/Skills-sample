@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
 
 class Activity extends Equatable {
   final int eventId;
@@ -12,6 +13,7 @@ class Activity extends Equatable {
   // there are still past events for that Skill that need to be shown in Sessions,
   // or maybe don't actually delete Skills, just make them inactive
   final String skillString;
+  Skill skill;
 
   Activity(
       {this.eventId,
@@ -20,9 +22,10 @@ class Activity extends Equatable {
       @required this.date,
       @required this.duration,
       @required this.isComplete,
-      @required this.skillString});
+      @required this.skillString,
+      this.skill}) : super();
 
   @override
   List<Object> get props =>
-      [eventId, skillId, sessionId, date, duration, isComplete, skillString];
+      [eventId, skillId, sessionId, date, duration, isComplete, skillString, skill];
 }

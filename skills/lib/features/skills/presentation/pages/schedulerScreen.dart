@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/new_session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
@@ -89,7 +90,8 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       
       SessionDataScreen dataScreen = locator<SessionDataScreen>();
-      dataScreen.bloc.add(GetActivitiesForSessionEvent(session));
+      Session ses = session;
+      dataScreen.bloc.add(GetSessionAndActivitiesEvent(sessionId: ses.sessionId));
       return dataScreen;
     }));
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));

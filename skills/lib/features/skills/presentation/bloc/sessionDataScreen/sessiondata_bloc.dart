@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
@@ -11,24 +9,27 @@ import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
+import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
 
 part 'sessiondata_event.dart';
 part 'sessiondata_state.dart';
 
-class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
+class SessiondataBloc extends SessionBloc {
   final UpdateAndRefreshSessionWithId updateAndRefreshSessionWithId;
   final DeleteSessionWithId deleteSessionWithId;
-  final GetActivityMapsForSession getActivityMapsForSession;
+  final GetSessionAndActivities getSessionAndActivities;
+  final GetActivitiesWithSkillsForSession getActivitiesWithSkillsForSession;
   final InsertActivityForSessionUC insertActivitiesForSession;
-  // final CompleteSessionAndEvents completeSessionAndEvents;
+  
   final DeleteActivityByIdUC deleteActivityByIdUC;
 
   SessiondataBloc(
       {this.updateAndRefreshSessionWithId,
       this.deleteSessionWithId,
-      this.getActivityMapsForSession,
+      this.getSessionAndActivities,
+      this.getActivitiesWithSkillsForSession,
       this.insertActivitiesForSession,
-      // this.completeSessionAndEvents,
+      
       this.deleteActivityByIdUC});
 
   @override
@@ -38,53 +39,43 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
   DateTime sessionDate;
   TimeOfDay selectedStartTime;
 
-  List<Map> activityMapsForListView = [];
+  // List<Map> activityMapsForListView = [];
+  List<Activity> activitiesForSession = [];
 
-  int get completedActivitiesCount {
-    int count = 0;
-    for (var map in activityMapsForListView) {
-      Activity event = map['activity'];
-      if (event.isComplete) count++;
-    }
-    return count;
-  }
-
-  int get availableTime {
-    var time = session.duration ?? 0;
-    for (var map in activityMapsForListView) {
-      var event = map['activity'];
-      time -= event.duration;
-    }
-    return time;
-  }
-
-  void createActivity(int activityDuration, Skill skill) {
-    final newActivity = Activity(
-        skillId: skill.skillId,
-        sessionId: session.sessionId,
-        date: sessionDate,
-        duration: activityDuration,
-        isComplete: false,
-        skillString: skill.name);
-    add(InsertActivityForSessionEvent(newActivity));
+  bool get canBeginSession {
+    return completedActivitiesCount < activitiesForSession.length;
   }
 
   @override
-  Stream<SessiondataState> mapEventToState(
-    SessiondataEvent event,
+  Stream<SessionState> mapEventToState(
+    SessionEvent event,
   ) async* {
-    // Get or refresh Activities for list
-    if (event is GetActivitiesForSessionEvent) {
-      session ??= event.session;
-      sessionDate ??= session.date;
-      selectedStartTime ??= session.startTime;
+    // Get Session or refresh after returning from ActiveSessionScreen
+    if (event is GetSessionAndActivitiesEvent) {
+      yield SessionDataCrudInProgressState();
+      final sessionOrFailure = await getSessionAndActivities(
+          SessionByIdParams(sessionId: event.sessionId));
+      yield sessionOrFailure.fold(
+          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (ses) {
+        session = ses;
+        sessionDate ??= session.date;
+        selectedStartTime ??= session.startTime;
+        activitiesForSession = session.activities;
+        session.openTime = availableTime;
+        return SessionDataInfoLoadedState();
+      });
+    }
+
+    // Refresh Activities for list
+    else if (event is GetActivitiesForSessionEvent) {
       yield SessionDataCrudInProgressState();
 
-      final activityMapsOrFailure = await getActivityMapsForSession(
+      final activitiesOrFailure = await getActivitiesWithSkillsForSession(
           SessionByIdParams(sessionId: session.sessionId));
-      yield activityMapsOrFailure.fold(
-          (failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE), (maps) {
-        activityMapsForListView = maps;
+      yield activitiesOrFailure
+          .fold((failure) => SessionDataErrorState(CACHE_FAILURE_MESSAGE),
+              (activities) {
+        activitiesForSession = activities;
         session.openTime = availableTime;
         return SessionDataActivitesLoadedState();
       });
@@ -130,7 +121,7 @@ class SessiondataBloc extends Bloc<SessiondataEvent, SessiondataState> {
       yield SkillSelectedForSessionState(event.skill);
     }
 
-    // Update Session
+    // Update Session and refresh after editing
     else if (event is UpdateSessionEvent) {
       yield SessionDataCrudInProgressState();
       final updateOrFailure = await updateAndRefreshSessionWithId(

@@ -130,6 +130,18 @@ class ActivityUpdateParams extends Params {
   List<Object> get props => [changeMap, activityId];
 }
 
+class ActivityCompleteParams extends Params {
+  final int activityId;
+  final DateTime date;
+  final int elapsedTime;
+  final int skillId;
+
+
+  ActivityCompleteParams(this.activityId, this.date, this.elapsedTime, this.skillId);
+  @override
+  List<Object> get props => [activityId, date, elapsedTime, skillId];
+}
+
 class ActivityGetOrDeleteParams extends Params {
   final int activityId;
 
