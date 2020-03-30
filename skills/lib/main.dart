@@ -35,17 +35,18 @@ class _SkillsAppState extends State<SkillsApp> {
               .textTheme
               .copyWith(subhead: new TextStyle(fontWeight: FontWeight.w600))),
       // initialRoute: '/',
-      onGenerateRoute: (settings){
-        if(settings.name == SESSION_DATA_ROUTE){
-          final Session newSession = settings.arguments;
+      onGenerateRoute: (settings) {
+        if (settings.name == SESSION_DATA_ROUTE) {
+          final int newSessionId = settings.arguments;
           SessionDataScreen dataScreen = locator<SessionDataScreen>();
-          dataScreen.bloc.add(GetActivitiesForSessionEvent(newSession));
-          return MaterialPageRoute(builder: (context){
+          dataScreen.bloc
+              .add(GetSessionAndActivitiesEvent(sessionId: newSessionId));
+          return MaterialPageRoute(builder: (context) {
             return dataScreen;
           });
-        } else return null;
+        } else
+          return null;
       },
-      
     );
   }
 }

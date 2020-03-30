@@ -46,7 +46,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         listener: (context, state) {
           if (state is NewSessionInsertedState) {
             Navigator.of(context).popAndPushNamed(SESSION_DATA_ROUTE,
-                arguments: state.newSession);
+                arguments: state.newSession.sessionId);
           }
         },
         child: Builder(

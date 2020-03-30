@@ -133,25 +133,23 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   Row _timeTrackerRow() {
-    if (timeTracker == null) {
-      _timeTrackerTypeSelected();
+    timeTracker = null;
+    if (_timeTrackerType == 0) {
+      timeTracker = Countdown(
+        minutesToCount: bloc.selectedActivity.duration,
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timeTrackerCancelled,
+      );
+    } else {
+      timeTracker = StopwatchWidget(
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timeTrackerCancelled,
+      );
     }
 
-    if (_timeTrackerType == 0) {
-      return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-                child: Container(width: 200, height: 150, child: timeTracker)),
-          ]);
-    } else {
-      return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-                child: Container(width: 200, height: 150, child: timeTracker)),
-          ]);
-    }
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Expanded(child: Container(width: 200, height: 150, child: timeTracker)),
+    ]);
   }
 
   Row _buttonsRow() {
@@ -212,8 +210,25 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   void _timeTrackerCancelled() {
     setState(() {
       _timeTrackerShown = false;
+      timeTracker = null;
     });
     bloc.add(ActivityTimerStoppedEvent());
+  }
+
+  void _timeTrackerTypeSelected() {
+    timeTracker = null;
+    if (_timeTrackerType == 0) {
+      timeTracker = Countdown(
+        minutesToCount: bloc.selectedActivity.duration,
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timeTrackerCancelled,
+      );
+    } else {
+      timeTracker = StopwatchWidget(
+        finishedCallback: _currentActivityFinished,
+        cancelCallback: _timeTrackerCancelled,
+      );
+    }
   }
 
   void _countdownSelected() {
@@ -235,21 +250,6 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     setState(() {
       _timeTrackerShown = true;
     });
-  }
-
-  void _timeTrackerTypeSelected() {
-    if (_timeTrackerType == 0) {
-      timeTracker = Countdown(
-        minutesToCount: bloc.selectedActivity.duration,
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timeTrackerCancelled,
-      );
-    } else {
-      timeTracker = StopwatchWidget(
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timeTrackerCancelled,
-      );
-    }
   }
 
   void _showSkillsList() async {
@@ -303,6 +303,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
                 child: Text(COMPLETE_IT),
                 onPressed: () {
                   bloc.add(CompleteActiveSessionEvent());
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -358,8 +359,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
   void _currentActivityFinished(int elapsedTime) {
     bloc.add(CurrentActivityFinishedEvent(
-        activity: bloc.selectedActivity,
-        elapsedTime: bloc.selectedActivity.duration));
+        activity: bloc.selectedActivity, elapsedTime: elapsedTime));
   }
 }
 
