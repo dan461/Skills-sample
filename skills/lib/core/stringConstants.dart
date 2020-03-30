@@ -23,6 +23,7 @@ const String INSUFFICIENT_TIME =
     'The minimum time for an activity is 5 minutes.';
 const String ROUND_UP =
     'Would you like to round up to 5 minutes and complete this activity?';
+const String COUNTDOWN_DONE = 'Activity accomplished!';
 
 // Stopwatch
 const String CANCEL_STOPWATCH = 'Do you want to cancel this stopwatch?';

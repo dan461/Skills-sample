@@ -60,6 +60,10 @@ class _CountdownState extends State<Countdown> {
     return _timer != null && _timer.isActive;
   }
 
+  bool get _timerNotCompleted {
+    return _remainingSeconds > 0;
+  }
+
   int get _elapsedTime {
     return (minutesToCount / _remainingSeconds).floor();
   }
@@ -90,13 +94,11 @@ class _CountdownState extends State<Countdown> {
   }
 
   Row _buttonsRow() {
-    List<Widget> buttons = [
-      RaisedButton(
-          child: Text(startStop),
-          onPressed: () {
-            _onStartPauseTap();
-          })
-    ];
+    List<Widget> buttons = [];
+
+    if (_timerNotCompleted) {
+      buttons.add(_startPauseButton());
+    }
 
     if (_timerRunning) {
       buttons.add(_finishButton());
@@ -121,6 +123,14 @@ class _CountdownState extends State<Countdown> {
     );
   }
 
+  Widget _startPauseButton() {
+    return RaisedButton(
+        child: Text(startStop),
+        onPressed: () {
+          _onStartPauseTap();
+        });
+  }
+
   Widget _finishButton() {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
@@ -138,7 +148,6 @@ class _CountdownState extends State<Countdown> {
   }
 
   void _onCancelTapped() async {
-    // _pauseTimer();
     if (_timerRunning || _remainingSeconds < (minutesToCount * 60)) {
       _pauseTimer();
       await showDialog(
@@ -190,8 +199,7 @@ class _CountdownState extends State<Countdown> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(INSUFFICIENT_TIME),
-            content: Text(
-                ROUND_UP),
+            content: Text(ROUND_UP),
             actions: <Widget>[
               FlatButton(
                 child: Text(CANCEL),
@@ -343,5 +351,27 @@ class _CountdownState extends State<Countdown> {
     });
   }
 
-  void _onTimerComplete() {}
+  void _onTimerComplete() {
+    _timer.cancel();
+    _showCountdownFinishedAlert();
+  }
+
+  void _showCountdownFinishedAlert() async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(COUNTDOWN_DONE),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(OK),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 }
