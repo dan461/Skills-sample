@@ -524,7 +524,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return sessionsList;
   }
 
-  // ******* EVENTS *********
+  // ******* ACTIVITIES *********
   @override
   Future<int> deleteActivityById(int id) async {
     final Database db = await database;
