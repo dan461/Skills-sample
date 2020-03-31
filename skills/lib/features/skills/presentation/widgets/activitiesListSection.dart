@@ -3,14 +3,14 @@ import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionEventCell.dart';
 
 typedef ActivitiesSectionAddTappedCallback();
-typedef ActivitiesSectionEventTappedCallback(Activity activity);
+typedef ActivitiesSectionActivityTappedCallback(Activity activity);
 
 class ActivitiesListSection extends StatefulWidget {
   final List<Activity> activities;
   final int completedActivitiesCount;
   final int availableTime;
   final ActivitiesSectionAddTappedCallback addTappedCallback;
-  final ActivitiesSectionEventTappedCallback eventTappedCallback;
+  final ActivitiesSectionActivityTappedCallback eventTappedCallback;
 
   const ActivitiesListSection(
       {Key key,
@@ -34,7 +34,7 @@ class _ActivitiesListSectionState extends State<ActivitiesListSection> {
   final int completedActivitiesCount;
   final int availableTime;
   final ActivitiesSectionAddTappedCallback addTappedCallback;
-  final ActivitiesSectionEventTappedCallback eventTappedCallback;
+  final ActivitiesSectionActivityTappedCallback eventTappedCallback;
 
   _ActivitiesListSectionState(this.activities, this.completedActivitiesCount,
       this.addTappedCallback, this.eventTappedCallback, this.availableTime);

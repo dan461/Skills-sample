@@ -8,7 +8,7 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/usecases/activityUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/sessionUseCases.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
-import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_bloc.dart';
 
 part 'activesession_event.dart';
 part 'activesession_state.dart';

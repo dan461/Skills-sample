@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
+import 'package:skills/features/skills/domain/entities/skill.dart';
+import 'package:skills/features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
+import 'package:skills/features/skills/presentation/widgets/activeSessionActivitiesList.dart';
 import 'package:skills/features/skills/presentation/widgets/stopwatch.dart';
+
+import '../../../../service_locator.dart';
 
 class LiveSessionScreen extends StatefulWidget {
   @override
@@ -7,19 +14,46 @@ class LiveSessionScreen extends StatefulWidget {
 }
 
 class _LiveSessionScreenState extends State<LiveSessionScreen> {
+  LiveSessionScreenBloc bloc;
+
+  @override
+  void initState() {
+    bloc = locator<LiveSessionScreenBloc>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Live Session')),
-      body: _stopwatchView(),
+    return BlocProvider(
+      builder: (context) => bloc,
+      child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
+        bloc: bloc,
+        listener: (context, state) {},
+        child: Builder(builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Live Session'),
+            ),
+            body: BlocBuilder<LiveSessionScreenBloc, LiveSessionScreenState>(
+                builder: (context, state) {
+              Widget body;
+              if (state is LiveSessionScreenInitial) {
+                body = _selectionView();
+              }
+
+              return body;
+            }),
+          );
+        }),
+      ),
     );
   }
 
   Column _stopwatchView() {
     List<Widget> content = [_dateTimeRow(), _timeTrackRow()];
 
-    // if (bloc.activities.lenght > 0){
-    //   // add activities section
+    // if (bloc.activities.length > 0){
+    content.add(_activitiesSection());
     // }
 
     return Column(
@@ -46,8 +80,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   Column _selectionView() {
     List<Widget> content = [_dateTimeRow(), _selectionRow()];
 
-    // if (bloc.activities.lenght > 0){
-    //   // add activities section
+    //  if (bloc.activities.length > 0){
+    //   content.add(_activitiesSection());
     // }
 
     return Column(
@@ -81,6 +115,28 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       ],
     );
   }
+
+  Widget _activitiesSection() {
+    Skill skill = Skill(
+        name: 'Bouree in E minor',
+        type: 'Comp',
+        startDate: DateTime.utc(2020, 3, 28),
+        source: 'Bach');
+    Activity act = Activity(
+        skillId: 1,
+        sessionId: 1,
+        date: DateTime.utc(2020, 3, 28),
+        duration: 30,
+        isComplete: true,
+        skillString: 'Skill description string');
+    act.skill = skill;
+    List<Activity> acts = [act];
+
+    return ActiveSessionActivityList(
+        activities: acts, activityTappedCallback: _onActivityTapped);
+  }
+
+  void _onActivityTapped(Activity activity) {}
 
   void _showSkillsList() {}
 
