@@ -18,6 +18,16 @@ class LiveSessionActivitySelectedState extends LiveSessionScreenState {
   List<Object> get props => [activity];
 }
 
+class LiveSessionProcessingState extends LiveSessionScreenState {
+  @override
+  List<Object> get props => null;
+}
+
+class LiveSessionSelectOrFinishState extends LiveSessionScreenState {
+  @override
+  List<Object> get props => null;
+}
+
 class LiveSessionReadyState extends LiveSessionScreenState {
   LiveSessionReadyState();
 
@@ -25,9 +35,18 @@ class LiveSessionReadyState extends LiveSessionScreenState {
   List<Object> get props => null;
 }
 
-class LiveSessionFinishedState extends LiveSessionScreenEvent {
+class LiveSessionFinishedState extends LiveSessionScreenState {
   LiveSessionFinishedState();
 
   @override
   List<Object> get props => null;
+}
+
+class LiveSessionScreenErrorState extends LiveSessionScreenState {
+  final String message;
+
+  LiveSessionScreenErrorState(this.message);
+
+  @override
+  List<Object> get props => [message];
 }

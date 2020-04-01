@@ -10,24 +10,27 @@ class StartLiveSessionEvent extends LiveSessionScreenEvent {
   List<Object> get props => null;
 }
 
-class LiveSessionActivitySelectedEvent extends LiveSessionScreenEvent {
-  final Activity activity;
+class LiveSessionSkillSelectedEvent extends LiveSessionScreenEvent {
+  final Skill skill;
 
-  LiveSessionActivitySelectedEvent({@required this.activity});
+  LiveSessionSkillSelectedEvent({@required this.skill});
 
   @override
-  List<Object> get props => [activity];
+  List<Object> get props => [skill];
 }
 
 class LiveSessionActivityFinishedEvent extends LiveSessionScreenEvent {
-  final Activity activity;
   final int elapsedTime;
 
-  LiveSessionActivityFinishedEvent(
-      {@required this.activity, @required this.elapsedTime});
+  LiveSessionActivityFinishedEvent({@required this.elapsedTime});
 
   @override
-  List<Object> get props => [activity, elapsedTime];
+  List<Object> get props => [elapsedTime];
+}
+
+class LiveSessionActivityCancelledEvent extends LiveSessionScreenEvent {
+  @override
+  List<Object> get props => null;
 }
 
 class LiveSessionActivityRemovedEvent extends LiveSessionScreenEvent {
