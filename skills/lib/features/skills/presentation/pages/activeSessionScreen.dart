@@ -9,7 +9,7 @@ import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_blo
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/countdown.dart';
-import 'package:skills/features/skills/presentation/widgets/stopwatch.dart';
+import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';
 
 class ActiveSessionScreen extends StatefulWidget {
   final ActiveSessionBloc bloc;

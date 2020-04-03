@@ -50,6 +50,12 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     return string;
   }
 
+  int _nearestFive() {
+    int minutes = (_elapsedSeconds / 60).round();
+    minutes = (minutes / 5).round() * 5;
+    return minutes;
+  }
+
   bool get _canReset {
     return !_isRunning && _elapsedSeconds > 0;
   }
@@ -70,11 +76,27 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
       child: Column(
         children: <Widget>[
           Center(
-              child: Text(_elapsedTimeString, style: TextStyle(fontSize: 18))),
+              child: _timeIndicatorRow()),
           _buttonsRow(),
           _cancelRow()
         ],
       ),
+    );
+  }
+
+  Row _timeIndicatorRow() {
+    return Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Text(_nearestFive().toString() + ' min.',
+              style: TextStyle(fontSize: 18)),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text('($_elapsedTimeString)', style: TextStyle(fontSize: 16)),
+        ),
+      ],
     );
   }
 
@@ -153,7 +175,6 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   void _onCancelTapped() async {
-    
     if (_isRunning || _elapsedSeconds > 0) {
       _pause();
       await showDialog(
@@ -191,6 +212,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   void _onFinishTapped() async {
+    _pause();
     _showFinishTimerAlert();
   }
 
@@ -212,7 +234,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
               FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  finishedCallback((_elapsedSeconds / 60).round());
+                  finishedCallback(_nearestFive());
                 },
                 child: Text(FINISH),
               )
