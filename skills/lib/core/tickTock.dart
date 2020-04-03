@@ -78,6 +78,24 @@ class TickTock {
   static int timeToInt(TimeOfDay timeOfDay) {
     return (timeOfDay.hour * 60) + timeOfDay.minute;
   }
+
+  static TimeOfDay roundTimeOfDay(TimeOfDay time){
+    TimeOfDay roundTime;
+    if (time.minute >= 57) {
+      roundTime = TimeOfDay(hour: time.hour + 1, minute: 0);
+    } else if (time.minute <= 3) {
+      roundTime = TimeOfDay(hour: time.hour, minute: 0);
+    } else if (time.minute % 5 == 0) {
+      roundTime = time;
+    } else if (time.minute % 5 <= 3) {
+      roundTime =
+          TimeOfDay(hour: time.hour, minute: time.minute - (time.minute % 5));
+    } else
+      roundTime =
+          TimeOfDay(hour: time.hour, minute: time.minute + (5 - time.minute % 5));
+
+    return roundTime;
+  }
 }
 
 class TimeOfDayEx extends TimeOfDay {
@@ -100,4 +118,6 @@ class TimeOfDayEx extends TimeOfDay {
   bool isAfter(TimeOfDay time2) {
     return timeAsDouble > timeToDouble(time2);
   }
+
+  
 }
