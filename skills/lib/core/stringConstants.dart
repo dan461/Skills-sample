@@ -41,3 +41,6 @@ const String COMPLETE_SESSION_QRY = 'Complete this Session?';
 const String INCOMPLETE_ACTIVITIES = 'This Session has activities that are not completed.';
 const String COMPLETE_SESSION_AND_ACTS_QRY = 'Complete this Session and all activities in it?';
 
+// LiveSession
+const String SELECT_TO_START = 'Select a skill to get started.';
+const String SELECT_ANOTHER = 'Select your next skill';

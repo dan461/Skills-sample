@@ -6,7 +6,7 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activeSessionActivitiesList.dart';
-import 'package:skills/features/skills/presentation/widgets/stopwatch.dart';
+import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';
 
 import '../../../../service_locator.dart';
 
@@ -22,6 +22,10 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   void initState() {
     bloc = locator<LiveSessionScreenBloc>();
     super.initState();
+  }
+
+  String get _startButtonScreenText {
+    return bloc.activities.isEmpty ? SELECT_TO_START : SELECT_ANOTHER;
   }
 
   @override
@@ -149,7 +153,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         FlatButton(
-          child: Text('Select a skill to get started.'),
+          child: Text(_startButtonScreenText),
           onPressed: _showSkillsList,
           textColor: Colors.blueAccent,
         ),
