@@ -47,7 +47,9 @@ class LiveSessionScreenBloc
           date: date,
           duration: event.elapsedTime,
           isComplete: true,
-          skillString: selectedSkill.name);
+          skillString: selectedSkill.name,
+          skill: selectedSkill);
+
       activities.add(activity);
       sessionDuration += event.elapsedTime;
       yield LiveSessionSelectOrFinishState();
@@ -75,21 +77,5 @@ class LiveSessionScreenBloc
     }
   }
 
-  TimeOfDay _roundStartTime(TimeOfDay time) {
-    TimeOfDay roundTime;
-    if (time.minute >= 57) {
-      roundTime = TimeOfDay(hour: time.hour + 1, minute: 0);
-    } else if (time.minute <= 3) {
-      roundTime = TimeOfDay(hour: time.hour, minute: 0);
-    } else if (time.minute % 5 == 0) {
-      roundTime = time;
-    } else if (time.minute % 5 <= 3) {
-      roundTime =
-          TimeOfDay(hour: time.hour, minute: time.minute - (time.minute % 5));
-    } else
-      roundTime =
-          TimeOfDay(hour: time.hour, minute: time.minute + (time.minute % 5));
-
-    return roundTime;
-  }
+  
 }

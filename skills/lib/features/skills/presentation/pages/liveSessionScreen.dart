@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
+import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activeSessionActivitiesList.dart';
 import 'package:skills/features/skills/presentation/widgets/stopwatch.dart';
 
@@ -28,17 +30,34 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       builder: (context) => bloc,
       child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
         bloc: bloc,
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is LiveSessionFinishedState) Navigator.of(context).pop();
+        },
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
               title: Text('Live Session'),
             ),
+            persistentFooterButtons: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+                child: RaisedButton(
+                    child: Text(CANCEL), onPressed: _onCancelSession),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                child: RaisedButton(
+                    child: Text(DONE), onPressed: _onFinishSession),
+              )
+            ],
             body: BlocBuilder<LiveSessionScreenBloc, LiveSessionScreenState>(
                 builder: (context, state) {
               Widget body;
-              if (state is LiveSessionScreenInitial) {
+              if (state is LiveSessionScreenInitial ||
+                  state is LiveSessionSelectOrFinishState) {
                 body = _selectionView();
+              } else if (state is LiveSessionReadyState) {
+                body = _stopwatchView();
               }
 
               return body;
@@ -49,16 +68,51 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     );
   }
 
-  Column _stopwatchView() {
-    List<Widget> content = [_dateTimeRow(), _timeTrackRow()];
+  Column _selectionView() {
+    List<Widget> content = [
+      _dateTimeRow(),
+      _selectionRow(),
+      // _bottomButtonsRow()
+    ];
 
-    // if (bloc.activities.length > 0){
-    content.add(_activitiesSection());
-    // }
+    if (bloc.activities.length > 0) {
+      content.add(_activitiesSection());
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: content,
+    );
+  }
+
+  Column _stopwatchView() {
+    List<Widget> content = [
+      _dateTimeRow(),
+      _skillInfoRow(),
+      _timeTrackRow(),
+      // _bottomButtonsRow()
+    ];
+
+    if (bloc.activities.length > 0) {
+      content.add(_activitiesSection());
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: content,
+    );
+  }
+
+  Widget _skillInfoRow() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(bloc.selectedSkill.name,
+              style: Theme.of(context).textTheme.headline)
+        ],
+      ),
     );
   }
 
@@ -74,19 +128,6 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
           ),
         )
       ],
-    );
-  }
-
-  Column _selectionView() {
-    List<Widget> content = [_dateTimeRow(), _selectionRow()];
-
-    //  if (bloc.activities.length > 0){
-    //   content.add(_activitiesSection());
-    // }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: content,
     );
   }
 
@@ -117,30 +158,62 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   }
 
   Widget _activitiesSection() {
-    Skill skill = Skill(
-        name: 'Bouree in E minor',
-        type: 'Comp',
-        startDate: DateTime.utc(2020, 3, 28),
-        source: 'Bach');
-    Activity act = Activity(
-        skillId: 1,
-        sessionId: 1,
-        date: DateTime.utc(2020, 3, 28),
-        duration: 30,
-        isComplete: true,
-        skillString: 'Skill description string');
-    act.skill = skill;
-    List<Activity> acts = [act];
-
     return ActiveSessionActivityList(
-        activities: acts, activityTappedCallback: _onActivityTapped);
+        activities: bloc.activities, activityTappedCallback: _onActivityTapped);
   }
+
+  Widget _bottomButtonsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+          child: RaisedButton(child: Text(CANCEL), onPressed: _onCancelSession),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+          child: RaisedButton(child: Text(DONE), onPressed: _onFinishSession),
+        )
+      ],
+    );
+  }
+
+  void _onFinishSession() {}
+  void _onCancelSession() {}
 
   void _onActivityTapped(Activity activity) {}
 
-  void _showSkillsList() {}
+  void _showSkillsList() async {
+    var routeBuilder = PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SkillsScreen(callback: _selectSkill),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(0.0, 1.0);
+          var end = Offset.zero;
+          var tween = Tween(begin: begin, end: end);
+          var offsetAnimation = animation.drive(tween);
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        });
+    var selectedSkill = await Navigator.of(context).push(routeBuilder);
+    if (selectedSkill != null) {
+      setState(() {
+        bloc.add(LiveSessionSkillSelectedEvent(skill: selectedSkill));
+      });
+    }
+  }
 
-  void _onStopwatchFinished(int elapsedTime) {}
+  void _selectSkill(Skill skill) {
+    Navigator.of(context).pop(skill);
+  }
 
-  void _onStopwatchCancelled() {}
+  void _onStopwatchFinished(int elapsedTime) {
+    bloc.add(LiveSessionActivityFinishedEvent(elapsedTime: elapsedTime));
+  }
+
+  void _onStopwatchCancelled() {
+    bloc.add(LiveSessionActivityCancelledEvent());
+  }
 }

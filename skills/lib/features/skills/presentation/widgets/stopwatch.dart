@@ -212,7 +212,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
               FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // _finishActivity();
+                  finishedCallback((_elapsedSeconds / 60).round());
                 },
                 child: Text(FINISH),
               )
