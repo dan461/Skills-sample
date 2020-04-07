@@ -66,9 +66,11 @@ class LiveSessionScreenBloc
       yield LiveSessionProcessingState();
       Session session = Session(
           date: date,
+          duration: sessionDuration,
           isComplete: true,
           isScheduled: true,
-          startTime: startTime);
+          startTime: startTime,
+          timeRemaining: 0);
       final sessionIdOrFailure = await saveLiveSessionWithActivitiesUC(
           LiveSessionParams(session: session, activities: activities));
       yield sessionIdOrFailure.fold(

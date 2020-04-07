@@ -28,14 +28,18 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     return bloc.activities.isEmpty ? SELECT_TO_START : SELECT_ANOTHER;
   }
 
+  bool get _saveEnabled {
+    return bloc.activities.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (context) => bloc,
       child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
         bloc: bloc,
-        listener: (context, state) {
-          if (state is LiveSessionFinishedState) Navigator.of(context).pop();
+        listener: (context, state) { 
+          // if (state is LiveSessionFinishedState) Navigator.of(context).pop();
         },
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -51,14 +55,15 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                 child: RaisedButton(
-                    child: Text(DONE), onPressed: _onFinishSession),
+                    child: Text(DONE),
+                    onPressed: _saveEnabled ? _onFinishSession : null),
               )
             ],
             body: BlocBuilder<LiveSessionScreenBloc, LiveSessionScreenState>(
                 builder: (context, state) {
               Widget body;
               if (state is LiveSessionScreenInitial ||
-                  state is LiveSessionSelectOrFinishState) {
+                  state is LiveSessionSelectOrFinishState || state is LiveSessionFinishedState) {
                 body = _selectionView();
               } else if (state is LiveSessionReadyState) {
                 body = _stopwatchView();
@@ -182,7 +187,10 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     );
   }
 
-  void _onFinishSession() {}
+  void _onFinishSession() {
+    bloc.add(LiveSessionFinishedEvent());
+  }
+
   void _onCancelSession() {}
 
   void _onActivityTapped(Activity activity) {}

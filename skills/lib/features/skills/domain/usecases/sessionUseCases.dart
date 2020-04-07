@@ -111,7 +111,8 @@ class SaveLiveSessionWithActivities extends UseCase<int, LiveSessionParams> {
   SaveLiveSessionWithActivities(this.repo);
 
   @override
-  Future<Either<Failure, int>> call(LiveSessionParams params) {
-    return null;
+  Future<Either<Failure, int>> call(LiveSessionParams params) async {
+    return await repo.saveLiveSessionWithActivities(
+        params.session, params.activities);
   }
 }

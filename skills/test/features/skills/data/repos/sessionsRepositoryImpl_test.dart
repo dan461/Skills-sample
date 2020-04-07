@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/data/repos/sessionsRepositoryImpl.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
 import 'goalsRepositoryImpl_test.dart';
@@ -49,6 +52,27 @@ void main() {
       final result = await sut.insertNewSession(testSession);
       verify(mockLocalDataSource.insertNewSession(testSession));
       expect(result, equals(Right(newSession)));
+    });
+
+    test('saveLiveSessionWithActivities - returns an int for new session id',
+        () async {
+      final Activity testActivity = Activity(
+          skillId: 1,
+          sessionId: 1,
+          date: DateTime.fromMillisecondsSinceEpoch(0),
+          duration: 30,
+          isComplete: false,
+          skillString: 'test');
+      List<Activity> testActivities = [testActivity];
+      when(mockLocalDataSource.saveLiveSessionWithActivities(
+              testSession, testActivities))
+          .thenAnswer((_) async => 1);
+      final result =
+          await sut.saveLiveSessionWithActivities(testSession, testActivities);
+      verify(mockLocalDataSource.saveLiveSessionWithActivities(
+          testSession, testActivities));
+      verifyNoMoreInteractions(mockLocalDataSource);
+      expect(result, equals(Right(1)));
     });
 
     test('updateSession - returns an integer after an update', () async {
