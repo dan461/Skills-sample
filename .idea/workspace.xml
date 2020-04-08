@@ -2,23 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bc7b00c4-9def-4439-8ae6-cf6704fca498" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/FMDB.build/FMDB-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/FMDB.build/FMDB-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/Objects-normal/arm64/PathProviderPlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/Objects-normal/arm64/PathProviderPlugin.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/path_provider-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/path_provider.build/path_provider-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqfliteOperation.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqfliteOperation.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqflitePlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/Objects-normal/arm64/SqflitePlugin.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/sqflite-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphoneos/sqflite.build/sqflite-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/PrecompiledHeaders/Runner-Bridging-Header-swift_2GIYGPHTPQ7CY-clang_2JFMX8QAEBHHQ.pch" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/PrecompiledHeaders/Runner-Bridging-Header-swift_2GIYGPHTPQ7CY-clang_2JFMX8QAEBHHQ.pch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/AppDelegate.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/AppDelegate.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/GeneratedPluginRegistrant.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/GeneratedPluginRegistrant.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps~moduleonly" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphoneos/Runner.build/Objects-normal/arm64/Runner-master.swiftdeps~moduleonly" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/80ae8067a85d6c529c3498dd12e9a093-desc.xcbuild" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/80ae8067a85d6c529c3498dd12e9a093-manifest.xcbuild" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/skills/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/FMDB-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/FMDB-all-target-headers.hmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/Objects-normal/x86_64/FMResultSet.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/Objects-normal/x86_64/FMResultSet.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/Objects-normal/x86_64/PathProviderPlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/Objects-normal/x86_64/PathProviderPlugin.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/path_provider-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/path_provider-all-target-headers.hmap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqfliteOperation.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqfliteOperation.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqflitePlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqflitePlugin.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/PrecompiledHeaders/Runner-Bridging-Header-swift_2FV7SDTG3WHR4-clang_2FDF0PEUYDDLU.pch" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/PrecompiledHeaders/Runner-Bridging-Header-swift_2FV7SDTG3WHR4-clang_2FDF0PEUYDDLU.pch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/objects-13.0+.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/runtime.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/objects-13.0+.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/runtime.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/objects-13.0+.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/runtime.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/objects-13.0+.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/runtime.nib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/AppDelegate.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/AppDelegate.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/GeneratedPluginRegistrant.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/GeneratedPluginRegistrant.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps~moduleonly" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps~moduleonly" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/BuildDescriptionCacheIndex-0800fe867371a6b91de750910604284f" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/BuildDescriptionCacheIndex-0800fe867371a6b91de750910604284f" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/build.db" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/build.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/lib/features/skills/presentation/pages/activeSessionScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/skills/lib/features/skills/presentation/pages/activeSessionScreen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/f4b39500fcb084ed1840f71eb7b0f57e-desc.xcbuild" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/f4b39500fcb084ed1840f71eb7b0f57e-manifest.xcbuild" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -61,7 +71,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
+            <state relative-caret-position="152">
               <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
               <folding>
                 <element signature="e#0#70#0" expanded="true" />
@@ -73,7 +83,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1140">
+            <state relative-caret-position="1178">
               <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
               <folding>
                 <element signature="e#0#48#0" expanded="true" />
@@ -96,6 +106,11 @@
     <findStrings>
       <find>skills_clean</find>
     </findStrings>
+  </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../keystores/skills_keystore" />
+    <option name="KEY_ALIAS" value="upload" />
+    <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -131,19 +146,25 @@
       </list>
     </option>
   </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" />
+      </list>
+    </option>
+  </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="3037" />
-    <option name="y" value="150" />
+    <option name="x" value="2785" />
+    <option name="y" value="175" />
     <option name="width" value="1848" />
     <option name="height" value="1285" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -166,15 +187,35 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane" />
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Skills_flutter" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Skills_flutter" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Skills_flutter" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Skills_flutter" type="462c0819:PsiDirectoryNode" />
+              <item name="skills" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="AndroidRunProguardForReleaseBuild" value="false" />
+    <property name="ExportedApkPath" value="$PROJECT_DIR$/Skills_flutter.apk" />
+    <property name="ExportedModule" value="Skills_flutter" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="dart.analysis.tool.window.force.activate" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -198,7 +239,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Dart Command Line App.getAllSkills_test.dart">
+  <component name="RunManager" selected="Flutter.main.dart">
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -282,11 +323,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3037" y="150" width="1848" height="1285" extended-state="0" />
+    <frame x="2785" y="175" width="1848" height="1285" extended-state="0" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.23200443" />
-      <window_info id="Structure" order="2" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.4989059" visible="true" weight="0.23864895" />
+      <window_info id="Structure" order="2" sideWeight="0.5010941" side_tool="true" weight="0.23864895" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
       <window_info id="Resources Explorer" order="5" weight="0.32945737" />
@@ -298,7 +339,7 @@
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49859312" weight="0.32905984" />
       <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49915588" weight="0.12215909" />
-      <window_info active="true" anchor="bottom" id="Event Log" order="5" sideWeight="0.5008441" side_tool="true" visible="true" weight="0.21880342" />
+      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5008441" side_tool="true" visible="true" weight="0.21880342" />
       <window_info anchor="bottom" id="Flutter Performance" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.49971864" visible="true" weight="0.32905984" />
@@ -529,7 +570,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
+        <state relative-caret-position="152">
           <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
           <folding>
             <element signature="e#0#70#0" expanded="true" />
@@ -539,7 +580,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1140">
+        <state relative-caret-position="1178">
           <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
           <folding>
             <element signature="e#0#48#0" expanded="true" />

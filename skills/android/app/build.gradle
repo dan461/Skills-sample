@@ -46,6 +46,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.file("app/skills_keystore")
+            storePassword System.getenv("APPCENTER_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("APPCENTER_KEY_ALIAS")
+            keyPassword System.getenv("APPCENTER_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
