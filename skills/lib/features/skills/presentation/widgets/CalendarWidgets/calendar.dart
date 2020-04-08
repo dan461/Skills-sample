@@ -420,6 +420,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
             },
             child: Icon(Icons.chevron_right, color: Colors.white,),
           ),
+          IconButton(icon: Icon(Icons.av_timer), onPressed: null)
         ],
       ),
     );
