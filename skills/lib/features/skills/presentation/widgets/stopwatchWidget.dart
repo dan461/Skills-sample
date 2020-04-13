@@ -50,6 +50,12 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     return string;
   }
 
+  String get _approxTimeString {
+    String minuteString = _nearestFive() == 0 ? '5' : _nearestFive().toString();
+    String prefix = _elapsedSeconds < 150 ? '<' : '~';
+    return '$prefix $minuteString min.';
+  }
+
   int _nearestFive() {
     int minutes = (_elapsedSeconds / 60).round();
     minutes = (minutes / 5).round() * 5;
@@ -89,7 +95,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: Text(_nearestFive().toString() + ' min.',
+          child: Text(_approxTimeString,
               style: TextStyle(fontSize: 18)),
         ),
         Padding(
@@ -100,8 +106,13 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     );
   }
 
+  Icon get startPauseIcon {
+
+  }
+
   Row _buttonsRow() {
     List<Widget> buttons = [
+      
       RaisedButton(
           child: Text(startPauseString),
           onPressed: () {
@@ -143,10 +154,14 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        RaisedButton(child: Text(CANCEL), onPressed: _onCancelTapped)
+        IconButton(icon: Icon(Icons.cancel), onPressed: _onCancelTapped)
+        // RaisedButton(child: Text(CANCEL), onPressed: _onCancelTapped)
       ],
     );
   }
+
+
+  // ACTIONS
 
   void _onResetTapped() async {
     await showDialog(
