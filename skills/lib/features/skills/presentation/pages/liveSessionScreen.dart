@@ -38,7 +38,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       builder: (context) => bloc,
       child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
         bloc: bloc,
-        listener: (context, state) { 
+        listener: (context, state) {
           // if (state is LiveSessionFinishedState) Navigator.of(context).pop();
         },
         child: Builder(builder: (BuildContext context) {
@@ -63,7 +63,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
                 builder: (context, state) {
               Widget body;
               if (state is LiveSessionScreenInitial ||
-                  state is LiveSessionSelectOrFinishState || state is LiveSessionFinishedState) {
+                  state is LiveSessionSelectOrFinishState ||
+                  state is LiveSessionFinishedState) {
                 body = _selectionView();
               } else if (state is LiveSessionReadyState) {
                 body = _stopwatchView();
@@ -170,7 +171,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ActiveSessionActivityList(
-          activities: bloc.activities, activityTappedCallback: _onActivityTapped),
+          activities: bloc.activities,
+          activityTappedCallback: _onActivityTapped),
     );
   }
 
@@ -194,7 +196,39 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     bloc.add(LiveSessionFinishedEvent());
   }
 
-  void _onCancelSession() {}
+  void _onCancelSession() {
+    if (bloc.activities.isNotEmpty) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Are you sure you want to cancel this session?'),
+              content: Text('Your completed activities will be lost.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(NO),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text(YES),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _cancelSession();
+                  },
+                )
+              ],
+            );
+          });
+    } else
+      _cancelSession();
+  }
+
+  void _cancelSession() {
+    // Navigator.of(context).pop();
+  }
 
   void _onActivityTapped(Activity activity) {}
 
@@ -225,7 +259,9 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   }
 
   void _onStopwatchFinished(int elapsedTime) {
-    bloc.add(LiveSessionActivityFinishedEvent(elapsedTime: elapsedTime));
+    setState(() {
+      bloc.add(LiveSessionActivityFinishedEvent(elapsedTime: elapsedTime));
+    });
   }
 
   void _onStopwatchCancelled() {
