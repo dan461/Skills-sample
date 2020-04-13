@@ -54,9 +54,15 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   String get _approxTimeString {
-    String minuteString = _nearestFive() == 0 ? '5' : _nearestFive().toString();
-    String prefix = _elapsedSeconds < 150 ? '<' : '~';
-    return '$prefix $minuteString min.';
+    String timeString = '0 min.';
+    if (_isRunning) {
+      String minuteString =
+          _nearestFive() == 0 ? '5' : _nearestFive().toString();
+      String prefix = _elapsedSeconds < 150 ? '<' : '~';
+      timeString = '$prefix $minuteString min.';
+    }
+
+    return timeString;
   }
 
   int _nearestFive() {
@@ -83,7 +89,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   Widget build(BuildContext context) {
     return ClipOval(
       child: Container(
-        color: Colors.grey[200],
+        color: Colors.green[400],
         height: 250,
         width: 250,
         child: Center(
@@ -171,10 +177,11 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   Widget _finishButton() {
+    bool enableFinish = (_isRunning || _canReset) && _elapsedSeconds > 150;
     return IconButton(
       iconSize: 60,
       icon: Icon(Icons.stop),
-      onPressed: _isRunning || _canReset ? _onFinishTapped : null,
+      onPressed: enableFinish ? _onFinishTapped : null,
     );
   }
 
@@ -204,17 +211,19 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
             title: Text(RESET_TIMER),
             actions: <Widget>[
               FlatButton(
+                child: Text(CANCEL),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(CANCEL),
+                
               ),
               FlatButton(
+                child: Text(RESET),
                 onPressed: () {
                   _reset();
                   Navigator.of(context).pop();
                 },
-                child: Text(RESET),
+                
               )
             ],
           );
