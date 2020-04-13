@@ -314,7 +314,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         children: <Widget>[
           FlatButton(
             // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
-            child: Text('Month', style: TextStyle(color: Colors.white),),
+            child: Text(
+              'Month',
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () {
               _modeSelected(CalendarMode.month);
             },
@@ -322,7 +325,8 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           FlatButton(
             // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
             child: Text(
-              'Week', style: TextStyle(color: Colors.white),
+              'Week',
+              style: TextStyle(color: Colors.white),
             ),
             onPressed: () {
               _modeSelected(CalendarMode.week);
@@ -330,7 +334,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           ),
           FlatButton(
             // shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black), borderRadius: BorderRadius.circular(10)),
-            child: Text('Day', style: TextStyle(color: Colors.white),),
+            child: Text(
+              'Day',
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () {
               _modeSelected(CalendarMode.day);
             },
@@ -403,7 +410,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
             onPressed: () {
               _onPeriodChange(-1);
             },
-            child: Icon(Icons.chevron_left, color: Colors.white,),
+            child: Icon(
+              Icons.chevron_left,
+              color: Colors.white,
+            ),
           ),
           Center(
             child: Text(
@@ -418,9 +428,11 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
             onPressed: () {
               _onPeriodChange(1);
             },
-            child: Icon(Icons.chevron_right, color: Colors.white,),
+            child: Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+            ),
           ),
-          IconButton(icon: Icon(Icons.av_timer), onPressed: null)
         ],
       ),
     );

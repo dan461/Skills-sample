@@ -40,7 +40,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
         bloc: bloc,
         listener: (context, state) {
-          // if (state is LiveSessionFinishedState) Navigator.of(context).pop();
+          if (state is LiveSessionFinishedState) Navigator.of(context).pop(true);
         },
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -228,7 +228,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   }
 
   void _cancelSession() {
-    // Navigator.of(context).pop();
+    Navigator.of(context).pop(false);
   }
 
   void _onActivityTapped(Activity activity) {}

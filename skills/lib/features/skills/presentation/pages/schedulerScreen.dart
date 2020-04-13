@@ -6,6 +6,7 @@ import 'package:skills/features/skills/presentation/bloc/schedulerScreen/schedul
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_event.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_state.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
+import 'package:skills/features/skills/presentation/pages/liveSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/sessionDataScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
@@ -66,6 +67,9 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             child: Column(
               children: <Widget>[
                 Expanded(flex: 2, child: body),
+                Row(children: <Widget>[
+                  FlatButton(onPressed: _showLiveSessionScreen, child: Text('Start Live Session'))
+                ],)
               ],
             ),
           );
@@ -95,6 +99,12 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
       return dataScreen;
     }));
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
+  }
+
+  void _showLiveSessionScreen() async {
+    bool refresh = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return LiveSessionScreen();
+    }));
   }
 
   void _dateSelected(DateTime selectedDate) {
