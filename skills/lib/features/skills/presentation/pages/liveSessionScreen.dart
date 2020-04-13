@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -44,7 +45,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Live Session'),
+              title: Text(LIVE_SESSION),
             ),
             persistentFooterButtons: <Widget>[
               Padding(
@@ -147,8 +148,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text('Mar. 28, 2020', style: Theme.of(context).textTheme.title),
-          Text('7:10 pm', style: Theme.of(context).textTheme.title)
+          Text(DateFormat.yMMMd().format(bloc.date), style: Theme.of(context).textTheme.title),
+          Text(bloc.startTime.format(context), style: Theme.of(context).textTheme.title)
         ],
       ),
     );
@@ -203,8 +204,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Are you sure you want to cancel this session?'),
-              content: Text('Your completed activities will be lost.'),
+              title: Text(CANCEL_LIVE_SESSION),
+              content: Text(ACTIVITIES_LOST),
               actions: <Widget>[
                 FlatButton(
                   child: Text(NO),

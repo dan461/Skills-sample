@@ -42,5 +42,8 @@ const String INCOMPLETE_ACTIVITIES = 'This Session has activities that are not c
 const String COMPLETE_SESSION_AND_ACTS_QRY = 'Complete this Session and all activities in it?';
 
 // LiveSession
+const String LIVE_SESSION = 'Live Session';
 const String SELECT_TO_START = 'Select a skill to get started.';
 const String SELECT_ANOTHER = 'Select your next skill';
+const String CANCEL_LIVE_SESSION = 'Are you sure you want to cancel this session?';
+const String ACTIVITIES_LOST = 'Your completed activities will be lost.';
