@@ -167,8 +167,11 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   }
 
   Widget _activitiesSection() {
-    return ActiveSessionActivityList(
-        activities: bloc.activities, activityTappedCallback: _onActivityTapped);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ActiveSessionActivityList(
+          activities: bloc.activities, activityTappedCallback: _onActivityTapped),
+    );
   }
 
   Widget _bottomButtonsRow() {
