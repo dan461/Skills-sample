@@ -45,8 +45,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/repos/skill_repo.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
+            <state relative-caret-position="361">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
               <folding>
                 <element signature="e#0#34#0" expanded="true" />
               </folding>
@@ -550,8 +550,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/repos/skill_repo.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
+        <state relative-caret-position="361">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
           </folding>
@@ -642,7 +642,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.12376237" />
+                <option value="0.2" />
               </list>
             </option>
           </splitter-proportions>
@@ -650,6 +650,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>Dart Packages</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
