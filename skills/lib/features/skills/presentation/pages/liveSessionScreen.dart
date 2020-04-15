@@ -40,26 +40,18 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
         bloc: bloc,
         listener: (context, state) {
-          if (state is LiveSessionFinishedState) Navigator.of(context).pop(true);
+          if (state is LiveSessionFinishedState)
+            Navigator.of(context).pop(true);
         },
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
               title: Text(LIVE_SESSION),
+              leading: _cancelButton(),
+              actions: <Widget>[
+                _saveButton(),
+              ],
             ),
-            persistentFooterButtons: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-                child: RaisedButton(
-                    child: Text(CANCEL), onPressed: _onCancelSession),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: RaisedButton(
-                    child: Text(DONE),
-                    onPressed: _saveEnabled ? _onFinishSession : null),
-              )
-            ],
             body: BlocBuilder<LiveSessionScreenBloc, LiveSessionScreenState>(
                 builder: (context, state) {
               Widget body;
@@ -67,8 +59,14 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
                   state is LiveSessionSelectOrFinishState ||
                   state is LiveSessionFinishedState) {
                 body = _selectionView();
-              } else if (state is LiveSessionReadyState) {
+              }
+              // ready to start stopwatch
+              else if (state is LiveSessionReadyState) {
                 body = _stopwatchView();
+              } else if (state is LiveSessionProcessingState) {
+                body = Center(
+                  child: CircularProgressIndicator(),
+                );
               }
 
               return body;
@@ -79,10 +77,35 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     );
   }
 
+  IconButton _cancelButton() {
+    return IconButton(
+        icon: Icon(
+          Icons.cancel,
+          color: Colors.white,
+          size: 35,
+        ),
+        onPressed: _onCancelSession);
+  }
+
+  FlatButton _saveButton() {
+    return FlatButton(
+      onPressed: _saveEnabled ? _onFinishSession : null,
+      child: Text(
+        SAVE,
+        style: TextStyle(fontSize: 18),
+      ),
+      textColor: Colors.white,
+    );
+  }
+
   Column _selectionView() {
     List<Widget> content = [
       _dateTimeRow(),
-      _selectionRow(),
+      _durationRow(),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _selectionSection(),
+      ),
       // _bottomButtonsRow()
     ];
 
@@ -99,6 +122,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   Column _stopwatchView() {
     List<Widget> content = [
       _dateTimeRow(),
+      _durationRow(),
       _skillInfoRow(),
       _timeTrackRow(),
       // _bottomButtonsRow()
@@ -142,27 +166,60 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     );
   }
 
+  Widget _durationRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          bloc.sessionDuration.toString() + ' ' + MINUTES_ABBR + ' completed',
+          style: Theme.of(context).textTheme.subhead,
+        )
+      ],
+    );
+  }
+
   Widget _dateTimeRow() {
     return Container(
       width: 250,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(DateFormat.yMMMd().format(bloc.date), style: Theme.of(context).textTheme.title),
-          Text(bloc.startTime.format(context), style: Theme.of(context).textTheme.title)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(DateFormat.yMMMd().format(bloc.date),
+                style: Theme.of(context).textTheme.title),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(bloc.startTime.format(context),
+                style: Theme.of(context).textTheme.title),
+          )
         ],
       ),
     );
   }
 
-  Widget _selectionRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _selectionSection() {
+    return Column(
       children: <Widget>[
-        FlatButton(
-          child: Text(_startButtonScreenText),
-          onPressed: _showSkillsList,
-          textColor: Colors.blueAccent,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              _startButtonScreenText,
+              style: Theme.of(context).textTheme.subhead,
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              child: Text(SELECT),
+              onPressed: _showSkillsList,
+              textColor: Colors.blueAccent,
+            ),
+          ],
         ),
       ],
     );

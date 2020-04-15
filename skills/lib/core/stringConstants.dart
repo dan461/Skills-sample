@@ -1,5 +1,6 @@
 const String DELETE = 'Delete';
 const String DONE = 'Done';
+const String SAVE = 'Save';
 const String CANCEL = 'Cancel';
 const String START = 'Start';
 const String STOP = 'Stop';
@@ -11,6 +12,7 @@ const String OK = 'OK';
 const String YES = 'Yes';
 const String NO = 'No';
 const String COMPLETE_IT = 'Complete it!';
+const String DURATION_COLON = 'Duration:';
 
 // Countdown timer
 const String RESET_TIMER = 'Reset the timer?';
@@ -47,3 +49,4 @@ const String SELECT_TO_START = 'Select a skill to get started.';
 const String SELECT_ANOTHER = 'Select your next skill';
 const String CANCEL_LIVE_SESSION = 'Are you sure you want to cancel this session?';
 const String ACTIVITIES_LOST = 'Your completed activities will be lost.';
+const String SELECT = 'Select';
