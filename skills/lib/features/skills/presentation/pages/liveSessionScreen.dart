@@ -5,6 +5,7 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
+import 'package:skills/features/skills/presentation/helpers/stopwatchTimer.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activeSessionActivitiesList.dart';
 import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';
@@ -20,15 +21,11 @@ class LiveSessionScreen extends StatefulWidget {
 
 class _LiveSessionScreenState extends State<LiveSessionScreen> {
   LiveSessionScreenBloc bloc;
-  StopwatchWidget stopwatchWidget;
 
   @override
   void initState() {
     bloc = locator<LiveSessionScreenBloc>();
     super.initState();
-    stopwatchWidget = StopwatchWidget(
-        finishedCallback: _onStopwatchFinished,
-        cancelCallback: _onStopwatchCancelled);
   }
 
   String get _startButtonScreenText {
@@ -38,6 +35,12 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   bool get _saveEnabled {
     return bloc.activities.isNotEmpty;
   }
+
+  bool get _cancelEnabled {
+    return !_stopwatchActive;
+  }
+
+  bool _stopwatchActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +88,13 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
 
   IconButton _cancelButton() {
     return IconButton(
+        disabledColor: Colors.grey,
         icon: Icon(
           Icons.cancel,
-          color: Colors.white,
+          color: _cancelEnabled ? Colors.white : Colors.grey,
           size: 35,
         ),
-        onPressed: _onCancelSession);
+        onPressed: _cancelEnabled ? _onCancelSession : null);
   }
 
   FlatButton _saveButton() {
@@ -129,7 +133,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     List<Widget> content = [
       _dateTimeRow(),
       _durationRow(),
-      _skillInfoRow(),
+      _skillInfoSection(),
       _timeTrackRow(),
       // _bottomButtonsRow()
     ];
@@ -144,14 +148,28 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     );
   }
 
-  Widget _skillInfoRow() {
+  Widget _skillInfoSection() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: <Widget>[
-          Text(bloc.selectedSkill.name,
-              style: Theme.of(context).textTheme.headline)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(bloc.selectedSkill.name,
+                  style: Theme.of(context).textTheme.headline)
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(bloc.selectedSkill.source,
+                    style: Theme.of(context).textTheme.subhead)
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -163,7 +181,11 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: stopwatchWidget,
+          child: StopwatchWidget(
+            finishedCallback: _onStopwatchFinished,
+            cancelCallback: _onStopwatchCancelled,
+            activeStateCallback: _onStopwatchActiveStateChange,
+          ),
         )
       ],
     );
@@ -237,20 +259,10 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     );
   }
 
-  Widget _bottomButtonsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-          child: RaisedButton(child: Text(CANCEL), onPressed: _onCancelSession),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-          child: RaisedButton(child: Text(DONE), onPressed: _onFinishSession),
-        )
-      ],
-    );
+  void _onStopwatchActiveStateChange(bool isActive) {
+    setState(() {
+      _stopwatchActive = isActive;
+    });
   }
 
   void _onFinishSession() {
@@ -327,5 +339,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
 
   void _onStopwatchCancelled() {
     bloc.add(LiveSessionActivityCancelledEvent());
+    setState(() {
+      _stopwatchActive = false;
+    });
   }
 }

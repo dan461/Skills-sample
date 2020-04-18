@@ -2,28 +2,36 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:skills/core/stringConstants.dart';
+import 'package:skills/features/skills/presentation/helpers/stopwatchTimer.dart';
 
 typedef StopwatchFinishedCallback(int elapsedTime);
 typedef StopwatchCancelCallback();
+typedef StopwatchActiveStateCallback(bool isActive);
 
 class StopwatchWidget extends StatefulWidget {
   final StopwatchFinishedCallback finishedCallback;
   final StopwatchCancelCallback cancelCallback;
+  final StopwatchActiveStateCallback activeStateCallback;
 
   const StopwatchWidget(
-      {Key key, @required this.finishedCallback, @required this.cancelCallback})
+      {Key key,
+      @required this.finishedCallback,
+      @required this.cancelCallback,
+      @required this.activeStateCallback})
       : super(key: key);
 
   @override
-  _StopwatchWidgetState createState() =>
-      _StopwatchWidgetState(finishedCallback, cancelCallback);
+  StopwatchWidgetState createState() => StopwatchWidgetState(
+      finishedCallback, cancelCallback, activeStateCallback);
 }
 
-class _StopwatchWidgetState extends State<StopwatchWidget> {
+class StopwatchWidgetState extends State<StopwatchWidget> {
   final StopwatchFinishedCallback finishedCallback;
   final StopwatchCancelCallback cancelCallback;
+  final StopwatchActiveStateCallback activeStateCallback;
 
-  _StopwatchWidgetState(this.finishedCallback, this.cancelCallback);
+  StopwatchWidgetState(
+      this.finishedCallback, this.cancelCallback, this.activeStateCallback);
 
   Timer _timer;
   String _startPauseString = START;
@@ -56,7 +64,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
 
   String get _approxTimeString {
     String timeString = '0 min.';
-    if (_isRunning) {
+    if (_elapsedSeconds > 0) {
       String minuteString =
           _nearestFive() == 0 ? '5' : _nearestFive().toString();
       String prefix = _elapsedSeconds < 150 ? '<' : '~';
@@ -73,10 +81,10 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   bool get _canReset {
-    return !_isRunning && _elapsedSeconds > 0;
+    return !isRunning && _elapsedSeconds > 0;
   }
 
-  bool get _isRunning {
+  bool get isRunning {
     return _timer != null && _timer.isActive;
   }
 
@@ -90,7 +98,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[900],
-      height: 250,
+      height: 230,
       width: 300,
       child: Center(
         child: Column(
@@ -100,15 +108,15 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
-                  child:
-                      Text(_approxTimeString, style: TextStyle(fontSize: 24, color: Colors.white)),
+                  child: Text(_approxTimeString,
+                      style: TextStyle(fontSize: 24, color: Colors.white)),
                 ),
               ],
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child:
-                  Text('($_elapsedTimeString)', style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: Text('($_elapsedTimeString)',
+                  style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -132,15 +140,16 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
 
   Widget _startPauseButton() {
     return RaisedButton(
-        child: Text(_startPauseString),
-        textColor: Colors.white,
-        onPressed: _onStartPauseTap,
-        color: Colors.grey[600],);
+      child: Text(_startPauseString),
+      textColor: Colors.white,
+      onPressed: _onStartPauseTap,
+      color: Colors.grey[600],
+    );
   }
 
   Widget _resetButton() {
     return IconButton(
-        iconSize: 60,
+        iconSize: 50,
         icon: Icon(
           Icons.replay,
           color: Colors.white,
@@ -149,9 +158,10 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   Widget _stopButton() {
-    bool enableFinish = (_isRunning || _canReset) && _elapsedSeconds > 150;
+    bool enableFinish = (isRunning || _canReset) && _elapsedSeconds > 150;
     return RaisedButton(
       textColor: Colors.white,
+      disabledColor: Colors.grey[800],
       color: Colors.grey[600],
       child: Text(_stopResetString),
       onPressed: enableFinish ? _onStopTapped : null,
@@ -163,7 +173,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         IconButton(
-            iconSize: 60,
+            iconSize: 50,
             icon: Icon(
               Icons.cancel,
               color: Colors.red,
@@ -202,7 +212,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   void _onCancelTapped() async {
-    if (_isRunning || _elapsedSeconds > 0) {
+    if (isRunning || _elapsedSeconds > 0) {
       _pause();
       await showDialog(
           context: context,
@@ -262,6 +272,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   finishedCallback(_nearestFive());
+                  activeStateCallback(false);
                 },
                 child: Text(FINISH),
               )
@@ -271,14 +282,14 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   void _onStartPauseTap() {
-    if (_isRunning) {
+    if (isRunning) {
       _pause();
     } else
       _start();
   }
 
   void _pause() {
-    if (_isRunning) {
+    if (isRunning) {
       _timer.cancel();
       setState(() {
         _startPauseString = RESUME;
@@ -290,7 +301,9 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     setState(() {
       _startPauseString = PAUSE;
     });
+
     _timer = Timer.periodic(const Duration(seconds: 1), _tick);
+    activeStateCallback(true);
   }
 
   void _tick(Timer _timer) {
@@ -302,6 +315,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   void _reset() {
     setState(() {
       _elapsedSeconds = 0;
+      activeStateCallback(false);
       startPauseIcon = Icon(
         Icons.play_arrow,
       );
