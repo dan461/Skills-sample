@@ -12,17 +12,23 @@ import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart
 import '../../../../service_locator.dart';
 
 class LiveSessionScreen extends StatefulWidget {
+  const LiveSessionScreen({Key key}) : super(key: key);
+
   @override
   _LiveSessionScreenState createState() => _LiveSessionScreenState();
 }
 
 class _LiveSessionScreenState extends State<LiveSessionScreen> {
   LiveSessionScreenBloc bloc;
+  StopwatchWidget stopwatchWidget;
 
   @override
   void initState() {
     bloc = locator<LiveSessionScreenBloc>();
     super.initState();
+    stopwatchWidget = StopwatchWidget(
+        finishedCallback: _onStopwatchFinished,
+        cancelCallback: _onStopwatchCancelled);
   }
 
   String get _startButtonScreenText {
@@ -157,10 +163,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: StopwatchWidget(
-            finishedCallback: _onStopwatchFinished,
-            cancelCallback: _onStopwatchCancelled,
-          ),
+          child: stopwatchWidget,
         )
       ],
     );
