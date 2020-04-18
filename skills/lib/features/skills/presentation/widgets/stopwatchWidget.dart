@@ -26,7 +26,8 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   _StopwatchWidgetState(this.finishedCallback, this.cancelCallback);
 
   Timer _timer;
-  String startPauseString = START;
+  String _startPauseString = START;
+  String _stopResetString = STOP;
   Icon startPauseIcon = Icon(
     Icons.play_arrow,
   );
@@ -87,72 +88,41 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipOval(
-      child: Container(
-        color: Colors.green[400],
-        height: 250,
-        width: 250,
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child:
-                        Text(_approxTimeString, style: TextStyle(fontSize: 24)),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text('($_elapsedTimeString)',
-                    style: TextStyle(fontSize: 16)),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _buttonsRow(),
-              ),
-              _cancelRow()
-            ],
-          ),
+    return Container(
+      color: Colors.grey[900],
+      height: 250,
+      width: 300,
+      child: Center(
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child:
+                      Text(_approxTimeString, style: TextStyle(fontSize: 24, color: Colors.white)),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child:
+                  Text('($_elapsedTimeString)', style: TextStyle(fontSize: 16, color: Colors.white)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _buttonsRow(),
+            ),
+            _cancelRow()
+          ],
         ),
       ),
     );
   }
 
-  // Row _timeIndicatorRow() {
-  //   return Row(
-  //     children: <Widget>[
-  //       Padding(
-  //         padding: const EdgeInsets.only(right: 10),
-  //         child: Text(_approxTimeString, style: TextStyle(fontSize: 24)),
-  //       ),
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 10),
-  //         child: Text('($_elapsedTimeString)', style: TextStyle(fontSize: 16)),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Row _buttonsRow() {
-    List<Widget> buttons = [
-      _startPauseButton(),
-      _resetButton(),
-      _finishButton()
-    ];
-
-    // if (_isRunning) {
-    //   buttons.add(_finishButton());
-    // }
-
-    // if (_canReset) {
-    //   buttons.add(IconButton(
-    //       icon: Icon(Icons.replay, size: 60), onPressed: _onResetTapped));
-    //   buttons.add(_finishButton());
-    // }
+    List<Widget> buttons = [_startPauseButton(), _resetButton(), _stopButton()];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -161,27 +131,30 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   Widget _startPauseButton() {
-    return IconButton(
-        iconSize: 60,
-        icon: startPauseIcon,
-        onPressed: () {
-          _onStartPauseTap();
-        });
+    return RaisedButton(
+        child: Text(_startPauseString),
+        textColor: Colors.white,
+        onPressed: _onStartPauseTap,
+        color: Colors.grey[600],);
   }
 
   Widget _resetButton() {
     return IconButton(
         iconSize: 60,
-        icon: Icon(Icons.replay),
+        icon: Icon(
+          Icons.replay,
+          color: Colors.white,
+        ),
         onPressed: _canReset ? _onResetTapped : null);
   }
 
-  Widget _finishButton() {
+  Widget _stopButton() {
     bool enableFinish = (_isRunning || _canReset) && _elapsedSeconds > 150;
-    return IconButton(
-      iconSize: 60,
-      icon: Icon(Icons.stop),
-      onPressed: enableFinish ? _onFinishTapped : null,
+    return RaisedButton(
+      textColor: Colors.white,
+      color: Colors.grey[600],
+      child: Text(_stopResetString),
+      onPressed: enableFinish ? _onStopTapped : null,
     );
   }
 
@@ -215,7 +188,6 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                
               ),
               FlatButton(
                 child: Text(RESET),
@@ -223,7 +195,6 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
                   _reset();
                   Navigator.of(context).pop();
                 },
-                
               )
             ],
           );
@@ -267,7 +238,7 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     cancelCallback();
   }
 
-  void _onFinishTapped() async {
+  void _onStopTapped() async {
     _pause();
     _showFinishTimerAlert();
   }
@@ -300,9 +271,9 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
   }
 
   void _onStartPauseTap() {
-    if (_isRunning)
+    if (_isRunning) {
       _pause();
-    else
+    } else
       _start();
   }
 
@@ -310,18 +281,14 @@ class _StopwatchWidgetState extends State<StopwatchWidget> {
     if (_isRunning) {
       _timer.cancel();
       setState(() {
-        startPauseIcon = Icon(
-          Icons.play_arrow,
-        );
+        _startPauseString = RESUME;
       });
     }
   }
 
   void _start() {
     setState(() {
-      startPauseIcon = Icon(
-        Icons.pause,
-      );
+      _startPauseString = PAUSE;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), _tick);
   }
