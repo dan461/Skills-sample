@@ -97,9 +97,9 @@ class StopwatchWidgetState extends State<StopwatchWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[900],
+      color: Colors.grey[500],
       height: 230,
-      width: 300,
+      width: MediaQuery.of(context).size.width,
       child: Center(
         child: Column(
           children: <Widget>[

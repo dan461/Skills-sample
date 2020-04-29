@@ -180,7 +180,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(top: 8.0),
           child: StopwatchWidget(
             finishedCallback: _onStopwatchFinished,
             cancelCallback: _onStopwatchCancelled,
@@ -252,7 +252,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
 
   Widget _activitiesSection() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(top: 8.0),
       child: ActiveSessionActivityList(
           activities: bloc.activities,
           activityTappedCallback: _onActivityTapped),
