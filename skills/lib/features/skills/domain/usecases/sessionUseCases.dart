@@ -104,3 +104,15 @@ class DeleteSessionWithId extends UseCase<int, SessionDeleteParams> {
     return await repo.deleteSessionById(params.sessionId);
   }
 }
+
+class SaveLiveSessionWithActivities extends UseCase<int, LiveSessionParams> {
+  final SessionRepository repo;
+
+  SaveLiveSessionWithActivities(this.repo);
+
+  @override
+  Future<Either<Failure, int>> call(LiveSessionParams params) async {
+    return await repo.saveLiveSessionWithActivities(
+        params.session, params.activities);
+  }
+}

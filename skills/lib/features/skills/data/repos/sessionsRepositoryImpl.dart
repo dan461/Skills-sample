@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/features/skills/data/datasources/skillsLocalDataSource.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/repos/session_repo.dart';
 
@@ -27,6 +28,13 @@ class SessionsRepositoryImpl extends SessionRepository {
   @override
   Future<Either<Failure, Session>> insertNewSession(Session session) async {
     return Right(await localDataSource.insertNewSession(session));
+  }
+
+  @override
+  Future<Either<Failure, int>> saveLiveSessionWithActivities(
+      Session session, List<Activity> activities) async {
+    return Right(await localDataSource.saveLiveSessionWithActivities(
+        session, activities));
   }
 
   @override
@@ -65,6 +73,4 @@ class SessionsRepositoryImpl extends SessionRepository {
     return Right(
         await localDataSource.completeSessionAndEvents(sessionId, date));
   }
-
-  
 }

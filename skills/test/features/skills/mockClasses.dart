@@ -48,6 +48,9 @@ class MockGetAllSkillsUC extends Mock implements GetAllSkills {}
 
 class MockGetSkillById extends Mock implements GetSkillById {}
 
+class MockSaveLiveSessionWithActivities extends Mock
+    implements SaveLiveSessionWithActivities {}
+
 class MockInsertNewSessionUC extends Mock implements InsertNewSession {}
 
 class MockGetSessionWithIdUC extends Mock implements GetSessionWithId {}

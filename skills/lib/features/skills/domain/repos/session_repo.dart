@@ -1,11 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:skills/core/error/failures.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
 abstract class SessionRepository {
   Future<Either<Failure, Session>> getSessionById(int id);
   Future<Either<Failure, Session>> getSessionAndActivities(int id);
   Future<Either<Failure, Session>> insertNewSession(Session session);
+  Future<Either<Failure, int>> saveLiveSessionWithActivities(
+      Session session, List<Activity> activities);
   Future<Either<Failure, int>> updateSession(
       Map<String, dynamic> changeMap, int id);
   Future<Either<Failure, Session>> updateAndRefreshSession(

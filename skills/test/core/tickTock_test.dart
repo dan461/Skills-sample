@@ -73,12 +73,55 @@ void main() {
   });
 
   group('TimeOfDay helpers', () {
-    test('', () async {
-      TimeOfDay t1 = TimeOfDay(hour: 12, minute: 30);
-      int t1int = TickTock.timeToInt(t1);
-      TimeOfDay t2 = TickTock.timeFromInt(t1int);
-      bool right = TickTock.timesAreEqual(t1, t2);
-      expect(true, right);
+    test('test timeFromInt returns correct time for given integer', () async {
+      TimeOfDay matcher = TimeOfDay(hour: 12, minute: 30);
+      int t1int = TickTock.timeToInt(matcher);
+      TimeOfDay result = TickTock.timeFromInt(t1int);
+
+      expect(result, equals(matcher));
+    });
+
+    test(
+        'test roundTimeOfDay returns a original time when that time is a multiple of 5',
+        () {
+      TimeOfDay testTime = TimeOfDay(hour: 12, minute: 15);
+      TimeOfDay result = TickTock.roundTimeOfDay(testTime);
+      expect(result, equals(testTime));
+    });
+
+    test(
+        'test roundTimeOfDay returns a time rounded  down to nearest minute that is a multiple of 5',
+        () {
+      TimeOfDay testTime = TimeOfDay(hour: 12, minute: 13);
+      TimeOfDay matcher = TimeOfDay(hour: 12, minute: 10);
+      TimeOfDay result = TickTock.roundTimeOfDay(testTime);
+      expect(result, equals(matcher));
+    });
+
+    test(
+        'test roundTimeOfDay returns a time rounded up to nearest minute that is a multiple of 5',
+        () {
+      TimeOfDay testTime = TimeOfDay(hour: 12, minute: 14);
+      TimeOfDay matcher = TimeOfDay(hour: 12, minute: 15);
+      TimeOfDay result = TickTock.roundTimeOfDay(testTime);
+      expect(result, equals(matcher));
+    });
+
+    test(
+        'test roundTimeOfDay returns correct rounded time with next hour value',
+        () {
+      TimeOfDay testTime = TimeOfDay(hour: 11, minute: 58);
+      TimeOfDay matcher = TimeOfDay(hour: 12, minute: 0);
+      TimeOfDay result = TickTock.roundTimeOfDay(testTime);
+      expect(result, equals(matcher));
+    });
+
+    test('test roundTimeOfDay returns correct time rounded to closest hour',
+        () {
+      TimeOfDay testTime = TimeOfDay(hour: 12, minute: 03);
+      TimeOfDay matcher = TimeOfDay(hour: 12, minute: 0);
+      TimeOfDay result = TickTock.roundTimeOfDay(testTime);
+      expect(result, equals(matcher));
     });
   });
 }

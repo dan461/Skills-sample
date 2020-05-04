@@ -5,11 +5,11 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/bloc/session_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/countdown.dart';
-import 'package:skills/features/skills/presentation/widgets/stopwatch.dart';
+import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';
 
 class ActiveSessionScreen extends StatefulWidget {
   final ActiveSessionBloc bloc;

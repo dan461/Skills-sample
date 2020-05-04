@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/features/skills/presentation/pages/liveSessionScreen.dart';
 import 'skillsScreen.dart';
 import 'schedulerScreen.dart';
 // import 'dataTester.dart';
@@ -15,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static List<Widget> _routes = <Widget>[
     SkillsScreen(),
     SchedulerScreen(),
+    
   ];
 
   void _itemTapped(int index) {
@@ -38,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icon(Icons.schedule),
           title: Text('Sched'),
         ),
+        
+
       ], currentIndex: _selectedIndex, onTap: _itemTapped),
     );
   }

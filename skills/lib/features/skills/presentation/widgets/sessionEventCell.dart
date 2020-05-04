@@ -3,11 +3,11 @@ import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
-typedef EventCellCallback(Activity activity);
+typedef ActivityCellCallback(Activity activity);
 
 class SessionEventCell extends StatelessWidget {
   final Activity activity;
-  final EventCellCallback callback;
+  final ActivityCellCallback callback;
   // final SkillEvent event;
 
   const SessionEventCell({Key key, @required this.activity, @required this.callback})

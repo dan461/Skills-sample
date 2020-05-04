@@ -112,6 +112,13 @@ class SessionDeleteParams extends Params {
   List<Object> get props => [sessionId];
 }
 
+class LiveSessionParams extends Params {
+  final Session session;
+  final List<Activity> activities;
+
+  LiveSessionParams({@required this.session, @required this.activities});
+}
+
 class ActivityInsertOrUpdateParams extends Params {
   final Activity activity;
 
@@ -136,8 +143,8 @@ class ActivityCompleteParams extends Params {
   final int elapsedTime;
   final int skillId;
 
-
-  ActivityCompleteParams(this.activityId, this.date, this.elapsedTime, this.skillId);
+  ActivityCompleteParams(
+      this.activityId, this.date, this.elapsedTime, this.skillId);
   @override
   List<Object> get props => [activityId, date, elapsedTime, skillId];
 }

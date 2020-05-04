@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 version: "Apple Swift version 5.1.2 (swiftlang-1100.0.278 clang-1100.0.33.9)"
 options: "fb26454308aa06a5cf3d768688a72346"
 build_time: [1585595974, 139043000]
+=======
+version: "Apple Swift version 5.2 (swiftlang-1103.0.32.1 clang-1103.0.32.29)"
+options: "80b62b48add9dbea9d16e532817d668c"
+build_time: [1588181800, 388281000]
+>>>>>>> feature/liveSession
 inputs:
   "/Users/danshriver/Developer/Skills_flutter/skills/ios/Runner/AppDelegate.swift": [1577819085, 809396849]

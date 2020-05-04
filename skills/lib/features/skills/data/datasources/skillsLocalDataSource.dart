@@ -30,6 +30,7 @@ abstract class SkillsLocalDataSource {
   Future<int> addGoalToSkill(int skillId, int goalId);
   // Sessions
   Future<Session> insertNewSession(Session session);
+  Future<int> saveLiveSessionWithActivities(Session session, List<Activity> activities);
   Future<int> updateSession(Map<String, dynamic> changeMap, int id);
   Future<Session> updateAndRefreshSession(
       Map<String, dynamic> changeMap, int id);
@@ -382,6 +383,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return newSession;
   }
 
+@override
+  Future<int> saveLiveSessionWithActivities(Session session, List<Activity> activities) async {
+    Session newSession = await insertNewSession(session);
+    await insertActivities(activities, newSession.sessionId);
+
+    return newSession.sessionId;
+  }
+
   Future<int> updateSession(Map<String, dynamic> changeMap, int id) async {
     final Database db = await database;
     int response = await db.update(sessionsTable, changeMap,
@@ -524,7 +533,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return sessionsList;
   }
 
-  // ******* EVENTS *********
+  // ******* ACTIVITIES *********
   @override
   Future<int> deleteActivityById(int id) async {
     final Database db = await database;
@@ -563,17 +572,17 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   @override
   Future<List<int>> insertActivities(
-      List<Activity> events, int newSessionId) async {
+      List<Activity> activities, int newSessionId) async {
     final Database db = await database;
     var insertBatch = db.batch();
-    for (var event in events) {
+    for (var activity in activities) {
       final model = ActivityModel(
-          skillId: event.skillId,
+          skillId: activity.skillId,
           sessionId: newSessionId,
-          date: event.date,
-          duration: event.duration,
-          isComplete: event.isComplete,
-          skillString: event.skillString);
+          date: activity.date,
+          duration: activity.duration,
+          isComplete: activity.isComplete,
+          skillString: activity.skillString);
       insertBatch.insert(skillEventsTable, model.toMap());
     }
     final resultsList = await insertBatch.commit(noResult: true);
