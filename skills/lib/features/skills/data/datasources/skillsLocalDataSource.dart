@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/data/models/activityModel.dart';
@@ -12,6 +13,7 @@ import 'package:synchronized/synchronized.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
 
 abstract class SkillsLocalDataSource {
   // Throws [CacheException]
@@ -96,8 +98,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         if (needsMigration) {
           await _addGoalTextToGoals();
           await _dropGoalTextFromSkills();
-          await _addNotesToActivityTable();
           await _renameSkillEventsTableToActivities();
+          await _addNotesToActivityTable();
+          
         }
       });
     }
@@ -188,17 +191,24 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   Future<void> _renameSkillEventsTableToActivities() async {
     final Database db = await database;
-    try {
+    bool tableExists = await _tableExistsInDatabase('skillEvents');
+    if(tableExists){
       await db.execute('ALTER TABLE skillEvents RENAME TO $activitiesTable');
-    } on Exception catch (_){
-      return;
     }
-    
+  }
+
+  Future<bool> _tableExistsInDatabase(String tableName)async {
+    final Database db = await database;
+    List result = await db.query('sqlite_master', columns: ['name'], where: 'type = ? AND name = ?', whereArgs: ['table', tableName]);
+
+    if(result.isNotEmpty && result.first['name'] == tableName){
+      return true;
+    } else return false;
   }
 
   Future<void> _addNotesToActivityTable() async {
     final Database db = await database;
-    bool hasNotesColumn = await _checkTableForColumn('skillEvents', 'notes');
+    bool hasNotesColumn = await _checkTableForColumn(activitiesTable, 'notes');
     if (hasNotesColumn == false){
       await db.execute('ALTER TABLE skillEvents ADD COLUMN notes text');
     }
