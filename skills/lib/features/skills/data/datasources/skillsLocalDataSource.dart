@@ -592,7 +592,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         date: event.date,
         duration: event.duration,
         isComplete: event.isComplete,
-        skillString: event.skillString);
+        skillString: event.skillString,
+        notes: event.notes);
     int id = await db.insert(activitiesTable, model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
 
@@ -612,7 +613,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
           date: activity.date,
           duration: activity.duration,
           isComplete: activity.isComplete,
-          skillString: activity.skillString);
+          skillString: activity.skillString,
+          notes: activity.notes);
       insertBatch.insert(activitiesTable, model.toMap());
     }
     final resultsList = await insertBatch.commit(noResult: true);

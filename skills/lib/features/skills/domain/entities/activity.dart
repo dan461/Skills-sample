@@ -13,6 +13,7 @@ class Activity extends Equatable {
   // there are still past events for that Skill that need to be shown in Sessions,
   // or maybe don't actually delete Skills, just make them inactive
   final String skillString;
+  final String notes;
   Skill skill;
 
   Activity(
@@ -23,9 +24,20 @@ class Activity extends Equatable {
       @required this.duration,
       @required this.isComplete,
       @required this.skillString,
-      this.skill}) : super();
+      this.notes,
+      this.skill})
+      : super();
 
   @override
-  List<Object> get props =>
-      [eventId, skillId, sessionId, date, duration, isComplete, skillString, skill];
+  List<Object> get props => [
+        eventId,
+        skillId,
+        sessionId,
+        date,
+        duration,
+        isComplete,
+        skillString,
+        notes,
+        skill
+      ];
 }

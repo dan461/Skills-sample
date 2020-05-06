@@ -14,7 +14,8 @@ void main() {
         date: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
         duration: 60,
         isComplete: false,
-        skillString: 'test');
+        skillString: 'test',
+        notes: '');
 
     testMap = {
       'eventId': 1,
@@ -23,7 +24,8 @@ void main() {
       'date': 0,
       'duration': 60,
       'isComplete': 0,
-      'skillString': "test"
+      'skillString': "test",
+      'notes': ''
     };
   });
 

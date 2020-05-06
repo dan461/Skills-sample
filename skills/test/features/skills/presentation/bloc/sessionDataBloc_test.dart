@@ -65,7 +65,9 @@ void main() {
         duration: 10,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
-        skillString: 'test');
+        skillString: 'test',
+        notes: ''
+        );
   });
 
   test('test that availableTime is correct', () async {
@@ -92,12 +94,13 @@ void main() {
         duration: 20,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
-        skillString: testSkill.name);
+        skillString: testSkill.name,
+        notes: 'note');
     List<Activity> activities = [newTestActivity];
     sut.session = testSession;
     sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
 
-    sut.createActivity(20, testSkill, newTestActivity.date);
+    sut.createActivity(20, 'note',testSkill, newTestActivity.date);
     await untilCalled(mockInsertActivitiesForSessionUC(
         ActivityMultiInsertParams(activities: activities, newSessionId: 1)));
     verify(mockInsertActivitiesForSessionUC(
@@ -111,7 +114,8 @@ void main() {
         duration: 10,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: true,
-        skillString: 'test');
+        skillString: 'test',
+        notes: 'notes');
 
     var testActivitiesList = [testActivity, testActivity2];
     sut.activitiesForSession = testActivitiesList;
@@ -344,7 +348,8 @@ void main() {
         duration: 1,
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
-        skillString: 'test');
+        skillString: 'test',
+        notes: '');
     List<Activity> events = [newTestEvent];
     List<int> resultsList = [1];
 
@@ -419,7 +424,8 @@ void main() {
           duration: 1,
           date: DateTime.fromMillisecondsSinceEpoch(0),
           isComplete: false,
-          skillString: 'test');
+          skillString: 'test',
+          notes: '');
       List<Activity> events = [newTestEvent];
       List<int> resultsList = [1];
 

@@ -62,7 +62,8 @@ void main() {
           date: DateTime.fromMillisecondsSinceEpoch(0),
           duration: 30,
           isComplete: false,
-          skillString: 'test');
+          skillString: 'test',
+          );
       List<Activity> testActivities = [testActivity];
       when(mockLocalDataSource.saveLiveSessionWithActivities(
               testSession, testActivities))

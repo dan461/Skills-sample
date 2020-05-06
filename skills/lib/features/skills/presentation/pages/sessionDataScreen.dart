@@ -317,7 +317,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
             );
           });
     } else
-      bloc.createActivity(duration, skill, bloc.sessionDate);
+      bloc.createActivity(duration, notesString, skill, bloc.sessionDate);
   }
 
   void _cancelActivityTapped() {

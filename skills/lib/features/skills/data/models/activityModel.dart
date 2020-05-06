@@ -9,7 +9,8 @@ class ActivityModel extends Activity {
       @required DateTime date,
       @required int duration,
       @required bool isComplete,
-      @required String skillString})
+      @required String skillString,
+      String notes})
       : super(
             eventId: eventId,
             skillId: skillId,
@@ -17,7 +18,8 @@ class ActivityModel extends Activity {
             date: date,
             duration: duration,
             isComplete: isComplete,
-            skillString: skillString);
+            skillString: skillString,
+            notes: notes);
 
   factory ActivityModel.fromMap(Map<String, dynamic> map) {
     return ActivityModel(
@@ -28,6 +30,7 @@ class ActivityModel extends Activity {
       duration: map['duration'],
       isComplete: map['isComplete'] == 0 ? false : true,
       skillString: map['skillString'],
+      notes: map['notes']
     );
   }
 
@@ -39,10 +42,11 @@ class ActivityModel extends Activity {
       'date': date.millisecondsSinceEpoch,
       'duration': duration,
       'isComplete': isComplete,
-      'skillString': skillString
+      'skillString': skillString,
+      'notes' : notes == null ? '' : notes
     };
   }
 
   List<Object> get props =>
-      [eventId, skillId, sessionId, date, duration, isComplete, skillString];
+      [eventId, skillId, sessionId, date, duration, isComplete, skillString, notes];
 }
