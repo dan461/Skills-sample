@@ -210,7 +210,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     final Database db = await database;
     bool hasNotesColumn = await _checkTableForColumn(activitiesTable, 'notes');
     if (hasNotesColumn == false){
-      await db.execute('ALTER TABLE skillEvents ADD COLUMN notes text');
+      await db.execute('ALTER TABLE $activitiesTable ADD COLUMN notes text');
     }
   }
 
