@@ -78,7 +78,7 @@ class SessionEventCell extends StatelessWidget {
 
   Widget _notesSectionBuilder(BuildContext context) {
     Widget section;
-    if (activity.notes.isEmpty || activity.notes == null) {
+    if (activity.notes == null || activity.notes.isEmpty) {
       section = SizedBox();
     } else {
       section = Row(

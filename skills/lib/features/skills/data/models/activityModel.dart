@@ -30,7 +30,7 @@ class ActivityModel extends Activity {
       duration: map['duration'],
       isComplete: map['isComplete'] == 0 ? false : true,
       skillString: map['skillString'],
-      notes: map['notes']
+      notes: map['notes'] == null ? '' : map['notes']
     );
   }
 

@@ -113,7 +113,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
   Widget _notesSection(Activity activity){
     Widget section;
-    if(activity.notes.isEmpty || activity.notes == null){
+    if(activity.notes == null || activity.notes.isEmpty){
       section = SizedBox();
     } else {
       section = Padding(
