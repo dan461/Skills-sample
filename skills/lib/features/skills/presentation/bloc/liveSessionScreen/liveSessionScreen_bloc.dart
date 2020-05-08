@@ -48,6 +48,7 @@ class LiveSessionScreenBloc
           duration: event.elapsedTime,
           isComplete: true,
           skillString: selectedSkill.name,
+          notes: event.notes,
           skill: selectedSkill);
 
       activities.add(activity);

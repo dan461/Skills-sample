@@ -30,14 +30,15 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     return time;
   }
 
-  void createActivity(int activityDuration, Skill skill, DateTime date) {
+  void createActivity(int activityDuration, String notes, Skill skill, DateTime date) {
     final newActivity = Activity(
         skillId: skill.skillId,
         sessionId: session.sessionId,
         date: date,
         duration: activityDuration,
         isComplete: false,
-        skillString: skill.name);
+        skillString: skill.name,
+        notes: notes);
     add(InsertActivityForSessionEvent(newActivity));
   }
 

@@ -102,17 +102,28 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-              'Notes: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'),
-        ),
+        _notesSection(activity),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: _timeTrackerRow(),
         )
       ],
     );
+  }
+
+  Widget _notesSection(Activity activity){
+    Widget section;
+    if(activity.notes == null || activity.notes.isEmpty){
+      section = SizedBox();
+    } else {
+      section = Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+              'Notes: ' + activity.notes),
+        );
+    }
+
+    return section;
   }
 
   Column _chooseActivityViewBuilder(int duration, List<Activity> activities) {

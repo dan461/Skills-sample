@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
-
-typedef AddEventCallback(int eventDuration, Skill skill);
+typedef AddEventCallback(int eventDuration, Skill skill, String notesString);
 typedef CancelEventCreateCallback();
 
 class EventCreator extends StatefulWidget {
@@ -31,6 +30,7 @@ class _EventCreatorState extends State<EventCreator> {
   String _goalText;
 
   TextEditingController _eventDurationTextControl = TextEditingController();
+  TextEditingController _notesController = TextEditingController();
   bool _addButtonEnabled = false;
 
   _EventCreatorState(
@@ -103,7 +103,6 @@ class _EventCreatorState extends State<EventCreator> {
                       Expanded(
                         child: TextField(
                           autofocus: true,
-                          
                           keyboardType: TextInputType.number,
                           controller: _eventDurationTextControl,
                           onChanged: (_) {
@@ -119,6 +118,13 @@ class _EventCreatorState extends State<EventCreator> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[Text(_goalText)],
+            ),
+            TextField(
+              controller: _notesController,
+              maxLength: 400,
+              showCursor: true,
+              decoration: InputDecoration(labelText: 'Notes'),
+              maxLines: null,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +143,8 @@ class _EventCreatorState extends State<EventCreator> {
                         child: Text('Add'),
                         onPressed: _addButtonEnabled
                             ? () {
-                                addEventCallback(_eventDuration, _selectedSkill);
+                                addEventCallback(
+                                    _eventDuration, _selectedSkill, _notesController.text);
                               }
                             : null),
                   ],

@@ -69,7 +69,7 @@ void main() {
       LiveSessionSelectOrFinishState()
     ];
     expectLater(sut, emitsInOrder(expected));
-    sut.add(LiveSessionActivityFinishedEvent(elapsedTime: 30));
+    sut.add(LiveSessionActivityFinishedEvent(elapsedTime: 30, notes: ''));
   });
 
   test(

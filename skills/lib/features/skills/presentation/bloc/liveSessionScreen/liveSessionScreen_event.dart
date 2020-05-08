@@ -21,11 +21,12 @@ class LiveSessionSkillSelectedEvent extends LiveSessionScreenEvent {
 
 class LiveSessionActivityFinishedEvent extends LiveSessionScreenEvent {
   final int elapsedTime;
+  final String notes;
 
-  LiveSessionActivityFinishedEvent({@required this.elapsedTime});
+  LiveSessionActivityFinishedEvent({@required this.elapsedTime, @required this.notes});
 
   @override
-  List<Object> get props => [elapsedTime];
+  List<Object> get props => [elapsedTime, notes];
 }
 
 class LiveSessionActivityCancelledEvent extends LiveSessionScreenEvent {

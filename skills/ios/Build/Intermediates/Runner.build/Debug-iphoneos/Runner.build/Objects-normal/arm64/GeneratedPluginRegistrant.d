@@ -17,10 +17,10 @@ dependencies: \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/FlutterMacros.h \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/FlutterAppDelegate.h \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/Flutter.h \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/path_provider/path_provider.framework/Headers/PathProviderPlugin.h \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/path_provider/path_provider.framework/Modules/module.modulemap \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/path_provider/path_provider.framework/Headers/path_provider-umbrella.h \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/sqflite/sqflite.framework/Headers/SqflitePlugin.h \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/sqflite/sqflite.framework/Modules/module.modulemap \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/sqflite/sqflite.framework/Headers/SqfliteOperation.h \
-  /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Products/Debug-iphoneos/sqflite/sqflite.framework/Headers/sqflite-umbrella.h
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/path_provider/path_provider.framework/Headers/PathProviderPlugin.h \
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/path_provider/path_provider.framework/Modules/module.modulemap \
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/path_provider/path_provider.framework/Headers/path_provider-umbrella.h \
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/sqflite/sqflite.framework/Headers/SqflitePlugin.h \
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/sqflite/sqflite.framework/Modules/module.modulemap \
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/sqflite/sqflite.framework/Headers/SqfliteOperation.h \
+  /Users/danshriver/Developer/Skills_flutter/skills/build/ios/Debug-iphoneos/sqflite/sqflite.framework/Headers/sqflite-umbrella.h

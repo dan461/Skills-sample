@@ -299,7 +299,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
     bloc.add(DeleteSessionWithIdEvent(id: bloc.session.sessionId));
   }
 
-  void _addActivity(int duration, Skill skill) async {
+  void _addActivity(int duration, Skill skill, String notesString) async {
     if (duration > bloc.availableTime) {
       await showDialog(
           context: (context),
@@ -317,7 +317,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
             );
           });
     } else
-      bloc.createActivity(duration, skill, bloc.sessionDate);
+      bloc.createActivity(duration, notesString, skill, bloc.sessionDate);
   }
 
   void _cancelActivityTapped() {

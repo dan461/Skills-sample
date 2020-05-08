@@ -10,10 +10,9 @@ class SessionEventCell extends StatelessWidget {
   final ActivityCellCallback callback;
   // final SkillEvent event;
 
-  const SessionEventCell({Key key, @required this.activity, @required this.callback})
+  const SessionEventCell(
+      {Key key, @required this.activity, @required this.callback})
       : super(key: key);
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +40,10 @@ class SessionEventCell extends StatelessWidget {
                       children: <Widget>[
                         Text(skill.name,
                             style: Theme.of(context).textTheme.subhead),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: _completedIcon(),
-                            )
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: _completedIcon(),
+                        )
                       ],
                     ),
                     Text('$durationString min.',
@@ -56,7 +55,8 @@ class SessionEventCell extends StatelessWidget {
                     Text(skill.source, style: Theme.of(context).textTheme.body1)
                   ],
                 ),
-                goalSectionBuilder(skill, context)
+                goalSectionBuilder(skill, context),
+                _notesSectionBuilder(context)
               ],
             ),
           ),
@@ -65,15 +65,37 @@ class SessionEventCell extends StatelessWidget {
     );
   }
 
-  Widget _completedIcon(){
-    if (activity.isComplete){
+  Widget _completedIcon() {
+    if (activity.isComplete) {
       return Icon(
         Icons.check_circle,
         color: Colors.green,
         size: 16,
       );
-    } else return SizedBox();
-    
+    } else
+      return SizedBox();
+  }
+
+  Widget _notesSectionBuilder(BuildContext context) {
+    Widget section;
+    if (activity.notes == null || activity.notes.isEmpty) {
+      section = SizedBox();
+    } else {
+      section = Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              'Notes: ' + activity.notes,
+              style: Theme.of(context).textTheme.body1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          )
+        ],
+      );
+    }
+
+    return section;
   }
 
   Widget goalSectionBuilder(Skill skill, BuildContext context) {
