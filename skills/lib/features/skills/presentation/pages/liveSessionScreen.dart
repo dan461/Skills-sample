@@ -28,6 +28,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
     super.initState();
   }
 
+  TextEditingController _notesController = TextEditingController();
+
   String get _startButtonScreenText {
     return bloc.activities.isEmpty ? SELECT_TO_START : SELECT_ANOTHER;
   }
@@ -134,6 +136,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       _dateTimeRow(),
       _durationRow(),
       _skillInfoSection(),
+      _notesSection(),
       _timeTrackRow(),
       // _bottomButtonsRow()
     ];
@@ -172,6 +175,26 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _notesSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _notesController,
+              maxLength: 400,
+              showCursor: true,
+              decoration: InputDecoration(labelText: 'Notes'),
+              maxLines: null,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -333,7 +356,8 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
 
   void _onStopwatchFinished(int elapsedTime) {
     setState(() {
-      bloc.add(LiveSessionActivityFinishedEvent(elapsedTime: elapsedTime));
+      bloc.add(LiveSessionActivityFinishedEvent(
+          elapsedTime: elapsedTime, notes: _notesController.text));
     });
   }
 
