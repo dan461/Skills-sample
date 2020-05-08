@@ -188,7 +188,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
               controller: _notesController,
               maxLength: 400,
               showCursor: true,
-              decoration: InputDecoration(labelText: 'Notes'),
+              decoration: InputDecoration(labelText: NOTES),
               maxLines: null,
             ),
           ),

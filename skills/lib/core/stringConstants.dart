@@ -13,6 +13,7 @@ const String YES = 'Yes';
 const String NO = 'No';
 const String COMPLETE_IT = 'Complete it!';
 const String DURATION_COLON = 'Duration:';
+const String NOTES = 'Notes: ';
 
 // Countdown timer
 const String RESET_TIMER = 'Reset the timer?';
