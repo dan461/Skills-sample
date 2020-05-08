@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/presentation/pages/liveSessionScreen.dart';
 import 'skillsScreen.dart';
 import 'schedulerScreen.dart';
 // import 'dataTester.dart';

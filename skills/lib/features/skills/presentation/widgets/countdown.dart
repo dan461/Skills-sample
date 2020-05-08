@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:skills/core/stringConstants.dart';
@@ -243,33 +242,6 @@ class _CountdownState extends State<Countdown> {
                   _finishActivity(_elapsedTime);
                 },
                 child: Text(OK),
-              )
-            ],
-          );
-        });
-  }
-
-  void _showFinishTimerAlert() async {
-    await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(FINISH_ACTIVITY),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  _startTimer();
-                  Navigator.of(context).pop();
-                },
-                child: Text(CANCEL),
-              ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _finishActivity(_elapsedTime);
-                },
-                child: Text(FINISH),
               )
             ],
           );

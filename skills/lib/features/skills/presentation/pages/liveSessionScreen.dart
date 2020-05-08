@@ -5,7 +5,6 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
-import 'package:skills/features/skills/presentation/helpers/stopwatchTimer.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activeSessionActivitiesList.dart';
 import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';

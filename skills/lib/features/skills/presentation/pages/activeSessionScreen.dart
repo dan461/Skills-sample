@@ -9,7 +9,6 @@ import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_blo
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/countdown.dart';
-import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';
 
 class ActiveSessionScreen extends StatefulWidget {
   final ActiveSessionBloc bloc;
@@ -24,8 +23,6 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
   _ActiveSessionScreenState(this.bloc);
   Widget timeTracker;
-  int _timeTrackerType = 0;
-  bool _timeTrackerShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,16 +108,15 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     );
   }
 
-  Widget _notesSection(Activity activity){
+  Widget _notesSection(Activity activity) {
     Widget section;
-    if(activity.notes == null || activity.notes.isEmpty){
+    if (activity.notes == null || activity.notes.isEmpty) {
       section = SizedBox();
     } else {
       section = Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-              'Notes: ' + activity.notes),
-        );
+        padding: const EdgeInsets.all(8.0),
+        child: Text('Notes: ' + activity.notes),
+      );
     }
 
     return section;
@@ -144,19 +140,11 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   }
 
   Row _timeTrackerRow() {
-    timeTracker = null;
-    if (_timeTrackerType == 0) {
-      timeTracker = Countdown(
-        minutesToCount: bloc.selectedActivity.duration,
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timeTrackerCancelled,
-      );
-    } else {
-      timeTracker = StopwatchWidget(
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timeTrackerCancelled,
-      );
-    }
+    Countdown timeTracker = Countdown(
+      minutesToCount: bloc.selectedActivity.duration,
+      finishedCallback: _currentActivityFinished,
+      cancelCallback: _timeTrackerCancelled,
+    );
 
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Expanded(child: Container(width: 200, height: 150, child: timeTracker)),
@@ -220,47 +208,9 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
   void _timeTrackerCancelled() {
     setState(() {
-      _timeTrackerShown = false;
       timeTracker = null;
     });
     bloc.add(ActivityTimerStoppedEvent());
-  }
-
-  void _timeTrackerTypeSelected() {
-    timeTracker = null;
-    if (_timeTrackerType == 0) {
-      timeTracker = Countdown(
-        minutesToCount: bloc.selectedActivity.duration,
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timeTrackerCancelled,
-      );
-    } else {
-      timeTracker = StopwatchWidget(
-        finishedCallback: _currentActivityFinished,
-        cancelCallback: _timeTrackerCancelled,
-      );
-    }
-  }
-
-  void _countdownSelected() {
-    timeTracker = Countdown(
-      minutesToCount: bloc.selectedActivity.duration,
-      finishedCallback: _currentActivityFinished,
-      cancelCallback: _timeTrackerCancelled,
-    );
-    setState(() {
-      _timeTrackerShown = true;
-    });
-  }
-
-  void _stopwatchSelected() {
-    timeTracker = StopwatchWidget(
-      finishedCallback: _currentActivityFinished,
-      cancelCallback: _timeTrackerCancelled,
-    );
-    setState(() {
-      _timeTrackerShown = true;
-    });
   }
 
   void _showSkillsList() async {

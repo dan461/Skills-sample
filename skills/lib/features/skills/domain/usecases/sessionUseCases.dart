@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:skills/core/error/failures.dart';
 import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';

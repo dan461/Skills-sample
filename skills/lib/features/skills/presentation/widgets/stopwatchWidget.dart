@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:skills/core/stringConstants.dart';
-import 'package:skills/features/skills/presentation/helpers/stopwatchTimer.dart';
 
 typedef StopwatchFinishedCallback(int elapsedTime);
 typedef StopwatchCancelCallback();

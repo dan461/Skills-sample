@@ -5,7 +5,6 @@ import 'package:skills/features/skills/presentation/pages/sessionDataScreen.dart
 import 'package:skills/service_locator.dart' as locatorPrefix;
 import 'package:skills/service_locator.dart';
 
-import 'features/skills/domain/entities/session.dart';
 import 'features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 
 void main() {
