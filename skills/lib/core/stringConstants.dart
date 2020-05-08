@@ -1,4 +1,5 @@
 const String DELETE = 'Delete';
+const String EDIT = 'Edit';
 const String DONE = 'Done';
 const String SAVE = 'Save';
 const String CANCEL = 'Cancel';

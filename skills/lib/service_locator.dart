@@ -17,6 +17,7 @@ import 'features/skills/domain/usecases/skillUseCases.dart';
 import 'features/skills/domain/usecases/sessionUseCases.dart';
 import 'features/skills/domain/usecases/activityUseCases.dart';
 import 'features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
+import 'features/skills/presentation/bloc/actvityEditor/activityeditor_bloc.dart';
 import 'features/skills/presentation/bloc/goalEditorScreen/goaleditor_bloc.dart';
 import 'features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
 import 'features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
@@ -77,6 +78,7 @@ void init() {
 
   locator.registerFactory(() => SessionDataScreen(bloc: locator()));
   locator.registerFactory(() => ActiveSessionScreen(bloc: locator()));
+  locator.registerFactory(() => ActivityEditorBloc());
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
