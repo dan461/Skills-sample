@@ -78,7 +78,8 @@ void init() {
 
   locator.registerFactory(() => SessionDataScreen(bloc: locator()));
   locator.registerFactory(() => ActiveSessionScreen(bloc: locator()));
-  locator.registerFactory(() => ActivityEditorBloc());
+  locator
+      .registerFactory(() => ActivityEditorBloc(updateActivityUC: locator()));
 
   // UseCases - can be singletons because they have no state, no streams etc.
   locator.registerLazySingleton(() => GetAllSkills(locator()));
@@ -108,7 +109,7 @@ void init() {
   locator.registerLazySingleton(() => InsertNewActivityUC(locator()));
   locator.registerLazySingleton(() => InsertActivityForSessionUC(locator()));
   locator.registerLazySingleton(() => GetActivityByIdUC(locator()));
-  locator.registerLazySingleton(() => UpdateActivityEventUC(locator()));
+  locator.registerLazySingleton(() => UpdateActivityUC(locator()));
   locator.registerLazySingleton(() => CompleteActivityUC(locator()));
   locator.registerLazySingleton(() => DeleteActivityByIdUC(locator()));
   locator.registerLazySingleton(() => GetActivitiesForSession(locator()));

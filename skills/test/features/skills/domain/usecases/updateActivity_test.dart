@@ -6,12 +6,12 @@ import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import '../../mockClasses.dart';
 
 void main() {
-  UpdateActivityEventUC sut;
+  UpdateActivityUC sut;
   MockActivitiesRepo mockEventsRepo;
 
   setUp(() {
     mockEventsRepo = MockActivitiesRepo();
-    sut = UpdateActivityEventUC(mockEventsRepo);
+    sut = UpdateActivityUC(mockEventsRepo);
   });
 
   test('test that class returns an int after updating an event', () async {
@@ -19,7 +19,8 @@ void main() {
 
     when(mockEventsRepo.updateActivity(changeMap, 1))
         .thenAnswer((_) async => Right(1));
-    final result = await sut(ActivityUpdateParams(changeMap, 1));
+    final result =
+        await sut(ActivityUpdateParams(changeMap: changeMap, activityId: 1));
     expect(result, Right(1));
     verify(mockEventsRepo.updateActivity(changeMap, 1));
     verifyNoMoreInteractions(mockEventsRepo);

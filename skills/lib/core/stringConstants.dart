@@ -52,3 +52,7 @@ const String SELECT_ANOTHER = 'Select your next skill';
 const String CANCEL_LIVE_SESSION = 'Are you sure you want to cancel this session?';
 const String ACTIVITIES_LOST = 'Your completed activities will be lost.';
 const String SELECT = 'Select';
+
+// Editing objects
+const String DISCARD_CHANGES = 'Discard changes?';
+const String LOSE_CHANGES = 'Do you want to cancel and lose your changes?';

@@ -77,7 +77,7 @@ class MockGetCompletedActivitiesForSkill extends Mock
 
 class MockDeleteActivityByIdUC extends Mock implements DeleteActivityByIdUC {}
 
-class MockUpdateActivityUC extends Mock implements UpdateActivityEventUC {}
+class MockUpdateActivityUC extends Mock implements UpdateActivityUC {}
 
 class MockCompleteActivityUC extends Mock implements CompleteActivityUC {}
 

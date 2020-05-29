@@ -143,8 +143,8 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   CancelDoneButtonBar(
-                      onDone: _onDone,
-                      onCancel: _onCancel,
+                      onDone: _onDoneTapped,
+                      onCancel: _onCancelTapped,
                       doneEnabled: _doneEnabled)
                 ],
               )
@@ -197,7 +197,46 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
     });
   }
 
-  void _onDone() {}
+  void _onDoneTapped() {
+    bloc.add(ActivityEditorSaveEvent());
+  }
 
-  void _onCancel() {}
+  void _onCancelTapped() {
+    if (bloc.hasValidChanges) {
+      _showCancelDialog();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _showCancelDialog() async {
+    await showDialog(
+        context: (context),
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(DISCARD_CHANGES),
+            content: Text(LOSE_CHANGES),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(NO),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(YES),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _cancel();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _cancel() {
+    Navigator.of(context).pop();
+  }
 }
