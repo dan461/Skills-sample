@@ -366,7 +366,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   void _editEventTapped(Activity activity) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       ActivityEditorScreen activityEditorScreen =
-          ActivityEditorScreen(bloc: locator<ActivityEditorBloc>());
+          ActivityEditorScreen(bloc: locator<ActivityEditorBloc>(), availableTime: bloc.availableTime,);
       activityEditorScreen.bloc.activity = activity;
 
       return activityEditorScreen;

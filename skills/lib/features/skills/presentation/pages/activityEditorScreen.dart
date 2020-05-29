@@ -3,12 +3,16 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/actvityEditor/activityeditor_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/widgets/CancelDoneButtonBar.dart';
 import 'package:skills/features/skills/presentation/widgets/notesFormField.dart';
 
 class ActivityEditorScreen extends StatefulWidget {
   final ActivityEditorBloc bloc;
+  final int availableTime;
 
-  const ActivityEditorScreen({Key key, @required this.bloc}) : super(key: key);
+  const ActivityEditorScreen(
+      {Key key, @required this.bloc, @required this.availableTime})
+      : super(key: key);
 
   @override
   _ActivityEditorScreenState createState() => _ActivityEditorScreenState(bloc);
@@ -21,7 +25,43 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
 
   _ActivityEditorScreenState(this.bloc) {
     _notesController.text = bloc.activity.notes;
+    _notesController.addListener(_notesChangeListener);
+    _eventDurationTextControl.text = bloc.activity.duration.toString();
+    _eventDurationTextControl.addListener(_durationChangeListener);
   }
+
+  Skill get displayedSkill {
+    if (bloc.selectedSkill != null)
+      return bloc.selectedSkill;
+    else
+      return bloc.activity.skill;
+  }
+
+  // CHANGE LISTENERS
+  void _notesChangeListener() {
+    bloc.selectedNotes = _notesController.text;
+    _setDoneEnabled();
+  }
+
+  void _durationChangeListener() {
+    // int duration = int.parse(_eventDurationTextControl.text);
+    // if (duration >= 5 &&
+    //     duration <= bloc.activity.duration + widget.availableTime) {
+    //   bloc.selectedDuration = duration;
+    // } else {
+    //   bloc.selectedDuration = bloc.activity.duration;
+    //   // _eventDurationTextControl.text = bloc.activity.duration.toString();
+    // }
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    _eventDurationTextControl.dispose();
+    super.dispose();
+  }
+
+  bool _doneEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +85,7 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                                   BorderSide(width: 1.0, color: Colors.black))),
                       child: GestureDetector(
                           onTap: _showActivitiesList,
-                          child: Text(bloc.activity.skill.name,
+                          child: Text(displayedSkill.name,
                               style: Theme.of(context).textTheme.title)),
                     ),
                   ],
@@ -56,14 +96,15 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(bloc.activity.skill.source, style: Theme.of(context).textTheme.subtitle)
+                    Text(displayedSkill.source,
+                        style: Theme.of(context).textTheme.subtitle)
                   ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  width: 100,
+                  width: 150,
                   height: 30,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -76,15 +117,20 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 4, bottom: 4),
                           child: TextField(
-                            autofocus: true,
+                            textAlign: TextAlign.center,
+                            autofocus: false,
                             keyboardType: TextInputType.number,
                             controller: _eventDurationTextControl,
-                            onChanged: (_) {
-                              // _setAddButtonEnabled();
+                            onChanged: (value) {
+                              _onDurationValueChange(value);
                             },
                           ),
                         ),
                       ),
+                      Text(
+                        MINUTES_ABBR,
+                        style: Theme.of(context).textTheme.subhead,
+                      )
                     ],
                   ),
                 ),
@@ -92,12 +138,32 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: NotesFormField(_notesController, NOTES),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CancelDoneButtonBar(
+                      onDone: _onDone,
+                      onCancel: _onCancel,
+                      doneEnabled: _doneEnabled)
+                ],
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _onDurationValueChange(String value) {
+    if (value.isNotEmpty) {
+      bloc.selectedDuration = int.parse(value);
+      _setDoneEnabled();
+    } else {
+      setState(() {
+        _doneEnabled = false;
+      });
+    }
   }
 
   void _showActivitiesList() async {
@@ -115,9 +181,23 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
           );
         });
     var selectedSkill = await Navigator.of(context).push(routeBuilder);
+    if (selectedSkill != null) {
+      bloc.selectedSkill = selectedSkill;
+      _setDoneEnabled();
+    }
   }
 
   void _selectSkill(Skill skill) {
     Navigator.of(context).pop(skill);
   }
+
+  void _setDoneEnabled() {
+    setState(() {
+      _doneEnabled = bloc.hasValidChanges;
+    });
+  }
+
+  void _onDone() {}
+
+  void _onCancel() {}
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class NotesFormField extends TextFormField {
   NotesFormField(TextEditingController controller, String placeHolder)
       : super(
@@ -8,5 +7,6 @@ class NotesFormField extends TextFormField {
             maxLines: null,
             decoration: InputDecoration(labelText: placeHolder),
             textCapitalization: TextCapitalization.sentences,
+            textInputAction: TextInputAction.done,
             controller: controller);
 }
