@@ -5,7 +5,7 @@ class GradientFromBottom extends LinearGradient {
   final Color accentColor;
 
   GradientFromBottom({this.accentColor, this.baseColor})
-      : super(colors: [accentColor, baseColor]);
+      : super();
 
   @override
   AlignmentGeometry get end => Alignment.bottomCenter;
