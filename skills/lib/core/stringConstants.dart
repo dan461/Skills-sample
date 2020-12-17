@@ -12,9 +12,18 @@ const String RESUME = 'Resume';
 const String OK = 'OK';
 const String YES = 'Yes';
 const String NO = 'No';
+const String DISMISS = 'Dismiss';
+const String CONTINUE = 'Continue';
 const String COMPLETE_IT = 'Complete it!';
 const String DURATION_COLON = 'Duration:';
 const String NOTES = 'Notes: ';
+const String TYPE = 'Type:';
+const String COMPOSITION = 'Composition';
+const String EXERCISE = 'Exercise';
+const String NAME = 'Name';
+const String SOURCE = 'Source';
+const String PRIORITY = 'Priority:';
+const String PROFICIENCY = 'Proficiency:';
 
 // Countdown timer
 const String RESET_TIMER = 'Reset the timer?';
@@ -42,17 +51,21 @@ const String SELECT_ACTIVITY = 'Select an Activity';
 const String BEGIN_SESSION = 'Begin Session';
 const String COMPLETE = 'Complete';
 const String COMPLETE_SESSION_QRY = 'Complete this Session?';
-const String INCOMPLETE_ACTIVITIES = 'This Session has activities that are not completed.';
-const String COMPLETE_SESSION_AND_ACTS_QRY = 'Complete this Session and all activities in it?';
+const String INCOMPLETE_ACTIVITIES =
+    'This Session has activities that are not completed.';
+const String COMPLETE_SESSION_AND_ACTS_QRY =
+    'Complete this Session and all activities in it?';
 
 // LiveSession
 const String LIVE_SESSION = 'Live Session';
 const String SELECT_TO_START = 'Select a skill to get started.';
 const String SELECT_ANOTHER = 'Select your next skill';
-const String CANCEL_LIVE_SESSION = 'Are you sure you want to cancel this session?';
+const String CANCEL_LIVE_SESSION =
+    'Are you sure you want to cancel this session?';
 const String ACTIVITIES_LOST = 'Your completed activities will be lost.';
 const String SELECT = 'Select';
 
 // Editing objects
 const String DISCARD_CHANGES = 'Discard changes?';
 const String LOSE_CHANGES = 'Do you want to cancel and lose your changes?';
+const String NAME_REQUIRED = 'Name Required';
