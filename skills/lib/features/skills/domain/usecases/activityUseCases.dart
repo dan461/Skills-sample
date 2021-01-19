@@ -52,10 +52,10 @@ class DeleteActivityByIdUC extends UseCase<int, ActivityGetOrDeleteParams> {
   }
 }
 
-class UpdateActivityEventUC extends UseCase<int, ActivityUpdateParams> {
+class UpdateActivityUC extends UseCase<int, ActivityUpdateParams> {
   final ActivityRepository repo;
 
-  UpdateActivityEventUC(this.repo);
+  UpdateActivityUC(this.repo);
 
   @override
   Future<Either<Failure, int>> call(ActivityUpdateParams params) async {
@@ -129,6 +129,7 @@ class GetActivityMapsForSession extends UseCase<List<Map>, SessionByIdParams> {
     return await repo.getActivityMapsForSession(params.sessionId);
   }
 }
+
 
 // class GetSkillInfoForEvent
 //     extends UseCase<Map<String, dynamic>, GetSkillParams> {

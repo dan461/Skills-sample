@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/enums.dart';
+import 'package:skills/core/stringConstants.dart';
 import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/helpers/skillChangeMonitor.dart';
@@ -46,7 +47,7 @@ class _SkillFormState extends State<SkillForm> {
 
   String _selectedType = skillTypeToString(SkillType.composition);
   String _selectedInstrument = SELECT_INST;
-  String _profString = 'Rate 1 - 10';
+  String _profString = '0';
   double currentProfValue = 0;
   String _priorityString = NORMAL_PRIORITY;
   SkillChangeMonitor changeMonitor;
@@ -172,9 +173,9 @@ class _SkillFormState extends State<SkillForm> {
     return ButtonBar(
       alignment: MainAxisAlignment.center,
       children: <Widget>[
-        FlatButton(onPressed: _onCancel, child: Text('Cancel')),
+        FlatButton(onPressed: _onCancel, child: Text(CANCEL)),
         FlatButton(
-            onPressed: _doneEnabled ? _onDone : null, child: Text('Done')),
+            onPressed: _doneEnabled ? _onDone : null, child: Text(DONE)),
       ],
     );
   }
@@ -185,7 +186,7 @@ class _SkillFormState extends State<SkillForm> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Text('Type:'),
+            Text(TYPE),
             Radio(
               value: skillTypeToString(SkillType.composition),
               groupValue: _selectedType,
@@ -193,7 +194,7 @@ class _SkillFormState extends State<SkillForm> {
                 _skillTypeChanged(value);
               },
             ),
-            Text('Compostion'),
+            Text(COMPOSITION),
           ],
         ),
         Row(
@@ -205,7 +206,7 @@ class _SkillFormState extends State<SkillForm> {
                 _skillTypeChanged(value);
               },
             ),
-            Text('Exercise'),
+            Text(EXERCISE),
           ],
         ),
       ],
@@ -216,13 +217,13 @@ class _SkillFormState extends State<SkillForm> {
     return TextFormField(
       textCapitalization: TextCapitalization.sentences,
       controller: _nameController,
-      decoration: InputDecoration(labelText: 'Name'),
+      decoration: InputDecoration(labelText: NAME),
       // onChanged: (_) {
       //   setDoneButtonEnabled();
       // },
       validator: (value) {
         if (value.isEmpty) {
-          return 'Name Required';
+          return NAME_REQUIRED;
         } else
           return null;
       },
@@ -233,7 +234,7 @@ class _SkillFormState extends State<SkillForm> {
     return TextFormField(
       textCapitalization: TextCapitalization.sentences,
       controller: _sourceController,
-      decoration: InputDecoration(labelText: 'Source'),
+      decoration: InputDecoration(labelText: SOURCE),
     );
   }
 
@@ -259,7 +260,7 @@ class _SkillFormState extends State<SkillForm> {
   Row _priorityRow() {
     return Row(
       children: <Widget>[
-        Text('Priority: ', style: Theme.of(context).textTheme.body1),
+        Text(PRIORITY + ' ', style: Theme.of(context).textTheme.body1),
         DropdownButton<String>(
             value: _priorityString,
             items: PRIORITIES.map<DropdownMenuItem<String>>((String value) {
@@ -282,7 +283,7 @@ class _SkillFormState extends State<SkillForm> {
         Row(
           children: <Widget>[
             Text(
-              'Proficiency: ',
+              PROFICIENCY + ' ',
               style: Theme.of(context).textTheme.body1,
             ),
             Text(
@@ -322,17 +323,17 @@ class _SkillFormState extends State<SkillForm> {
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Discard changes?'),
-              content: Text('Do you want to cancel and lose your changes?'),
+              title: Text(DISCARD_CHANGES),
+              content: Text(LOSE_CHANGES),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('Dismiss'),
+                  child: Text(DISMISS),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 FlatButton(
-                  child: Text('Continue'),
+                  child: Text(CONTINUE),
                   onPressed: () {
                     Navigator.of(context).pop();
                     cancelCallback();

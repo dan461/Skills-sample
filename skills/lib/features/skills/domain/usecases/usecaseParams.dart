@@ -131,7 +131,7 @@ class ActivityUpdateParams extends Params {
   final Map<String, dynamic> changeMap;
   final int activityId;
 
-  ActivityUpdateParams(this.changeMap, this.activityId);
+  ActivityUpdateParams({this.changeMap, this.activityId});
 
   @override
   List<Object> get props => [changeMap, activityId];
@@ -167,3 +167,4 @@ class ActivityMultiInsertParams extends Params {
   @override
   List<Object> get props => [activities];
 }
+

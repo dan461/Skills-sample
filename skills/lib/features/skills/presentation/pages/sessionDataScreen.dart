@@ -5,6 +5,7 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/actvityEditor/activityeditor_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
@@ -13,6 +14,8 @@ import 'package:skills/features/skills/presentation/widgets/activitiesListSectio
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
 import 'package:skills/service_locator.dart';
+
+import 'activityEditorScreen.dart';
 
 class SessionDataScreen extends StatefulWidget {
   final SessiondataBloc bloc;
@@ -335,13 +338,13 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
               child: Column(
                 children: <Widget>[
                   ListTile(
-                    title: Text('Edit (no function)'),
+                    title: Text(EDIT),
                     onTap: () {
                       _editEventTapped(activity);
                     },
                   ),
                   ListTile(
-                    title: Text('Delete'),
+                    title: Text(DELETE),
                     onTap: () {
                       _deleteEventTapped(activity);
                     },
@@ -360,11 +363,16 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         });
   }
 
-  void _editEventTapped(Activity activity) {
-    // setState(() {
-    //   _bloc.selectedSkill = map['skill'];
-    //   currentEventMap = map;
-    // });
+  void _editEventTapped(Activity activity) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      ActivityEditorScreen activityEditorScreen =
+          ActivityEditorScreen(bloc: locator<ActivityEditorBloc>(), availableTime: bloc.availableTime,);
+      activityEditorScreen.bloc.activity = activity;
+
+      return activityEditorScreen;
+    }));
+
+    Navigator.of(context).pop();
   }
 
   void _deleteEventTapped(Activity activity) async {

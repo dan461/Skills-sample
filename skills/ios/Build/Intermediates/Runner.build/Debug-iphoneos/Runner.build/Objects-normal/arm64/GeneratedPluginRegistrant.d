@@ -2,6 +2,8 @@ dependencies: \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Runner/GeneratedPluginRegistrant.m \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Runner/GeneratedPluginRegistrant.h \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.2.sdk/usr/include/mach-o/compact_unwind_encoding.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.2.sdk/usr/include/mach-o/dyld.modulemap \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/FlutterTexture.h \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/FlutterPlugin.h \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/FlutterEngine.h \
