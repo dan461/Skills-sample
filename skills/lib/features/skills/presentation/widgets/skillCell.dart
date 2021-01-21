@@ -70,13 +70,13 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[
         Text(
           skill.name,
-          style: thisTheme.subhead,
+          style: thisTheme.subtitle1,
           overflow: TextOverflow.ellipsis,
         ),
         Text(lastPracString,
             style: lastPracString == NEVER_PRACTICED
                 ? TextStyles.subtitleRedStyle
-                : thisTheme.subtitle)
+                : thisTheme.subtitle2)
       ],
     );
   }
@@ -116,7 +116,7 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[
         Text(
           goalText,
-          style: thisTheme.subtitle,
+          style: thisTheme.subtitle2,
           overflow: TextOverflow.ellipsis,
         )
       ],

@@ -19,7 +19,7 @@ class InstrumentsScreen extends StatelessWidget {
                 return Card(
                   child: ListTile(
                     title: Text(instruments[index],
-                        style: Theme.of(context).textTheme.title),
+                        style: Theme.of(context).textTheme.headline6),
                     onTap: () {
                       Navigator.pop(context, instruments[index]);
                     },

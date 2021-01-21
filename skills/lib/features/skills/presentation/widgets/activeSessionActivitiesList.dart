@@ -9,7 +9,9 @@ class ActiveSessionActivityList extends StatefulWidget {
   final ActivitiesSectionActivityTappedCallback activityTappedCallback;
 
   const ActiveSessionActivityList(
-      {Key key, @required this.activities, @required this.activityTappedCallback})
+      {Key key,
+      @required this.activities,
+      @required this.activityTappedCallback})
       : super(key: key);
 
   @override
@@ -41,8 +43,9 @@ class _ActiveSessionActivityListState extends State<ActiveSessionActivityList> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Activities', style: Theme.of(context).textTheme.subhead),
-              Text('$countString', style: Theme.of(context).textTheme.subhead),
+              Text('Activities', style: Theme.of(context).textTheme.subtitle1),
+              Text('$countString',
+                  style: Theme.of(context).textTheme.subtitle1),
             ],
           ),
         ));
@@ -102,16 +105,16 @@ class _ActiveSessionCellState extends State<ActiveSessionCell> {
                 Row(
                   children: <Widget>[
                     Text(skill.name,
-                        style: Theme.of(context).textTheme.subhead),
+                        style: Theme.of(context).textTheme.subtitle1),
                   ],
                 ),
                 Text('$durationString min.',
-                    style: Theme.of(context).textTheme.subhead),
+                    style: Theme.of(context).textTheme.subtitle1),
               ],
             ),
             Row(
               children: <Widget>[
-                Text(skill.source, style: Theme.of(context).textTheme.body1)
+                Text(skill.source, style: Theme.of(context).textTheme.bodyText2)
               ],
             ),
           ],

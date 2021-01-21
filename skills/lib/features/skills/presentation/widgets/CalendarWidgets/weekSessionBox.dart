@@ -19,15 +19,15 @@ class WeekSessionBox extends StatelessWidget {
             Row(
               children: <Widget>[
                 Text(session.startTime.format(context),
-                    style: Theme.of(context).textTheme.body2)
+                    style: Theme.of(context).textTheme.bodyText1)
               ],
             ),
             Text('${session.duration} min',
-                style: Theme.of(context).textTheme.body1),
+                style: Theme.of(context).textTheme.bodyText2),
             Text('${events.length} actvities',
-                style: Theme.of(context).textTheme.body1),
+                style: Theme.of(context).textTheme.bodyText2),
             Text('${session.timeRemaining} min. open',
-                style: Theme.of(context).textTheme.body1)
+                style: Theme.of(context).textTheme.bodyText2)
           ],
         ));
   }

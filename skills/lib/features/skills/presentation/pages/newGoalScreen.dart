@@ -183,7 +183,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             children: <Widget>[
               Text(
                 'Hours: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -205,7 +205,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             children: <Widget>[
               Text(
                 'Minutes: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -231,7 +231,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
       children: <Widget>[
         Text(
           descText,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
           textAlign: TextAlign.left,
         ),
         Padding(
@@ -240,7 +240,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             child: InkWell(
               child: Text(
                 placeholder,
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               onTap: () {
                 callback();
@@ -268,7 +268,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     widget.skillName,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.left,
                   ),
                 ),

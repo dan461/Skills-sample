@@ -29,7 +29,7 @@ class _DayCellState extends State<DayCell> {
           height: 40,
           child: Center(
               child: Text(DateFormat.yMMMMd().format(date),
-                  style: Theme.of(context).textTheme.subtitle)),
+                  style: Theme.of(context).textTheme.subtitle2)),
         ),
         Expanded(
             child: HoursScrollView(

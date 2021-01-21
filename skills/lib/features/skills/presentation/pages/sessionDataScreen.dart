@@ -181,7 +181,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
             children: <Widget>[
               Text(
                 _sessionDateString,
-                style: Theme.of(context).textTheme.title,
+                style: Theme.of(context).textTheme.headline6,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 4),
@@ -208,7 +208,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
       children: <Widget>[
         Text(
           _startTimeString,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
       ],
     );
@@ -221,11 +221,11 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
         children: <Widget>[
           Text(
             _durationString,
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
           Text(
             'Available: $timeString min.',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           )
         ]);
   }
@@ -365,8 +365,10 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
 
   void _editEventTapped(Activity activity) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      ActivityEditorScreen activityEditorScreen =
-          ActivityEditorScreen(bloc: locator<ActivityEditorBloc>(), availableTime: bloc.availableTime,);
+      ActivityEditorScreen activityEditorScreen = ActivityEditorScreen(
+        bloc: locator<ActivityEditorBloc>(),
+        availableTime: bloc.availableTime,
+      );
       activityEditorScreen.bloc.activity = activity;
 
       return activityEditorScreen;

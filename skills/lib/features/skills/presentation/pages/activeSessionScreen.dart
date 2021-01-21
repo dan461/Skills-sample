@@ -89,12 +89,12 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(activity.skillString,
-                    style: Theme.of(context).textTheme.title),
+                    style: Theme.of(context).textTheme.headline6),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text('$timeString min.',
-                    style: Theme.of(context).textTheme.title),
+                    style: Theme.of(context).textTheme.headline6),
               ),
             ],
           ),
@@ -169,7 +169,8 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text('$durationString min.', style: Theme.of(context).textTheme.title)
+        Text('$durationString min.',
+            style: Theme.of(context).textTheme.headline6)
       ],
     );
   }
@@ -178,7 +179,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(SELECT_ACTIVITY, style: Theme.of(context).textTheme.title)
+        Text(SELECT_ACTIVITY, style: Theme.of(context).textTheme.headline6)
       ],
     );
   }

@@ -3,7 +3,6 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 
-
 import 'notesFormField.dart';
 
 typedef AddEventCallback(int eventDuration, Skill skill, String notesString);
@@ -84,7 +83,7 @@ class _EventCreatorState extends State<EventCreator> {
               children: <Widget>[
                 Text(
                   'New Event',
-                  style: Theme.of(context).textTheme.body2,
+                  style: Theme.of(context).textTheme.bodyText1,
                 )
               ],
             ),
@@ -92,7 +91,7 @@ class _EventCreatorState extends State<EventCreator> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Text(_selectedSkill.name,
-                    style: Theme.of(context).textTheme.subhead),
+                    style: Theme.of(context).textTheme.subtitle1),
                 Container(
                   // color: Colors.amber,
                   height: 30,
@@ -102,7 +101,7 @@ class _EventCreatorState extends State<EventCreator> {
                     children: <Widget>[
                       Text(
                         'Minutes: ',
-                        style: Theme.of(context).textTheme.subhead,
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                       Expanded(
                         child: TextField(
@@ -124,36 +123,34 @@ class _EventCreatorState extends State<EventCreator> {
               children: <Widget>[Text(_goalText)],
             ),
             NotesFormField(_notesController, NOTES),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            ButtonBar(
-                              buttonHeight: 30,
-                              alignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                RaisedButton(
-                                  child: Text('Cancel'),
-                                  onPressed: () {
-                                    cancelEventCreateCallback();
-                                  },
-                                ),
-                                RaisedButton(
-                                    child: Text('Add'),
-                                    onPressed: _addButtonEnabled
-                                        ? () {
-                                            addEventCallback(_eventDuration, _selectedSkill,
-                                                _notesController.text);
-                                          }
-                                        : null),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ButtonBar(
+                  buttonHeight: 30,
+                  alignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        cancelEventCreateCallback();
+                      },
                     ),
-                  ),
-                );
-              }
-            }
-            
-            
+                    RaisedButton(
+                        child: Text('Add'),
+                        onPressed: _addButtonEnabled
+                            ? () {
+                                addEventCallback(_eventDuration, _selectedSkill,
+                                    _notesController.text);
+                              }
+                            : null),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

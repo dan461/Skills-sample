@@ -165,7 +165,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
       children: <Widget>[
         Text(
           skill.name,
-          style: Theme.of(context).textTheme.headline,
+          style: Theme.of(context).textTheme.headline5,
         ),
         Container(
             height: 30,
@@ -187,11 +187,11 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
       children: <Widget>[
         Text(
           sourceString,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         Text(
           '${skill.instrument}',
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
       ],
     );
@@ -210,7 +210,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
             child: Row(
               children: <Widget>[
                 Text('Recent Practice Activity',
-                    style: Theme.of(context).textTheme.subhead),
+                    style: Theme.of(context).textTheme.subtitle1),
               ],
             ),
           ),
@@ -271,7 +271,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
               ),
               Text(
                 goalString,
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
                 maxLines: 2,
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,
@@ -291,7 +291,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         children: <Widget>[
           Text(
             'Total time: ${bloc.skill.totalTime.toString()} min.',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
         ],
       ),
@@ -307,11 +307,11 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         children: <Widget>[
           Text(
             'Proficiency: ${bloc.skill.proficiency.toString()}/10',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
           Text(
             'Priority: $priorityString',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
         ],
       ),
@@ -326,7 +326,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         children: <Widget>[
           Text(
             'Last practice: $lastPracString',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
         ],
       ),
@@ -341,7 +341,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         children: <Widget>[
           Text(
             'Start Date: $startDateString',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
         ],
       ),

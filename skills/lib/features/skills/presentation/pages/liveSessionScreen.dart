@@ -159,7 +159,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(bloc.selectedSkill.name,
-                  style: Theme.of(context).textTheme.headline)
+                  style: Theme.of(context).textTheme.headline5)
             ],
           ),
           Padding(
@@ -168,7 +168,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(bloc.selectedSkill.source,
-                    style: Theme.of(context).textTheme.subhead)
+                    style: Theme.of(context).textTheme.subtitle1)
               ],
             ),
           ),
@@ -219,7 +219,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
       children: <Widget>[
         Text(
           bloc.sessionDuration.toString() + ' ' + MINUTES_ABBR + ' completed',
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         )
       ],
     );
@@ -234,12 +234,12 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(DateFormat.yMMMd().format(bloc.date),
-                style: Theme.of(context).textTheme.title),
+                style: Theme.of(context).textTheme.headline6),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(bloc.startTime.format(context),
-                style: Theme.of(context).textTheme.title),
+                style: Theme.of(context).textTheme.headline6),
           )
         ],
       ),
@@ -254,7 +254,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
           children: <Widget>[
             Text(
               _startButtonScreenText,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.subtitle1,
             )
           ],
         ),

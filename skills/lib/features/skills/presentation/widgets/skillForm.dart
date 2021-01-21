@@ -174,8 +174,7 @@ class _SkillFormState extends State<SkillForm> {
       alignment: MainAxisAlignment.center,
       children: <Widget>[
         FlatButton(onPressed: _onCancel, child: Text(CANCEL)),
-        FlatButton(
-            onPressed: _doneEnabled ? _onDone : null, child: Text(DONE)),
+        FlatButton(onPressed: _doneEnabled ? _onDone : null, child: Text(DONE)),
       ],
     );
   }
@@ -248,7 +247,7 @@ class _SkillFormState extends State<SkillForm> {
           child: InkWell(
             child: Text(
               _selectedInstrument,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
             onTap: _showInstrumentsList,
           ),
@@ -260,13 +259,14 @@ class _SkillFormState extends State<SkillForm> {
   Row _priorityRow() {
     return Row(
       children: <Widget>[
-        Text(PRIORITY + ' ', style: Theme.of(context).textTheme.body1),
+        Text(PRIORITY + ' ', style: Theme.of(context).textTheme.bodyText2),
         DropdownButton<String>(
             value: _priorityString,
             items: PRIORITIES.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value, style: Theme.of(context).textTheme.body1),
+                child:
+                    Text(value, style: Theme.of(context).textTheme.bodyText2),
               );
             }).toList(),
             onChanged: (String newValue) {
@@ -284,11 +284,11 @@ class _SkillFormState extends State<SkillForm> {
           children: <Widget>[
             Text(
               PROFICIENCY + ' ',
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
             Text(
               _profString,
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
           ],
         ),
@@ -347,12 +347,11 @@ class _SkillFormState extends State<SkillForm> {
   }
 
   void _onDone() {
-    
     if (_isEditing) {
       Map<String, dynamic> changeMap = changeMonitor.toMap();
       doneEditingCallback(changeMap);
     } else {
-     Skill newSkill = Skill(
+      Skill newSkill = Skill(
         name: _nameController.text,
         type: _selectedType,
         source: _sourceController.text ?? '',

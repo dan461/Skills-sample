@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>application-identifier</key>
-	<string>NT24FRE93J.com.example.skills</string>
+	<string>NT24FRE93J.com.focus53.skills</string>
 	<key>com.apple.developer.team-identifier</key>
 	<string>NT24FRE93J</string>
 	<key>get-task-allow</key>
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>NT24FRE93J.com.example.skills</string>
+		<string>NT24FRE93J.com.focus53.skills</string>
 	</array>
 </dict>
 </plist>

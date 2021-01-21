@@ -180,7 +180,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             children: <Widget>[
               Text(
                 'Hours: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -203,7 +203,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             children: <Widget>[
               Text(
                 'Minutes: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -229,7 +229,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
       children: <Widget>[
         Text(
           descText,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
           textAlign: TextAlign.left,
         ),
         Padding(
@@ -238,7 +238,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             child: InkWell(
               child: Text(
                 placeholder,
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               onTap: () {
                 callback();
@@ -266,7 +266,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     widget.skillName,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -284,10 +284,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             ),
 
             // Segmented Control
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _goalTypeRow()
-            ),
+            Padding(padding: const EdgeInsets.all(8.0), child: _goalTypeRow()),
             // Duration or Task description
             Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -323,7 +320,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
       children: <Widget>[
         Text(
           'Goal type:',
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         CupertinoSegmentedControl(
           children: {

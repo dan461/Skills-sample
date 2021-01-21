@@ -94,9 +94,11 @@ class _SessionFormState extends State<SessionForm> {
 
   int get _tentativeOpenTime {
     if (_selectedDuration.inMinutes < _startingDuration)
-      return session.openTime - (_startingDuration - _selectedDuration.inMinutes);
+      return session.openTime -
+          (_startingDuration - _selectedDuration.inMinutes);
     else
-      return session.openTime + (_selectedDuration.inMinutes - _startingDuration);
+      return session.openTime +
+          (_selectedDuration.inMinutes - _startingDuration);
   }
 
   int get _scheduledMinutes {
@@ -242,7 +244,7 @@ class _SessionFormState extends State<SessionForm> {
           child: InkWell(
             child: Text(
               _selectedDateString,
-              style: Theme.of(context).textTheme.title,
+              style: Theme.of(context).textTheme.headline6,
             ),
             onTap: () {
               _pickNewDate();
@@ -291,12 +293,11 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   Row _durationRow() {
-    
     return Row(
       children: <Widget>[
         Text(
           'Duration: ',
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         Material(
           color: Colors.transparent,
@@ -305,7 +306,7 @@ class _SessionFormState extends State<SessionForm> {
           child: InkWell(
             child: Text(
               _durationString,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
             onTap: _showDurationPicker,
           ),
@@ -346,13 +347,14 @@ class _SessionFormState extends State<SessionForm> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Text(descText, style: Theme.of(context).textTheme.subhead),
+          Text(descText, style: Theme.of(context).textTheme.subtitle1),
           Material(
             color: Colors.transparent,
             shape:
                 Border(bottom: BorderSide(width: 1.0, color: Colors.grey[400])),
             child: InkWell(
-              child: Text(timeText, style: Theme.of(context).textTheme.subhead),
+              child:
+                  Text(timeText, style: Theme.of(context).textTheme.subtitle1),
               onTap: () {
                 callback();
                 // _setDoneBtnStatus();
@@ -367,9 +369,13 @@ class _SessionFormState extends State<SessionForm> {
   ButtonBar _bottomButtons() {
     String doneTitle;
     Widget deleteButton;
-    if (_isEditing){
+    if (_isEditing) {
       doneTitle = 'Done';
-      deleteButton = FlatButton(onPressed: _onDelete, child: Text('Delete'), textColor: Colors.red,);
+      deleteButton = FlatButton(
+        onPressed: _onDelete,
+        child: Text('Delete'),
+        textColor: Colors.red,
+      );
     } else {
       doneTitle = 'Create Session';
       deleteButton = SizedBox();
@@ -383,8 +389,6 @@ class _SessionFormState extends State<SessionForm> {
             onPressed: _doneEnabled ? _onDone : null, child: Text(doneTitle)),
       ],
     );
-
-    
   }
 
   // ****** ACTIONS ***********

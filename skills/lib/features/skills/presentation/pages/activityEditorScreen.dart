@@ -86,7 +86,7 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                       child: GestureDetector(
                           onTap: _showActivitiesList,
                           child: Text(displayedSkill.name,
-                              style: Theme.of(context).textTheme.title)),
+                              style: Theme.of(context).textTheme.headline6)),
                     ),
                   ],
                 ),
@@ -97,7 +97,7 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(displayedSkill.source,
-                        style: Theme.of(context).textTheme.subtitle)
+                        style: Theme.of(context).textTheme.subtitle2)
                   ],
                 ),
               ),
@@ -111,7 +111,7 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                     children: <Widget>[
                       Text(
                         DURATION_COLON,
-                        style: Theme.of(context).textTheme.subhead,
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                       Expanded(
                         child: Padding(
@@ -129,7 +129,7 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
                       ),
                       Text(
                         MINUTES_ABBR,
-                        style: Theme.of(context).textTheme.subhead,
+                        style: Theme.of(context).textTheme.subtitle1,
                       )
                     ],
                   ),

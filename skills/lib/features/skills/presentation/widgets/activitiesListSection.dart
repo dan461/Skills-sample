@@ -64,8 +64,9 @@ class _ActivitiesListSectionState extends State<ActivitiesListSection> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Activities', style: Theme.of(context).textTheme.subhead),
-              Text('$countString', style: Theme.of(context).textTheme.subhead),
+              Text('Activities', style: Theme.of(context).textTheme.subtitle1),
+              Text('$countString',
+                  style: Theme.of(context).textTheme.subtitle1),
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: _plusButtonEnabled

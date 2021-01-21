@@ -33,11 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBar(items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          title: Text('Home'),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.schedule),
-          title: Text('Sched'),
+          label: 'Sched',
         ),
         
 

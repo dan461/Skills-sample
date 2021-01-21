@@ -114,7 +114,7 @@ class _SessionCardState extends State<SessionCard> {
         ),
         Text(
           '$availableTime min. open',
-          style: Theme.of(context).textTheme.body2,
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       ],
     );
@@ -130,11 +130,11 @@ class _SessionCardState extends State<SessionCard> {
           children: <Widget>[
             Text(
               startTime.format(context),
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
             Text(
               endTime.format(context),
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
           ],
         ),
@@ -160,9 +160,9 @@ class _SessionCardState extends State<SessionCard> {
       for (var activity in activities) {
         // create row for activity
         var text = Text(activity.skillString,
-            style: Theme.of(context).textTheme.body2);
+            style: Theme.of(context).textTheme.bodyText1);
         var timeText = Text('${activity.duration} min',
-            style: Theme.of(context).textTheme.body2);
+            style: Theme.of(context).textTheme.bodyText1);
         var newRow = Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
             child: Row(

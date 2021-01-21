@@ -32,7 +32,7 @@ class _SkillsAppState extends State<SkillsApp> {
           // scaffoldBackgroundColor: Colors.blue[800],
           textTheme: Theme.of(context)
               .textTheme
-              .copyWith(subhead: new TextStyle(fontWeight: FontWeight.w600))),
+              .copyWith(subtitle1: new TextStyle(fontWeight: FontWeight.w600))),
       // initialRoute: '/',
       onGenerateRoute: (settings) {
         if (settings.name == SESSION_DATA_ROUTE) {

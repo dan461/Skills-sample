@@ -176,15 +176,15 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
               Row(
                 children: <Widget>[
                   Text(session.startTime.format(context),
-                      style: Theme.of(context).textTheme.body2)
+                      style: Theme.of(context).textTheme.bodyText1)
                 ],
               ),
               Text('${session.duration} min',
-                  style: Theme.of(context).textTheme.body1),
+                  style: Theme.of(context).textTheme.bodyText2),
               Text('${activities.length} actvities',
-                  style: Theme.of(context).textTheme.body1),
+                  style: Theme.of(context).textTheme.bodyText2),
               Text('${session.timeRemaining} min. open',
-                  style: Theme.of(context).textTheme.body1)
+                  style: Theme.of(context).textTheme.bodyText2)
             ],
           );
         },
@@ -233,11 +233,14 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
       List<Activity> activities = [];
       var activitiesOrFail = await getActiviesForSession(
           SessionByIdParams(sessionId: session.sessionId));
-      activitiesOrFail.fold((failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE),
-          (result) {
+      activitiesOrFail.fold(
+          (failure) => SchedulerErrorState(CACHE_FAILURE_MESSAGE), (result) {
         activities = result;
       });
-      Map<String, dynamic> sessionMap = {'session': session, 'activities': activities};
+      Map<String, dynamic> sessionMap = {
+        'session': session,
+        'activities': activities
+      };
       sessionMaps.add(sessionMap);
     }
 

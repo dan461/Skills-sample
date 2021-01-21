@@ -88,11 +88,11 @@ class _DayDetailsState extends State<DayDetails> {
             children: <Widget>[
               Text(
                 DateFormat.yMMMd().format(widget.date),
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Text(
                 '$count Sessions',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
             ],
           ),

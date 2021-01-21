@@ -39,7 +39,7 @@ class SessionEventCell extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Text(skill.name,
-                            style: Theme.of(context).textTheme.subhead),
+                            style: Theme.of(context).textTheme.subtitle1),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: _completedIcon(),
@@ -47,12 +47,13 @@ class SessionEventCell extends StatelessWidget {
                       ],
                     ),
                     Text('$durationString min.',
-                        style: Theme.of(context).textTheme.subhead),
+                        style: Theme.of(context).textTheme.subtitle1),
                   ],
                 ),
                 Row(
                   children: <Widget>[
-                    Text(skill.source, style: Theme.of(context).textTheme.body1)
+                    Text(skill.source,
+                        style: Theme.of(context).textTheme.bodyText2)
                   ],
                 ),
                 goalSectionBuilder(skill, context),
@@ -87,7 +88,7 @@ class SessionEventCell extends StatelessWidget {
             padding: const EdgeInsets.all(4.0),
             child: Text(
               'Notes: ' + activity.notes,
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
               overflow: TextOverflow.ellipsis,
             ),
           )
@@ -111,13 +112,14 @@ class SessionEventCell extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(goal.goalText, style: Theme.of(context).textTheme.body1),
+                  Text(goal.goalText,
+                      style: Theme.of(context).textTheme.bodyText2),
                 ],
               ),
               Row(
                 children: <Widget>[
                   Text('$goalTimeString min remaining',
-                      style: Theme.of(context).textTheme.body1)
+                      style: Theme.of(context).textTheme.bodyText2)
                 ],
               )
             ],
