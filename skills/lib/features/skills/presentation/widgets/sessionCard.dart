@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 
@@ -34,6 +35,11 @@ class _SessionCardState extends State<SessionCard> {
     return time;
   }
 
+  TimeOfDay get sessionEndTime {
+    Session session = sessionMap['session'];
+    return TickTock.timeFromInt(TickTock.timeToInt(session.startTime) + session.duration);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +56,7 @@ class _SessionCardState extends State<SessionCard> {
   Widget build(BuildContext context) {
     Session session = sessionMap['session'];
     List<Activity> activities = sessionMap['activities'];
-
+    // TimeOfDay sessionEnd = TickTock.timeFromInt(TickTock.timeToInt(session.startTime) + session.duration);
     return GestureDetector(
       onTap: () {
         editorCallback(session);
@@ -65,7 +71,7 @@ class _SessionCardState extends State<SessionCard> {
             child: IntrinsicHeight(
               child: Row(
                 children: <Widget>[
-                  _timeSection(session.startTime, session.startTime),
+                  _timeSection(session.startTime, sessionEndTime),
                   Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,21 +110,21 @@ class _SessionCardState extends State<SessionCard> {
     return content;
   }
 
-  Row _headerBuilder(int count, int duration) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          child: Text('$duration min.'),
-        ),
-        Text(
-          '$availableTime min. open',
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ],
-    );
-  }
+  // Row _headerBuilder(int count, int duration) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: <Widget>[
+  //       Padding(
+  //         padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+  //         child: Text('$duration min.'),
+  //       ),
+  //       Text(
+  //         '$availableTime min. open',
+  //         style: Theme.of(context).textTheme.bodyText1,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Container _timeSection(TimeOfDay startTime, TimeOfDay endTime) {
     return Container(
@@ -144,9 +150,9 @@ class _SessionCardState extends State<SessionCard> {
 
   List<Widget> _middleSectionBuilder(List<Activity> activities, int duration) {
     List<Widget> rows = [];
-    rows.add(
-      _headerBuilder(activities.length, duration),
-    );
+    // rows.add(
+    //   _headerBuilder(activities.length, duration),
+    // );
     if (activities.isEmpty) {
       Row emptyRow = Row(
         crossAxisAlignment: CrossAxisAlignment.center,
