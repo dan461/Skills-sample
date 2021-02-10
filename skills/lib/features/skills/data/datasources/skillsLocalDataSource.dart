@@ -453,13 +453,14 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       return null;
   }
 
+  // TODO: Completing the session here is currently redundant when this is called from updateAndRefreshSession
   Future<int> completeSessionAndEvents(
       int sessionId, DateTime sessionDate) async {
     final Database db = await database;
     int dateInt = sessionDate.millisecondsSinceEpoch;
 
     // set session complete
-    int complete = await updateSession({'isComplete': 1}, sessionId);
+    int complete = await updateSession({'isComplete': true}, sessionId);
 
     // set events complete
     await db.rawUpdate(
