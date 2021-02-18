@@ -44,9 +44,11 @@ class _SkillsScreenState extends State<SkillsScreen> {
     return BlocProvider(
       builder: (_) => bloc,
       child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
           centerTitle: true,
           title: Text('Your Skills'),
+          backgroundColor: Theme.of(context).primaryColor,
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.unfold_more),
@@ -79,7 +81,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
             } else if (state is AllSkillsLoaded) {
               // bloc.skills = state.skills;
               body = Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 child: SkillsList(
                   skills: bloc.skills,
                   callback: callback == null ? viewSkill : callback,
@@ -205,8 +207,8 @@ class _SkillsListState extends State<SkillsList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
-      margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
+      // color: Color(0xFFFAF7F3),
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: <Widget>[
           Expanded(

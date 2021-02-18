@@ -10,38 +10,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
-  static List<Widget> _routes = <Widget>[
-    SkillsScreen(),
-    SchedulerScreen(),
-    
-  ];
-
-  void _itemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue,
-      body: SafeArea(child: _routes[_selectedIndex]),
-      bottomNavigationBar:
-          BottomNavigationBar(items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.schedule),
-          label: 'Sched',
-        ),
-        
+    // TextStyle textStyle = TextStyle(
+    //     color: Theme.of(context).colorScheme.onPrimary,
+    //     fontSize: Theme.of(context).textTheme.subtitle2.fontSize);
 
-      ], currentIndex: _selectedIndex, onTap: _itemTapped),
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        centerTitle: true,
+        title: Text("Stats"),
+      ),
+      body: Container(
+        child: Text("Test!"),
+        // color: Colors.red,
+      ),
     );
   }
 }

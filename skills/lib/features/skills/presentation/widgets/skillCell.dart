@@ -37,7 +37,7 @@ class SkillCell extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
         ),
         padding: EdgeInsets.all(4),

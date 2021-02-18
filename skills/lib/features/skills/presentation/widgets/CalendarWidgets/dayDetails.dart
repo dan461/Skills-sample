@@ -46,6 +46,16 @@ class _DayDetailsState extends State<DayDetails> {
     super.initState();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        _headerBuilder(context),
+        Expanded(child: _showContentForSession())
+      ],
+    );
+  }
+
   Widget _showContentForSession() {
     if (sessions != null && sessions.isNotEmpty) {
       return new ListView.builder(
@@ -61,6 +71,7 @@ class _DayDetailsState extends State<DayDetails> {
       );
     } else {
       return Container(
+        color: Theme.of(context).colorScheme.background,
         child: Center(
           child: RaisedButton(
             child: Text('Add a Session'),
@@ -73,11 +84,11 @@ class _DayDetailsState extends State<DayDetails> {
     }
   }
 
-  Container _headerBuilder() {
+  Container _headerBuilder(BuildContext context) {
     String count = sessions != null ? sessions.length.toString() : "0";
     return Container(
       height: 35,
-      color: Colors.grey,
+      color: Theme.of(context).colorScheme.primaryVariant,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
         child: GestureDetector(
@@ -88,11 +99,11 @@ class _DayDetailsState extends State<DayDetails> {
             children: <Widget>[
               Text(
                 DateFormat.yMMMd().format(widget.date),
-                style: Theme.of(context).textTheme.subtitle1,
+                style: TextStyle(color: Colors.white),
               ),
               Text(
                 '$count Sessions',
-                style: Theme.of(context).textTheme.subtitle1,
+                style: TextStyle(color: Colors.white),
               ),
             ],
           ),
@@ -103,15 +114,5 @@ class _DayDetailsState extends State<DayDetails> {
 
   void _close() {
     widget.closeCallback();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _headerBuilder(),
-        Expanded(child: _showContentForSession())
-      ],
-    );
   }
 }

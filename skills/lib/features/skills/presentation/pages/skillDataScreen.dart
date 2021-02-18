@@ -124,7 +124,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   Widget _infoViewBuilder() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      color: Colors.white,
+      color: Theme.of(context).backgroundColor,
       child: Column(
         children: <Widget>[
           _infoSectionBuilder(),
@@ -199,10 +199,10 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
 
   Widget _eventsListBuilder() {
     return Container(
-      // color: Colors.cyan[200],
-      decoration: BoxDecoration(
-          gradient: GradientFromBottom(
-              accentColor: Colors.cyan[800], baseColor: Colors.cyan[700])),
+      color: Theme.of(context).backgroundColor,
+      // decoration: BoxDecoration(
+      //     gradient: GradientFromBottom(
+      //         accentColor: Colors.cyan[800], baseColor: Colors.cyan[700])),
       child: Column(
         children: <Widget>[
           Padding(
@@ -240,7 +240,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
   Widget _goalInfoRow(Skill skill) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.blue[200],
+          color: Theme.of(context).colorScheme.secondary,
           border: Border(
               top: BorderSide(width: 0.0, color: Colors.grey[400]),
               bottom: BorderSide(width: 0.0, color: Colors.grey[400]))),

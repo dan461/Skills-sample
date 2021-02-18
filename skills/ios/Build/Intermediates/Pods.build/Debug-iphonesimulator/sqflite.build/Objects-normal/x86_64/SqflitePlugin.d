@@ -2,8 +2,8 @@ dependencies: \
   /Users/danshriver/Developer/SDKs/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.7+2/ios/Classes/SqflitePlugin.m \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/module.modulemap \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Pods/Target\ Support\ Files/sqflite/sqflite-prefix.pch \
-  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.1.sdk/usr/include/mach-o/compact_unwind_encoding.modulemap \
-  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.1.sdk/usr/include/mach-o/dyld.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.4.sdk/usr/include/mach-o/compact_unwind_encoding.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.4.sdk/usr/include/mach-o/dyld.modulemap \
   /Users/danshriver/Developer/SDKs/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.7+2/ios/Classes/SqflitePlugin.h \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Modules/module.modulemap \
   /Users/danshriver/Developer/Skills_flutter/skills/ios/Flutter/Flutter.framework/Headers/FlutterTexture.h \
