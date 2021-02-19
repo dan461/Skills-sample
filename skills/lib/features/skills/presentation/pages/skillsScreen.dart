@@ -45,6 +45,15 @@ class _SkillsScreenState extends State<SkillsScreen> {
       builder: (_) => bloc,
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Theme.of(context).backgroundColor,
+          child: Icon(
+            Icons.add,
+            size: 30,
+          ),
+          onPressed: addSkill,
+        ),
         appBar: AppBar(
           centerTitle: true,
           title: Text('Your Skills'),
@@ -56,12 +65,12 @@ class _SkillsScreenState extends State<SkillsScreen> {
                   _ascDescTapped();
                 }),
             _sortByBuilder(),
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                addSkill();
-              },
-            )
+            // IconButton(
+            //   icon: Icon(Icons.add),
+            //   onPressed: () {
+            //     addSkill();
+            //   },
+            // )
           ],
         ),
         body: BlocBuilder<SkillsBloc, SkillsState>(
