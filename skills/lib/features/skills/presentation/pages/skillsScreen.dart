@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
@@ -49,6 +50,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Theme.of(context).backgroundColor,
+          tooltip: ADD_SKILL_TOOLTIP,
           child: Icon(
             Icons.add,
             size: 30,
@@ -61,12 +63,14 @@ class _SkillsScreenState extends State<SkillsScreen> {
           backgroundColor: Theme.of(context).primaryColor,
           actions: <Widget>[
             IconButton(
+                tooltip: ASCDESC_TOOLTIP,
                 icon: Icon(Icons.unfold_more),
                 onPressed: () {
                   _ascDescTapped();
                 }),
             _sortByBuilder(),
             IconButton(
+              tooltip: DETAILS_TOOLTIP,
               icon: Icon(Icons.details),
               onPressed: () {
                 setState(() {
@@ -118,7 +122,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
   // ****** BUILDERS *********
   Widget _sortByBuilder() {
     return PopupMenuButton<SkillSortOption>(
-        tooltip: "Sort by...",
+        tooltip: SORT_TOOLTIP,
         icon: Icon(Icons.sort),
         onSelected: (SkillSortOption choice) {
           _sortTapped(choice);

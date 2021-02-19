@@ -29,6 +29,10 @@ class SkillCell extends StatelessWidget {
     return lastPracString == NEVER_PRACTICED;
   }
 
+  double get _cellHeight {
+    return showDetails ? 100 : 75;
+  }
+
   TextTheme thisTheme;
 
   @override
@@ -45,27 +49,8 @@ class SkillCell extends StatelessWidget {
             border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           ),
           padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
-          height: showDetails ? 95 : 60,
-          child: showDetails ? _detailsView() : _conciseView()
-          // child: Column(
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: const EdgeInsets.only(bottom: 4),
-          //       child: _nameRow(),
-          //     ),
-          //     Padding(
-          //       padding: const EdgeInsets.only(bottom: 4),
-          //       child: _sourceRow(),
-          //     ),
-          //     Padding(
-          //       padding: const EdgeInsets.only(bottom: 4),
-          //       child: _profPriorityRow(),
-          //     ),
-          //     // _instrumentRow(),
-          //     _goalRow()
-          //   ],
-          // ),
-          ),
+          height: _cellHeight,
+          child: showDetails ? _detailsView() : _conciseView()),
     );
   }
 
@@ -85,16 +70,20 @@ class SkillCell extends StatelessWidget {
           ],
         ),
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('${skill.source}'),
-          Text(lastPracString,
-              style: lastPracString == NEVER_PRACTICED
-                  ? TextStyles.subtitleRedStyle
-                  : thisTheme.subtitle2)
-        ],
+      Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${skill.source}'),
+            Text(lastPracString,
+                style: lastPracString == NEVER_PRACTICED
+                    ? TextStyles.subtitleRedStyle
+                    : thisTheme.subtitle2)
+          ],
+        ),
       ),
+      _goalRow()
     ]);
   }
 

@@ -73,6 +73,12 @@ const String SELECT_INST = 'Select an Instrument (required)';
 // const String NEVER_PRACTICED = 'last: Never';
 const String NEVER_PRACTICED = 'Never Practiced';
 
+// Skills screen
+const String DETAILS_TOOLTIP = 'Show or hide Skill details';
+const String ASCDESC_TOOLTIP = 'Toggle Ascending or Descending order';
+const String SORT_TOOLTIP = 'Sort list by attribute';
+const String ADD_SKILL_TOOLTIP = 'Add a new Skill';
+
 // Calendar
 const String SUN_ABBR = 'Sun';
 const String MON_ABBR = 'Mon';
