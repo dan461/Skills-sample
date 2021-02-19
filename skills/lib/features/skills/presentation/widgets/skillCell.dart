@@ -8,8 +8,12 @@ import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 class SkillCell extends StatelessWidget {
   final Skill skill;
   final SelectionCallback callback;
-  SkillCell({@required this.skill, @required this.callback});
-
+  final bool showDetails;
+  SkillCell(
+      {@required this.skill,
+      @required this.callback,
+      @required this.showDetails});
+  // bool showDetails = false;
   String get lastPracString {
     var string;
     if (skill.lastPracDate
@@ -36,31 +40,82 @@ class SkillCell extends StatelessWidget {
         callback(skill);
       },
       child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-        ),
-        padding: EdgeInsets.all(4),
-        height: 95,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: _nameRow(),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+          ),
+          padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+          height: showDetails ? 95 : 60,
+          child: showDetails ? _detailsView() : _conciseView()
+          // child: Column(
+          //   children: <Widget>[
+          //     Padding(
+          //       padding: const EdgeInsets.only(bottom: 4),
+          //       child: _nameRow(),
+          //     ),
+          //     Padding(
+          //       padding: const EdgeInsets.only(bottom: 4),
+          //       child: _sourceRow(),
+          //     ),
+          //     Padding(
+          //       padding: const EdgeInsets.only(bottom: 4),
+          //       child: _profPriorityRow(),
+          //     ),
+          //     // _instrumentRow(),
+          //     _goalRow()
+          //   ],
+          // ),
+          ),
+    );
+  }
+
+  Column _conciseView() {
+    return Column(children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          children: [
+            Text(
+              skill.name,
+              style: TextStyle(
+                  fontSize: thisTheme.subtitle1.fontSize,
+                  fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: _sourceRow(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: _profPriorityRow(),
-            ),
-            // _instrumentRow(),
-            _goalRow()
           ],
         ),
       ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('${skill.source}'),
+          Text(lastPracString,
+              style: lastPracString == NEVER_PRACTICED
+                  ? TextStyles.subtitleRedStyle
+                  : thisTheme.subtitle2)
+        ],
+      ),
+    ]);
+  }
+
+  Column _detailsView() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: _nameRow(),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: _sourceRow(),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: _profPriorityRow(),
+        ),
+        // _instrumentRow(),
+        _goalRow()
+      ],
     );
   }
 
@@ -70,7 +125,9 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[
         Text(
           skill.name,
-          style: thisTheme.subtitle1,
+          style: TextStyle(
+              fontSize: thisTheme.subtitle1.fontSize,
+              fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
         ),
         Text(lastPracString,
@@ -85,7 +142,7 @@ class SkillCell extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Source: ${skill.source}'),
+        Text('${skill.source}'),
         // Text(lastPracString, style: thisTheme.subtitle)
         Text('${skill.instrument}')
       ],
@@ -97,7 +154,7 @@ class SkillCell extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Prof: ${skill.proficiency.toInt().toString()}'),
+        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
         Text('Priority: $priorityString')
       ],
     );

@@ -25,13 +25,14 @@ class SkillsScreen extends StatefulWidget {
 class _SkillsScreenState extends State<SkillsScreen> {
   final SelectionCallback callback;
   SkillsBloc bloc;
-
+  bool _showSkillDetails = false;
   _SkillsScreenState(this.callback);
   @override
   void initState() {
     super.initState();
     bloc = locator<SkillsBloc>();
     bloc.add(GetAllSkillsEvent());
+    // _showSkillDetails = false;
   }
 
   @override
@@ -65,12 +66,14 @@ class _SkillsScreenState extends State<SkillsScreen> {
                   _ascDescTapped();
                 }),
             _sortByBuilder(),
-            // IconButton(
-            //   icon: Icon(Icons.add),
-            //   onPressed: () {
-            //     addSkill();
-            //   },
-            // )
+            IconButton(
+              icon: Icon(Icons.details),
+              onPressed: () {
+                setState(() {
+                  _showSkillDetails = !_showSkillDetails;
+                });
+              },
+            )
           ],
         ),
         body: BlocBuilder<SkillsBloc, SkillsState>(
@@ -94,6 +97,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
                 child: SkillsList(
                   skills: bloc.skills,
                   callback: callback == null ? viewSkill : callback,
+                  showDetails: _showSkillDetails,
                 ),
               );
             } else {
@@ -197,11 +201,13 @@ class _SkillsScreenState extends State<SkillsScreen> {
 class SkillsList extends StatefulWidget {
   final List<Skill> skills;
   final SelectionCallback callback;
-  const SkillsList({
-    Key key,
-    @required this.skills,
-    @required this.callback,
-  }) : super(key: key);
+  final bool showDetails;
+  const SkillsList(
+      {Key key,
+      @required this.skills,
+      @required this.callback,
+      @required this.showDetails})
+      : super(key: key);
 
   @override
   _SkillsListState createState() => _SkillsListState();
@@ -226,6 +232,7 @@ class _SkillsListState extends State<SkillsList> {
                 return SkillCell(
                   skill: widget.skills[index],
                   callback: widget.callback,
+                  showDetails: widget.showDetails,
                 );
               },
               itemCount: widget.skills.length,

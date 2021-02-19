@@ -166,6 +166,7 @@ class _SkillDataScreenState extends State<SkillDataScreen> {
         Text(
           skill.name,
           style: Theme.of(context).textTheme.headline5,
+          overflow: TextOverflow.ellipsis,
         ),
         Container(
             height: 30,
