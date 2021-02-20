@@ -43,14 +43,18 @@ class SkillCell extends StatelessWidget {
       onTap: () {
         callback(skill);
       },
-      child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-          ),
-          padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
-          height: _cellHeight,
-          child: showDetails ? _detailsView() : _conciseView()),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 2),
+        child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border:
+                  Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+            ),
+            padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+            height: _cellHeight,
+            child: showDetails ? _detailsView() : _conciseView()),
+      ),
     );
   }
 
@@ -87,23 +91,82 @@ class SkillCell extends StatelessWidget {
     ]);
   }
 
+  // Column _detailsView() {
+  //   return Column(
+  //     children: <Widget>[
+  //       Padding(
+  //         padding: const EdgeInsets.only(bottom: 4),
+  //         child: _nameRow(),
+  //       ),
+  //       Padding(
+  //         padding: const EdgeInsets.only(bottom: 4),
+  //         child: _sourceRow(),
+  //       ),
+  //       Padding(
+  //         padding: const EdgeInsets.only(bottom: 4),
+  //         child: _profPriorityRow(),
+  //       ),
+  //       // _instrumentRow(),
+  //       _goalRow()
+  //     ],
+  //   );
+  // }
+
   Column _detailsView() {
     return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
-          child: _nameRow(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [_leftDetailsColumn(), _rightDetailsColumn()],
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: _sourceRow(),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: _profPriorityRow(),
-        ),
-        // _instrumentRow(),
         _goalRow()
+      ],
+    );
+  }
+
+  Column _leftDetailsColumn() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(
+            skill.name,
+            style: TextStyle(
+                fontSize: thisTheme.subtitle1.fontSize,
+                fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text('${skill.source}'),
+        ),
+        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
+      ],
+    );
+  }
+
+  Column _rightDetailsColumn() {
+    var priorityString = PRIORITIES[skill.priority];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2, bottom: 4),
+          child: Text(lastPracString,
+              style: lastPracString == NEVER_PRACTICED
+                  ? TextStyles.subtitleRedStyle
+                  : thisTheme.subtitle2),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text('${skill.instrument}'),
+        ),
+        Text('Priority: $priorityString')
       ],
     );
   }
@@ -162,7 +225,6 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[
         Text(
           goalText,
-          style: thisTheme.subtitle2,
           overflow: TextOverflow.ellipsis,
         )
       ],
