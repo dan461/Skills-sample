@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/textStyles.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -44,17 +45,18 @@ class SkillCell extends StatelessWidget {
         callback(skill);
       },
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 0, 10, 2),
-        child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border:
-                  Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          child: Card(
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(6))),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+              height: _cellHeight,
+              child: showDetails ? _detailsView() : _conciseView(),
             ),
-            padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
-            height: _cellHeight,
-            child: showDetails ? _detailsView() : _conciseView()),
-      ),
+            elevation: 2,
+          )),
     );
   }
 
@@ -90,27 +92,6 @@ class SkillCell extends StatelessWidget {
       _goalRow()
     ]);
   }
-
-  // Column _detailsView() {
-  //   return Column(
-  //     children: <Widget>[
-  //       Padding(
-  //         padding: const EdgeInsets.only(bottom: 4),
-  //         child: _nameRow(),
-  //       ),
-  //       Padding(
-  //         padding: const EdgeInsets.only(bottom: 4),
-  //         child: _sourceRow(),
-  //       ),
-  //       Padding(
-  //         padding: const EdgeInsets.only(bottom: 4),
-  //         child: _profPriorityRow(),
-  //       ),
-  //       // _instrumentRow(),
-  //       _goalRow()
-  //     ],
-  //   );
-  // }
 
   Column _detailsView() {
     return Column(
