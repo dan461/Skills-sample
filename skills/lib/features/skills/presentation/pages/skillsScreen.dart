@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
@@ -25,13 +26,14 @@ class SkillsScreen extends StatefulWidget {
 class _SkillsScreenState extends State<SkillsScreen> {
   final SelectionCallback callback;
   SkillsBloc bloc;
-
+  bool _showSkillDetails = false;
   _SkillsScreenState(this.callback);
   @override
   void initState() {
     super.initState();
     bloc = locator<SkillsBloc>();
     bloc.add(GetAllSkillsEvent());
+    // _showSkillDetails = false;
   }
 
   @override
@@ -44,20 +46,36 @@ class _SkillsScreenState extends State<SkillsScreen> {
     return BlocProvider(
       builder: (_) => bloc,
       child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          foregroundColor: Theme.of(context).backgroundColor,
+          tooltip: ADD_SKILL_TOOLTIP,
+          child: Icon(
+            Icons.add,
+            size: 30,
+          ),
+          onPressed: addSkill,
+        ),
         appBar: AppBar(
           centerTitle: true,
           title: Text('Your Skills'),
+          backgroundColor: Theme.of(context).primaryColor,
           actions: <Widget>[
             IconButton(
+                tooltip: ASCDESC_TOOLTIP,
                 icon: Icon(Icons.unfold_more),
                 onPressed: () {
                   _ascDescTapped();
                 }),
             _sortByBuilder(),
             IconButton(
-              icon: Icon(Icons.add),
+              tooltip: DETAILS_TOOLTIP,
+              icon: Icon(Icons.details),
               onPressed: () {
-                addSkill();
+                setState(() {
+                  _showSkillDetails = !_showSkillDetails;
+                });
               },
             )
           ],
@@ -79,10 +97,11 @@ class _SkillsScreenState extends State<SkillsScreen> {
             } else if (state is AllSkillsLoaded) {
               // bloc.skills = state.skills;
               body = Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 child: SkillsList(
                   skills: bloc.skills,
                   callback: callback == null ? viewSkill : callback,
+                  showDetails: _showSkillDetails,
                 ),
               );
             } else {
@@ -103,7 +122,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
   // ****** BUILDERS *********
   Widget _sortByBuilder() {
     return PopupMenuButton<SkillSortOption>(
-        tooltip: "Sort by...",
+        tooltip: SORT_TOOLTIP,
         icon: Icon(Icons.sort),
         onSelected: (SkillSortOption choice) {
           _sortTapped(choice);
@@ -186,11 +205,13 @@ class _SkillsScreenState extends State<SkillsScreen> {
 class SkillsList extends StatefulWidget {
   final List<Skill> skills;
   final SelectionCallback callback;
-  const SkillsList({
-    Key key,
-    @required this.skills,
-    @required this.callback,
-  }) : super(key: key);
+  final bool showDetails;
+  const SkillsList(
+      {Key key,
+      @required this.skills,
+      @required this.callback,
+      @required this.showDetails})
+      : super(key: key);
 
   @override
   _SkillsListState createState() => _SkillsListState();
@@ -205,8 +226,8 @@ class _SkillsListState extends State<SkillsList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
-      margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
+      // color: Color(0xFFFAF7F3),
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: <Widget>[
           Expanded(
@@ -215,6 +236,7 @@ class _SkillsListState extends State<SkillsList> {
                 return SkillCell(
                   skill: widget.skills[index],
                   callback: widget.callback,
+                  showDetails: widget.showDetails,
                 );
               },
               itemCount: widget.skills.length,

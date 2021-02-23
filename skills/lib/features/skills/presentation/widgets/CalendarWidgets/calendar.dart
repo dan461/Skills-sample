@@ -166,7 +166,9 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
       curve: Curves.fastOutSlowIn,
       alignment: Alignment(0, -1),
       vsync: this,
-      child: Container(color: Colors.blue[800], child: _calendarBuilder()),
+      child: Container(
+          color: Theme.of(context).colorScheme.primary,
+          child: _calendarBuilder()),
     );
   }
 
@@ -270,7 +272,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   AnimatedContainer _detailsViewBuilder() {
     return AnimatedContainer(
       height: detailsHeight,
-      color: Colors.green[100],
+      color: Color(0xFFFAF7F3),
       child: detailsHeight == 0
           ? null
           : DayDetails(
@@ -308,6 +310,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
   Container _modeBarBuilder() {
     return Container(
+      color: Theme.of(context).colorScheme.primary,
       height: 30,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

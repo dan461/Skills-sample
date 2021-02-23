@@ -214,6 +214,7 @@ class _SkillFormState extends State<SkillForm> {
 
   TextFormField _nameField() {
     return TextFormField(
+      autocorrect: false,
       textCapitalization: TextCapitalization.sentences,
       controller: _nameController,
       decoration: InputDecoration(labelText: NAME),
@@ -231,6 +232,7 @@ class _SkillFormState extends State<SkillForm> {
 
   TextFormField _sourceField() {
     return TextFormField(
+      autocorrect: false,
       textCapitalization: TextCapitalization.sentences,
       controller: _sourceController,
       decoration: InputDecoration(labelText: SOURCE),

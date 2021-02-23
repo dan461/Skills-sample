@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/core/textStyles.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -8,8 +9,12 @@ import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 class SkillCell extends StatelessWidget {
   final Skill skill;
   final SelectionCallback callback;
-  SkillCell({@required this.skill, @required this.callback});
-
+  final bool showDetails;
+  SkillCell(
+      {@required this.skill,
+      @required this.callback,
+      @required this.showDetails});
+  // bool showDetails = false;
   String get lastPracString {
     var string;
     if (skill.lastPracDate
@@ -25,6 +30,10 @@ class SkillCell extends StatelessWidget {
     return lastPracString == NEVER_PRACTICED;
   }
 
+  double get _cellHeight {
+    return showDetails ? 100 : 75;
+  }
+
   TextTheme thisTheme;
 
   @override
@@ -35,32 +44,111 @@ class SkillCell extends StatelessWidget {
       onTap: () {
         callback(skill);
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-        ),
-        padding: EdgeInsets.all(4),
-        height: 95,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: _nameRow(),
+      child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          child: Card(
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(6))),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+              height: _cellHeight,
+              child: showDetails ? _detailsView() : _conciseView(),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: _sourceRow(),
+            elevation: 2,
+          )),
+    );
+  }
+
+  Column _conciseView() {
+    return Column(children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          children: [
+            Text(
+              skill.name,
+              style: TextStyle(
+                  fontSize: thisTheme.subtitle1.fontSize,
+                  fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: _profPriorityRow(),
-            ),
-            // _instrumentRow(),
-            _goalRow()
           ],
         ),
       ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${skill.source}'),
+            Text(lastPracString,
+                style: lastPracString == NEVER_PRACTICED
+                    ? TextStyles.subtitleRedStyle
+                    : thisTheme.subtitle2)
+          ],
+        ),
+      ),
+      _goalRow()
+    ]);
+  }
+
+  Column _detailsView() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [_leftDetailsColumn(), _rightDetailsColumn()],
+          ),
+        ),
+        _goalRow()
+      ],
+    );
+  }
+
+  Column _leftDetailsColumn() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(
+            skill.name,
+            style: TextStyle(
+                fontSize: thisTheme.subtitle1.fontSize,
+                fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text('${skill.source}'),
+        ),
+        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
+      ],
+    );
+  }
+
+  Column _rightDetailsColumn() {
+    var priorityString = PRIORITIES[skill.priority];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2, bottom: 4),
+          child: Text(lastPracString,
+              style: lastPracString == NEVER_PRACTICED
+                  ? TextStyles.subtitleRedStyle
+                  : thisTheme.subtitle2),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text('${skill.instrument}'),
+        ),
+        Text('Priority: $priorityString')
+      ],
     );
   }
 
@@ -70,7 +158,9 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[
         Text(
           skill.name,
-          style: thisTheme.subtitle1,
+          style: TextStyle(
+              fontSize: thisTheme.subtitle1.fontSize,
+              fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
         ),
         Text(lastPracString,
@@ -85,7 +175,7 @@ class SkillCell extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Source: ${skill.source}'),
+        Text('${skill.source}'),
         // Text(lastPracString, style: thisTheme.subtitle)
         Text('${skill.instrument}')
       ],
@@ -97,7 +187,7 @@ class SkillCell extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text('Prof: ${skill.proficiency.toInt().toString()}'),
+        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
         Text('Priority: $priorityString')
       ],
     );
@@ -116,7 +206,6 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[
         Text(
           goalText,
-          style: thisTheme.subtitle2,
           overflow: TextOverflow.ellipsis,
         )
       ],

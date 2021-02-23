@@ -1,7 +1,6 @@
 // Route names
 const String SESSION_DATA_ROUTE = '/session_editor';
 
-
 const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
 const String SERVER_FAILURE_MESSAGE = 'Server Failure';
 
@@ -71,7 +70,14 @@ const PRIORITIES = [
 const String SELECT_INST = 'Select an Instrument (required)';
 
 // SkillCell
-const String NEVER_PRACTICED = 'last: Never';
+// const String NEVER_PRACTICED = 'last: Never';
+const String NEVER_PRACTICED = 'Never Practiced';
+
+// Skills screen
+const String DETAILS_TOOLTIP = 'Show or hide Skill details';
+const String ASCDESC_TOOLTIP = 'Toggle Ascending or Descending order';
+const String SORT_TOOLTIP = 'Sort list by attribute';
+const String ADD_SKILL_TOOLTIP = 'Add a new Skill';
 
 // Calendar
 const String SUN_ABBR = 'Sun';
