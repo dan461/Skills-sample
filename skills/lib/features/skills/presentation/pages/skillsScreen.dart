@@ -48,7 +48,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).backgroundColor,
           tooltip: ADD_SKILL_TOOLTIP,
           child: Icon(

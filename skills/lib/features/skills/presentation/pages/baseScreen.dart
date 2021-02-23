@@ -3,7 +3,6 @@ import 'skillsScreen.dart';
 import 'schedulerScreen.dart';
 import 'homeScreen.dart';
 
-
 class BaseScreen extends StatefulWidget {
   @override
   _BaseScreenState createState() => _BaseScreenState();
@@ -27,7 +26,7 @@ class _BaseScreenState extends State<BaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primaryVariant,
       body: SafeArea(child: _routes[_selectedIndex]),
       bottomNavigationBar:
           BottomNavigationBar(items: const <BottomNavigationBarItem>[
