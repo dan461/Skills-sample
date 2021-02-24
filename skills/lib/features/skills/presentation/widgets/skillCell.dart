@@ -31,7 +31,7 @@ class SkillCell extends StatelessWidget {
   }
 
   double get _cellHeight {
-    return showDetails ? 122 : 75;
+    return showDetails ? 122 : 91;
   }
 
   TextTheme thisTheme;
@@ -53,7 +53,7 @@ class SkillCell extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
               height: _cellHeight,
-              child: showDetails ? _detailsView(context) : _conciseView(),
+              child: showDetails ? _detailsView() : _conciseView(),
             ),
             elevation: 2,
           )),
@@ -65,42 +65,42 @@ class SkillCell extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.only(bottom: 4),
         child: Row(
-          children: [
-            Text(
-              skill.name,
-              style: TextStyle(
-                  fontSize: thisTheme.subtitle1.fontSize,
-                  fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('${skill.source}'),
-            Text(lastPracString,
-                style: lastPracString == NEVER_PRACTICED
-                    ? TextStyles.subtitleRedStyle
-                    : thisTheme.subtitle2)
-          ],
+          children: [_leftConciseColumn(), _lastPracticedColumn()],
         ),
       ),
-      _goalRow()
     ]);
   }
 
-  Column _detailsView(BuildContext context) {
+  Widget _leftConciseColumn() {
+    return Expanded(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            child: _nameRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            child: _sourceRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
+            child: _goalRow(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Column _detailsView() {
     return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [_leftDetailsColumn(), _lastPracticedColumn(context)],
+            children: [_leftDetailsColumn(), _lastPracticedColumn()],
           ),
         ),
         // _goalRow()
@@ -141,7 +141,7 @@ class SkillCell extends StatelessWidget {
     );
   }
 
-  Widget _lastPracticedColumn(BuildContext context) {
+  Widget _lastPracticedColumn() {
     return Container(
       child: Padding(
         padding: const EdgeInsets.only(left: 4),
@@ -150,18 +150,18 @@ class SkillCell extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: Colors.green,
-              radius: 20,
+              radius: 21,
               child: Text(
                 "30",
                 style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.subtitle1.fontSize,
+                    fontSize: thisTheme.subtitle1.fontSize,
                     color: Colors.white,
                     fontWeight: FontWeight.bold),
               ),
             ),
             Text(
               "12/30/20",
-              style: Theme.of(context).textTheme.overline,
+              style: thisTheme.overline,
             )
           ],
         ),
@@ -196,13 +196,15 @@ class SkillCell extends StatelessWidget {
   Row _nameRow() {
     return Row(
       children: [
-        Text(
-          skill.name,
-          style: TextStyle(
-            fontSize: thisTheme.subtitle1.fontSize,
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Text(
+            skill.name,
+            style: TextStyle(
+              fontSize: thisTheme.subtitle1.fontSize,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
-          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -254,9 +256,13 @@ class SkillCell extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          goalText,
-          overflow: TextOverflow.ellipsis,
+        Expanded(
+          child: Text(
+            goalText,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.left,
+            maxLines: 1,
+          ),
         )
       ],
     );
