@@ -31,7 +31,7 @@ class SkillCell extends StatelessWidget {
   }
 
   double get _cellHeight {
-    return showDetails ? 100 : 75;
+    return showDetails ? 122 : 75;
   }
 
   TextTheme thisTheme;
@@ -45,7 +45,7 @@ class SkillCell extends StatelessWidget {
         callback(skill);
       },
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
           child: Card(
             color: Theme.of(context).colorScheme.surface,
             shape: RoundedRectangleBorder(
@@ -53,7 +53,7 @@ class SkillCell extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
               height: _cellHeight,
-              child: showDetails ? _detailsView() : _conciseView(),
+              child: showDetails ? _detailsView(context) : _conciseView(),
             ),
             elevation: 2,
           )),
@@ -93,41 +93,82 @@ class SkillCell extends StatelessWidget {
     ]);
   }
 
-  Column _detailsView() {
+  Column _detailsView(BuildContext context) {
     return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [_leftDetailsColumn(), _rightDetailsColumn()],
+            children: [_leftDetailsColumn(), _lastPracticedColumn(context)],
           ),
         ),
-        _goalRow()
+        // _goalRow()
       ],
     );
   }
 
-  Column _leftDetailsColumn() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(
-            skill.name,
-            style: TextStyle(
-                fontSize: thisTheme.subtitle1.fontSize,
-                fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
+  Widget _leftDetailsColumn() {
+    var priorityString = PRIORITIES[skill.priority];
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            child: _nameRow(),
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            child: _sourceRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(5, 3, 6, 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _proficiencySection(skill.proficiency.toDouble()),
+                Text('Priority: $priorityString')
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
+            child: _goalRow(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _lastPracticedColumn(BuildContext context) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.green,
+              radius: 20,
+              child: Text(
+                "30",
+                style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.subtitle1.fontSize,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              "12/30/20",
+              style: Theme.of(context).textTheme.overline,
+            )
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text('${skill.source}'),
-        ),
-        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
-      ],
+      ),
+      width: 60,
+      height: 70,
+      // color: Colors.grey,
     );
   }
 
@@ -154,19 +195,15 @@ class SkillCell extends StatelessWidget {
 
   Row _nameRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
+      children: [
         Text(
           skill.name,
           style: TextStyle(
-              fontSize: thisTheme.subtitle1.fontSize,
-              fontWeight: FontWeight.bold),
+            fontSize: thisTheme.subtitle1.fontSize,
+            fontWeight: FontWeight.bold,
+          ),
           overflow: TextOverflow.ellipsis,
         ),
-        Text(lastPracString,
-            style: lastPracString == NEVER_PRACTICED
-                ? TextStyles.subtitleRedStyle
-                : thisTheme.subtitle2)
       ],
     );
   }
@@ -174,30 +211,43 @@ class SkillCell extends StatelessWidget {
   Row _sourceRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text('${skill.source}'),
-        // Text(lastPracString, style: thisTheme.subtitle)
-        Text('${skill.instrument}')
-      ],
+      children: <Widget>[Text('${skill.source}'), Text('${skill.instrument}')],
     );
   }
 
-  Row _profPriorityRow() {
-    var priorityString = PRIORITIES[skill.priority];
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
-        Text('Priority: $priorityString')
-      ],
-    );
-  }
-
-  // Row _instrumentRow() {
+  // Row _profPriorityRow() {
+  //   var priorityString = PRIORITIES[skill.priority];
   //   return Row(
-  //     children: <Widget>[Text('${skill.instrument}')],
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: <Widget>[
+  //       Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
+  //       Text('Priority: $priorityString')
+  //     ],
   //   );
   // }
+
+  Widget _proficiencySection(double prof) {
+    prof = prof > 5 ? prof / 2 : prof;
+    List stars = <Icon>[];
+    int count = 1;
+    while (count < 6) {
+      Icon star = Icon(Icons.star_border_outlined, color: Colors.grey);
+      if (prof == 0.5) {
+        star = Icon(Icons.star_half, color: Color(0xFFdaa520));
+      } else if (prof >= 0.5) {
+        star = Icon(Icons.star, color: Color(0xFFdaa520));
+      }
+
+      stars.add(star);
+      ++count;
+      --prof;
+    }
+    return Row(
+      children: stars,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+    );
+  }
 
   Row _goalRow() {
     String goalText = skill.goal != null ? skill.goal.goalText : 'None';
