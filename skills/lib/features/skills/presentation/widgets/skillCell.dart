@@ -31,7 +31,7 @@ class SkillCell extends StatelessWidget {
   }
 
   double get _cellHeight {
-    return showDetails ? 122 : 91;
+    return showDetails ? 122 : 70;
   }
 
   TextTheme thisTheme;
@@ -84,10 +84,10 @@ class SkillCell extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
             child: _sourceRow(),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
-            child: _goalRow(),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
+          //   child: _goalRow(),
+          // )
         ],
       ),
     );
@@ -167,7 +167,7 @@ class SkillCell extends StatelessWidget {
         ),
       ),
       width: 60,
-      height: 70,
+      height: 54,
       // color: Colors.grey,
     );
   }
