@@ -135,9 +135,12 @@ class SkillCell extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _circleAvatar(),
-            Text(
-              lastPracString,
-              style: thisTheme.overline,
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                lastPracString,
+                style: thisTheme.overline,
+              ),
             )
           ],
         ),
@@ -158,10 +161,14 @@ class SkillCell extends StatelessWidget {
     }
 
     String daysString =
-        skill.elapsedDays >= 0 ? skill.elapsedDays.toString() : "!";
+        skill.elapsedDays >= 0 ? skill.elapsedDays.toString() : "N";
+    if (skill.elapsedDays > 99) {
+      daysString = "!!";
+    }
+
     return CircleAvatar(
       backgroundColor: circleColor,
-      radius: 20,
+      radius: 18,
       child: Text(
         daysString,
         style: TextStyle(
