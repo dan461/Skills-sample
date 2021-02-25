@@ -204,14 +204,15 @@ class SkillCell extends StatelessWidget {
   }
 
   Widget _proficiencySection(double prof) {
-    prof = prof > 5 ? prof / 2 : prof;
+    // TODO - remove division after changing proficiency to 0-5
+    prof = prof / 2;
     List stars = <Icon>[];
     int count = 1;
     while (count < 6) {
       Icon star = Icon(Icons.star_border_outlined, color: Colors.grey);
       if (prof == 0.5) {
         star = Icon(Icons.star_half, color: Color(0xFFdaa520));
-      } else if (prof >= 0.5) {
+      } else if (prof > 0.5) {
         star = Icon(Icons.star, color: Color(0xFFdaa520));
       }
 
