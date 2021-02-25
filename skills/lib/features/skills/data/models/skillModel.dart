@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -19,20 +20,19 @@ class SkillModel extends Skill {
       int proficiency,
       Goal goal})
       : super(
-          skillId: skillId,
-          name: name,
-          type: type,
-          source: source,
-          instrument: instrument,
-          startDate: startDate,
-          totalTime: totalTime,
-          lastPracDate: lastPracDate,
-          currentGoalId: currentGoalId,
-          // goalText: goalText,
-          priority: priority,
-          proficiency: proficiency,
-          goal: goal
-        );
+            skillId: skillId,
+            name: name,
+            type: type,
+            source: source,
+            instrument: instrument,
+            startDate: startDate,
+            totalTime: totalTime,
+            lastPracDate: lastPracDate,
+            currentGoalId: currentGoalId,
+            // goalText: goalText,
+            priority: priority,
+            proficiency: proficiency,
+            goal: goal);
 
   factory SkillModel.fromMap(Map<String, dynamic> map) {
     return SkillModel(
@@ -45,7 +45,7 @@ class SkillModel extends Skill {
       totalTime: map['totalTime'],
       lastPracDate: map['lastPracDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']).toUtc()
-          : DateTime.fromMillisecondsSinceEpoch(map['startDate']).toUtc(),
+          : DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
       currentGoalId: map['goalId'],
       // goalText: map['goalText'],
       priority: map['priority'],
