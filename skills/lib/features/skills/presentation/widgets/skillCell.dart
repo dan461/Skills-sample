@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:skills/core/constants.dart';
-import 'package:skills/core/textStyles.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 
@@ -19,15 +17,11 @@ class SkillCell extends StatelessWidget {
     var string;
     if (skill.lastPracDate
         .isAtSameMomentAs(DateTime.fromMicrosecondsSinceEpoch(0))) {
-      string = NEVER_PRACTICED;
+      string = "Never";
     } else {
-      string = DateFormat.yMMMd().format(skill.lastPracDate);
+      string = DateFormat.yMd().format(skill.lastPracDate);
     }
     return string;
-  }
-
-  bool get showPracticeAlert {
-    return lastPracString == NEVER_PRACTICED;
   }
 
   double get _cellHeight {
@@ -45,7 +39,7 @@ class SkillCell extends StatelessWidget {
         callback(skill);
       },
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
           child: Card(
             color: Theme.of(context).colorScheme.surface,
             shape: RoundedRectangleBorder(
@@ -62,12 +56,9 @@ class SkillCell extends StatelessWidget {
 
   Column _conciseView() {
     return Column(children: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [_leftConciseColumn(), _lastPracticedColumn()],
-        ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [_leftConciseColumn(), _lastPracticedColumn()],
       ),
     ]);
   }
@@ -77,17 +68,13 @@ class SkillCell extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            padding: const EdgeInsets.fromLTRB(6, 0, 4, 4),
             child: _nameRow(),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            padding: const EdgeInsets.fromLTRB(6, 4, 16, 4),
             child: _sourceRow(),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
-          //   child: _goalRow(),
-          // )
         ],
       ),
     );
@@ -103,7 +90,6 @@ class SkillCell extends StatelessWidget {
             children: [_leftDetailsColumn(), _lastPracticedColumn()],
           ),
         ),
-        // _goalRow()
       ],
     );
   }
@@ -119,11 +105,11 @@ class SkillCell extends StatelessWidget {
             child: _nameRow(),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            padding: const EdgeInsets.fromLTRB(6, 4, 16, 4),
             child: _sourceRow(),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(5, 3, 6, 4),
+            padding: const EdgeInsets.fromLTRB(5, 3, 16, 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -148,48 +134,41 @@ class SkillCell extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundColor: Colors.green,
-              radius: 21,
-              child: Text(
-                "30",
-                style: TextStyle(
-                    fontSize: thisTheme.subtitle1.fontSize,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
+            _circleAvatar(),
             Text(
-              "12/30/20",
+              lastPracString,
               style: thisTheme.overline,
             )
           ],
         ),
       ),
-      width: 60,
-      height: 54,
-      // color: Colors.grey,
+      width: 64,
+      height: 58,
     );
   }
 
-  Column _rightDetailsColumn() {
-    var priorityString = PRIORITIES[skill.priority];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2, bottom: 4),
-          child: Text(lastPracString,
-              style: lastPracString == NEVER_PRACTICED
-                  ? TextStyles.subtitleRedStyle
-                  : thisTheme.subtitle2),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text('${skill.instrument}'),
-        ),
-        Text('Priority: $priorityString')
-      ],
+  CircleAvatar _circleAvatar() {
+    int alertThreshold = 30;
+
+    Color circleColor;
+    if (skill.elapsedDays == -1 || skill.elapsedDays > alertThreshold) {
+      circleColor = Colors.red;
+    } else {
+      circleColor = Colors.green;
+    }
+
+    String daysString =
+        skill.elapsedDays >= 0 ? skill.elapsedDays.toString() : "!";
+    return CircleAvatar(
+      backgroundColor: circleColor,
+      radius: 20,
+      child: Text(
+        daysString,
+        style: TextStyle(
+            fontSize: thisTheme.subtitle1.fontSize,
+            color: Colors.white,
+            fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -216,17 +195,6 @@ class SkillCell extends StatelessWidget {
       children: <Widget>[Text('${skill.source}'), Text('${skill.instrument}')],
     );
   }
-
-  // Row _profPriorityRow() {
-  //   var priorityString = PRIORITIES[skill.priority];
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: <Widget>[
-  //       Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
-  //       Text('Priority: $priorityString')
-  //     ],
-  //   );
-  // }
 
   Widget _proficiencySection(double prof) {
     prof = prof > 5 ? prof / 2 : prof;
