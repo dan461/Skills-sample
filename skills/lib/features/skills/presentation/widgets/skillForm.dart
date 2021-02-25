@@ -48,7 +48,7 @@ class _SkillFormState extends State<SkillForm> {
   String _selectedType = skillTypeToString(SkillType.composition);
   String _selectedInstrument = SELECT_INST;
   String _profString = '0';
-  double currentProfValue = 0;
+  double _currentProfValue = 0.0;
   String _priorityString = NORMAL_PRIORITY;
   SkillChangeMonitor changeMonitor;
 
@@ -73,7 +73,8 @@ class _SkillFormState extends State<SkillForm> {
       _selectedType = skill.type;
       _selectedInstrument = skill.instrument;
       _profString = skill.proficiency.toString();
-      currentProfValue = skill.proficiency.toDouble();
+
+      _currentProfValue = skill.proficiency;
       _priorityString = PRIORITIES[skill.priority];
     }
     super.initState();
@@ -113,12 +114,12 @@ class _SkillFormState extends State<SkillForm> {
 
   void _proficiencyChanged(double value) {
     setState(() {
-      currentProfValue = value;
-      _profString = value.toInt().toString();
+      _currentProfValue = value;
+      _profString = value.toString();
     });
 
     if (_isEditing) {
-      changeMonitor.proficiencyValue = currentProfValue.toInt();
+      changeMonitor.proficiencyValue = _currentProfValue;
       setDoneButtonEnabled();
     }
   }
@@ -302,14 +303,14 @@ class _SkillFormState extends State<SkillForm> {
               width: MediaQuery.of(context).size.width * 0.75,
               child: Slider(
                   min: 0,
-                  max: 10,
-                  value: currentProfValue,
+                  max: 5,
+                  value: _currentProfValue,
                   divisions: 10,
                   onChanged: (newValue) {
                     _proficiencyChanged(newValue);
                   }),
             ),
-            Text('10'),
+            Text('5'),
           ],
         )
       ],
@@ -360,7 +361,7 @@ class _SkillFormState extends State<SkillForm> {
         startDate: TickTock.today(),
         instrument: _selectedInstrument,
         priority: PRIORITIES.indexOf(_priorityString),
-        proficiency: currentProfValue.toInt(),
+        proficiency: _currentProfValue,
       );
       createSkillCallback(newSkill);
     }

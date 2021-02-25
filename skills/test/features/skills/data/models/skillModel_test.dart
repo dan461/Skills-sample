@@ -19,9 +19,8 @@ void main() {
       totalTime: 1,
       lastPracDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
       currentGoalId: 1,
-      // goalText: "none",
       priority: 3,
-      proficiency: 8,
+      proficiency: 8.5,
     );
 
     testMap = {
@@ -35,7 +34,7 @@ void main() {
       'lastPracDate': 0,
       'goalId': 1,
       'priority': 3,
-      'proficiency': 8
+      'proficiency': 8.5
     };
   });
 
@@ -72,7 +71,7 @@ void main() {
         'lastPracDate': 0,
         'goalId': 1,
         'priority': 3,
-        'proficiency': 8
+        'proficiency': 8.5
       };
       expect(result, expectedMap);
     });

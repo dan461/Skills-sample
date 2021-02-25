@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 
 import 'package:skills/features/skills/domain/entities/skill.dart';
@@ -15,9 +14,8 @@ class SkillModel extends Skill {
       int totalTime,
       DateTime lastPracDate,
       int currentGoalId,
-      // String goalText,
       int priority,
-      int proficiency,
+      double proficiency,
       Goal goal})
       : super(
             skillId: skillId,
@@ -29,7 +27,6 @@ class SkillModel extends Skill {
             totalTime: totalTime,
             lastPracDate: lastPracDate,
             currentGoalId: currentGoalId,
-            // goalText: goalText,
             priority: priority,
             proficiency: proficiency,
             goal: goal);
@@ -47,7 +44,6 @@ class SkillModel extends Skill {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastPracDate']).toUtc()
           : DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
       currentGoalId: map['goalId'],
-      // goalText: map['goalText'],
       priority: map['priority'],
       proficiency: map['proficiency'],
     );
@@ -64,7 +60,6 @@ class SkillModel extends Skill {
       'totalTime': totalTime,
       'lastPracDate': lastPracDate.millisecondsSinceEpoch,
       'goalId': currentGoalId,
-      // 'goalText': goalText,
       'priority': priority,
       'proficiency': proficiency
     };
@@ -81,7 +76,6 @@ class SkillModel extends Skill {
         totalTime,
         lastPracDate,
         currentGoalId,
-        // goalText,
         priority,
         proficiency,
         goal

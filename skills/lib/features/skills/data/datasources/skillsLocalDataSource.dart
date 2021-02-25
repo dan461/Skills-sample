@@ -13,7 +13,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-
 abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
@@ -31,7 +30,8 @@ abstract class SkillsLocalDataSource {
   Future<int> addGoalToSkill(int skillId, int goalId);
   // Sessions
   Future<Session> insertNewSession(Session session);
-  Future<int> saveLiveSessionWithActivities(Session session, List<Activity> activities);
+  Future<int> saveLiveSessionWithActivities(
+      Session session, List<Activity> activities);
   Future<int> updateSession(Map<String, dynamic> changeMap, int id);
   Future<Session> updateAndRefreshSession(
       Map<String, dynamic> changeMap, int id);
@@ -96,10 +96,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         }
         if (needsMigration) {
           await _addGoalTextToGoals();
-          await _dropGoalTextFromSkills();
+          await _dropGoalTextFromSkillsAndChangeProfToReal();
           await _renameSkillEventsTableToActivities();
           await _addNotesToActivityTable();
-          
         }
       });
     }
@@ -166,7 +165,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     }
   }
 
-  Future<void> _dropGoalTextFromSkills() async {
+  Future<void> _dropGoalTextFromSkillsAndChangeProfToReal() async {
     final Database db = await database;
 
     bool hasGoalText = await _checkTableForColumn(skillsTable, 'goalText');
@@ -175,7 +174,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       await db.execute("BEGIN TRANSACTION");
       await db.execute(
           "CREATE TABLE IF NOT EXISTS tempSkills(skillId $primaryKey, name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, "
-          "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)");
+          "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency REAL)");
       await db.execute(
           "INSERT INTO tempSkills(skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency) "
           "SELECT skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency "
@@ -191,27 +190,33 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<void> _renameSkillEventsTableToActivities() async {
     final Database db = await database;
     bool tableExists = await _tableExistsInDatabase('skillEvents');
-    if(tableExists){
+    if (tableExists) {
       await db.execute('ALTER TABLE skillEvents RENAME TO $activitiesTable');
     }
   }
 
-  Future<bool> _tableExistsInDatabase(String tableName)async {
+  Future<bool> _tableExistsInDatabase(String tableName) async {
     final Database db = await database;
-    List result = await db.query('sqlite_master', columns: ['name'], where: 'type = ? AND name = ?', whereArgs: ['table', tableName]);
+    List result = await db.query('sqlite_master',
+        columns: ['name'],
+        where: 'type = ? AND name = ?',
+        whereArgs: ['table', tableName]);
 
-    if(result.isNotEmpty && result.first['name'] == tableName){
+    if (result.isNotEmpty && result.first['name'] == tableName) {
       return true;
-    } else return false;
+    } else
+      return false;
   }
 
   Future<void> _addNotesToActivityTable() async {
     final Database db = await database;
     bool hasNotesColumn = await _checkTableForColumn(activitiesTable, 'notes');
-    if (hasNotesColumn == false){
+    if (hasNotesColumn == false) {
       await db.execute('ALTER TABLE $activitiesTable ADD COLUMN notes text');
     }
   }
+
+  
 
   Future<bool> _checkTableForColumn(String table, String columnName) async {
     final Database db = await database;
@@ -412,8 +417,9 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return newSession;
   }
 
-@override
-  Future<int> saveLiveSessionWithActivities(Session session, List<Activity> activities) async {
+  @override
+  Future<int> saveLiveSessionWithActivities(
+      Session session, List<Activity> activities) async {
     Session newSession = await insertNewSession(session);
     await insertActivities(activities, newSession.sessionId);
 
@@ -495,7 +501,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
 
   Future<Session> getSessionAndActivities(int id) async {
     SessionModel session = await getSessionById(id);
-    List<Activity> activities = await getActivitiesWithSkillsForSession(id) ?? [];
+    List<Activity> activities =
+        await getActivitiesWithSkillsForSession(id) ?? [];
     if (session != null) session.activities = activities;
     return session;
   }
@@ -567,8 +574,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<int> deleteActivityById(int id) async {
     final Database db = await database;
-    int result = await db
-        .delete(activitiesTable, where: 'eventId = ?', whereArgs: [id]);
+    int result =
+        await db.delete(activitiesTable, where: 'eventId = ?', whereArgs: [id]);
     return result;
   }
 
@@ -648,8 +655,8 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   @override
   Future<List<Activity>> getActivitiesForSession(int sessionId) async {
     final Database db = await database;
-    List<Map> maps = await db.query(activitiesTable,
-        where: 'sessionId = ?', whereArgs: [sessionId]);
+    List<Map> maps = await db
+        .query(activitiesTable, where: 'sessionId = ?', whereArgs: [sessionId]);
     List<Activity> events = [];
     for (var map in maps) {
       events.add(ActivityModel.fromMap(map));

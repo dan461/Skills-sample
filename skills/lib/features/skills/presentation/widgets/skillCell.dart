@@ -204,8 +204,6 @@ class SkillCell extends StatelessWidget {
   }
 
   Widget _proficiencySection(double prof) {
-    // TODO - remove division after changing proficiency to 0-5
-    prof = prof / 2;
     List stars = <Icon>[];
     int count = 1;
     while (count < 6) {

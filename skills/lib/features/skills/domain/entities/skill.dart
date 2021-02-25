@@ -14,9 +14,8 @@ class Skill extends Equatable {
   final int totalTime;
   final DateTime lastPracDate;
   final int currentGoalId;
-  // final String goalText;
   final int priority;
-  final int proficiency;
+  final double proficiency;
   Goal goal;
 
   Skill(
@@ -29,7 +28,6 @@ class Skill extends Equatable {
       this.totalTime,
       this.lastPracDate,
       this.currentGoalId,
-      // this.goalText,
       this.priority,
       this.proficiency,
       this.goal})
@@ -56,7 +54,6 @@ class Skill extends Equatable {
         totalTime,
         lastPracDate,
         currentGoalId,
-        // goalText,
         priority,
         proficiency,
         goal

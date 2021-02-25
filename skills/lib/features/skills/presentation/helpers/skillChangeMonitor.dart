@@ -3,6 +3,13 @@ import 'package:skills/features/skills/domain/entities/skill.dart';
 class SkillChangeMonitor {
   final Skill skill;
 
+  String nameText;
+  String sourceText;
+  String skillType;
+  String instrumentText;
+  int priorityValue;
+  double proficiencyValue;
+
   SkillChangeMonitor(this.skill) {
     if (skill != null) {
       nameText = skill.name;
@@ -25,13 +32,6 @@ class SkillChangeMonitor {
     else
       return false;
   }
-
-  String nameText;
-  String sourceText;
-  String skillType;
-  String instrumentText;
-  int priorityValue;
-  int proficiencyValue;
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {};
