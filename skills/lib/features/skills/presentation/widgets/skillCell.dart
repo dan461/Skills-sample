@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:skills/core/constants.dart';
-import 'package:skills/core/textStyles.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
 
@@ -19,19 +17,15 @@ class SkillCell extends StatelessWidget {
     var string;
     if (skill.lastPracDate
         .isAtSameMomentAs(DateTime.fromMicrosecondsSinceEpoch(0))) {
-      string = NEVER_PRACTICED;
+      string = "Never";
     } else {
-      string = DateFormat.yMMMd().format(skill.lastPracDate);
+      string = DateFormat.yMd().format(skill.lastPracDate);
     }
     return string;
   }
 
-  bool get showPracticeAlert {
-    return lastPracString == NEVER_PRACTICED;
-  }
-
   double get _cellHeight {
-    return showDetails ? 100 : 75;
+    return showDetails ? 122 : 70;
   }
 
   TextTheme thisTheme;
@@ -45,7 +39,7 @@ class SkillCell extends StatelessWidget {
         callback(skill);
       },
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
           child: Card(
             color: Theme.of(context).colorScheme.surface,
             shape: RoundedRectangleBorder(
@@ -62,35 +56,28 @@ class SkillCell extends StatelessWidget {
 
   Column _conciseView() {
     return Column(children: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          children: [
-            Text(
-              skill.name,
-              style: TextStyle(
-                  fontSize: thisTheme.subtitle1.fontSize,
-                  fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [_leftConciseColumn(), _lastPracticedColumn()],
       ),
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('${skill.source}'),
-            Text(lastPracString,
-                style: lastPracString == NEVER_PRACTICED
-                    ? TextStyles.subtitleRedStyle
-                    : thisTheme.subtitle2)
-          ],
-        ),
-      ),
-      _goalRow()
     ]);
+  }
+
+  Widget _leftConciseColumn() {
+    return Expanded(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 0, 4, 4),
+            child: _nameRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 16, 4),
+            child: _sourceRow(),
+          ),
+        ],
+      ),
+    );
   }
 
   Column _detailsView() {
@@ -100,73 +87,111 @@ class SkillCell extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [_leftDetailsColumn(), _rightDetailsColumn()],
+            children: [_leftDetailsColumn(), _lastPracticedColumn()],
           ),
         ),
-        _goalRow()
       ],
     );
   }
 
-  Column _leftDetailsColumn() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(
-            skill.name,
-            style: TextStyle(
-                fontSize: thisTheme.subtitle1.fontSize,
-                fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text('${skill.source}'),
-        ),
-        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
-      ],
-    );
-  }
-
-  Column _rightDetailsColumn() {
+  Widget _leftDetailsColumn() {
     var priorityString = PRIORITIES[skill.priority];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2, bottom: 4),
-          child: Text(lastPracString,
-              style: lastPracString == NEVER_PRACTICED
-                  ? TextStyles.subtitleRedStyle
-                  : thisTheme.subtitle2),
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 4),
+            child: _nameRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 16, 4),
+            child: _sourceRow(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(5, 3, 16, 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _proficiencySection(skill.proficiency.toDouble()),
+                Text('Priority: $priorityString')
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
+            child: _goalRow(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _lastPracticedColumn() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _circleAvatar(),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                lastPracString,
+                style: thisTheme.overline,
+              ),
+            )
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text('${skill.instrument}'),
-        ),
-        Text('Priority: $priorityString')
-      ],
+      ),
+      width: 64,
+      height: 58,
+    );
+  }
+
+  CircleAvatar _circleAvatar() {
+    int alertThreshold = 30;
+
+    Color circleColor;
+    if (skill.elapsedDays == -1 || skill.elapsedDays > alertThreshold) {
+      circleColor = Colors.red;
+    } else {
+      circleColor = Colors.green;
+    }
+
+    String daysString =
+        skill.elapsedDays >= 0 ? skill.elapsedDays.toString() : "N";
+    if (skill.elapsedDays > 99) {
+      daysString = "!!";
+    }
+
+    return CircleAvatar(
+      backgroundColor: circleColor,
+      radius: 18,
+      child: Text(
+        daysString,
+        style: TextStyle(
+            fontSize: thisTheme.subtitle1.fontSize,
+            color: Colors.white,
+            fontWeight: FontWeight.bold),
+      ),
     );
   }
 
   Row _nameRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          skill.name,
-          style: TextStyle(
+      children: [
+        Expanded(
+          child: Text(
+            skill.name,
+            style: TextStyle(
               fontSize: thisTheme.subtitle1.fontSize,
-              fontWeight: FontWeight.bold),
-          overflow: TextOverflow.ellipsis,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        Text(lastPracString,
-            style: lastPracString == NEVER_PRACTICED
-                ? TextStyles.subtitleRedStyle
-                : thisTheme.subtitle2)
       ],
     );
   }
@@ -174,39 +199,46 @@ class SkillCell extends StatelessWidget {
   Row _sourceRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text('${skill.source}'),
-        // Text(lastPracString, style: thisTheme.subtitle)
-        Text('${skill.instrument}')
-      ],
+      children: <Widget>[Text('${skill.source}'), Text('${skill.instrument}')],
     );
   }
 
-  Row _profPriorityRow() {
-    var priorityString = PRIORITIES[skill.priority];
+  Widget _proficiencySection(double prof) {
+    // TODO - remove division after changing proficiency to 0-5
+    prof = prof / 2;
+    List stars = <Icon>[];
+    int count = 1;
+    while (count < 6) {
+      Icon star = Icon(Icons.star_border_outlined, color: Colors.grey);
+      if (prof == 0.5) {
+        star = Icon(Icons.star_half, color: Color(0xFFdaa520));
+      } else if (prof > 0.5) {
+        star = Icon(Icons.star, color: Color(0xFFdaa520));
+      }
+
+      stars.add(star);
+      ++count;
+      --prof;
+    }
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text('Prof: ${skill.proficiency.toInt().toString()}/10'),
-        Text('Priority: $priorityString')
-      ],
+      children: stars,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
     );
   }
-
-  // Row _instrumentRow() {
-  //   return Row(
-  //     children: <Widget>[Text('${skill.instrument}')],
-  //   );
-  // }
 
   Row _goalRow() {
     String goalText = skill.goal != null ? skill.goal.goalText : 'None';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          goalText,
-          overflow: TextOverflow.ellipsis,
+        Expanded(
+          child: Text(
+            goalText,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.left,
+            maxLines: 1,
+          ),
         )
       ],
     );
