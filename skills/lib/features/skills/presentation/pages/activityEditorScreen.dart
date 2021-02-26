@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/actvityEditor/activityeditor_bloc.dart';
-import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/pages/skillsMasterScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CancelDoneButtonBar.dart';
 import 'package:skills/features/skills/presentation/widgets/notesFormField.dart';
 
@@ -169,7 +169,7 @@ class _ActivityEditorScreenState extends State<ActivityEditorScreen> {
   void _showActivitiesList() async {
     var routeBuilder = PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            SkillsScreen(callback: _selectSkill),
+            SkillsMasterScreen(callback: _selectSkill),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;
