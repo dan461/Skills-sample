@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'skillsScreen.dart';
+import 'SkillsMasterScreen.dart';
 import 'schedulerScreen.dart';
 // import 'dataTester.dart';
 // import 'dataManager.dart';
