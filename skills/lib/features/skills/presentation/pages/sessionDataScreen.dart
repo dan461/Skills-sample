@@ -9,7 +9,7 @@ import 'package:skills/features/skills/presentation/bloc/actvityEditor/activitye
 import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionDataScreen/sessiondata_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
-import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/pages/skillsMasterScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/eventCreator.dart';
 import 'package:skills/features/skills/presentation/widgets/sessionForm.dart';
@@ -409,7 +409,7 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            SkillsScreen(callback: _selectSkill),
+            SkillsMasterScreen(callback: _selectSkill),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;
