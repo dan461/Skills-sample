@@ -7,6 +7,7 @@ import 'package:skills/features/skills/presentation/bloc/skillsDetailScreen/skil
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
+import 'package:skills/features/skills/presentation/pages/skillListWidget.dart';
 import 'package:skills/features/skills/presentation/pages/skillsDetailScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
 import 'package:skills/service_locator.dart';
@@ -26,6 +27,10 @@ class SkillsMasterScreen extends StatefulWidget {
 class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
   final SelectionCallback callback;
   SkillsBloc bloc;
+  SkillDataBloc detailsBloc;
+
+  Skill _selectedSkill;
+
   bool _showSkillDetails = false;
   _SkillsMasterScreenState(this.callback);
   bool showSideBySide = false;
@@ -34,6 +39,7 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
     super.initState();
     bloc = locator<SkillsBloc>();
     bloc.add(GetAllSkillsEvent());
+    detailsBloc = locator<SkillDataBloc>();
     // _showSkillDetails = false;
   }
 
@@ -85,38 +91,40 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
           builder: (context, state) {
             return LayoutBuilder(
               builder: (builder, constraints) {
-                return _buildBody(context, state, constraints);
-                // Widget body;
-                // if (state is InitialSkillsState) {
-                //   body = Container(
-                //     height: MediaQuery.of(context).size.height / 5,
-                //     child: Center(
-                //       child: Text('Empty'),
-                //     ),
-                //   );
-                // } else if (state is AllSkillsLoading) {
-                //   body = Center(
-                //     child: CircularProgressIndicator(),
-                //   );
-                // } else if (state is AllSkillsLoaded) {
-                //   // bloc.skills = state.skills;
-                //   body = Container(
-                //     color: Theme.of(context).colorScheme.surface,
-                //     child: SkillsList(
-                //       skills: bloc.skills,
-                //       callback: callback == null ? viewSkill : callback,
-                //       showDetails: _showSkillDetails,
-                //     ),
-                //   );
-                // } else {
-                //   // TODO - not great, deal with error better
-                //   body = Container(
-                //     child: Center(
-                //       child: Text('All skills error'),
-                //     ),
-                //   );
-                // }
-                // return body;
+                Widget masterView;
+                if (state is InitialSkillsState) {
+                  masterView = Container(
+                    height: MediaQuery.of(context).size.height / 5,
+                    child: Center(
+                      child: Text('Empty'),
+                    ),
+                  );
+                } else if (state is AllSkillsLoading) {
+                  masterView = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is AllSkillsLoaded) {
+                  // bloc.skills = state.skills;
+                  masterView = Container(
+                    width: 500,
+                    color: Theme.of(context).colorScheme.primaryVariant,
+                    child: SkillsList(
+                      skills: bloc.skills,
+                      callback: callback == null ? viewSkill : callback,
+                      showDetails: _showSkillDetails,
+                    ),
+                  );
+                } else {
+                  // TODO - not great, deal with error better
+                  masterView = Container(
+                    child: Center(
+                      child: Text('All skills error'),
+                    ),
+                  );
+                }
+                return Row(
+                  children: [masterView, _detailsView(constraints)],
+                );
               },
             );
           },
@@ -125,54 +133,18 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
     );
   }
 
-  int _sideBySideBreakpoint = 600;
+  Widget _detailsView(BoxConstraints constraints) {
+    _selectedSkill = _selectedSkill == null ? bloc.skills[0] : _selectedSkill;
+    if (constraints.maxWidth > _sideBySideBreakpoint) {
+      showSideBySide = true;
 
-  Widget _buildBody(
-      BuildContext context, SkillsState state, BoxConstraints constraints) {
-    Widget body;
-    showSideBySide = constraints.maxWidth > _sideBySideBreakpoint;
-    if (state is InitialSkillsState) {
-      body = Container(
-        height: MediaQuery.of(context).size.height / 5,
-        child: Center(
-          child: Text('Empty'),
-        ),
-      );
-    } else if (state is AllSkillsLoading) {
-      body = Center(
-        child: CircularProgressIndicator(),
-      );
-    } else if (state is AllSkillsLoaded) {
-      // bloc.skills = state.skills;
-      body = Row(
-        children: [
-          Expanded(
-            child: Container(
-              color: Theme.of(context).colorScheme.surface,
-              child: SkillsList(
-                skills: bloc.skills,
-                callback: callback == null ? viewSkill : callback,
-                showDetails: _showSkillDetails,
-              ),
-            ),
-          ),
-          // show side by side or not
-          showSideBySide
-              ? Expanded(child: _setupSkillDetailsScreen(bloc.skills[0]))
-              : Container(),
-        ],
-      );
+      return Expanded(child: _skillDetailsScreen());
     } else {
-      // TODO - not great, deal with error better
-      body = Container(
-        child: Center(
-          child: Text('All skills error'),
-        ),
-      );
+      return Container();
     }
-
-    return body;
   }
+
+  int _sideBySideBreakpoint = 600;
 
   // ****** BUILDERS *********
   Widget _sortByBuilder() {
@@ -233,81 +205,26 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
     bloc.add(GetAllSkillsEvent());
   }
 
-  Widget _setupSkillDetailsScreen(Skill skill) {
-    final skillScreen = SkillsDetailScreen(bloc: locator<SkillDataBloc>());
-    skillScreen.bloc.goal = skill.goal;
-    skillScreen.bloc.add(GetEventsForSkillEvent(skillId: skill.skillId));
+  Widget _skillDetailsScreen() {
+    final skillScreen = SkillsDetailScreen(bloc: detailsBloc);
+    skillScreen.bloc.skill = _selectedSkill;
+    skillScreen.bloc.goal = _selectedSkill.goal;
+    skillScreen.bloc
+        .add(GetEventsForSkillEvent(skillId: _selectedSkill.skillId));
     return skillScreen;
   }
 
   void viewSkill(Skill skill) async {
-    final skillScreen = SkillsDetailScreen(bloc: locator<SkillDataBloc>());
-    
-    skillScreen.bloc.goal = skill.goal;
-    skillScreen.bloc.add(GetEventsForSkillEvent(skillId: skill.skillId));
+    _selectedSkill = skill;
+
     if (showSideBySide == false) {
       await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return skillScreen;
+        return _skillDetailsScreen();
       }));
+    } else {
+      setState(() {});
     }
 
     bloc.add(GetAllSkillsEvent());
-  }
-
-  // void editSkill(Skill skill) async {
-  //   final editor = SkillEditorScreen(
-  //     skillEditorBloc: locator<SkillEditorBloc>(),
-  //   );
-  //   editor.skillEditorBloc.add(EditSkillEvent(skill));
-  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-  //     return editor;
-  //   }));
-  //   bloc.add(GetAllSkillsEvent());
-  // }
-}
-
-class SkillsList extends StatefulWidget {
-  final List<Skill> skills;
-  final SelectionCallback callback;
-  final bool showDetails;
-  const SkillsList(
-      {Key key,
-      @required this.skills,
-      @required this.callback,
-      @required this.showDetails})
-      : super(key: key);
-
-  @override
-  _SkillsListState createState() => _SkillsListState();
-}
-
-class _SkillsListState extends State<SkillsList> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      // color: Color(0xFFFAF7F3),
-      color: Theme.of(context).colorScheme.surface,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return SkillCell(
-                  skill: widget.skills[index],
-                  callback: widget.callback,
-                  showDetails: widget.showDetails,
-                );
-              },
-              itemCount: widget.skills.length,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
