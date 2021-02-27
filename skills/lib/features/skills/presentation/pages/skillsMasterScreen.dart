@@ -33,7 +33,10 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
 
   bool _showSkillDetails = false;
   _SkillsMasterScreenState(this.callback);
-  bool showSideBySide = false;
+  bool get showSideBySide {
+    return MediaQuery.of(context).size.width > _sideBySideBreakpoint;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +57,7 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
       builder: (_) => bloc,
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).backgroundColor,
@@ -105,13 +109,15 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
                   );
                 } else if (state is AllSkillsLoaded) {
                   // bloc.skills = state.skills;
-                  masterView = Container(
-                    width: 500,
-                    color: Theme.of(context).colorScheme.primaryVariant,
-                    child: SkillsList(
-                      skills: bloc.skills,
-                      callback: callback == null ? viewSkill : callback,
-                      showDetails: _showSkillDetails,
+                  masterView = Expanded(
+                    child: Container(
+                      // width: 500,
+                      color: Theme.of(context).colorScheme.primaryVariant,
+                      child: SkillsList(
+                        skills: bloc.skills,
+                        callback: callback == null ? viewSkill : callback,
+                        showDetails: _showSkillDetails,
+                      ),
                     ),
                   );
                 } else {
@@ -123,7 +129,15 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
                   );
                 }
                 return Row(
-                  children: [masterView, _detailsView(constraints)],
+                  children: [
+                    masterView,
+                    showSideBySide
+                        ? VerticalDivider(
+                            width: 1,
+                          )
+                        : Container(),
+                    _detailsView(constraints)
+                  ],
                 );
               },
             );
@@ -135,16 +149,14 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
 
   Widget _detailsView(BoxConstraints constraints) {
     _selectedSkill = _selectedSkill == null ? bloc.skills[0] : _selectedSkill;
-    if (constraints.maxWidth > _sideBySideBreakpoint) {
-      showSideBySide = true;
-
+    if (showSideBySide) {
       return Expanded(child: _skillDetailsScreen());
     } else {
       return Container();
     }
   }
 
-  int _sideBySideBreakpoint = 600;
+  int _sideBySideBreakpoint = 850;
 
   // ****** BUILDERS *********
   Widget _sortByBuilder() {
