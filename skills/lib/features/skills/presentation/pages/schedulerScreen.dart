@@ -32,48 +32,63 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (BuildContext context) => _bloc,
-      child: BlocBuilder<SchedulerBloc, SchedulerState>(
-        builder: (context, state) {
-          Widget body;
-          if (state is InitialSchedulerState ||
-              state is GettingSessionsForDateRangeState) {
-            body = Center(
-              child: CircularProgressIndicator(),
-            );
-            _bloc.add(
-                VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
-          }
+      child: Scaffold(
+        appBar: AppBar(
+            centerTitle: true,
+            // title: Text('Your Skills'),
+            backgroundColor: Theme.of(context).primaryColor,
+            leading: IconButton(
+                icon: Icon(Icons.menu, color: Colors.white),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                })),
+        body: BlocBuilder<SchedulerBloc, SchedulerState>(
+          builder: (context, state) {
+            Widget body;
+            if (state is InitialSchedulerState ||
+                state is GettingSessionsForDateRangeState) {
+              body = Center(
+                child: CircularProgressIndicator(),
+              );
+              _bloc.add(
+                  VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
+            }
 
-          // Day selectedState, may only be needed for month mode
-          else if (state is DaySelectedState) {
-            body = Calendar(
-              control: _bloc.calendarControl,
-              tapCallback: _dateSelected,
-              eventTapCallback: _showSessionEditor,
-              detailsViewCallback: _showNewSessionScreen,
-              detailsViewOpenHeight: 200,
-            );
-          } else if (state is SessionsForRangeReturnedState) {
-            body = Calendar(
-              control: _bloc.calendarControl,
-              tapCallback: _dateSelected,
-              detailsViewCallback: _showNewSessionScreen,
-              eventTapCallback: _showSessionEditor,
-              detailsViewOpenHeight: 200,
-            );
-          } else if (state is NewCalendarModeState) {}
+            // Day selectedState, may only be needed for month mode
+            else if (state is DaySelectedState) {
+              body = Calendar(
+                control: _bloc.calendarControl,
+                tapCallback: _dateSelected,
+                eventTapCallback: _showSessionEditor,
+                detailsViewCallback: _showNewSessionScreen,
+                detailsViewOpenHeight: 200,
+              );
+            } else if (state is SessionsForRangeReturnedState) {
+              body = Calendar(
+                control: _bloc.calendarControl,
+                tapCallback: _dateSelected,
+                detailsViewCallback: _showNewSessionScreen,
+                eventTapCallback: _showSessionEditor,
+                detailsViewOpenHeight: 200,
+              );
+            } else if (state is NewCalendarModeState) {}
 
-          return Container(
-            child: Column(
-              children: <Widget>[
-                Expanded(flex: 2, child: body),
-                Row(children: <Widget>[
-                  FlatButton(onPressed: _showLiveSessionScreen, child: Text('Start Live Session'))
-                ],)
-              ],
-            ),
-          );
-        },
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  Expanded(flex: 2, child: body),
+                  Row(
+                    children: <Widget>[
+                      FlatButton(
+                          onPressed: _showLiveSessionScreen,
+                          child: Text('Start Live Session'))
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -90,19 +105,19 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   }
 
   void _showSessionEditor(CalendarEvent session) async {
-    
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      
       SessionDataScreen dataScreen = locator<SessionDataScreen>();
       Session ses = session;
-      dataScreen.bloc.add(GetSessionAndActivitiesEvent(sessionId: ses.sessionId));
+      dataScreen.bloc
+          .add(GetSessionAndActivitiesEvent(sessionId: ses.sessionId));
       return dataScreen;
     }));
     _bloc.add(VisibleDateRangeChangeEvent(_bloc.calendarControl.dateRange));
   }
 
   void _showLiveSessionScreen() async {
-    bool refresh = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    bool refresh =
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return LiveSessionScreen();
     }));
   }

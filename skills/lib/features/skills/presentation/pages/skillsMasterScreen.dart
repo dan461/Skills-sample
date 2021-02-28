@@ -11,6 +11,7 @@ import 'package:skills/features/skills/presentation/pages/skillListWidget.dart';
 import 'package:skills/features/skills/presentation/pages/skillsDetailScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
 import 'package:skills/service_locator.dart';
+import 'package:skills/features/skills/presentation/pages/baseScreen.dart';
 
 import 'newSkillScreen.dart';
 
@@ -75,6 +76,11 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
           centerTitle: true,
           title: Text('Your Skills'),
           backgroundColor: Theme.of(context).primaryColor,
+          leading: IconButton(
+              icon: Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              }),
           actions: <Widget>[
             IconButton(
                 tooltip: ASCDESC_TOOLTIP,

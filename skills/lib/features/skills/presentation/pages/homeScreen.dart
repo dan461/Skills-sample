@@ -22,6 +22,11 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         title: Text("Stats"),
+        leading: IconButton(
+            icon: Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            }),
       ),
       body: Container(
         child: Text("Test!"),
