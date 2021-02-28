@@ -45,6 +45,11 @@ class _SkillsDetailScreenState extends State<SkillsDetailScreen> {
     return bloc.goal == null ? 'None' : bloc.goal.goalText;
   }
 
+  int _sideBySideBreakpoint = 600;
+  bool get showSideBySide {
+    return MediaQuery.of(context).size.width > _sideBySideBreakpoint;
+  }
+
   bool _isEditing = false;
 
   @override
@@ -59,32 +64,41 @@ class _SkillsDetailScreenState extends State<SkillsDetailScreen> {
         },
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text(bloc.skill.type),
-            ),
-            body: BlocBuilder<SkillDataBloc, SkillDataState>(
-              builder: (context, state) {
-                if (state is InitialNewSkillState ||
-                    state is SkillDataCrudProcessingState) {
-                  body = Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                // Events loaded || Skill refreshed
-                else if (state is SkillDataEventsLoadedState ||
-                    state is SkillRefreshedState) {
-                  body = _contentBuilder();
-                }
-                // Skill updated
-                else if (state is UpdatedExistingSkillState) {
-                  body = Center(
-                    child: CircularProgressIndicator(),
-                  );
-                  bloc.add(RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
-                }
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            appBar: showSideBySide
+                ? PreferredSize(
+                    preferredSize: Size.zero,
+                    child: Container(),
+                  )
+                : AppBar(
+                    title: Text('Details'),
+                  ),
+            body: SafeArea(
+              child: BlocBuilder<SkillDataBloc, SkillDataState>(
+                builder: (context, state) {
+                  if (state is InitialNewSkillState ||
+                      state is SkillDataCrudProcessingState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  // Events loaded || Skill refreshed
+                  else if (state is SkillDataEventsLoadedState ||
+                      state is SkillRefreshedState) {
+                    body = _contentBuilder();
+                  }
+                  // Skill updated
+                  else if (state is UpdatedExistingSkillState) {
+                    body = Center(
+                      child: CircularProgressIndicator(),
+                    );
+                    bloc.add(
+                        RefreshSkillByIdEvent(skillId: bloc.skill.skillId));
+                  }
 
-                return body;
-              },
+                  return body;
+                },
+              ),
             ),
           );
         }),
