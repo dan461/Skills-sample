@@ -33,6 +33,8 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
 
   bool _showSkillDetails = false;
   _SkillsMasterScreenState(this.callback);
+
+  int _sideBySideBreakpoint = 600;
   bool get showSideBySide {
     return MediaQuery.of(context).size.width > _sideBySideBreakpoint;
   }
@@ -56,8 +58,9 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
     return BlocProvider(
       builder: (_) => bloc,
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        floatingActionButtonLocation: showSideBySide
+            ? FloatingActionButtonLocation.startFloat
+            : FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).backgroundColor,
@@ -133,6 +136,7 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
                     masterView,
                     showSideBySide
                         ? VerticalDivider(
+                            color: Colors.black38,
                             width: 1,
                           )
                         : Container(),
@@ -155,8 +159,6 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
       return Container();
     }
   }
-
-  int _sideBySideBreakpoint = 850;
 
   // ****** BUILDERS *********
   Widget _sortByBuilder() {
