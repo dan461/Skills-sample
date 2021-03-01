@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
 
 import '../../../../service_locator.dart';
-import 'skillsMasterScreen.dart';
 
 typedef SkillSelectionCallback(Skill skill);
 
