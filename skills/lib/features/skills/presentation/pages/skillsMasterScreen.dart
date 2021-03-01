@@ -104,51 +104,30 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
           builder: (context, state) {
             return LayoutBuilder(
               builder: (builder, constraints) {
-                Widget masterView;
+                Widget body;
                 if (state is InitialSkillsState) {
-                  masterView = Container(
+                  body = Container(
                     height: MediaQuery.of(context).size.height / 5,
                     child: Center(
                       child: Text('Empty'),
                     ),
                   );
                 } else if (state is AllSkillsLoading) {
-                  masterView = Center(
+                  body = Center(
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is AllSkillsLoaded) {
                   // bloc.skills = state.skills;
-                  masterView = Expanded(
-                    child: Container(
-                      // width: 500,
-                      color: Theme.of(context).colorScheme.primaryVariant,
-                      child: SkillsList(
-                        skills: bloc.skills,
-                        callback: callback == null ? viewSkill : callback,
-                        showDetails: _showSkillDetails,
-                      ),
-                    ),
-                  );
+                  body = _masterView();
                 } else {
                   // TODO - not great, deal with error better
-                  masterView = Container(
+                  body = Container(
                     child: Center(
                       child: Text('All skills error'),
                     ),
                   );
                 }
-                return Row(
-                  children: [
-                    masterView,
-                    showSideBySide
-                        ? VerticalDivider(
-                            color: Colors.black38,
-                            width: 1,
-                          )
-                        : Container(),
-                    _detailsView(constraints)
-                  ],
-                );
+                return body;
               },
             );
           },
@@ -157,12 +136,37 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
     );
   }
 
-  Widget _detailsView(BoxConstraints constraints) {
+  Widget _masterView() {
     _selectedSkill = _selectedSkill == null ? bloc.skills[0] : _selectedSkill;
+
+    Expanded listView = Expanded(
+      child: Container(
+        // width: 500,
+        color: Theme.of(context).colorScheme.primaryVariant,
+        child: SkillsList(
+          skills: bloc.skills,
+          callback: callback == null ? viewSkill : callback,
+          showDetails: _showSkillDetails,
+        ),
+      ),
+    );
     if (showSideBySide) {
-      return Expanded(child: _skillDetailsScreen());
+      return Row(
+        children: [
+          listView,
+          VerticalDivider(
+            color: Colors.black38,
+            width: 1,
+          ),
+          Expanded(
+            child: _skillDetailsScreen(),
+          )
+        ],
+      );
     } else {
-      return Container();
+      return Row(
+        children: [listView],
+      );
     }
   }
 
@@ -216,8 +220,6 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
   }
 
   void addSkill() async {
-    // final newSkillScreen = NewSkillScreen(bloc: locator<NewskillBloc>());
-
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return NewSkillScreen(bloc: locator<NewskillBloc>());
     }));
