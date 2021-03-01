@@ -10,6 +10,7 @@ import 'package:skills/features/skills/presentation/pages/liveSessionScreen.dart
 import 'package:skills/features/skills/presentation/pages/newSessionScreen.dart';
 import 'package:skills/features/skills/presentation/pages/sessionDataScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendar.dart';
+import 'package:skills/features/skills/presentation/widgets/hamburger.dart';
 import 'package:skills/service_locator.dart';
 
 class SchedulerScreen extends StatefulWidget {
@@ -37,11 +38,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
             centerTitle: true,
             // title: Text('Your Skills'),
             backgroundColor: Theme.of(context).primaryColor,
-            leading: IconButton(
-                icon: Icon(Icons.menu, color: Colors.white),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                })),
+            leading: Hamburger(parentContext: context)),
         body: BlocBuilder<SchedulerBloc, SchedulerState>(
           builder: (context, state) {
             Widget body;
