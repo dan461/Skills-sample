@@ -76,7 +76,8 @@ class _SkillsDetailScreenState extends State<SkillsDetailScreen> {
             body: SafeArea(
               child: BlocBuilder<SkillDataBloc, SkillDataState>(
                 builder: (context, state) {
-                  if (state is InitialNewSkillState ||
+                  if (state is SkillDataInitialState ||
+                      state is InitialNewSkillState ||
                       state is SkillDataCrudProcessingState) {
                     body = Center(
                       child: CircularProgressIndicator(),
