@@ -14,13 +14,19 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
-        title: Text("Stats"),
+        title: Text(
+          "Stats",
+        ),
         leading: Hamburger(
           parentContext: context,
         ),
       ),
       body: Container(
-        child: Text("Test!"),
+        child: Center(
+            child: Text(
+          "Stats",
+          style: Theme.of(context).textTheme.headline5,
+        )),
         // color: Colors.red,
       ),
     );
