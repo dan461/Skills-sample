@@ -3,36 +3,47 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/newSkillScreen/newskill_bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillsDetailScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_event.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_state.dart';
-import 'package:skills/features/skills/presentation/pages/skillDataScreen.dart';
-import 'package:skills/features/skills/presentation/widgets/skillCell.dart';
+import 'package:skills/features/skills/presentation/pages/skillListWidget.dart';
+import 'package:skills/features/skills/presentation/pages/skillsDetailScreen.dart';
+import 'package:skills/features/skills/presentation/widgets/hamburger.dart';
 import 'package:skills/service_locator.dart';
-
 import 'newSkillScreen.dart';
 
 typedef SelectionCallback(Skill skill);
 
-class SkillsScreen extends StatefulWidget {
+class SkillsMasterScreen extends StatefulWidget {
   final SelectionCallback callback;
 
-  const SkillsScreen({Key key, this.callback}) : super(key: key);
+  const SkillsMasterScreen({Key key, this.callback}) : super(key: key);
   @override
-  _SkillsScreenState createState() => _SkillsScreenState(callback);
+  _SkillsMasterScreenState createState() => _SkillsMasterScreenState(callback);
 }
 
-class _SkillsScreenState extends State<SkillsScreen> {
+class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
   final SelectionCallback callback;
   SkillsBloc bloc;
+  SkillDataBloc detailsBloc;
+
+  Skill _selectedSkill;
+
   bool _showSkillDetails = false;
-  _SkillsScreenState(this.callback);
+  _SkillsMasterScreenState(this.callback);
+
+  int _sideBySideBreakpoint = 600;
+  bool get showSideBySide {
+    return MediaQuery.of(context).size.width > _sideBySideBreakpoint;
+  }
+
   @override
   void initState() {
     super.initState();
     bloc = locator<SkillsBloc>();
     bloc.add(GetAllSkillsEvent());
+    detailsBloc = locator<SkillDataBloc>();
     // _showSkillDetails = false;
   }
 
@@ -46,7 +57,9 @@ class _SkillsScreenState extends State<SkillsScreen> {
     return BlocProvider(
       builder: (_) => bloc,
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        floatingActionButtonLocation: showSideBySide
+            ? FloatingActionButtonLocation.startFloat
+            : FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).backgroundColor,
@@ -61,6 +74,9 @@ class _SkillsScreenState extends State<SkillsScreen> {
           centerTitle: true,
           title: Text('Your Skills'),
           backgroundColor: Theme.of(context).primaryColor,
+          leading: Hamburger(
+            parentContext: context,
+          ),
           actions: <Widget>[
             IconButton(
                 tooltip: ASCDESC_TOOLTIP,
@@ -82,41 +98,72 @@ class _SkillsScreenState extends State<SkillsScreen> {
         ),
         body: BlocBuilder<SkillsBloc, SkillsState>(
           builder: (context, state) {
-            Widget body;
-            if (state is InitialSkillsState) {
-              body = Container(
-                height: MediaQuery.of(context).size.height / 5,
-                child: Center(
-                  child: Text('Empty'),
-                ),
-              );
-            } else if (state is AllSkillsLoading) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is AllSkillsLoaded) {
-              // bloc.skills = state.skills;
-              body = Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: SkillsList(
-                  skills: bloc.skills,
-                  callback: callback == null ? viewSkill : callback,
-                  showDetails: _showSkillDetails,
-                ),
-              );
-            } else {
-              // TODO - not great, deal with error better
-              body = Container(
-                child: Center(
-                  child: Text('All skills error'),
-                ),
-              );
-            }
-            return body;
+            return LayoutBuilder(
+              builder: (builder, constraints) {
+                Widget body;
+                if (state is InitialSkillsState) {
+                  body = Container(
+                    height: MediaQuery.of(context).size.height / 5,
+                    child: Center(
+                      child: Text('Empty'),
+                    ),
+                  );
+                } else if (state is AllSkillsLoading) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is AllSkillsLoaded) {
+                  // bloc.skills = state.skills;
+                  body = _masterView();
+                } else {
+                  // TODO - not great, deal with error better
+                  body = Container(
+                    child: Center(
+                      child: Text('All skills error'),
+                    ),
+                  );
+                }
+                return body;
+              },
+            );
           },
         ),
       ),
     );
+  }
+
+  Widget _masterView() {
+    _selectedSkill = _selectedSkill == null ? bloc.skills[0] : _selectedSkill;
+
+    Expanded listView = Expanded(
+      child: Container(
+        // width: 500,
+        color: Theme.of(context).colorScheme.primaryVariant,
+        child: SkillsList(
+          skills: bloc.skills,
+          callback: callback == null ? viewSkill : callback,
+          showDetails: _showSkillDetails,
+        ),
+      ),
+    );
+    if (showSideBySide) {
+      return Row(
+        children: [
+          listView,
+          VerticalDivider(
+            color: Colors.black38,
+            width: 1,
+          ),
+          Expanded(
+            child: _skillDetailsScreen(),
+          )
+        ],
+      );
+    } else {
+      return Row(
+        children: [listView],
+      );
+    }
   }
 
   // ****** BUILDERS *********
@@ -169,8 +216,6 @@ class _SkillsScreenState extends State<SkillsScreen> {
   }
 
   void addSkill() async {
-    // final newSkillScreen = NewSkillScreen(bloc: locator<NewskillBloc>());
-
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return NewSkillScreen(bloc: locator<NewskillBloc>());
     }));
@@ -178,72 +223,26 @@ class _SkillsScreenState extends State<SkillsScreen> {
     bloc.add(GetAllSkillsEvent());
   }
 
+  Widget _skillDetailsScreen() {
+    final skillScreen = SkillsDetailScreen(bloc: detailsBloc);
+    skillScreen.bloc.skill = _selectedSkill;
+    skillScreen.bloc.goal = _selectedSkill.goal;
+    skillScreen.bloc
+        .add(GetEventsForSkillEvent(skillId: _selectedSkill.skillId));
+    return skillScreen;
+  }
+
   void viewSkill(Skill skill) async {
-    final skillScreen = SkillDataScreen(bloc: locator<SkillDataBloc>());
-    skillScreen.bloc.skill = skill;
-    skillScreen.bloc.goal = skill.goal;
-    skillScreen.bloc.add(GetEventsForSkillEvent(skillId: skill.skillId));
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return skillScreen;
-    }));
+    _selectedSkill = skill;
+
+    if (showSideBySide == false) {
+      await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return _skillDetailsScreen();
+      }));
+    } else {
+      setState(() {});
+    }
 
     bloc.add(GetAllSkillsEvent());
-  }
-
-  // void editSkill(Skill skill) async {
-  //   final editor = SkillEditorScreen(
-  //     skillEditorBloc: locator<SkillEditorBloc>(),
-  //   );
-  //   editor.skillEditorBloc.add(EditSkillEvent(skill));
-  //   await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-  //     return editor;
-  //   }));
-  //   bloc.add(GetAllSkillsEvent());
-  // }
-}
-
-class SkillsList extends StatefulWidget {
-  final List<Skill> skills;
-  final SelectionCallback callback;
-  final bool showDetails;
-  const SkillsList(
-      {Key key,
-      @required this.skills,
-      @required this.callback,
-      @required this.showDetails})
-      : super(key: key);
-
-  @override
-  _SkillsListState createState() => _SkillsListState();
-}
-
-class _SkillsListState extends State<SkillsList> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      // color: Color(0xFFFAF7F3),
-      color: Theme.of(context).colorScheme.surface,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return SkillCell(
-                  skill: widget.skills[index],
-                  callback: widget.callback,
-                  showDetails: widget.showDetails,
-                );
-              },
-              itemCount: widget.skills.length,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

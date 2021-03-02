@@ -5,7 +5,7 @@ import 'package:skills/core/stringConstants.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/liveSessionScreen/liveSessionScreen_bloc.dart';
-import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/pages/skillsMasterScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activeSessionActivitiesList.dart';
 import 'package:skills/features/skills/presentation/widgets/stopwatchWidget.dart';
 
@@ -330,7 +330,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            SkillsScreen(callback: _selectSkill),
+            SkillsMasterScreen(callback: _selectSkill),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;

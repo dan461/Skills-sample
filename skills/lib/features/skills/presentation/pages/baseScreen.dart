@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'skillsScreen.dart';
+import 'package:skills/features/skills/presentation/pages/skillsMasterScreen.dart';
+// import 'SkillsMasterScreen.dart';
 import 'schedulerScreen.dart';
 import 'homeScreen.dart';
 
@@ -13,36 +14,76 @@ class _BaseScreenState extends State<BaseScreen> {
 
   static List<Widget> _routes = <Widget>[
     HomeScreen(),
-    SkillsScreen(),
+    SkillsMasterScreen(),
     SchedulerScreen(),
   ];
 
-  void _itemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+// ******* rework *************
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: _menuDrawer(),
       backgroundColor: Theme.of(context).colorScheme.primaryVariant,
-      body: SafeArea(child: _routes[_selectedIndex]),
-      bottomNavigationBar:
-          BottomNavigationBar(items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (builder, constraints) {
+            return _routes[_selectedIndex];
+          },
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.list),
-          label: 'Skills',
+      ),
+    );
+  }
+
+  void _menuItemSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    Navigator.of(context).pop();
+  }
+
+  Container _menuDrawer() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.2,
+      child: Drawer(
+        elevation: 8,
+        child: Container(
+          color: Colors.grey[700],
+          width: 60,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                child: Container(
+                  child: Center(
+                    child: Text("Header"),
+                  ),
+                ),
+              ),
+              _menuButton(0, Icons.table_chart),
+              _menuButton(1, Icons.list),
+              _menuButton(2, Icons.schedule),
+            ],
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.schedule),
-          label: 'Sched',
+      ),
+    );
+  }
+
+  Widget _menuButton(int index, IconData icon) {
+    return Column(
+      children: [
+        IconButton(
+          onPressed: () {
+            _menuItemSelected(index);
+          },
+          icon: Icon(
+            icon,
+            color: Colors.white,
+          ),
+          iconSize: 48,
         ),
-      ], currentIndex: _selectedIndex, onTap: _itemTapped),
+      ],
     );
   }
 }

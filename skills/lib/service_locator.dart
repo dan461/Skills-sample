@@ -5,7 +5,7 @@ import 'package:skills/features/skills/domain/repos/session_repo.dart';
 import 'package:skills/features/skills/domain/repos/activity_repo.dart';
 import 'package:skills/features/skills/domain/usecases/goalUseCases.dart';
 import 'package:skills/features/skills/presentation/bloc/new_session/bloc.dart';
-import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillsDetailScreen/skilldata_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/skills_screen/skills_bloc.dart';
 import 'package:skills/features/skills/presentation/pages/activeSessionScreen.dart';
 import 'features/skills/data/datasources/skillsLocalDataSource.dart';

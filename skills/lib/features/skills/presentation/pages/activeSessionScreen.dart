@@ -6,7 +6,7 @@ import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/presentation/bloc/activeSessionScreen/activesession_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/sessionBloc/session_bloc.dart';
-import 'package:skills/features/skills/presentation/pages/skillsScreen.dart';
+import 'package:skills/features/skills/presentation/pages/skillsMasterScreen.dart';
 import 'package:skills/features/skills/presentation/widgets/activitiesListSection.dart';
 import 'package:skills/features/skills/presentation/widgets/countdown.dart';
 
@@ -217,7 +217,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   void _showSkillsList() async {
     var routeBuilder = PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            SkillsScreen(callback: _selectSkill),
+            SkillsMasterScreen(callback: _selectSkill),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;
@@ -368,7 +368,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 //   void _showSkillsList() async {
 //     var routeBuilder = PageRouteBuilder(
 //         pageBuilder: (context, animation, secondaryAnimation) =>
-//             SkillsScreen(callback: _selectSkill),
+//             SkillsMasterScreen(callback: _selectSkill),
 //         transitionsBuilder: (context, animation, secondaryAnimation, child) {
 //           var begin = Offset(0.0, 1.0);
 //           var end = Offset.zero;

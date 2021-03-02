@@ -32,6 +32,9 @@ class SkillModel extends Skill {
             goal: goal);
 
   factory SkillModel.fromMap(Map<String, dynamic> map) {
+    // TODO - bug: keep getting integers instead of doubles
+    num p = map['proficiency'];
+    double prof = p.toDouble();
     return SkillModel(
       skillId: map['skillId'],
       name: map['name'],
@@ -45,7 +48,7 @@ class SkillModel extends Skill {
           : DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
       currentGoalId: map['goalId'],
       priority: map['priority'],
-      proficiency: map['proficiency'],
+      proficiency: prof,
     );
   }
 

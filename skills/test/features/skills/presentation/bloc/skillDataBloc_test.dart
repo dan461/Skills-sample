@@ -7,7 +7,7 @@ import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
 import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
-import 'package:skills/features/skills/presentation/bloc/skillDataScreen/skilldata_bloc.dart';
+import 'package:skills/features/skills/presentation/bloc/skillsDetailScreen/skilldata_bloc.dart';
 
 import '../../mockClasses.dart';
 
