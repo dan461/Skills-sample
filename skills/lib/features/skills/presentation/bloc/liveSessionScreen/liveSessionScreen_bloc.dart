@@ -19,16 +19,14 @@ class LiveSessionScreenBloc
     extends Bloc<LiveSessionScreenEvent, LiveSessionScreenState> {
   final SaveLiveSessionWithActivities saveLiveSessionWithActivitiesUC;
 
-  LiveSessionScreenBloc({@required this.saveLiveSessionWithActivitiesUC});
+  LiveSessionScreenBloc({@required this.saveLiveSessionWithActivitiesUC})
+      : super(LiveSessionScreenInitial());
 
   Skill selectedSkill;
   List<Activity> activities = [];
   DateTime date = TickTock.today();
   TimeOfDay startTime = TimeOfDay.now();
   int sessionDuration = 0;
-
-  @override
-  LiveSessionScreenState get initialState => LiveSessionScreenInitial();
 
   @override
   Stream<LiveSessionScreenState> mapEventToState(
@@ -79,6 +77,4 @@ class LiveSessionScreenBloc
           (id) => LiveSessionFinishedState());
     }
   }
-
-  
 }

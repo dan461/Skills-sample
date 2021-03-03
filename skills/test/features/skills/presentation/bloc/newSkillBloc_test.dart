@@ -16,8 +16,8 @@ void main() {
   Skill testSkill;
 
   setUp(() {
-    mockInsertNewSkillUC = MockInsertNewSkillUC()
-;    sut = NewskillBloc(insertNewSkillUC: mockInsertNewSkillUC);
+    mockInsertNewSkillUC = MockInsertNewSkillUC();
+    sut = NewskillBloc(insertNewSkillUC: mockInsertNewSkillUC);
 
     testSkill = Skill(
         name: 'test',
@@ -25,12 +25,9 @@ void main() {
         startDate: DateTime.utc(2019, 2, 1));
   });
 
-  test('test bloc initial state is correct', () {
-    expect(sut.initialState, equals(InitialNewSkillState()));
-  });
-
   group('InsertNewSkill', () {
-    Skill newSkill = Skill(name: 'test',
+    Skill newSkill = Skill(
+        name: 'test',
         type: skillTypeToString(SkillType.composition),
         startDate: DateTime.utc(2019, 2, 1));
 
@@ -48,11 +45,7 @@ void main() {
         () async {
       when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
           .thenAnswer((_) async => Right(newSkill));
-      final expected = [
-        InitialNewSkillState(),
-        CreatingNewSkillState(),
-        NewSkillInsertedState()
-      ];
+      final expected = [CreatingNewSkillState(), NewSkillInsertedState()];
       // assert before act due to possibility of act event completing too quickly
       expectLater(sut, emitsInOrder(expected));
       sut.add(CreateNewSkillEvent(testSkill));
@@ -64,7 +57,6 @@ void main() {
       when(mockInsertNewSkillUC(SkillInsertOrUpdateParams(skill: testSkill)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        InitialNewSkillState(),
         CreatingNewSkillState(),
         NewSkillErrorState(CACHE_FAILURE_MESSAGE)
       ];

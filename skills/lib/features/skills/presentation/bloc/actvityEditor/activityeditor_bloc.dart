@@ -16,10 +16,7 @@ class ActivityEditorBloc
   Activity activity;
   final UpdateActivityUC updateActivityUC;
 
-  ActivityEditorBloc({this.updateActivityUC});
-
-  @override
-  ActivityEditorState get initialState => ActivityEditorInitial();
+  ActivityEditorBloc({this.updateActivityUC}) : super(ActivityEditorInitial());
 
   Skill selectedSkill;
   int selectedDuration;

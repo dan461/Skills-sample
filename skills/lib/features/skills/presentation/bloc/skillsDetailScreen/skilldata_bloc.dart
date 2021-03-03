@@ -28,10 +28,8 @@ class SkillDataBloc extends Bloc<SkillDataEvent, SkillDataState> {
       {this.getCompletedEventsForSkill,
       this.updateSkill,
       this.getSkillById,
-      this.getSkillGoalMapById});
-
-  @override
-  SkillDataState get initialState => SkillDataInitialState();
+      this.getSkillGoalMapById})
+      : super(SkillDataInitialState());
 
   @override
   Stream<SkillDataState> mapEventToState(

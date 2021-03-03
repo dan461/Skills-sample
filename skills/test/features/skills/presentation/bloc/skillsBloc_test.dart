@@ -115,7 +115,6 @@ void main() {
       when(mockGetAllSkillsUC(NoParams()))
           .thenAnswer((_) async => Right(skillsList));
       final expected = [
-        InitialSkillsState(),
         AllSkillsLoading(),
         AllSkillsLoaded(skillsList),
       ];
@@ -129,7 +128,6 @@ void main() {
       when(mockGetAllSkillsUC(NoParams()))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        InitialSkillsState(),
         AllSkillsLoading(),
         AllSkillsError(CACHE_FAILURE_MESSAGE),
       ];
@@ -143,7 +141,6 @@ void main() {
       when(mockGetAllSkillsUC(NoParams()))
           .thenAnswer((_) async => Left(ServerFailure()));
       final expected = [
-        InitialSkillsState(),
         AllSkillsLoading(),
         AllSkillsError(SERVER_FAILURE_MESSAGE),
       ];

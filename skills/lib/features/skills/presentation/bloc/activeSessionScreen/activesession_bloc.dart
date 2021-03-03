@@ -33,9 +33,6 @@ class ActiveSessionBloc extends SessionBloc {
   }
 
   @override
-  ActiveSessionState get initialState => ActiveSessionInitial();
-
-  @override
   Stream<ActiveSessionState> mapEventToState(
     SessionEvent event,
   ) async* {

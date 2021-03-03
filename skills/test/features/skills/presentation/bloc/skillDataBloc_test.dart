@@ -45,10 +45,6 @@ void main() {
     eventsList = [testEvent];
   });
 
-  test('bloc initial state is correct', () {
-    expect(sut.initialState, equals(SkillDataInitialState()));
-  });
-
   group('GetEventsForSkillEvent: - ', () {
     test(
         'test that bloc emits [SkillDataCrudProcessingState, SkillDataEventsLoadedState] when GetEventsForSkillEvent is added',
@@ -56,7 +52,6 @@ void main() {
       when(mockGetCompletedEventsForSkill(GetSkillParams(id: 1)))
           .thenAnswer((_) async => Right(eventsList));
       final expected = [
-        SkillDataInitialState(),
         SkillDataCrudProcessingState(),
         SkillDataEventsLoadedState()
       ];
@@ -70,7 +65,6 @@ void main() {
       when(mockGetCompletedEventsForSkill(GetSkillParams(id: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        SkillDataInitialState(),
         SkillDataCrudProcessingState(),
         SkillDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -95,7 +89,6 @@ void main() {
               skillId: testSkill.skillId, changeMap: testMap)))
           .thenAnswer((_) async => Right(1));
       final expected = [
-        SkillDataInitialState(),
         SkillDataCrudProcessingState(),
         UpdatedExistingSkillState()
       ];
@@ -111,7 +104,6 @@ void main() {
               skillId: testSkill.skillId, changeMap: testMap)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        SkillDataInitialState(),
         SkillDataCrudProcessingState(),
         SkillDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -145,11 +137,7 @@ void main() {
         () {
       when(mockGetSkillGoalMapById(GetSkillParams(id: 1)))
           .thenAnswer((_) async => Right(testMap));
-      final expected = [
-        SkillDataInitialState(),
-        SkillDataCrudProcessingState(),
-        SkillRefreshedState()
-      ];
+      final expected = [SkillDataCrudProcessingState(), SkillRefreshedState()];
       expectLater(sut, emitsInOrder(expected));
       sut.add(RefreshSkillByIdEvent(skillId: 1));
     });
@@ -160,7 +148,6 @@ void main() {
       when(mockGetSkillGoalMapById(GetSkillParams(id: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        SkillDataInitialState(),
         SkillDataCrudProcessingState(),
         SkillDataErrorState(CACHE_FAILURE_MESSAGE)
       ];

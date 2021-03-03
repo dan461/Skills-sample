@@ -14,10 +14,8 @@ class NewgoalBloc extends Bloc<NewgoalEvent, NewgoalState> {
   Goal goal;
   String goalTranslation = 'none';
 
-  NewgoalBloc({this.insertNewGoalUC, this.addGoalToSkill});
-
-  @override
-  NewgoalState get initialState => InitialNewgoalState();
+  NewgoalBloc({this.insertNewGoalUC, this.addGoalToSkill})
+      : super(InitialNewgoalState());
 
   @override
   Stream<NewgoalState> mapEventToState(
@@ -32,9 +30,8 @@ class NewgoalBloc extends Bloc<NewgoalEvent, NewgoalState> {
           (newGoal) => NewGoalInsertedState(newGoal));
     } else if (event is AddGoalToSkillEvent) {
       yield AddingGoalToSkillState();
-      final failureOrNewId = await addGoalToSkill(AddGoalToSkillParams(
-          skillId: event.skillId,
-          goalId: event.goalId));
+      final failureOrNewId = await addGoalToSkill(
+          AddGoalToSkillParams(skillId: event.skillId, goalId: event.goalId));
       yield failureOrNewId.fold(
           (failure) => NewGoalErrorState(CACHE_FAILURE_MESSAGE),
           (newId) =>

@@ -40,9 +40,9 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (context) => bloc,
+      create: (context) => bloc,
       child: BlocListener<NewSessionBloc, NewSessionState>(
-        bloc: bloc,
+        cubit: bloc,
         listener: (context, state) {
           if (state is NewSessionInsertedState) {
             Navigator.of(context).popAndPushNamed(SESSION_DATA_ROUTE,

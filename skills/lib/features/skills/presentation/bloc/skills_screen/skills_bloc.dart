@@ -22,7 +22,7 @@ class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
   // UseCases
   final GetAllSkills getAllSkills;
 
-  SkillsBloc({@required this.getAllSkills});
+  SkillsBloc({@required this.getAllSkills}) : super(InitialSkillsState());
 
   void ascDescTapped() {
     skills = List<Skill>.from(skills.reversed);
@@ -54,9 +54,6 @@ class SkillsBloc extends Bloc<SkillsEvent, SkillsState> {
     }
     skills.sort(comparator);
   }
-
-  @override
-  SkillsState get initialState => InitialSkillsState();
 
   @override
   Stream<SkillsState> mapEventToState(

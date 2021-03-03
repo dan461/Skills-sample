@@ -14,6 +14,8 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   List<Activity> activitiesForSession = [];
   Session session;
 
+  SessionBloc() : super(SessionInitial());
+
   int get completedActivitiesCount {
     int count = 0;
     for (var activity in activitiesForSession) {
@@ -30,7 +32,8 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     return time;
   }
 
-  void createActivity(int activityDuration, String notes, Skill skill, DateTime date) {
+  void createActivity(
+      int activityDuration, String notes, Skill skill, DateTime date) {
     final newActivity = Activity(
         skillId: skill.skillId,
         sessionId: session.sessionId,
@@ -41,9 +44,6 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
         notes: notes);
     add(InsertActivityForSessionEvent(newActivity));
   }
-
-  @override
-  SessionState get initialState => null;
 
   @override
   Stream<SessionState> mapEventToState(SessionEvent event) {

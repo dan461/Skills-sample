@@ -55,7 +55,7 @@ class _SkillsMasterScreenState extends State<SkillsMasterScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (_) => bloc,
+      create: (_) => bloc,
       child: Scaffold(
         floatingActionButtonLocation: showSideBySide
             ? FloatingActionButtonLocation.startFloat

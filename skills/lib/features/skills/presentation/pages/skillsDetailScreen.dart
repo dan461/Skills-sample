@@ -55,9 +55,9 @@ class _SkillsDetailScreenState extends State<SkillsDetailScreen> {
   Widget build(BuildContext context) {
     Widget body;
     return BlocProvider(
-      builder: (context) => bloc,
+      create: (context) => bloc,
       child: BlocListener<SkillDataBloc, SkillDataState>(
-        bloc: bloc,
+        cubit: bloc,
         listener: (context, state) {
           // if (state is )
         },

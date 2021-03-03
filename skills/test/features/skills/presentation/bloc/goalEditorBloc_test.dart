@@ -18,7 +18,7 @@ void main() {
   // MockAddGoalToSkill mockAddGoalToSkill;
   MockDeleteGoalWithId mockDeleteGoalWithId;
   Goal testGoal;
-  
+
   GoalModel testModel;
 
   setUp(() {
@@ -38,8 +38,6 @@ void main() {
         timeRemaining: 0,
         goalTime: 0);
 
-    
-
     testModel = GoalModel(
         skillId: testGoal.skillId,
         fromDate: testGoal.fromDate,
@@ -51,17 +49,10 @@ void main() {
         desc: testGoal.desc != null ? testGoal.desc : "");
   });
 
-  test('test bloc initial state is correct', () {
-    expect(sut.initialState, equals(EmptyGoalEditorState()));
-  });
-
   test(
       'test for bloc emitting [GoalEditorEditingState] in response to an EditGoalEvent',
       () async {
-    final expected = [
-      EmptyGoalEditorState(),
-      GoalEditorEditingState(goal: testGoal)
-    ];
+    final expected = [GoalEditorEditingState(goal: testGoal)];
     sut.theGoal = testGoal;
     sut.add(EditGoalEvent());
     expect(sut, emitsInOrder(expected));
@@ -82,11 +73,7 @@ void main() {
         () async {
       when(mockDeleteGoalWithId(GoalCrudParams(id: 1)))
           .thenAnswer((_) async => Right(0));
-      final expected = [
-        EmptyGoalEditorState(),
-        GoalCrudInProgressState(),
-        GoalDeletedState(0)
-      ];
+      final expected = [GoalCrudInProgressState(), GoalDeletedState(0)];
       expectLater(sut, emitsInOrder(expected));
       sut.add(DeleteGoalEvent(1));
     });
@@ -97,7 +84,6 @@ void main() {
       when(mockDeleteGoalWithId(GoalCrudParams(id: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        EmptyGoalEditorState(),
         GoalCrudInProgressState(),
         GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -121,11 +107,7 @@ void main() {
         () async {
       when(mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => Right(1));
-      final expected = [
-        EmptyGoalEditorState(),
-        GoalCrudInProgressState(),
-        GoalUpdatedState(1)
-      ];
+      final expected = [GoalCrudInProgressState(), GoalUpdatedState(1)];
       expectLater(sut, emitsInOrder(expected));
       sut.add(UpdateGoalEvent(testGoal));
     });
@@ -136,7 +118,6 @@ void main() {
       when(mockUpdateGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        EmptyGoalEditorState(),
         GoalCrudInProgressState(),
         GoalEditorErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -207,107 +188,107 @@ void main() {
   //     expect(translation, matcher);
   //   });
 
-    // test(
-    //     'test translation of a time based goal into a descriptive string, with less than one hour.',
-    //     () {
-    //   DateTime from = DateTime(2019, 07, 02);
-    //   DateTime to = DateTime(2019, 07, 04);
+  // test(
+  //     'test translation of a time based goal into a descriptive string, with less than one hour.',
+  //     () {
+  //   DateTime from = DateTime(2019, 07, 02);
+  //   DateTime to = DateTime(2019, 07, 04);
 
-    //   final testTimeGoal = Goal(
-    //       skillId: 1,
-    //       fromDate: from,
-    //       toDate: to,
-    //       isComplete: false,
-    //       timeBased: true,
-    //       goalTime: 15);
+  //   final testTimeGoal = Goal(
+  //       skillId: 1,
+  //       fromDate: from,
+  //       toDate: to,
+  //       isComplete: false,
+  //       timeBased: true,
+  //       goalTime: 15);
 
-    //   String matcher = "Goal: 15 minutes between Jul 2 and Jul 4.";
-    //   String translation = sut.translateGoal(testTimeGoal);
+  //   String matcher = "Goal: 15 minutes between Jul 2 and Jul 4.";
+  //   String translation = sut.translateGoal(testTimeGoal);
 
-    //   expect(translation, matcher);
-    // });
+  //   expect(translation, matcher);
+  // });
 
-    // test(
-    //     'test translation of a time based goal with multiple hours and zero minutes into a descriptive string.',
-    //     () {
-    //   DateTime from = DateTime(2019, 07, 02);
-    //   DateTime to = DateTime(2019, 07, 04);
+  // test(
+  //     'test translation of a time based goal with multiple hours and zero minutes into a descriptive string.',
+  //     () {
+  //   DateTime from = DateTime(2019, 07, 02);
+  //   DateTime to = DateTime(2019, 07, 04);
 
-    //   final testTimeGoal = Goal(
-    //       skillId: 1,
-    //       fromDate: from,
-    //       toDate: to,
-    //       isComplete: false,
-    //       timeBased: true,
-    //       goalTime: 120);
+  //   final testTimeGoal = Goal(
+  //       skillId: 1,
+  //       fromDate: from,
+  //       toDate: to,
+  //       isComplete: false,
+  //       timeBased: true,
+  //       goalTime: 120);
 
-    //   String matcher = "Goal: 2 hrs between Jul 2 and Jul 4.";
-    //   String translation = sut.translateGoal(testTimeGoal);
+  //   String matcher = "Goal: 2 hrs between Jul 2 and Jul 4.";
+  //   String translation = sut.translateGoal(testTimeGoal);
 
-    //   expect(translation, matcher);
-    // });
+  //   expect(translation, matcher);
+  // });
 
-    // test(
-    //     'test translation of a time based goal into a descriptive string, start and end on same day.',
-    //     () {
-    //   DateTime from = DateTime(2019, 07, 02);
-    //   DateTime to = DateTime(2019, 07, 02);
+  // test(
+  //     'test translation of a time based goal into a descriptive string, start and end on same day.',
+  //     () {
+  //   DateTime from = DateTime(2019, 07, 02);
+  //   DateTime to = DateTime(2019, 07, 02);
 
-    //   final testTimeGoal = Goal(
-    //       skillId: 1,
-    //       fromDate: from,
-    //       toDate: to,
-    //       isComplete: false,
-    //       timeBased: true,
-    //       goalTime: 90);
+  //   final testTimeGoal = Goal(
+  //       skillId: 1,
+  //       fromDate: from,
+  //       toDate: to,
+  //       isComplete: false,
+  //       timeBased: true,
+  //       goalTime: 90);
 
-    //   String matcher = "Goal: 1 hrs 30 min on Jul 2.";
-    //   String translation = sut.translateGoal(testTimeGoal);
+  //   String matcher = "Goal: 1 hrs 30 min on Jul 2.";
+  //   String translation = sut.translateGoal(testTimeGoal);
 
-    //   expect(translation, matcher);
-    // });
+  //   expect(translation, matcher);
+  // });
 
-    // test(
-    //     'test translation of a task based goal into a descriptive string, start and end on different days.',
-    //     () {
-    //   DateTime from = DateTime(2019, 07, 02);
-    //   DateTime to = DateTime(2019, 07, 04);
+  // test(
+  //     'test translation of a task based goal into a descriptive string, start and end on different days.',
+  //     () {
+  //   DateTime from = DateTime(2019, 07, 02);
+  //   DateTime to = DateTime(2019, 07, 04);
 
-    //   final testTimeGoal = Goal(
-    //       skillId: 1,
-    //       fromDate: from,
-    //       toDate: to,
-    //       isComplete: false,
-    //       timeBased: false,
-    //       goalTime: 0,
-    //       desc: 'Practice practice practice');
+  //   final testTimeGoal = Goal(
+  //       skillId: 1,
+  //       fromDate: from,
+  //       toDate: to,
+  //       isComplete: false,
+  //       timeBased: false,
+  //       goalTime: 0,
+  //       desc: 'Practice practice practice');
 
-    //   String matcher =
-    //       "Goal: Practice practice practice between Jul 2 and Jul 4.";
-    //   String translation = sut.translateGoal(testTimeGoal);
+  //   String matcher =
+  //       "Goal: Practice practice practice between Jul 2 and Jul 4.";
+  //   String translation = sut.translateGoal(testTimeGoal);
 
-    //   expect(translation, matcher);
-    // });
+  //   expect(translation, matcher);
+  // });
 
-    // test(
-    //     'test translation of a task based goal into a descriptive string, start and end on same day.',
-    //     () {
-    //   DateTime from = DateTime(2019, 07, 02);
-    //   DateTime to = DateTime(2019, 07, 02);
+  // test(
+  //     'test translation of a task based goal into a descriptive string, start and end on same day.',
+  //     () {
+  //   DateTime from = DateTime(2019, 07, 02);
+  //   DateTime to = DateTime(2019, 07, 02);
 
-    //   final testTimeGoal = Goal(
-    //       skillId: 1,
-    //       fromDate: from,
-    //       toDate: to,
-    //       isComplete: false,
-    //       timeBased: false,
-    //       goalTime: 0,
-    //       desc: 'Practice practice practice');
+  //   final testTimeGoal = Goal(
+  //       skillId: 1,
+  //       fromDate: from,
+  //       toDate: to,
+  //       isComplete: false,
+  //       timeBased: false,
+  //       goalTime: 0,
+  //       desc: 'Practice practice practice');
 
-    //   String matcher = "Goal: Practice practice practice on Jul 2.";
-    //   String translation = sut.translateGoal(testTimeGoal);
+  //   String matcher = "Goal: Practice practice practice on Jul 2.";
+  //   String translation = sut.translateGoal(testTimeGoal);
 
-    //   expect(translation, matcher);
-    // });
+  //   expect(translation, matcher);
+  // });
   // });
 }

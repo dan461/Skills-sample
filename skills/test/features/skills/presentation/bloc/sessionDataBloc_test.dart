@@ -53,11 +53,8 @@ void main() {
         isScheduled: true);
 
     sut.session = testSession;
-    
+
     testChangeMap = {};
-
-
-    
 
     testActivity = Activity(
         skillId: 1,
@@ -66,12 +63,10 @@ void main() {
         date: DateTime.fromMillisecondsSinceEpoch(0),
         isComplete: false,
         skillString: 'test',
-        notes: ''
-        );
+        notes: '');
   });
 
   test('test that availableTime is correct', () async {
-    
     sut.activitiesForSession = [testActivity];
 
     expect(sut.availableTime, 20);
@@ -89,18 +84,19 @@ void main() {
     );
 
     var newTestActivity = Activity(
-        skillId: testSkill.skillId,
-        sessionId: 1,
-        duration: 20,
-        date: DateTime.fromMillisecondsSinceEpoch(0),
-        isComplete: false,
-        skillString: testSkill.name,
-        notes: 'note');
+      skillId: testSkill.skillId,
+      sessionId: 1,
+      duration: 20,
+      date: DateTime.fromMillisecondsSinceEpoch(0),
+      isComplete: false,
+      skillString: testSkill.name,
+      notes: 'note',
+    );
     List<Activity> activities = [newTestActivity];
     sut.session = testSession;
     sut.sessionDate = DateTime.fromMillisecondsSinceEpoch(0);
 
-    sut.createActivity(20, 'note',testSkill, newTestActivity.date);
+    sut.createActivity(20, 'note', testSkill, newTestActivity.date);
     await untilCalled(mockInsertActivitiesForSessionUC(
         ActivityMultiInsertParams(activities: activities, newSessionId: 1)));
     verify(mockInsertActivitiesForSessionUC(
@@ -127,7 +123,7 @@ void main() {
       'test that bloc emits SessionEditingState after BeginSessionEditingEvent is added',
       () async {
     sut.add(BeginSessionEditingEvent());
-    final expected = [SessiondataInitial(), SessionEditingState()];
+    final expected = [SessionEditingState()];
     expectLater(sut, emitsInOrder(expected));
   });
 
@@ -135,7 +131,7 @@ void main() {
       'test that bloc emits SessionViewingState after CancelSessionEditingEvent is added',
       () async {
     sut.add(CancelSessionEditingEvent());
-    final expected = [SessiondataInitial(), SessionViewingState()];
+    final expected = [SessionViewingState()];
     expectLater(sut, emitsInOrder(expected));
   });
 
@@ -143,7 +139,7 @@ void main() {
       'test that bloc emits SessionViewingState after CancelSkillForSessionEvent is added',
       () async {
     sut.add(CancelSkillForSessionEvent());
-    final expected = [SessiondataInitial(), SessionViewingState()];
+    final expected = [SessionViewingState()];
     expectLater(sut, emitsInOrder(expected));
   });
 
@@ -157,10 +153,7 @@ void main() {
       startDate: DateTime.fromMillisecondsSinceEpoch(0),
     );
     sut.add(SkillSelectedForSessionEvent(skill: testSkill));
-    final expected = [
-      SessiondataInitial(),
-      SkillSelectedForSessionState(testSkill)
-    ];
+    final expected = [SkillSelectedForSessionState(testSkill)];
     expectLater(sut, emitsInOrder(expected));
   });
 
@@ -172,16 +165,15 @@ void main() {
         duration: 30,
         isComplete: false,
         isScheduled: true);
-        testSession2.activities = [];
+    testSession2.activities = [];
 
     test(
         'test that GetSessionAndActivities use case is called after a GetSessionAndActivitiesEvent event is added.',
         () async {
-      sut.add(GetSessionAndActivitiesEvent(sessionId: testSession.sessionId));
-      await untilCalled(mockGetSessionAndActivities(
-          SessionByIdParams(sessionId: testSession.sessionId)));
-      verify(mockGetSessionAndActivities(
-          SessionByIdParams(sessionId: testSession.sessionId)));
+      sut.add(GetSessionAndActivitiesEvent(sessionId: 1));
+      await untilCalled(
+          mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)));
+      verify(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)));
     });
 
     test(
@@ -191,7 +183,6 @@ void main() {
       when(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Right(testSession2));
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataInfoLoadedState()
       ];
@@ -206,7 +197,6 @@ void main() {
       when(mockGetSessionAndActivities(SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -221,9 +211,9 @@ void main() {
         () async {
       sut.add(GetActivitiesForSessionEvent(testSession));
       await untilCalled(mockGetActivitiesWithSkillsForSessionUC(
-          SessionByIdParams(sessionId: 1)));
+          SessionByIdParams(sessionId: testSession.sessionId)));
       verify(mockGetActivitiesWithSkillsForSessionUC(
-          SessionByIdParams(sessionId: 1)));
+          SessionByIdParams(sessionId: testSession.sessionId)));
     });
 
     test(
@@ -234,7 +224,6 @@ void main() {
               SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Right([]));
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataActivitesLoadedState()
       ];
@@ -250,7 +239,6 @@ void main() {
               SessionByIdParams(sessionId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -275,7 +263,6 @@ void main() {
               SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
           .thenAnswer((_) async => Right(testSession));
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionUpdatedAndRefreshedState(testSession)
       ];
@@ -290,7 +277,6 @@ void main() {
               SessionUpdateParams(sessionId: 1, changeMap: testChangeMap)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -317,7 +303,6 @@ void main() {
           .thenAnswer((_) async => Right(1));
 
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionWasDeletedState()
       ];
@@ -332,7 +317,6 @@ void main() {
           .thenAnswer((_) async => Left(CacheFailure()));
 
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -382,7 +366,6 @@ void main() {
           .thenAnswer((_) async => Right(resultsList));
 
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         NewActivityCreatedState()
       ];
@@ -398,7 +381,6 @@ void main() {
           .thenAnswer((_) async => Left(CacheFailure()));
 
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -446,7 +428,6 @@ void main() {
           .thenAnswer((_) async => Right(1));
 
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         ActivityRemovedFromSessionState()
       ];
@@ -461,7 +442,6 @@ void main() {
           .thenAnswer((_) async => Left(CacheFailure()));
 
       final expected = [
-        SessiondataInitial(),
         SessionDataCrudInProgressState(),
         SessionDataErrorState(CACHE_FAILURE_MESSAGE)
       ];

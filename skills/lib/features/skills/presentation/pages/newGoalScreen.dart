@@ -338,7 +338,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NewgoalBloc>(
-      builder: (_) => locator<NewgoalBloc>(),
+      create: (_) => locator<NewgoalBloc>(),
       child: BlocListener<NewgoalBloc, NewgoalState>(
         listener: (context, state) {
           if (state is GoalAddedToSkillState) {
