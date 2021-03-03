@@ -1,36 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
+import 'package:skills/core/tickTock.dart';
+
+import 'goal.dart';
 
 class Skill extends Equatable {
-  final int id;
+  final int skillId;
   final String name;
+  final String type;
   final String source;
+  final String instrument;
   final DateTime startDate;
   final int totalTime;
   final DateTime lastPracDate;
   final int currentGoalId;
-  final String goalText;
+  final int priority;
+  final double proficiency;
+  Goal goal;
 
   Skill(
-      {this.id,
+      {this.skillId,
       @required this.name,
-      @required this.source,
-      this.startDate,
+      @required this.type,
+      this.source,
+      this.instrument,
+      @required this.startDate,
       this.totalTime,
       this.lastPracDate,
       this.currentGoalId,
-      this.goalText})
+      this.priority,
+      this.proficiency,
+      this.goal})
       : super();
+
+  int get elapsedDays {
+    int days = -1;
+    if (lastPracDate.millisecondsSinceEpoch != 0) {
+      days = (TickTock.today().millisecondsSinceEpoch -
+              lastPracDate.millisecondsSinceEpoch) ~/
+          86400000;
+    }
+    return days;
+  }
 
   @override
   List<Object> get props => [
-        id,
+        skillId,
         name,
+        type,
         source,
+        instrument,
         startDate,
         totalTime,
         lastPracDate,
         currentGoalId,
-        goalText
+        priority,
+        proficiency,
+        goal
       ];
 }

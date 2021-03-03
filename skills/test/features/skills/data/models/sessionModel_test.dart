@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:skills/core/TickTock.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 
@@ -8,30 +9,26 @@ void main() {
   Map<String, dynamic> testMap;
 
   setUp(() {
-    var testDate = DateTime.fromMillisecondsSinceEpoch(0);
-    var start = DateTime(testDate.year, testDate.month, testDate.day, 12, 0)
-        .millisecondsSinceEpoch;
-    var end = DateTime(testDate.year, testDate.month, testDate.day, 13, 0)
-        .millisecondsSinceEpoch;
+    var testDate = DateTime.fromMillisecondsSinceEpoch(0).toUtc();
+    var start = TimeOfDay(hour: 12, minute: 0);
+    
     sut = SessionModel(
         sessionId: 1,
         date: testDate,
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 13, minute: 0),
         duration: 60,
         timeRemaining: 60,
         isScheduled: true,
-        isCompleted: false);
+        isComplete: false);
 
     testMap = {
       'sessionId': 1,
       'date': 0,
-      'startTime': start,
-      'endTime': end,
+      'startTime': TickTock.timeToInt(start),
       'duration': 60,
       'timeRemaining': 60,
       'isScheduled': 1,
-      'isCompleted': 0
+      'isComplete': 0
     };
   });
 
@@ -52,14 +49,11 @@ void main() {
     final expectedMap = {
       "sessionId": 1,
       "date": 0,
-      "startTime": sut.timeToInt(DateTime.fromMillisecondsSinceEpoch(0),
-          TimeOfDay(hour: 12, minute: 0)),
-      "endTime": sut.timeToInt(DateTime.fromMillisecondsSinceEpoch(0),
-          TimeOfDay(hour: 13, minute: 0)),
+      "startTime": TickTock.timeToInt(TimeOfDay(hour: 12, minute: 0)),
       "duration": 60,
       "timeRemaining": 60,
       "isScheduled": true,
-      "isCompleted": false
+      "isComplete": false
     };
     expect(result, expectedMap);
   });

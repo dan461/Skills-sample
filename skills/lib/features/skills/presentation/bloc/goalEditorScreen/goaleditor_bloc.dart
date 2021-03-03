@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:skills/core/constants.dart';
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
@@ -57,7 +56,7 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
             timeRemaining: goal.goalTime,
             desc: goal.desc != null ? goal.desc : "");
         return GoalEditorGoalReturnedState(goal: goal);
-      });
+      }); 
 
       // edit Goal
     } else if (event is EditGoalEvent) {
@@ -83,54 +82,54 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
     }
   }
 
-  String translateGoal(Goal goal) {
-    String translation;
-    final durationString = createDurationString(goal.fromDate, goal.toDate);
+  // String translateGoal(Goal goal) {
+  //   String translation;
+  //   final durationString = createDurationString(goal.fromDate, goal.toDate);
 
-    if (goal.timeBased) {
-      final timeString = createGoalTimeString(goal.goalTime);
-      translation = 'Goal: $timeString $durationString.';
-    } else {
-      var desc = goal.desc;
-      translation = 'Goal: $desc $durationString.';
-    }
+  //   if (goal.timeBased) {
+  //     final timeString = createGoalTimeString(goal.goalTime);
+  //     translation = 'Goal: $timeString $durationString.';
+  //   } else {
+  //     var desc = goal.desc;
+  //     translation = 'Goal: $desc $durationString.';
+  //   }
 
-    return translation;
-  }
+  //   return translation;
+  // }
 
-  String createGoalTimeString(int time) {
-    String timeString;
+  // String createGoalTimeString(int time) {
+  //   String timeString;
 
-    String hours;
-    String min;
-    if (time < 60) {
-      min = time.toString();
-      timeString = '$min minutes';
-    } else if (time == 60) {
-      timeString = '1 hour';
-    } else {
-      hours = (time / 60).floor().toString();
-      timeString = '$hours hrs';
-      if (time % 60 != 0) {
-        min = (time % 60).toString();
-        timeString = '$hours hrs $min min';
-      }
-    }
+  //   String hours;
+  //   String min;
+  //   if (time < 60) {
+  //     min = time.toString();
+  //     timeString = '$min minutes';
+  //   } else if (time == 60) {
+  //     timeString = '1 hour';
+  //   } else {
+  //     hours = (time / 60).floor().toString();
+  //     timeString = '$hours hrs';
+  //     if (time % 60 != 0) {
+  //       min = (time % 60).toString();
+  //       timeString = '$hours hrs $min min';
+  //     }
+  //   }
 
-    return timeString;
-  }
+  //   return timeString;
+  // }
 
-  String createDurationString(DateTime from, DateTime to) {
-    String durationString;
+  // String createDurationString(DateTime from, DateTime to) {
+  //   String durationString;
 
-    // final fromDate = DateTime.fromMillisecondsSinceEpoch(from);
-    final fromString = DateFormat.MMMd().format(from);
-    if (from == to) {
-      durationString = 'on $fromString';
-    } else {
-      final toString = DateFormat.MMMd().format(to);
-      durationString = 'between $fromString and $toString';
-    }
-    return durationString;
-  }
+  //   // final fromDate = DateTime.fromMillisecondsSinceEpoch(from);
+  //   final fromString = DateFormat.MMMd().format(from);
+  //   if (from == to) {
+  //     durationString = 'on $fromString';
+  //   } else {
+  //     final toString = DateFormat.MMMd().format(to);
+  //     durationString = 'between $fromString and $toString';
+  //   }
+  //   return durationString;
+  // }
 }

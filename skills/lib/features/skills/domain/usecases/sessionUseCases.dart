@@ -16,14 +16,29 @@ class InsertNewSession extends UseCase<Session, SessionInsertOrUpdateParams> {
   }
 }
 
-class GetSessionsInMonth extends UseCase<List<Session>, SessionInMonthParams> {
+class GetSessionsInDateRange
+    extends UseCase<List<Session>, SessionsInDateRangeParams> {
   final SessionRepository repo;
 
-  GetSessionsInMonth(this.repo);
+  GetSessionsInDateRange(this.repo);
 
   @override
-  Future<Either<Failure, List<Session>>> call(SessionInMonthParams params) {
-    return repo.getSessionsInMonth(params.month);
+  Future<Either<Failure, List<Session>>> call(
+      SessionsInDateRangeParams params) {
+    return repo.getSessionsInDateRange(params.dates.first, params.dates.last);
+  }
+}
+
+class GetMapsForSessionsInDateRange
+    extends UseCase<List<Map>, SessionsInDateRangeParams> {
+  final SessionRepository repo;
+
+  GetMapsForSessionsInDateRange(this.repo);
+
+  @override
+  Future<Either<Failure, List<Map>>> call(SessionsInDateRangeParams params) {
+    return repo.getSessionMapsInDateRange(
+        params.dates.first, params.dates.last);
   }
 }
 
@@ -37,6 +52,48 @@ class GetSessionWithId extends UseCase<Session, SessionByIdParams> {
   }
 }
 
+class GetSessionAndActivities extends UseCase<Session, SessionByIdParams> {
+  final SessionRepository repo;
+
+  GetSessionAndActivities(this.repo);
+
+  @override
+  Future<Either<Failure, Session>> call(SessionByIdParams params) {
+    return repo.getSessionAndActivities(params.sessionId);
+  }
+}
+
+class UpdateSessionWithId extends UseCase<int, SessionUpdateParams> {
+  final SessionRepository repo;
+
+  UpdateSessionWithId(this.repo);
+  @override
+  Future<Either<Failure, int>> call(SessionUpdateParams params) {
+    return repo.updateSession(params.changeMap, params.sessionId);
+  }
+}
+
+class UpdateAndRefreshSessionWithId
+    extends UseCase<Session, SessionUpdateParams> {
+  final SessionRepository repo;
+
+  UpdateAndRefreshSessionWithId(this.repo);
+  @override
+  Future<Either<Failure, Session>> call(SessionUpdateParams params) {
+    return repo.updateAndRefreshSession(params.changeMap, params.sessionId);
+  }
+}
+
+class CompleteSessionAndEvents extends UseCase<int, SessionCompleteParams> {
+  final SessionRepository repo;
+
+  CompleteSessionAndEvents(this.repo);
+  @override
+  Future<Either<Failure, int>> call(SessionCompleteParams params) {
+    return repo.completeSessionAndEvents(params.sessionId, params.date);
+  }
+}
+
 class DeleteSessionWithId extends UseCase<int, SessionDeleteParams> {
   final SessionRepository repo;
 
@@ -44,5 +101,17 @@ class DeleteSessionWithId extends UseCase<int, SessionDeleteParams> {
   @override
   Future<Either<Failure, int>> call(SessionDeleteParams params) async {
     return await repo.deleteSessionById(params.sessionId);
+  }
+}
+
+class SaveLiveSessionWithActivities extends UseCase<int, LiveSessionParams> {
+  final SessionRepository repo;
+
+  SaveLiveSessionWithActivities(this.repo);
+
+  @override
+  Future<Either<Failure, int>> call(LiveSessionParams params) async {
+    return await repo.saveLiveSessionWithActivities(
+        params.session, params.activities);
   }
 }

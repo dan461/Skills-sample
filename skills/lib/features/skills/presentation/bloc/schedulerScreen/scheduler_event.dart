@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 
 abstract class SchedulerEvent extends Equatable {
   const SchedulerEvent();
@@ -24,6 +25,16 @@ class MonthSelectedEvent extends SchedulerEvent {
   List<Object> get props => [change];
 }
 
+class VisibleDateRangeChangeEvent extends SchedulerEvent {
+  final List<DateTime> dateRange;
+
+  VisibleDateRangeChangeEvent(this.dateRange);
+  
+  @override
+  List<Object> get props => null;
+  
+}
+
 class GetSessionsForMonthEvent extends SchedulerEvent {
   // final DateTime month;
 
@@ -31,4 +42,13 @@ class GetSessionsForMonthEvent extends SchedulerEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class CalendarModeChangedEvent extends SchedulerEvent {
+  final CalendarMode newMode;
+
+  CalendarModeChangedEvent(this.newMode);
+
+  @override
+  List<Object> get props => [newMode];
 }

@@ -1,11 +1,11 @@
 import 'package:skills/features/skills/data/models/goalModel.dart';
 import 'package:skills/features/skills/data/models/sessionModel.dart';
-import 'package:skills/features/skills/data/models/skillEventModel.dart';
+import 'package:skills/features/skills/data/models/activityModel.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:synchronized/synchronized.dart';
@@ -16,25 +16,47 @@ import 'package:path_provider/path_provider.dart';
 abstract class SkillsLocalDataSource {
   // Throws [CacheException]
   Future<List<SkillModel>> getAllSkills();
+  // Future<List<Map<String, dynamic>>> getAllSkillsInfo();
   Future<SkillModel> getSkillById(int id);
+  Future<Map<String, dynamic>> getSkillGoalMapById(int id);
   Future<Skill> insertNewSkill(Skill skill);
   Future<int> deleteSkillWithId(int skillId);
-  Future<int> updateSkill(Skill skill);
+  Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap);
+  // Goals
   Future<GoalModel> getGoalById(int id);
   Future<Goal> insertNewGoal(Goal goal);
   Future<int> updateGoal(Goal goal);
   Future<int> deleteGoalWithId(int id);
-  Future<int> addGoalToSkill(int skillId, int goalId, String goalText);
+  Future<int> addGoalToSkill(int skillId, int goalId);
+  // Sessions
   Future<Session> insertNewSession(Session session);
+  Future<int> saveLiveSessionWithActivities(
+      Session session, List<Activity> activities);
+  Future<int> updateSession(Map<String, dynamic> changeMap, int id);
+  Future<Session> updateAndRefreshSession(
+      Map<String, dynamic> changeMap, int id);
+  Future<int> completeSessionAndEvents(int sessionId, DateTime date);
   Future<SessionModel> getSessionById(int id);
+  Future<Session> getSessionAndActivities(int id);
   Future<int> deleteSessionWithId(int id);
   Future<List<Session>> getSessionsInMonth(DateTime month);
-  Future<SkillEventModel> insertNewEvent(SkillEvent event);
-  Future<SkillEventModel> getEventById(int id);
-  Future<int> updateEvent(SkillEvent event);
-  Future<int> deleteEventById(int id);
-  Future<List<int>> insertEvents(List<SkillEvent> events, int newSessionId);
-  Future<List<SkillEvent>> getEventsForSession(int sessionId);
+  Future<List<Session>> getSessionsInDateRange(
+      DateTime from, DateTime to); // for calendar month mode
+  Future<List<Map>> getSessionMapsInDateRange(
+      DateTime from, DateTime to); // for calendar week and day modes
+  // Activities
+  Future<ActivityModel> insertNewActivity(Activity event);
+  Future<ActivityModel> getActivityById(int id);
+  Future<int> updateActivity(Map<String, dynamic> changeMap, int eventId);
+  Future<int> completeActivity(
+      int activityId, DateTime date, int elapsedTime, int skillId);
+  Future<int> deleteActivityById(int id);
+  Future<List<int>> insertActivities(List<Activity> events, int newSessionId);
+  Future<List<Activity>> getActivitiesForSession(int sessionId);
+  Future<List<Activity>> getCompletedActivitiesForSkill(int skillId);
+  Future<List<Map>> getInfoForActivities(List<Activity> events);
+  Future<List<Map>> getActivityMapsForSession(int sessionId);
+  Future<List<Activity>> getActivitiesWithSkillsForSession(int sessionId);
 }
 
 // Singleton class for providing access to sqlite database
@@ -56,9 +78,10 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   final String goalsTable = 'goals';
   final String skillsGoalsTable = 'skills_goals';
   final String sessionsTable = 'sessions';
-  final String skillEventsTable = 'skillEvents';
+  final String activitiesTable = 'activities';
   // final String sessionSkillsTable = 'session_skills';
-  final String columnId = 'id';
+
+  bool needsMigration = true;
 
   Future<Database> get database async {
     Directory docsDir = await getApplicationDocumentsDirectory();
@@ -69,7 +92,13 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
       await _lock.synchronized(() async {
         if (_database == null) {
           _database = await openDatabase(path,
-              version: dbVersion, onOpen: (db) {}, onCreate: _onCreate);
+              version: dbVersion, onOpen: _onOpen, onCreate: _onCreate);
+        }
+        if (needsMigration) {
+          await _addGoalTextToGoals();
+          await _dropGoalTextFromSkillsAndChangeProfToReal();
+          await _renameSkillEventsTableToActivities();
+          await _addNotesToActivityTable();
         }
       });
     }
@@ -77,11 +106,26 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return _database;
   }
 
+  // TODO - check on ways to make this more reliable
+  void _onOpen(Database db) async {
+    // Enable Foreign keys, default is OFF
+    await db.execute('PRAGMA foreign_keys=ON');
+    _checkForeignKeysEnabled(db);
+  }
+
   void _onCreate(Database db, int version) async {
+    needsMigration = false;
     await db.execute(_createSkillTable);
     await db.execute(_createGoalTable);
     await db.execute(_createSessionsTable);
-    await db.execute(_createSkillEventsTable);
+    await db.execute(_createActivitiesTable);
+  }
+
+  void _checkForeignKeysEnabled(Database db) async {
+    List<Map> result = await db.rawQuery('PRAGMA foreign_keys');
+    if (result.first['foreign_keys'] == 0) {
+      await db.execute('PRAGMA foreign_keys=ON');
+    }
   }
 
   Future<void> deleteDatabase() async {
@@ -89,39 +133,123 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   static final String primaryKey = "INTEGER PRIMARY KEY";
-  static final String idKey = "id $primaryKey, ";
-  static final String integer = "INTEGER";
+
   static final String createTable = "CREATE TABLE IF NOT EXISTS";
 
   // table creation
   final String _createSkillTable = "$createTable skills(skillId $primaryKey, "
-      "name TEXT, source TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, currentGoalId $integer, goalText TEXT)";
+      "name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency INTEGER)";
 
-  final String _createGoalTable = "$createTable goals($idKey "
-      "skillId $integer, fromDate $integer, toDate $integer, isComplete $integer, timeBased $integer, "
-      "goalTime $integer, timeRemaining $integer, desc TEXT, "
+  final String _createGoalTable = "$createTable goals(goalId $primaryKey, "
+      "skillId INTEGER, fromDate INTEGER, toDate INTEGER, isComplete INTEGER, timeBased INTEGER, "
+      "goalTime INTEGER, goalText TEXT, timeRemaining INTEGER, desc TEXT, "
       "CONSTRAINT fk_skills FOREIGN KEY (skillId) REFERENCES skills(skillId) ON DELETE CASCADE)";
 
   final String _createSessionsTable =
       "$createTable sessions(sessionId $primaryKey, "
-      "date $integer, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
-      "isScheduled INTEGER, isCompleted INTEGER)";
+      "date INTEGER, startTime INTEGER, endTime INTEGER, duration INTEGER, timeRemaining INTEGER, "
+      "isScheduled INTEGER, isComplete INTEGER)";
 
-  final String _createSkillEventsTable =
-      "$createTable skillEvents(eventId $primaryKey, "
-      "skillId $integer, sessionId $integer, date $integer, duration $integer, isComplete $integer, skillString TEXT, "
+  final String _createActivitiesTable =
+      "$createTable activities(eventId $primaryKey, "
+      "skillId INTEGER, sessionId INTEGER, date INTEGER, duration INTEGER, isComplete INTEGER, skillString TEXT, notes TEXT,"
       "CONSTRAINT fk_sessions FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE)";
 
+  //  ************ MIGRATIONS ****************
+  Future<void> _addGoalTextToGoals() async {
+    final Database db = await database;
+
+    bool hasGoalText = await _checkTableForColumn(goalsTable, 'goalText');
+    if (hasGoalText == false) {
+      await db.execute("ALTER TABLE goals ADD COLUMN goalText text");
+    }
+  }
+
+  Future<void> _dropGoalTextFromSkillsAndChangeProfToReal() async {
+    final Database db = await database;
+
+    bool hasGoalText = await _checkTableForColumn(skillsTable, 'goalText');
+    if (hasGoalText) {
+      await db.execute("PRAGMA foreign_keys=OFF");
+      await db.execute("BEGIN TRANSACTION");
+      await db.execute(
+          "CREATE TABLE IF NOT EXISTS tempSkills(skillId $primaryKey, name TEXT, type TEXT, source TEXT, instrument TEXT, startDate INTEGER, "
+          "totalTime INTEGER, lastPracDate INTEGER, goalId INTEGER, priority INTEGER, proficiency REAL)");
+      await db.execute(
+          "INSERT INTO tempSkills(skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency) "
+          "SELECT skillId, name, type, source, instrument, startDate, totalTime, lastPracDate, goalId, priority, proficiency "
+          "FROM skills");
+
+      await db.execute("DROP TABLE skills");
+      await db.execute("ALTER TABLE tempSkills RENAME TO skills");
+      await db.execute("COMMIT");
+      await db.execute("PRAGMA foreign_keys=ON");
+    }
+  }
+
+  Future<void> _renameSkillEventsTableToActivities() async {
+    final Database db = await database;
+    bool tableExists = await _tableExistsInDatabase('skillEvents');
+    if (tableExists) {
+      await db.execute('ALTER TABLE skillEvents RENAME TO $activitiesTable');
+    }
+  }
+
+  Future<bool> _tableExistsInDatabase(String tableName) async {
+    final Database db = await database;
+    List result = await db.query('sqlite_master',
+        columns: ['name'],
+        where: 'type = ? AND name = ?',
+        whereArgs: ['table', tableName]);
+
+    if (result.isNotEmpty && result.first['name'] == tableName) {
+      return true;
+    } else
+      return false;
+  }
+
+  Future<void> _addNotesToActivityTable() async {
+    final Database db = await database;
+    bool hasNotesColumn = await _checkTableForColumn(activitiesTable, 'notes');
+    if (hasNotesColumn == false) {
+      await db.execute('ALTER TABLE $activitiesTable ADD COLUMN notes text');
+    }
+  }
+
+  
+
+  Future<bool> _checkTableForColumn(String table, String columnName) async {
+    final Database db = await database;
+    bool columnFound = false;
+    await db.transaction((txn) async {
+      List<Map> columnsList = await txn.rawQuery("pragma table_info($table)");
+      for (var column in columnsList) {
+        if (column['name'] == columnName) {
+          columnFound = true;
+          break;
+        }
+      }
+    });
+    return columnFound;
+  }
+
+// ******* SKILLS *********
   @override
   Future<List<SkillModel>> getAllSkills() async {
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query(skillsTable);
-
-    return List.generate(maps.length, (i) {
+    List<SkillModel> skills = List.generate(maps.length, (i) {
       return SkillModel.fromMap(maps[i]);
     });
-    // return null;
+    for (var skill in skills) {
+      if (skill.currentGoalId != 0) {
+        Goal goal = await getGoalById(skill.currentGoalId);
+        skill.goal = goal;
+      }
+    }
+
+    return skills;
   }
 
   @override
@@ -136,18 +264,44 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
+  Future<Map<String, dynamic>> getSkillGoalMapById(int id) async {
+    SkillModel skill = await getSkillById(id);
+    if (skill != null) {
+      GoalModel goal = await getGoalById(skill.currentGoalId);
+      Map<String, dynamic> map = {'skill': skill, 'goal': goal};
+
+      return map;
+    } else
+      return null;
+  }
+
+  @override
+  Future<Skill> getSkillWithGoalById(int skillId) async {
+    SkillModel skill = await getSkillById(skillId);
+    if (skill != null && skill.currentGoalId != 0) {
+      GoalModel goal = await getGoalById(skill.currentGoalId);
+      skill.goal = goal;
+    }
+    return skill;
+  }
+
+  @override
   Future<Skill> insertNewSkill(Skill skill) async {
     final Database db = await database;
-    DateTime today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
     final SkillModel skillModel = SkillModel(
-        name: skill.name,
-        source: skill.source,
-        startDate: today,
-        totalTime: 0,
-        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
-        currentGoalId: 0,
-        goalText: "Goal: none");
+      name: skill.name,
+      type: skill.type,
+      source: skill.source,
+      instrument: skill.instrument,
+      startDate: skill.startDate,
+      totalTime: 0,
+      lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
+      currentGoalId: 0,
+      // goalText: "Goal: none",
+      priority: skill.priority,
+      proficiency: skill.proficiency,
+    );
 
     int id = await db.insert(skillsTable, skillModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -166,35 +320,28 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   }
 
   @override
-  Future<int> updateSkill(Skill skill) async {
+  Future<int> updateSkill(int skillId, Map<String, dynamic> changeMap) async {
     final Database db = await database;
-    final SkillModel skillModel = SkillModel(
-        id: skill.id,
-        name: skill.name,
-        source: skill.source,
-        startDate: skill.startDate,
-        totalTime: skill.totalTime,
-        lastPracDate: skill.lastPracDate,
-        currentGoalId: skill.currentGoalId,
-        goalText: skill.goalText);
-    int updates = await db.update(skillsTable, skillModel.toMap(),
-        where: 'skillId = ?', whereArgs: [skillModel.id]);
+
+    int updates = await db.update(skillsTable, changeMap,
+        where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 
+  // ***** GOALS **********
   @override
   Future<int> deleteGoalWithId(int id) async {
     final Database db = await database;
     int result =
-        await db.delete(goalsTable, where: '$columnId = ?', whereArgs: [id]);
+        await db.delete(goalsTable, where: 'goalId = ?', whereArgs: [id]);
     return result;
   }
 
   @override
   Future<GoalModel> getGoalById(int id) async {
     final Database db = await database;
-    List<Map> maps = await db.query(goalsTable,
-        columns: null, where: '$columnId = ?', whereArgs: [id]);
+    List<Map> maps = await db
+        .query(goalsTable, columns: null, where: 'goalId = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return GoalModel.fromMap(maps.first);
     }
@@ -211,6 +358,7 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
         timeBased: goal.timeBased,
         isComplete: false,
         goalTime: goal.goalTime,
+        goalText: GoalModel.translateGoal(goal),
         timeRemaining: goal.goalTime,
         desc: goal.desc != null ? goal.desc : "");
 
@@ -225,49 +373,120 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
   Future<int> updateGoal(Goal goal) async {
     final Database db = await database;
     final GoalModel goalModel = GoalModel(
-        id: goal.id,
+        goalId: goal.goalId,
         skillId: goal.skillId,
         fromDate: goal.fromDate,
         toDate: goal.toDate,
         timeBased: goal.timeBased,
         isComplete: goal.isComplete,
         goalTime: goal.goalTime,
+        goalText: GoalModel.translateGoal(goal),
         timeRemaining: goal.timeRemaining,
         desc: goal.desc);
     int updates = await db.update(goalsTable, goalModel.toMap(),
-        where: 'id = ?', whereArgs: [goal.id]);
+        where: 'goalId = ?', whereArgs: [goal.goalId]);
     return updates;
   }
 
   @override
-  Future<int> addGoalToSkill(int skillId, int goalId, String goalText) async {
+  Future<int> addGoalToSkill(int skillId, int goalId) async {
     final Database db = await database;
-    Map<String, dynamic> changeMap = {
-      'currentGoalId': goalId,
-      'goalText': goalText
-    };
+    Map<String, dynamic> changeMap = {'goalId': goalId};
     int updates = await db.update(skillsTable, changeMap,
         where: 'skillId = ?', whereArgs: [skillId]);
     return updates;
   }
 
+  // ******** SESSIONS **********
   @override
   Future<Session> insertNewSession(Session session) async {
     final Database db = await database;
     SessionModel sessionModel = SessionModel(
       date: session.date,
       startTime: session.startTime,
-      endTime: session.endTime,
       duration: session.duration,
       timeRemaining: session.timeRemaining,
-      isCompleted: session.isCompleted,
+      isComplete: session.isComplete,
       isScheduled: session.isScheduled,
     );
+
     int id = await db.insert(sessionsTable, sessionModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     Session newSession = await getSessionById(id);
 
     return newSession;
+  }
+
+  @override
+  Future<int> saveLiveSessionWithActivities(
+      Session session, List<Activity> activities) async {
+    Session newSession = await insertNewSession(session);
+    await insertActivities(activities, newSession.sessionId);
+
+    return newSession.sessionId;
+  }
+
+  Future<int> updateSession(Map<String, dynamic> changeMap, int id) async {
+    final Database db = await database;
+    int response = await db.update(sessionsTable, changeMap,
+        where: 'sessionId = ?', whereArgs: [id]);
+
+    bool sessionCompleted = changeMap['isComplete'] ?? false;
+    if (sessionCompleted) {
+      int update = await db.rawUpdate(
+          'UPDATE $activitiesTable SET isComplete = 1 WHERE sessionId = $id');
+      // List<Map> skillIds = await db.query(skillEventsTable,
+      //     columns: ['skillId'], where: 'sessionId = ?', whereArgs: [id]);
+      print(update);
+    }
+    return response;
+  }
+
+  Future<Session> updateAndRefreshSession(
+      Map<String, dynamic> changeMap, int id) async {
+    //
+    final Database db = await database;
+    int response = await db.update(sessionsTable, changeMap,
+        where: 'sessionId = ?', whereArgs: [id]);
+
+    if (response != null) {
+      Session refreshedSession = await getSessionById(id);
+      if (changeMap['isComplete'] == true) {
+        await completeSessionAndEvents(id, refreshedSession.date);
+      }
+      return refreshedSession;
+    } else
+      return null;
+  }
+
+  // TODO: Completing the session here is currently redundant when this is called from updateAndRefreshSession
+  Future<int> completeSessionAndEvents(
+      int sessionId, DateTime sessionDate) async {
+    final Database db = await database;
+    int dateInt = sessionDate.millisecondsSinceEpoch;
+
+    // set session complete
+    int complete = await updateSession({'isComplete': true}, sessionId);
+
+    // set events complete
+    await db.rawUpdate(
+        'UPDATE $activitiesTable SET isComplete = 1 WHERE sessionId = $sessionId');
+
+    // get skillIds of all Events
+    List<Map> skillIds = await db.query(activitiesTable,
+        columns: ['skillId'], where: 'sessionId = ?', whereArgs: [sessionId]);
+
+    var pracDateBatch = db.batch();
+    for (var map in skillIds) {
+      int skillId = map['skillId'];
+      // update last practice date if new date is later than or equal to current
+      pracDateBatch.rawUpdate(
+          "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
+    }
+
+    await pracDateBatch.commit(noResult: true);
+
+    return complete;
   }
 
   Future<SessionModel> getSessionById(int id) async {
@@ -280,21 +499,30 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return null;
   }
 
+  Future<Session> getSessionAndActivities(int id) async {
+    SessionModel session = await getSessionById(id);
+    List<Activity> activities =
+        await getActivitiesWithSkillsForSession(id) ?? [];
+    if (session != null) session.activities = activities;
+    return session;
+  }
+
   Future<int> deleteSessionWithId(int id) async {
     final Database db = await database;
     int result =
-        await db.delete(sessionsTable, where: '$columnId = ?', whereArgs: [id]);
+        await db.delete(sessionsTable, where: 'sessionId = ?', whereArgs: [id]);
     return result;
   }
 
-  Future<List<Session>> getSessionsInMonth(DateTime month) async {
-    final nextMonth =
-        DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
+  Future<List<Session>> getSessionsInDateRange(
+      DateTime from, DateTime to) async {
     final Database db = await database;
+
     List<Map> maps = await db.query(sessionsTable,
         columns: null,
         where: 'date BETWEEN ? AND ?',
-        whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
+        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch]);
+
     List<Session> sessionsList = [];
     if (maps.isNotEmpty) {
       for (var map in maps) {
@@ -305,86 +533,202 @@ class SkillsLocalDataSourceImpl implements SkillsLocalDataSource {
     return sessionsList;
   }
 
-  @override
-  Future<int> deleteEventById(int id) async {
+  Future<List<Map>> getSessionMapsInDateRange(
+      DateTime from, DateTime to) async {
+    List<Session> sessions = await getSessionsInDateRange(from, to);
+    List<Map> sessionMaps = [];
+    for (var session in sessions) {
+      List<Activity> activities =
+          await getActivitiesForSession(session.sessionId);
+      Map<String, dynamic> sessionMap = {
+        'session': session,
+        'activities': activities
+      };
+      sessionMaps.add(sessionMap);
+    }
+
+    return sessionMaps;
+  }
+
+  Future<List<Session>> getSessionsInMonth(DateTime month) async {
+    final nextMonth =
+        DateTime(month.year, month.month + 1).millisecondsSinceEpoch;
     final Database db = await database;
-    int result = await db
-        .delete(skillEventsTable, where: 'eventId = ?', whereArgs: [id]);
+
+    List<Map> maps = await db.query(sessionsTable,
+        columns: null,
+        where: 'date BETWEEN ? AND ?',
+        whereArgs: [month.millisecondsSinceEpoch, nextMonth]);
+
+    List<Session> sessionsList = [];
+    if (maps.isNotEmpty) {
+      for (var map in maps) {
+        Session session = SessionModel.fromMap(map);
+        sessionsList.add(session);
+      }
+    }
+    return sessionsList;
+  }
+
+  // ******* ACTIVITIES *********
+  @override
+  Future<int> deleteActivityById(int id) async {
+    final Database db = await database;
+    int result =
+        await db.delete(activitiesTable, where: 'eventId = ?', whereArgs: [id]);
     return result;
   }
 
   @override
-  Future<SkillEventModel> getEventById(int id) async {
+  Future<ActivityModel> getActivityById(int id) async {
     final Database db = await database;
-    List<Map> maps = await db.query(skillEventsTable,
+    List<Map> maps = await db.query(activitiesTable,
         columns: null, where: 'eventId = ?', whereArgs: [id]);
     if (maps.length > 0) {
-      return SkillEventModel.fromMap(maps.first);
+      return ActivityModel.fromMap(maps.first);
     }
     return null;
   }
 
   @override
-  Future<SkillEventModel> insertNewEvent(SkillEvent event) async {
+  Future<ActivityModel> insertNewActivity(Activity event) async {
     final Database db = await database;
-    final model = SkillEventModel(
+    final model = ActivityModel(
         skillId: event.skillId,
         sessionId: event.sessionId,
         date: event.date,
         duration: event.duration,
         isComplete: event.isComplete,
-        skillString: event.skillString);
-    int id = await db.insert(skillEventsTable, model.toMap(),
+        skillString: event.skillString,
+        notes: event.notes);
+    int id = await db.insert(activitiesTable, model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
 
-    final newEvent = await getEventById(id);
+    final newEvent = await getActivityById(id);
     return newEvent;
   }
 
   @override
-  Future<List<int>> insertEvents(
-      List<SkillEvent> events, int newSessionId) async {
+  Future<List<int>> insertActivities(
+      List<Activity> activities, int newSessionId) async {
     final Database db = await database;
     var insertBatch = db.batch();
-    for (var event in events) {
-      final model = SkillEventModel(
-          skillId: event.skillId,
+    for (var activity in activities) {
+      final model = ActivityModel(
+          skillId: activity.skillId,
           sessionId: newSessionId,
-          date: event.date,
-          duration: event.duration,
-          isComplete: event.isComplete,
-          skillString: event.skillString);
-      insertBatch.insert(skillEventsTable, model.toMap());
+          date: activity.date,
+          duration: activity.duration,
+          isComplete: activity.isComplete,
+          skillString: activity.skillString,
+          notes: activity.notes);
+      insertBatch.insert(activitiesTable, model.toMap());
     }
     final resultsList = await insertBatch.commit(noResult: true);
     return resultsList;
   }
 
   @override
-  Future<int> updateEvent(SkillEvent event) async {
+  Future<int> updateActivity(Map<String, dynamic> changeMap, activityId) async {
     final Database db = await database;
-    final model = SkillEventModel(
-        eventId: event.eventId,
-        skillId: event.skillId,
-        sessionId: event.sessionId,
-        date: event.date,
-        duration: event.duration,
-        isComplete: event.isComplete,
-        skillString: event.skillString);
+    int updates = await db.update(activitiesTable, changeMap,
+        where: 'eventId = ?', whereArgs: [activityId]);
 
-    int updates = await db.update(skillEventsTable, model.toMap(),
-        where: 'eventId = ?', whereArgs: [event.eventId]);
     return updates;
   }
 
   @override
-  Future<List<SkillEvent>> getEventsForSession(int sessionId) async {
+  Future<int> completeActivity(
+      int activityId, DateTime date, int elapsedTime, int skillId) async {
     final Database db = await database;
-    List<Map> maps = await db.query(skillEventsTable, where: 'sessionId = ?', whereArgs: [sessionId]);
-    List<SkillEvent> events = [];
-    for (var map in maps){
-      events.add(SkillEventModel.fromMap(map));
+    Map<String, dynamic> changes = {'isComplete': 1, 'duration': elapsedTime};
+
+    int update = await db.update(activitiesTable, changes,
+        where: 'eventId = ?', whereArgs: [activityId]);
+    int dateInt = date.millisecondsSinceEpoch;
+
+    await db.rawUpdate(
+        "UPDATE $skillsTable SET lastPracDate = $dateInt WHERE skillId = $skillId AND lastPracDate <= $dateInt");
+    return update;
+  }
+
+  @override
+  Future<List<Activity>> getActivitiesForSession(int sessionId) async {
+    final Database db = await database;
+    List<Map> maps = await db
+        .query(activitiesTable, where: 'sessionId = ?', whereArgs: [sessionId]);
+    List<Activity> events = [];
+    for (var map in maps) {
+      events.add(ActivityModel.fromMap(map));
     }
     return events;
+  }
+
+  @override
+  Future<List<Activity>> getCompletedActivitiesForSkill(int skillId) async {
+    final Database db = await database;
+    List<Map> maps = await db.query(activitiesTable,
+        where: 'skillId = ? AND isComplete = 1', whereArgs: [skillId]);
+
+    List<Activity> events = [];
+    for (var map in maps) {
+      events.add(ActivityModel.fromMap(map));
+    }
+    return events;
+  }
+
+  // TODO - dead code?
+  Future<List<Map>> getInfoForActivities(List<Activity> events) async {
+    // final Database db = await database;
+
+    List<Map> maps = [];
+    for (var event in events) {
+      SkillModel skill = await getSkillById(event.skillId);
+
+      GoalModel goal;
+      if (skill.currentGoalId != 0) {
+        goal = await getGoalById(skill.currentGoalId);
+      }
+
+      Map<String, dynamic> eventMap = {
+        'activity': event,
+        'skill': skill,
+        'goal': goal ?? 'none',
+      };
+      maps.add(eventMap);
+    }
+
+    return maps;
+  }
+
+  @override
+  Future<List<Map>> getActivityMapsForSession(int sessionId) async {
+    List<Activity> activities = await getActivitiesForSession(sessionId);
+
+    List<Map> maps = [];
+    for (var activity in activities) {
+      Map<String, dynamic> activityMap = {
+        'activity': activity,
+      };
+      Map<String, dynamic> skillMap =
+          await getSkillGoalMapById(activity.skillId);
+      activityMap.addAll(skillMap);
+      maps.add(activityMap);
+    }
+
+    return maps;
+  }
+
+  @override
+  Future<List<Activity>> getActivitiesWithSkillsForSession(
+      int sessionId) async {
+    List<Activity> activities = await getActivitiesForSession(sessionId);
+
+    for (var activity in activities) {
+      Skill skill = await getSkillWithGoalById(activity.skillId);
+      activity.skill = skill;
+    }
+
+    return activities;
   }
 }

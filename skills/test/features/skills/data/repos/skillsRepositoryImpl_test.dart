@@ -1,13 +1,12 @@
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skills/features/skills/data/repos/skillsRepositoryImpl.dart';
+import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../mockClasses.dart';
-
-
 
 void main() {
   SkillsRepositoryImpl repositoryImpl;
@@ -46,9 +45,15 @@ void main() {
   // }
 
   group('Skills CRUD tests', () {
-    final SkillModel skillModel = SkillModel(name: 'test', source: 'testing');
+    final SkillModel skillModel = SkillModel(
+      name: 'test',
+      source: 'testing',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
     final List<SkillModel> skillModelList = [skillModel];
     final Skill tSkill = skillModel;
+    Map<String, dynamic> testMap = {'name' : 'test'};
 
     test('getAllSkills - returns a List of SkillModels', () async {
       when(mockLocalDataSource.getAllSkills())
@@ -67,9 +72,34 @@ void main() {
       expect(result, equals(Right(tSkill)));
     });
 
-    test('insertNewSkill - returns a new Skill with an id after inserting a SkillModel',
+    test('getSkillGoalMapById - returns a Map with a Skill and Goal', () async {
+      final testGoal = Goal(
+          skillId: 1,
+          goalTime: 1,
+          fromDate: DateTime.fromMillisecondsSinceEpoch(0),
+          toDate: DateTime.fromMillisecondsSinceEpoch(0),
+          isComplete: false,
+          timeBased: true);
+
+      Map<String, dynamic> testMap = {'skill': tSkill, 'goal': testGoal};
+
+      when(mockLocalDataSource.getSkillGoalMapById(1))
+          .thenAnswer((_) async => testMap);
+          final result = await repositoryImpl.getSkillGoalMapById(1);
+          verify(mockLocalDataSource.getSkillGoalMapById(1));
+          expect(result, equals(Right(testMap)));
+    });
+
+    test(
+        'insertNewSkill - returns a new Skill with an id after inserting a SkillModel',
         () async {
-      Skill newSkill = Skill(id: 1, name: 'new', source: 'new', lastPracDate: DateTime.fromMillisecondsSinceEpoch(0));
+      Skill newSkill = Skill(
+          skillId: 1,
+          name: 'new',
+          source: 'new',
+          type: 'composition',
+          startDate: DateTime.fromMillisecondsSinceEpoch(0),
+          lastPracDate: DateTime.fromMillisecondsSinceEpoch(0));
       when(mockLocalDataSource.insertNewSkill(tSkill))
           .thenAnswer((_) async => newSkill);
       final result = await repositoryImpl.insertNewSkill(tSkill);
@@ -89,14 +119,12 @@ void main() {
 
     test('updateSkill - returns an int for number of changes to Skill',
         () async {
-      when(mockLocalDataSource.updateSkill(tSkill)).thenAnswer((_) async => 1);
-      final result = await repositoryImpl.updateSkill(tSkill);
-      verify(mockLocalDataSource.updateSkill(tSkill));
+      when(mockLocalDataSource.updateSkill(tSkill.skillId, testMap)).thenAnswer((_) async => 1);
+      final result = await repositoryImpl.updateSkill(tSkill.skillId, testMap);
+      verify(mockLocalDataSource.updateSkill(tSkill.skillId, testMap));
       expect(result, equals(Right(1)));
     });
   });
-
-  
 
   // group('downloadAllSkills', () {
   //   test('test for connection', () async {

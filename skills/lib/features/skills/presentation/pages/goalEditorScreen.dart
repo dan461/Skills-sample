@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/presentation/bloc/goalEditorScreen/bloc.dart';
 
@@ -87,92 +88,63 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     return totalMinutes;
   }
 
-  void _focusNodeListener(){
-    if (_focusNode.hasFocus){
+  void _focusNodeListener() {
+    if (_focusNode.hasFocus) {
       print('focus');
-
-    } else print('no focus');
+    } else
+      print('no focus');
   }
 
-  void goalIsChanged(String key, dynamic value){
-    Map changeMap = Map.from(_goalEditorBloc.goalModel.toMap());
-    changeMap.update(key, (_){return value;});
-    bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => _goalEditorBloc,
+      child: Builder(builder: (BuildContext context) {
+        return BlocListener(
+          bloc: _goalEditorBloc,
+          listener: (context, state) {
+            if (state is GoalUpdatedState || state is GoalDeletedState) {
+              Navigator.of(context).pop(true);
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              leading: SizedBox(),
+            ),
+            body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
+              builder: (context, state) {
+                Widget body;
+
+                if (state is EmptyGoalEditorState ||
+                    state is GoalCrudInProgressState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is GoalEditorGoalReturnedState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                  _setScreenValues(state.goal);
+                  // _goalEditorBloc.goal = state.goal;
+                  _goalEditorBloc.add(EditGoalEvent());
+                } else if (state is GoalEditorEditingState) {
+                  body = _goalEditArea();
+                } else if (state is GoalUpdatedState ||
+                    state is GoalDeletedState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return body;
+              },
+            ),
+          ),
+        );
+      }),
+    );
   }
 
-  void _setDoneButtonEnabled() {
-    bool timeOrTaskSet;
-    if (_isTimeBased)
-      timeOrTaskSet = _goalMinutes > 0;
-    else
-      timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
-
-    _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
-  }
-
-  void _updateGoal() async {
-    // TODO - finish this
-    // Goal updatedGoal = Goal(
-    //     skillId: _goalEditorBloc.goal.skillId,
-    //     fromDate: _startDate.millisecondsSinceEpoch,
-    //     toDate: _endDate.millisecondsSinceEpoch,
-    //     timeBased: _isTimeBased,
-    //     goalTime: _goalMinutes,
-    //     timeRemaining: _goalMinutes,
-    //     isComplete: false,
-    //     desc: _isTimeBased ? "none" : _goalDescTextController.text);
-  }
-
-  void _selectStartDate() async {
-    DateTime lastDate =
-        _endDate == null ? DateTime.now().add(Duration(days: 365)) : _endDate;
-
-    DateTime initialDate =
-        DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
-            ? DateTime.now()
-            : lastDate;
-
-    DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
-        lastDate: lastDate);
-
-    if (pickedDate != null) {
-      goalIsChanged('fromDate', pickedDate.millisecondsSinceEpoch);
-      setState(() {
-        _startDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
-      });
-    }
-  }
-
-  void _selectEndDate() async {
-    DateTime firstDate = _startDate == null
-        ? DateTime.now().subtract(Duration(days: 365))
-        : _startDate;
-
-    DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
-            firstDate.millisecondsSinceEpoch
-        ? DateTime.now()
-        : _startDate;
-
-    DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: firstDate,
-        lastDate: DateTime.now().add(Duration(days: 365)));
-
-    if (pickedDate != null) {
-      
-      setState(() {
-        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
-      });
-    }
-  }
-
-  DateTime dayMonthYearFromDateTime(DateTime date){
-    return DateTime(date.year, date.month, date.day);
-  }
+  // BUILDERS
 
   Widget _goalDetailAreaBuilder() {
     Widget area;
@@ -208,7 +180,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             children: <Widget>[
               Text(
                 'Hours: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -220,7 +192,6 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                     _setDoneButtonEnabled();
                   },
                   focusNode: _focusNode,
-                  
                 ),
               )
             ],
@@ -232,7 +203,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             children: <Widget>[
               Text(
                 'Minutes: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -258,7 +229,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
       children: <Widget>[
         Text(
           descText,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
           textAlign: TextAlign.left,
         ),
         Padding(
@@ -267,7 +238,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             child: InkWell(
               child: Text(
                 placeholder,
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               onTap: () {
                 callback();
@@ -295,7 +266,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     widget.skillName,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -313,27 +284,7 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
             ),
 
             // Segmented Control
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CupertinoSegmentedControl(
-                children: {
-                  0: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                    child: Text('Time'),
-                  ),
-                  1: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                    child: Text('Task'),
-                  ),
-                },
-                onValueChanged: (int val) {
-                  setState(() {
-                    _goalType = val;
-                  });
-                },
-                groupValue: _goalType,
-              ),
-            ),
+            Padding(padding: const EdgeInsets.all(8.0), child: _goalTypeRow()),
             // Duration or Task description
             Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -344,7 +295,9 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
                 children: <Widget>[
                   RaisedButton(
                     child: Text('Cancel'),
-                    onPressed: () {},
+                    onPressed: () {
+                      _onCancelTapped();
+                    },
                   ),
                   RaisedButton(
                       child: Text('Done'),
@@ -362,36 +315,114 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => _goalEditorBloc,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: BlocBuilder<GoaleditorBloc, GoalEditorState>(
-          builder: (context, state) {
-            Widget body;
-
-            if (state is EmptyGoalEditorState ||
-                state is GoalCrudInProgressState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is GoalEditorGoalReturnedState) {
-              body = Center(
-                child: CircularProgressIndicator(),
-              );
-              _setScreenValues(state.goal);
-              // _goalEditorBloc.goal = state.goal;
-              _goalEditorBloc.add(EditGoalEvent());
-            } else if (state is GoalEditorEditingState) {
-              body = _goalEditArea();
-            }
-            return body;
-          },
+  Row _goalTypeRow() {
+    return Row(
+      children: <Widget>[
+        Text(
+          'Goal type:',
+          style: Theme.of(context).textTheme.subtitle1,
         ),
-      ),
+        CupertinoSegmentedControl(
+          children: {
+            0: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Text('Time'),
+            ),
+            1: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Text('Task'),
+            ),
+          },
+          onValueChanged: (int val) {
+            setState(() {
+              _goalType = val;
+            });
+          },
+          groupValue: _goalType,
+        ),
+      ],
     );
+  }
+
+// ACTIONS
+
+  void goalIsChanged(String key, dynamic value) {
+    Map changeMap = Map.from(_goalEditorBloc.goalModel.toMap());
+    changeMap.update(key, (_) {
+      return value;
+    });
+    // bool isChanged = _goalEditorBloc.goalIsChanged(changeMap);
+  }
+
+  void _setDoneButtonEnabled() {
+    bool timeOrTaskSet;
+    if (_isTimeBased)
+      timeOrTaskSet = _goalMinutes > 0;
+    else
+      timeOrTaskSet = _goalDescTextController.text.isNotEmpty;
+
+    _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
+  }
+
+  void _onCancelTapped() {
+    Navigator.of(context).pop();
+  }
+
+  void _updateGoal() async {
+    // TODO - finish this
+    Goal updatedGoal = Goal(
+        goalId: _goalEditorBloc.theGoal.goalId,
+        skillId: _goalEditorBloc.theGoal.skillId,
+        fromDate: _startDate,
+        toDate: _endDate,
+        timeBased: _isTimeBased,
+        goalTime: _goalMinutes,
+        timeRemaining: _goalMinutes,
+        isComplete: false,
+        desc: _isTimeBased ? "none" : _goalDescTextController.text);
+
+    _goalEditorBloc.add(UpdateGoalEvent(updatedGoal));
+  }
+
+  void _selectStartDate() async {
+    DateTime lastDate = _endDate ?? TickTock.today().add(Duration(days: 365));
+
+    DateTime initialDate =
+        TickTock.today().isBefore(lastDate) ? TickTock.today() : lastDate;
+
+    DateTime pickedDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: TickTock.today().subtract(Duration(days: 365)),
+        lastDate: lastDate);
+
+    if (pickedDate != null) {
+      goalIsChanged('fromDate', pickedDate.millisecondsSinceEpoch);
+      setState(() {
+        _startDate =
+            DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+      });
+    }
+  }
+
+  void _selectEndDate() async {
+    DateTime firstDate =
+        _startDate ?? TickTock.today().subtract(Duration(days: 365));
+
+    DateTime initialDate =
+        TickTock.today().isAfter(firstDate) ? TickTock.today() : _startDate;
+
+    DateTime pickedDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: TickTock.today().add(Duration(days: 365)));
+
+    if (pickedDate != null) {
+      setState(() {
+        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+      });
+    }
   }
 
   void _setScreenValues(Goal goal) {

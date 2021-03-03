@@ -12,6 +12,31 @@ import '../../mockClasses.dart';
 void main() {
   SkillsBloc sut;
   MockGetAllSkillsUC mockGetAllSkillsUC;
+  Skill testSkill1 = Skill(
+    name: 'Zulu',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  Skill testSkill2 = Skill(
+    name: 'Delta',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  Skill testSkill3 = Skill(
+    name: 'Alpha',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  Skill testSkill4 = Skill(
+    name: 'Lima',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+  List<Skill> skillsList;
 
   setUp(() {
     mockGetAllSkillsUC = MockGetAllSkillsUC();
@@ -19,15 +44,64 @@ void main() {
     sut = SkillsBloc(
       getAllSkills: mockGetAllSkillsUC,
     );
+
+    testSkill1 = Skill(
+      name: 'Zulu',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    testSkill2 = Skill(
+      name: 'Delta',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    testSkill3 = Skill(
+      name: 'Alpha',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    testSkill4 = Skill(
+      name: 'Lima',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    skillsList = [testSkill1, testSkill2, testSkill3, testSkill4];
   });
 
-  test('test initial state is correct', () {
-    expect(sut.initialState, equals(InitialSkillsState()));
+  group('Skill list sorting', () {
+    // final testSkill1 = Skill(name: 'Zulu', source: 'test');
+    // final testSkill2 = Skill(name: 'Delta', source: 'test');
+    // final testSkill3 = Skill(name: 'Alpha', source: 'test');
+    // final testSkill4 = Skill(name: 'Lima', source: 'test');
+    // final List<Skill> skillsList = [
+    //   testSkill1,
+    //   testSkill2,
+    //   testSkill3,
+    //   testSkill4
+    // ];
+
+    test('test that skill list is sorted by selected option', () {
+      sut.skills = skillsList;
+      sut.sortOptionPicked(SkillSortOption.name);
+      List<Skill> expected = [testSkill3, testSkill2, testSkill4, testSkill1];
+      expect(sut.skills, expected);
+    });
+
+    test('test that skill list is reversed when asc/desc tapped', () {
+      sut.skills = skillsList;
+      sut.ascDescTapped();
+      List<Skill> expected = [testSkill4, testSkill3, testSkill2, testSkill1];
+      expect(sut.skills, expected);
+    });
   });
 
   group('GetAllSkills', () {
-    final testSkill = Skill(name: 'test', source: 'test');
-    final List<Skill> skillsList = [testSkill];
+    // final testSkill = Skill(name: 'test', source: 'test');
+    // final List<Skill> skillsList = [testSkill];
     test('test that List of Skills is returned', () async {
       when(mockGetAllSkillsUC(NoParams()))
           .thenAnswer((_) async => Right(skillsList));

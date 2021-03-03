@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:skills/core/constants.dart';
+import 'package:skills/core/enums.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
 import 'package:skills/features/skills/data/models/skillModel.dart';
 
@@ -8,24 +10,31 @@ void main() {
 
   setUp(() {
     sut = SkillModel(
-        id: 1,
-        name: 'test',
-        source: 'testing',
-        startDate: DateTime.fromMillisecondsSinceEpoch(0),
-        totalTime: 1,
-        lastPracDate: DateTime.fromMillisecondsSinceEpoch(0),
-        currentGoalId: 1,
-        goalText: "none");
+      skillId: 1,
+      name: 'test',
+      type: skillTypeToString(SkillType.composition),
+      source: 'testing',
+      instrument: GUITAR_CL,
+      startDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
+      totalTime: 1,
+      lastPracDate: DateTime.fromMillisecondsSinceEpoch(0).toUtc(),
+      currentGoalId: 1,
+      priority: 3,
+      proficiency: 8.5,
+    );
 
     testMap = {
       'skillId': 1,
       'name': "test",
+      'type': 'composition',
       'source': "testing",
+      'instrument': 'Guitar (Classical)',
       'startDate': 0,
       'totalTime': 1,
       'lastPracDate': 0,
-      'currentGoalId': 1,
-      'goalText': "none"
+      'goalId': 1,
+      'priority': 3,
+      'proficiency': 8.5
     };
   });
 
@@ -36,7 +45,7 @@ void main() {
     },
   );
 
-  group('fromMap', () {
+  group('fromMap: - ', () {
     test(
       'should return a valid SkillModel from a Map',
       () async {
@@ -48,18 +57,21 @@ void main() {
     );
   });
 
-  group('toMap', () {
+  group('toMap: - ', () {
     test('should return a valid Map from a SkillModel', () async {
       final result = sut.toMap();
       final expectedMap = {
         'skillId': 1,
-        'name': 'test',
-        'source': 'testing',
+        'name': "test",
+        'type': 'composition',
+        'source': "testing",
+        'instrument': 'Guitar (Classical)',
         'startDate': 0,
         'totalTime': 1,
         'lastPracDate': 0,
-        'currentGoalId': 1,
-        'goalText': 'none'
+        'goalId': 1,
+        'priority': 3,
+        'proficiency': 8.5
       };
       expect(result, expectedMap);
     });

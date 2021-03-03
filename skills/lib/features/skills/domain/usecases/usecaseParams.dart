@@ -3,7 +3,7 @@ import 'package:skills/core/usecase.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
 import 'package:skills/features/skills/domain/entities/skill.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 
 class GoalCrudParams extends Params {
   final int id;
@@ -15,10 +15,8 @@ class GoalCrudParams extends Params {
 class AddGoalToSkillParams extends Params {
   final int skillId;
   final int goalId;
-  final String goalText;
 
-  AddGoalToSkillParams(
-      {@required this.skillId, @required this.goalId, @required this.goalText});
+  AddGoalToSkillParams({@required this.skillId, @required this.goalId});
 }
 
 class GetSkillParams extends Params {
@@ -72,12 +70,38 @@ class SessionByIdParams extends Params {
   List<Object> get props => [sessionId];
 }
 
+class SessionCompleteParams extends Params {
+  final int sessionId;
+  final DateTime date;
+
+  SessionCompleteParams(this.sessionId, this.date);
+
+  List<Object> get props => [sessionId, date];
+}
+
 class SessionInMonthParams extends Params {
   final DateTime month;
 
   SessionInMonthParams(this.month);
   @override
   List<Object> get props => [month];
+}
+
+class SessionsInDateRangeParams extends Params {
+  final List<DateTime> dates;
+
+  SessionsInDateRangeParams(this.dates);
+  @override
+  List<Object> get props => [dates];
+}
+
+class SessionUpdateParams extends Params {
+  final int sessionId;
+  final Map<String, dynamic> changeMap;
+
+  SessionUpdateParams({@required this.sessionId, @required this.changeMap});
+  @override
+  List<Object> get props => [sessionId, changeMap];
 }
 
 class SessionDeleteParams extends Params {
@@ -88,29 +112,59 @@ class SessionDeleteParams extends Params {
   List<Object> get props => [sessionId];
 }
 
-class SkillEventInsertOrUpdateParams extends Params {
-  final SkillEvent event;
+class LiveSessionParams extends Params {
+  final Session session;
+  final List<Activity> activities;
 
-  SkillEventInsertOrUpdateParams({@required this.event});
+  LiveSessionParams({@required this.session, @required this.activities});
+}
+
+class ActivityInsertOrUpdateParams extends Params {
+  final Activity activity;
+
+  ActivityInsertOrUpdateParams({@required this.activity});
   @override
-  List<Object> get props => [event];
+  List<Object> get props => [activity];
 }
 
-class SkillEventGetOrDeleteParams extends Params {
-  final int eventId;
+class ActivityUpdateParams extends Params {
+  final Map<String, dynamic> changeMap;
+  final int activityId;
 
-  SkillEventGetOrDeleteParams({@required this.eventId});
-   @override
-  List<Object> get props => [eventId];
+  ActivityUpdateParams({this.changeMap, this.activityId});
+
+  @override
+  List<Object> get props => [changeMap, activityId];
 }
 
-class SkillEventMultiInsertParams extends Params {
-  final List<SkillEvent> events;
+class ActivityCompleteParams extends Params {
+  final int activityId;
+  final DateTime date;
+  final int elapsedTime;
+  final int skillId;
+
+  ActivityCompleteParams(
+      this.activityId, this.date, this.elapsedTime, this.skillId);
+  @override
+  List<Object> get props => [activityId, date, elapsedTime, skillId];
+}
+
+class ActivityGetOrDeleteParams extends Params {
+  final int activityId;
+
+  ActivityGetOrDeleteParams({@required this.activityId});
+  @override
+  List<Object> get props => [activityId];
+}
+
+class ActivityMultiInsertParams extends Params {
+  final List<Activity> activities;
   final int newSessionId;
 
-  SkillEventMultiInsertParams({@required this.events, @required this.newSessionId});
+  ActivityMultiInsertParams(
+      {@required this.activities, @required this.newSessionId});
 
-   @override
-  List<Object> get props => [events];
-  
+  @override
+  List<Object> get props => [activities];
 }
+

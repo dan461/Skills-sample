@@ -1,35 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="bc7b00c4-9def-4439-8ae6-cf6704fca498" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/skills_clean.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/skills_clean.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/FMDB-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/FMDB-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/Objects-normal/x86_64/FMDatabaseQueue.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/Objects-normal/x86_64/FMDatabaseQueue.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/Objects-normal/x86_64/FMResultSet.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/FMDB.build/Objects-normal/x86_64/FMResultSet.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/Pods-Runner.build/Pods_Runner-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/Objects-normal/x86_64/PathProviderPlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/Objects-normal/x86_64/PathProviderPlugin.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/path_provider-all-target-headers.hmap" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/path_provider.build/path_provider-all-target-headers.hmap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqfliteOperation.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqfliteOperation.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqflitePlugin.o" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Pods.build/Debug-iphonesimulator/sqflite.build/Objects-normal/x86_64/SqflitePlugin.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/PrecompiledHeaders/Runner-Bridging-Header-swift_19TSN9J10QZCG-clang_2FDF0PEUYDDLU.pch" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/PrecompiledHeaders/Runner-Bridging-Header-swift_19TSN9J10QZCG-clang_2FDF0PEUYDDLU.pch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/objects-13.0+.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib/runtime.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/objects-13.0+.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib/runtime.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/objects-13.0+.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib/runtime.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/objects-13.0+.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/objects-13.0+.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/runtime.nib" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib/runtime.nib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps~moduleonly" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/Runner.build/Debug-iphonesimulator/Runner.build/Objects-normal/x86_64/Runner-master.swiftdeps~moduleonly" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/41c2c8d93fc9f2a6efb679a8ecf56001-desc.xcbuild" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/41c2c8d93fc9f2a6efb679a8ecf56001-manifest.xcbuild" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/BuildDescriptionCacheIndex-a7031e9eb4fbb9a642b5b8de0486ef5c" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/BuildDescriptionCacheIndex-a7031e9eb4fbb9a642b5b8de0486ef5c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/build.db" beforeDir="false" afterPath="$PROJECT_DIR$/skills/ios/Build/Intermediates/XCBuildData/build.db" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,175 +15,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_API_27" />
-  <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/repos/skill_repo.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="114">
-                  <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
-                  <folding>
-                    <element signature="e#0#34#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/repos/skillsRepositoryImpl_test.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="133">
-                  <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="95">
-                  <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-                  <folding>
-                    <element signature="e#0#70#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/insertNewSkill.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="133">
-                  <caret line="13" column="51" selection-start-line="13" selection-start-column="51" selection-end-line="13" selection-end-column="51" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/getAllSkills.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="152">
-                  <caret line="12" column="37" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="684">
-                  <caret line="52" column="8" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="8" />
-                  <folding>
-                    <element signature="e#0#48#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/entities/skill.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="76">
-                  <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
-                  <folding>
-                    <element signature="e#0#39#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/data/models/skillModel.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="798">
-                  <caret line="43" column="15" selection-start-line="43" selection-start-column="15" selection-end-line="43" selection-end-column="15" />
-                  <folding>
-                    <element signature="e#0#40#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/data/repos/skillsRepositoryImpl.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="285">
-                  <caret line="23" selection-start-line="23" selection-end-line="23" />
-                  <folding>
-                    <element signature="e#0#40#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/skills/pubspec.yaml">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="53">
-                  <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/core/network/networkInfo.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="38">
-                  <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/getAllSkills.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="285">
-                  <caret line="15" selection-start-line="15" selection-end-line="15" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/test/features/skills/domain/usecases/insertNewSkill_test.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="399">
-                  <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="27" selection-end-column="9" />
-                  <folding>
-                    <element signature="e#0#67#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/data/datasources/skillsLocalDataSource.dart">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="228">
-                  <caret line="12" selection-start-line="12" selection-end-line="12" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
-  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -215,76 +24,45 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>skills_clean</find>
+    </findStrings>
+  </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../keystores/skills_keystore" />
+    <option name="KEY_ALIAS" value="upload" />
+    <option name="BUILD_TARGET_KEY" value="apk" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
       <list>
-        <option value="$PROJECT_DIR$/skills/lib/core/error/usecase.dart" />
-        <option value="$PROJECT_DIR$/skills/test/features/skills/domain/usecases/getAllSkills_test.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/insertNewSkill.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/getAllSkills.dart" />
-        <option value="$PROJECT_DIR$/skills/test/features/skills/domain/usecases/insertNewSkill_test.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/core/usecase.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/domain/entities/skill.dart" />
-        <option value="$PROJECT_DIR$/skills/test/fixtures/skillMap.dart" />
-        <option value="$PROJECT_DIR$/skills/test/fixtures/skillJson.json" />
-        <option value="$PROJECT_DIR$/skills/test/fixtures/jsonFixtureReader.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/data/models/skillModel.dart" />
-        <option value="$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/core/error/exceptions.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/core/error/failures.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/core/platform/networkInfo.dart" />
-        <option value="$PROJECT_DIR$/skills/pubspec.yaml" />
-        <option value="$PROJECT_DIR$/skills/test/core/platform/networkInfo_test.dart" />
-        <option value="$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/domain/repos/skill_repo.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/data/datasources/skillsLocalDataSource.dart" />
-        <option value="$PROJECT_DIR$/skills/lib/features/skills/data/repos/skillsRepositoryImpl.dart" />
-        <option value="$PROJECT_DIR$/skills/test/features/skills/data/repos/skillsRepositoryImpl_test.dart" />
-        <option value="$PROJECT_DIR$/skills/android/app/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="2713" />
-    <option name="y" value="150" />
-    <option name="width" value="2207" />
-    <option name="height" value="1285" />
-  </component>
+  <component name="ProjectId" id="1jCKWBRxIrAlV7u3fhawq39l4fo" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="skills_clean" type="b2602c69:ProjectViewProjectNode" />
-              <item name="skills_clean" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="skills_clean" type="b2602c69:ProjectViewProjectNode" />
-              <item name="skills_clean" type="462c0819:PsiDirectoryNode" />
-              <item name="skills" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="AndroidRunProguardForReleaseBuild" value="false" />
+    <property name="ExportedApkPath" value="$PROJECT_DIR$/Skills_flutter.apk" />
+    <property name="ExportedModule" value="Skills_flutter" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="dart.analysis.tool.window.force.activate" value="false" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="dart.settings" />
     <property name="show.migrate.to.gradle.popup" value="false" />
@@ -294,19 +72,13 @@
       <recent name="$PROJECT_DIR$/skills/lib/core" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Flutter.main.dart">
+  <component name="RunManager" selected="Dart Command Line App.getAllSkills_test.dart">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -330,12 +102,6 @@
     </configuration>
     <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
-    </configuration>
-    <configuration default="true" type="Applet">
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -361,12 +127,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Flutter.main.dart" />
-        <item itemvalue="Dart Command Line App.getAllSkills_test.dart" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -389,275 +149,87 @@
     <option name="localTasksCounter" value="2" />
     <servers />
   </component>
-  <component name="ToolWindowManager">
-    <frame x="2713" y="150" width="2207" height="1285" extended-state="0" />
-    <layout>
-      <window_info id="Build Variants" side_tool="true" />
-      <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.14734411" />
-      <window_info id="Structure" order="2" side_tool="true" />
-      <window_info id="Image Layers" order="3" />
-      <window_info id="Designer" order="4" />
-      <window_info id="Resources Explorer" order="5" />
-      <window_info id="Capture Tool" order="6" />
-      <window_info id="Favorites" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Android Profiler" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Logcat" />
-      <window_info anchor="bottom" id="Dart Analysis" order="0" sideWeight="0.49971864" weight="0.32905984" />
-      <window_info anchor="bottom" id="Run" order="1" sideWeight="0.49915588" weight="0.32954547" />
-      <window_info anchor="bottom" id="TODO" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49859312" weight="0.32905984" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49915588" weight="0.12215909" />
-      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5008441" side_tool="true" weight="0.32954547" />
-      <window_info anchor="bottom" id="Flutter Performance" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.49971864" visible="true" weight="0.32905984" />
-      <window_info anchor="bottom" id="Inspection Results" order="9" weight="0.32991454" />
-      <window_info anchor="bottom" id="Find" order="10" />
-      <window_info anchor="right" id="Device File Explorer" side_tool="true" />
-      <window_info anchor="right" id="Capture Analysis" order="0" />
-      <window_info anchor="right" id="Theme Preview" order="1" />
-      <window_info anchor="right" id="Flutter Inspector" order="2" />
-      <window_info anchor="right" id="Flutter Outline" order="3" />
-      <window_info anchor="right" id="Palette&#9;" order="4" />
-    </layout>
-    <layout-to-restore>
-      <window_info id="Captures" order="0" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.17107485" />
-      <window_info id="Structure" order="2" side_tool="true" />
-      <window_info id="Image Layers" order="3" />
-      <window_info id="Designer" order="4" />
-      <window_info id="Resources Explorer" order="5" />
-      <window_info id="Capture Tool" order="6" />
-      <window_info id="Favorites" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Dart Analysis" order="0" sideWeight="0.49971864" weight="0.32954547" />
-      <window_info anchor="bottom" id="Run" order="1" sideWeight="0.49915588" weight="0.32954547" />
-      <window_info anchor="bottom" id="TODO" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49859312" weight="0.32954547" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49915588" visible="true" weight="0.32954547" />
-      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5008441" side_tool="true" weight="0.32954547" />
-      <window_info anchor="bottom" id="Flutter Performance" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.49971864" weight="0.32954547" />
-      <window_info anchor="right" id="Capture Analysis" order="0" />
-      <window_info anchor="right" id="Theme Preview" order="1" />
-      <window_info anchor="right" id="Flutter Inspector" order="2" />
-      <window_info anchor="right" id="Flutter Outline" order="3" />
-      <window_info anchor="right" id="Palette&#9;" order="4" />
-    </layout-to-restore>
-  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First commit" />
     <option name="LAST_COMMIT_MESSAGE" value="First commit" />
   </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../SDKs/flutter/packages/flutter_test/lib/src/test_compat.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="153" column="5" selection-start-line="153" selection-start-column="5" selection-end-line="153" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/main.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../SDKs/flutter/.pub-cache/hosted/pub.dartlang.org/mockito-4.1.1/lib/src/mock.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="445">
-          <caret line="913" column="17" selection-start-line="913" selection-start-column="17" selection-end-line="913" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/fixtures/skillMap.dart" />
-    <entry file="file://$PROJECT_DIR$/skills/test/fixtures/jsonFixtureReader.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/fixtures/skillJson.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" column="1" lean-forward="true" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/core/error/exceptions.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="2" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/core/error/failures.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="38" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/core/usecase.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/features/skills/domain/usecases/getAllSkills_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-          <folding>
-            <element signature="e#0#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/bug-report_2.md">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/android/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/android/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="3" column="55" selection-start-line="3" selection-start-column="55" selection-end-line="3" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/android/settings.gradle">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/repos/skill_repo.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/core/network/networkInfo_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#70#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/insertNewSkill.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="13" column="51" selection-start-line="13" selection-start-column="51" selection-end-line="13" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/models/skillModel_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="52" column="8" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/entities/skill.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/data/models/skillModel.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="798">
-          <caret line="43" column="15" selection-start-line="43" selection-start-column="15" selection-end-line="43" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/data/repos/skillsRepositoryImpl.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="23" selection-start-line="23" selection-end-line="23" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/core/network/networkInfo.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/domain/usecases/getAllSkills.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="12" column="37" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/features/skills/domain/usecases/insertNewSkill_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="27" column="9" selection-start-line="27" selection-start-column="9" selection-end-line="27" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/lib/features/skills/data/datasources/skillsLocalDataSource.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/pubspec.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/skills/test/features/skills/data/repos/skillsRepositoryImpl_test.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
+  <component name="WindowStateProjectService">
+    <state x="3203" y="350" key="SettingsEditor" timestamp="1603304170850">
+      <screen x="2560" y="23" width="2560" height="1417" />
+    </state>
+    <state x="3203" y="350" key="SettingsEditor/0.23.2560.1417/2560.23.2560.1417@2560.23.2560.1417" timestamp="1603304170850" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Skills_flutter</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Dart Packages</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

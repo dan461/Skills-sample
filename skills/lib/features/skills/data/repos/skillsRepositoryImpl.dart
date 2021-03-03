@@ -28,6 +28,12 @@ class SkillsRepositoryImpl implements SkillRepository {
   }
 
   @override
+  Future<Either<Failure, Map<String, dynamic>>> getSkillGoalMapById(
+      int id) async {
+    return Right(await localDataSource.getSkillGoalMapById(id));
+  }
+
+  @override
   Future<Either<Failure, Skill>> insertNewSkill(Skill skill) async {
     return Right(await localDataSource.insertNewSkill(skill));
   }
@@ -43,9 +49,8 @@ class SkillsRepositoryImpl implements SkillRepository {
   }
 
   @override
-  Future<Either<Failure, int>> updateSkill(Skill skill) async {
-
-    return Right(await localDataSource.updateSkill(skill));
+  Future<Either<Failure, int>> updateSkill(int skillId, Map<String, dynamic> changeMap) async {
+    return Right(await localDataSource.updateSkill(skillId, changeMap));
   }
 
   // @override
@@ -53,7 +58,6 @@ class SkillsRepositoryImpl implements SkillRepository {
   //   return Right(await localDataSource.updateSkill(skillId, changeMap));
   // }
 
-  
   // @override
   // Future<Either<Failure, List<Skill>>> downloadAllSkills() async {
   //   if (await networkInfo.isConnected) {
@@ -66,5 +70,4 @@ class SkillsRepositoryImpl implements SkillRepository {
   //   }
   // }
 
-  
 }

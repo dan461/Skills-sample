@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:skills/core/tickTock.dart';
 import 'package:skills/features/skills/domain/entities/goal.dart';
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/newGoalScreen/newgoal_event.dart';
@@ -64,6 +65,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     return _goalType == 0;
   }
 
+// TODO - BUG: exception thrown if a decimal value used
   int get _goalMinutes {
     int hours = _hoursTextController.text.isNotEmpty
         ? int.parse(_hoursTextController.text)
@@ -86,50 +88,48 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     setState(() {
       _doneEnabled = _startDate != null && _endDate != null && timeOrTaskSet;
     });
-    
+
     // _doneEnabled = _startDate != null && _endDate != null;
   }
 
   void _selectStartDate() async {
-    DateTime lastDate =
-        _endDate == null ? DateTime.now().add(Duration(days: 365)) : _endDate;
+    DateTime lastDate = _endDate ?? TickTock.today().add(Duration(days: 365));
+
     DateTime initialDate =
-        DateTime.now().millisecondsSinceEpoch <= lastDate.millisecondsSinceEpoch
-            ? DateTime.now()
-            : lastDate;
+        TickTock.today().isBefore(lastDate) ? TickTock.today() : lastDate;
+
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
+        firstDate: TickTock.today().subtract(Duration(days: 365)),
         lastDate: lastDate);
 
     if (pickedDate != null) {
       setState(() {
-        _startDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+        _startDate =
+            DateTime.utc(pickedDate.year, pickedDate.month, pickedDate.day);
         print(_startDate);
       });
     }
   }
 
   void _selectEndDate() async {
-    DateTime firstDate = _startDate == null
-        ? DateTime.now().subtract(Duration(days: 365))
-        : _startDate;
+    DateTime firstDate =
+        _startDate ?? TickTock.today().subtract(Duration(days: 365));
 
-    DateTime initialDate = DateTime.now().millisecondsSinceEpoch >=
-            firstDate.millisecondsSinceEpoch
-        ? DateTime.now()
-        : _startDate;
+    DateTime initialDate =
+        TickTock.today().isAfter(firstDate) ? TickTock.today() : _startDate;
 
     DateTime pickedDate = await showDatePicker(
         context: context,
         initialDate: initialDate,
         firstDate: firstDate,
-        lastDate: DateTime.now().add(Duration(days: 365)));
+        lastDate: TickTock.today().add(Duration(days: 365)));
 
     if (pickedDate != null) {
       setState(() {
-        _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+        _endDate =
+            DateTime.utc(pickedDate.year, pickedDate.month, pickedDate.day);
       });
     }
   }
@@ -183,7 +183,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             children: <Widget>[
               Text(
                 'Hours: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -205,7 +205,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             children: <Widget>[
               Text(
                 'Minutes: ',
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Expanded(
                 child: TextField(
@@ -231,7 +231,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
       children: <Widget>[
         Text(
           descText,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
           textAlign: TextAlign.left,
         ),
         Padding(
@@ -240,7 +240,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             child: InkWell(
               child: Text(
                 placeholder,
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               onTap: () {
                 callback();
@@ -268,7 +268,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     widget.skillName,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -339,36 +339,42 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   Widget build(BuildContext context) {
     return BlocProvider<NewgoalBloc>(
       builder: (_) => locator<NewgoalBloc>(),
-      child: Scaffold(
-          appBar: AppBar(),
-          body: BlocBuilder<NewgoalBloc, NewgoalState>(
-            builder: (context, state) {
-              Widget body;
-              if (state is InitialNewgoalState) {
-                body = _goalEditArea(context);
-              } else if (state is NewGoalInsertingState ||
-                  state is AddingGoalToSkillState) {
-                body = Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is NewGoalInsertedState) {
-                // Need to update skill with currentGoalId and goalText
-                BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
-                    skillId: widget.skillId,
-                    goalId: state.newGoal.id,
-                    goalText: _goalTranslation));
-                body = Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is GoalAddedToSkillState) {
-                body = Center(child: CircularProgressIndicator());
+      child: BlocListener<NewgoalBloc, NewgoalState>(
+        listener: (context, state) {
+          if (state is GoalAddedToSkillState) {
+            Navigator.of(context).pop(true);
+          }
+        },
+        child: Builder(builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: BlocBuilder<NewgoalBloc, NewgoalState>(
+              builder: (context, state) {
+                Widget body;
+                if (state is InitialNewgoalState) {
+                  body = _goalEditArea(context);
+                } else if (state is NewGoalInsertingState ||
+                    state is AddingGoalToSkillState) {
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is NewGoalInsertedState) {
+                  // Need to update skill with currentGoalId and goalText
+                  BlocProvider.of<NewgoalBloc>(context).add(AddGoalToSkillEvent(
+                      skillId: widget.skillId, goalId: state.newGoal.goalId));
+                  body = Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is GoalAddedToSkillState) {
+                  body = Center(child: CircularProgressIndicator());
+                }
 
-                Navigator.of(context).pop();
-              }
-
-              return body;
-            },
-          )),
+                return body;
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }

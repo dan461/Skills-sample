@@ -15,12 +15,21 @@ void main() {
     useCase = InsertNewSkill(mockSkillsRepo);
   });
 
-  final testSkill = Skill(name: 'test', source: 'test');
+  final testSkill = Skill(
+      name: 'test',
+      source: 'test',
+      type: 'composition',
+      startDate: DateTime.fromMillisecondsSinceEpoch(0));
 
   test(
     'should insert new skill and return the new skill',
     () async {
-      Skill newSkill = Skill(name: 'new', source: 'new');
+      Skill newSkill = Skill(
+        name: 'new',
+        source: 'new',
+        type: 'composition',
+        startDate: DateTime.fromMillisecondsSinceEpoch(0),
+      );
       when(mockSkillsRepo.insertNewSkill(testSkill))
           .thenAnswer((_) async => Right(newSkill));
       final result = await useCase(SkillInsertOrUpdateParams(skill: testSkill));

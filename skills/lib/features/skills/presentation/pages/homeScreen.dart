@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'skillsScreen.dart';
-import 'schedulerScreen.dart';
-// import 'dataTester.dart';
-// import 'dataManager.dart';
+import 'package:skills/features/skills/presentation/widgets/hamburger.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,35 +7,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
-  static List<Widget> _routes = <Widget>[
-    SkillsScreen(),
-    SchedulerScreen(),
-  ];
-
-  void _itemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.green,
-      body: SafeArea(child: _routes[_selectedIndex]),
-      bottomNavigationBar:
-          BottomNavigationBar(items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          title: Text('Home'),
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        centerTitle: true,
+        title: Text(
+          "Stats",
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.schedule),
-          title: Text('Sched'),
+        leading: Hamburger(
+          parentContext: context,
         ),
-      ], currentIndex: _selectedIndex, onTap: _itemTapped),
+      ),
+      body: Container(
+        child: Center(
+            child: Text(
+          "Stats",
+          style: Theme.of(context).textTheme.headline5,
+        )),
+        // color: Colors.red,
+      ),
     );
   }
 }

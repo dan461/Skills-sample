@@ -16,15 +16,22 @@ void main() {
     sut = UpdateSkill(mockSkillsRepo);
   });
 
-  final testSkill = Skill(name: 'test', source: 'test');
+  final testSkill = Skill(
+    name: 'test',
+    source: 'test',
+    type: 'composition',
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+  );
+
+  Map<String, dynamic> testMap = {'name' : 'test'};
 
   test('should update skill and return int for number of changes made',
       () async {
-    when(mockSkillsRepo.updateSkill(testSkill))
+    when(mockSkillsRepo.updateSkill(testSkill.skillId, testMap))
         .thenAnswer((_) async => Right(1));
-    final result = await sut(SkillInsertOrUpdateParams(skill: testSkill));
+    final result = await sut(SkillUpdateParams(skillId: testSkill.skillId, changeMap: testMap));
     expect(result, Right(1));
-    verify(mockSkillsRepo.updateSkill(testSkill));
+    verify(mockSkillsRepo.updateSkill(testSkill.skillId, testMap));
     verifyNoMoreInteractions(mockSkillsRepo);
   });
 }

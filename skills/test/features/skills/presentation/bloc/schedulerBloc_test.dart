@@ -3,61 +3,91 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mockito/mockito.dart';
+import 'package:skills/core/constants.dart';
+import 'package:skills/core/error/failures.dart';
+import 'package:skills/features/skills/data/models/activityModel.dart';
 import 'package:skills/features/skills/domain/entities/session.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
 import 'package:skills/features/skills/domain/usecases/usecaseParams.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/bloc.dart';
 import 'package:skills/features/skills/presentation/bloc/schedulerScreen/scheduler_bloc.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/calendarControl.dart';
 import '../../mockClasses.dart';
 
 void main() {
   SchedulerBloc sut;
 
-  MockGetSessionsInMonthUC mockGetSessionsInMonthUC;
+  MockGetSessionsInDateRange mockGetSessionsInDateRange;
+  MockGetActivitiesForSessionUC mockGetActivitiesForSessionUC;
+  MockGetMapsForSessionsInDateRange mockGetMapsForSessionsInDateRange;
+
+  // MockCalendarControl mockCalendarControl;
   Session testSession;
   Session testSession1;
   Session testSession2;
   Session testSession3;
-  final testMonth = DateTime(2019, 12);
+  List<Session> testList = [testSession];
+  final testDateRange = [DateTime(2019, 12, 29), DateTime(2020, 1, 1)];
+  Map<String, dynamic> testSessionMap;
 
   setUp(() {
-    mockGetSessionsInMonthUC = MockGetSessionsInMonthUC();
-    sut = SchedulerBloc(getSessionInMonth: mockGetSessionsInMonthUC);
-    sut.activeMonth = testMonth;
+    mockGetSessionsInDateRange = MockGetSessionsInDateRange();
+    mockGetActivitiesForSessionUC = MockGetActivitiesForSessionUC();
+    mockGetMapsForSessionsInDateRange = MockGetMapsForSessionsInDateRange();
+    // mockCalendarControl = MockCalendarControl();
+    // mockCalendarControl.currentMode = CalendarMode.month;
+    sut = SchedulerBloc(
+        getSessionsInDateRange: mockGetSessionsInDateRange,
+        getActiviesForSession: mockGetActivitiesForSessionUC,
+        getMapsForSessionsInDateRange: mockGetMapsForSessionsInDateRange);
+    // sut.calendarControl = mockCalendarControl;
+
     testSession = Session(
-        date: DateTime.now(),
+        date: DateTime(2019, 12, 29),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
-        isCompleted: false,
+        isComplete: false,
         isScheduled: true);
 
     testSession1 = Session(
+        sessionId: 1,
         date: DateTime(2019, 12, 1),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
-        isCompleted: false,
+        isComplete: false,
         isScheduled: true);
 
     testSession2 = Session(
         date: DateTime(2019, 12, 2),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
-        isCompleted: false,
+        isComplete: false,
         isScheduled: true);
 
     testSession3 = Session(
         date: DateTime(2019, 12, 2),
         startTime: TimeOfDay(hour: 12, minute: 0),
-        endTime: TimeOfDay(hour: 12, minute: 0),
-        isCompleted: false,
+        isComplete: false,
         isScheduled: true);
+
+    testList = [testSession];
+
+    ActivityModel testActivityModel = ActivityModel(
+        eventId: 1,
+        skillId: 1,
+        sessionId: 1,
+        date: DateTime(2019, 12, 29),
+        duration: 30,
+        isComplete: false,
+        skillString: 'test');
+
+    List<Activity> activitiesList = [testActivityModel];
+    testSessionMap = {'session': testSession1, 'activities': activitiesList};
   });
 
   test('test bloc initial state is correct', () {
     expect(sut.initialState, equals(InitialSchedulerState()));
   });
 
-  test('test that daySession returns correct list of sessions', () {
-    sut.sessionsForMonth = [testSession1, testSession2, testSession3];
+  test('test that daysSessions returns correct list of sessions', () {
+    sut.sessionsForRange = [testSession1, testSession2, testSession3];
     sut.selectedDay = testSession2.date;
 
     final matcher = [testSession2, testSession3];
@@ -65,19 +95,10 @@ void main() {
   });
 
   test('test that sessionDates returns correct list of DateTimes', () {
-    sut.sessionsForMonth = [testSession1, testSession2, testSession3];
+    sut.sessionsForRange = [testSession1, testSession2, testSession3];
     final matcher = [DateTime(2019, 12, 1), DateTime(2019, 12, 2)];
     final result = sut.sessionDates;
     expect(result, matcher);
-  });
-
-  test(
-      'test that bloc emits [GettingSessionsForMonthState] when MonthSelectedEvent is added',
-      () async {
-    sut.add(MonthSelectedEvent(change: 0));
-
-    final expected = [InitialSchedulerState(), GettingSessionsForMonthState()];
-    expect(sut, emitsInOrder(expected));
   });
 
   group('DaySelectedEvent', () {
@@ -93,33 +114,113 @@ void main() {
     });
   });
 
-  group('GetSessionsInMonth', () {
-    final testList = [testSession];
-    
-    
-    test('test that GetSessionsInMonth usecase is called', () async {
-      
-      when(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)))
+  group('GetSessionsInDateRange', () {
+    test(
+        'test that GetSessionsInDateRange usecase is called when date range changes in Month mode',
+        () async {
+      when(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Right(testList));
-      
-      sut.add(GetSessionsForMonthEvent());
+
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
       await untilCalled(
-          mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)));
-      verify(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)));
+          mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)));
+      verify(
+          mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)));
     });
 
     test(
-        'test that bloc emits [SessionsForMonthReturnedState] when GetSessionsForMonthEvent event occurs',
+        'test that bloc emits [SessionsForRangeReturnedState] when VisibleDateRangeChangeEvent event occurs in Month mode',
         () async {
-      when(mockGetSessionsInMonthUC(SessionInMonthParams(testMonth)))
+      when(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)))
           .thenAnswer((_) async => Right(testList));
 
       final expected = [
         InitialSchedulerState(),
-        SessionsForMonthReturnedState(testList)
+        // GettingSessionsForDateRangeState(),
+        SessionsForRangeReturnedState(testList)
       ];
       expectLater(sut, emitsInOrder(expected));
-      sut.add(GetSessionsForMonthEvent());
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
+    });
+
+    test(
+        'test that bloc emits [SchedulerErrorState] when VisibleDateRangeChangeEvent event occurs in Month mode and results in a failure',
+        () async {
+      when(mockGetSessionsInDateRange(SessionsInDateRangeParams(testDateRange)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+
+      final expected = [
+        InitialSchedulerState(),
+        // GettingSessionsForDateRangeState(),
+        SchedulerErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
+    });
+  });
+
+  group('GetSessionMapsInDateRange', () {
+    test(
+        'test that GetSessionMapsInDateRange is called when VisibleDateRangeChangeEvent event occurs in Week mode ',
+        () async {
+      List<Map> testMaps = [testSessionMap];
+      sut.calendarControl.currentMode = CalendarMode.week;
+      when(mockGetMapsForSessionsInDateRange(
+              SessionsInDateRangeParams(testDateRange)))
+          .thenAnswer((_) async => Right(testMaps));
+
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
+      await untilCalled(mockGetMapsForSessionsInDateRange(
+          SessionsInDateRangeParams(testDateRange)));
+      verify(mockGetMapsForSessionsInDateRange(
+          SessionsInDateRangeParams(testDateRange)));
+    });
+
+    test(
+        'test that GetSessionMapsInDateRange is called when VisibleDateRangeChangeEvent event occurs in Day mode ',
+        () async {
+      List<Map> testMaps = [testSessionMap];
+      sut.calendarControl.currentMode = CalendarMode.day;
+      when(mockGetMapsForSessionsInDateRange(
+              SessionsInDateRangeParams(testDateRange)))
+          .thenAnswer((_) async => Right(testMaps));
+
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
+      await untilCalled(mockGetMapsForSessionsInDateRange(
+          SessionsInDateRangeParams(testDateRange)));
+      verify(mockGetMapsForSessionsInDateRange(
+          SessionsInDateRangeParams(testDateRange)));
+    });
+
+    test(
+        'test that GetSessionMapsInDateRange returns [SessionsForRangeReturnedState] on successful call',
+        () async {
+      List<Map> testMaps = [testSessionMap];
+      sut.calendarControl.currentMode = CalendarMode.day;
+      when(mockGetMapsForSessionsInDateRange(
+              SessionsInDateRangeParams(testDateRange)))
+          .thenAnswer((_) async => Right(testMaps));
+      final expected = [
+        InitialSchedulerState(),
+        SessionsForRangeReturnedState(testMaps)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
+    });
+
+    test(
+        'test that GetSessionMapsInDateRange returns [SchedulerErrorState] on unsuccessful call',
+        () async {
+      sut.calendarControl.currentMode = CalendarMode.day;
+      when(mockGetMapsForSessionsInDateRange(
+              SessionsInDateRangeParams(testDateRange)))
+          .thenAnswer((_) async => Left(CacheFailure()));
+      final expected = [
+        InitialSchedulerState(),
+        SchedulerErrorState(CACHE_FAILURE_MESSAGE)
+      ];
+      expectLater(sut, emitsInOrder(expected));
+      sut.add(VisibleDateRangeChangeEvent(testDateRange));
     });
   });
 }

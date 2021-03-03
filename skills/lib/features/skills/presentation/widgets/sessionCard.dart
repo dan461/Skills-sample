@@ -1,23 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:skills/features/skills/domain/entities/skillEvent.dart';
+import 'package:skills/core/tickTock.dart';
+import 'package:skills/features/skills/domain/entities/activity.dart';
+import 'package:skills/features/skills/presentation/widgets/CalendarWidgets/dayDetails.dart';
 
 import '../../domain/entities/session.dart';
 
 class SessionCard extends StatefulWidget {
-  Map<String, dynamic> sessionMap;
+  final Map<String, dynamic> sessionMap;
+  final ShowSessionEditorCallback editorCallback;
 
-  SessionCard({Key key, @required this.sessionMap}) : super(key: key);
+  SessionCard(
+      {Key key, @required this.sessionMap, @required this.editorCallback})
+      : super(key: key);
 
   @override
-  _SessionCardState createState() => _SessionCardState(sessionMap);
+  _SessionCardState createState() =>
+      _SessionCardState(sessionMap, editorCallback);
 }
 
 class _SessionCardState extends State<SessionCard> {
   Map<String, dynamic> sessionMap;
-  _SessionCardState(this.sessionMap);
+  final ShowSessionEditorCallback editorCallback;
+  _SessionCardState(this.sessionMap, this.editorCallback);
 
   // TODO - should probably get this value somewhere else, maybe add to Session entity
-  int openTime = 0;
+  int get availableTime {
+    Session session = sessionMap['session'];
+    List<Activity> activities = sessionMap['activities'];
+    var time = session.duration;
+    for (var activity in activities) {
+      time -= activity.duration;
+    }
+
+    return time;
+  }
+
+  TimeOfDay get sessionEndTime {
+    Session session = sessionMap['session'];
+    return TickTock.timeFromInt(TickTock.timeToInt(session.startTime) + session.duration);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,44 +55,33 @@ class _SessionCardState extends State<SessionCard> {
   @override
   Widget build(BuildContext context) {
     Session session = sessionMap['session'];
-    List<SkillEvent> events = sessionMap['events'];
-    openTime = session.duration;
-    for (var event in events) {
-      openTime -= event.duration;
-    }
-
-    return Card(
-      color: Colors.amber[300],
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(6))),
-      child: GestureDetector(
+    List<Activity> activities = sessionMap['activities'];
+    // TimeOfDay sessionEnd = TickTock.timeFromInt(TickTock.timeToInt(session.startTime) + session.duration);
+    return GestureDetector(
+      onTap: () {
+        editorCallback(session);
+      },
+      child: Card(
+        color: Colors.amber[300],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6))),
         child: Container(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
             child: IntrinsicHeight(
               child: Row(
                 children: <Widget>[
-                  _timeSection(session.startTime, session.endTime),
+                  _timeSection(session.startTime, sessionEndTime),
                   Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: _middleSectionBuilder(events)),
+                        children: _middleSectionBuilder(
+                            activities, session.duration)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Column(
-                      children: <Widget>[
-                        InkWell(
-                          child: Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.grey,
-                            size: 20,
-                          ),
-                          onTap: () {
-                            _markSessionComplete();
-                          },
-                        )
-                      ],
+                      children: <Widget>[_completedIconBuilder(session)],
                     ),
                   )
                 ],
@@ -78,50 +89,42 @@ class _SessionCardState extends State<SessionCard> {
             ),
           ),
         ),
-        onTap: () {
-          _showSessionDetails();
-        },
       ),
     );
   }
 
-  String createTimeString(int time) {
-    String timeString;
+  // ***** BUILDERS *********
 
-    String hours;
-    String min;
-    if (time < 60) {
-      min = time.toString();
-      timeString = '$min minutes';
-    } else if (time == 60) {
-      timeString = '1 hour';
+  Widget _completedIconBuilder(Session session) {
+    Widget content;
+    if (session.isComplete) {
+      content = Icon(
+        Icons.check,
+        color: Colors.green,
+        size: 20,
+      );
     } else {
-      hours = (time / 60).floor().toString();
-      timeString = '$hours hrs';
-      if (time % 60 != 0) {
-        min = (time % 60).toString();
-        timeString = '$hours hrs $min min';
-      }
+      content = SizedBox();
     }
 
-    return timeString;
+    return content;
   }
 
-  Row _headerBuilder(int count, int duration) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          child: Text('$duration min.'),
-        ),
-        Text(
-          '$openTime min. open',
-          style: Theme.of(context).textTheme.body2,
-        ),
-      ],
-    );
-  }
+  // Row _headerBuilder(int count, int duration) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: <Widget>[
+  //       Padding(
+  //         padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+  //         child: Text('$duration min.'),
+  //       ),
+  //       Text(
+  //         '$availableTime min. open',
+  //         style: Theme.of(context).textTheme.bodyText1,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Container _timeSection(TimeOfDay startTime, TimeOfDay endTime) {
     return Container(
@@ -133,11 +136,11 @@ class _SessionCardState extends State<SessionCard> {
           children: <Widget>[
             Text(
               startTime.format(context),
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
             Text(
               endTime.format(context),
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
           ],
         ),
@@ -145,26 +148,27 @@ class _SessionCardState extends State<SessionCard> {
     );
   }
 
-  List<Widget> _middleSectionBuilder(List<SkillEvent> events) {
+  List<Widget> _middleSectionBuilder(List<Activity> activities, int duration) {
     List<Widget> rows = [];
-    rows.add(
-      _headerBuilder(events.length, 60),
-    );
-    if (events.isEmpty) {
+    // rows.add(
+    //   _headerBuilder(activities.length, duration),
+    // );
+    if (activities.isEmpty) {
       Row emptyRow = Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(height: 30, child: Text('No events')),
+          Container(height: 30, child: Text('No activities')),
         ],
       );
       rows.add(emptyRow);
     } else {
-      for (var event in events) {
-        // create row for event
-        var text =
-            Text(event.skillString, style: Theme.of(context).textTheme.body2);
-        var timeText = Text('45 min', style: Theme.of(context).textTheme.body2);
+      for (var activity in activities) {
+        // create row for activity
+        var text = Text(activity.skillString,
+            style: Theme.of(context).textTheme.bodyText1);
+        var timeText = Text('${activity.duration} min',
+            style: Theme.of(context).textTheme.bodyText1);
         var newRow = Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 2, 2),
             child: Row(
@@ -194,6 +198,25 @@ class _SessionCardState extends State<SessionCard> {
     return rows;
   }
 
-  void _markSessionComplete() {}
-  void _showSessionDetails() {}
+  String createTimeString(int time) {
+    String timeString;
+
+    String hours;
+    String min;
+    if (time < 60) {
+      min = time.toString();
+      timeString = '$min minutes';
+    } else if (time == 60) {
+      timeString = '1 hour';
+    } else {
+      hours = (time / 60).floor().toString();
+      timeString = '$hours hrs';
+      if (time % 60 != 0) {
+        min = (time % 60).toString();
+        timeString = '$hours hrs $min min';
+      }
+    }
+
+    return timeString;
+  }
 }
