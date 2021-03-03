@@ -28,9 +28,9 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   Widget build(BuildContext context) {
     Widget body;
     return BlocProvider(
-      builder: (context) => bloc,
+      create: (context) => bloc,
       child: BlocListener<ActiveSessionBloc, SessionState>(
-        bloc: bloc,
+        cubit: bloc,
         listener: (context, state) {
           if (state is ActiveSessionCompletedState) {
             Navigator.of(context).pop(true);

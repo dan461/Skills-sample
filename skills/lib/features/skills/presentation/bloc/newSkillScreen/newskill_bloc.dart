@@ -13,12 +13,9 @@ part 'newskill_state.dart';
 class NewskillBloc extends Bloc<NewskillEvent, NewSkillState> {
   final InsertNewSkill insertNewSkillUC;
 
-  NewskillBloc({this.insertNewSkillUC});
+  NewskillBloc({this.insertNewSkillUC}) : super(InitialNewSkillState());
 
   Skill newSkill;
-
-  @override
-  NewSkillState get initialState => InitialNewSkillState();
 
   @override
   Stream<NewSkillState> mapEventToState(
@@ -26,8 +23,8 @@ class NewskillBloc extends Bloc<NewskillEvent, NewSkillState> {
   ) async* {
     if (event is CreateNewSkillEvent) {
       yield CreatingNewSkillState();
-      final failureOrNewId =
-          await insertNewSkillUC(SkillInsertOrUpdateParams(skill: event.newSkill));
+      final failureOrNewId = await insertNewSkillUC(
+          SkillInsertOrUpdateParams(skill: event.newSkill));
       yield failureOrNewId.fold(
           (failure) => NewSkillErrorState(CACHE_FAILURE_MESSAGE),
           (newSkill) => NewSkillInsertedState());

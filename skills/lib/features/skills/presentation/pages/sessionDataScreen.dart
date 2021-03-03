@@ -53,9 +53,9 @@ class _SessionDataScreenState extends State<SessionDataScreen> {
   Widget build(BuildContext context) {
     Widget body;
     return BlocProvider(
-      builder: (context) => bloc,
+      create: (context) => bloc,
       child: BlocListener<SessiondataBloc, SessionState>(
-        bloc: bloc,
+        cubit: bloc,
         listener: (context, state) {
           if (state is SessionWasDeletedState) {
             Navigator.of(context).pop();

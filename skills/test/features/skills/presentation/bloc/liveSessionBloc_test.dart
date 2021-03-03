@@ -45,14 +45,10 @@ void main() {
     testActivitiesList = [testActivity];
   });
 
-  test('test for correct initial state', () {
-    expect(sut.initialState, equals(LiveSessionScreenInitial()));
-  });
-
   test(
       'test bloc emits LiveSessionReadyState after LiveSessionActivitySelectedEvent is added',
       () async {
-    final expected = [LiveSessionScreenInitial(), LiveSessionReadyState()];
+    final expected = [LiveSessionReadyState()];
     expectLater(sut, emitsInOrder(expected));
     sut.add(LiveSessionSkillSelectedEvent(skill: testSkill));
   });
@@ -61,10 +57,7 @@ void main() {
       'test bloc emits [LiveSessionSelectOrFinishState] after a LiveSessionActivityFinishedEvent is added',
       () async {
     sut.selectedSkill = testSkill;
-    final expected = [
-      LiveSessionScreenInitial(),
-      LiveSessionSelectOrFinishState()
-    ];
+    final expected = [LiveSessionSelectOrFinishState()];
     expectLater(sut, emitsInOrder(expected));
     sut.add(LiveSessionActivityFinishedEvent(elapsedTime: 30, notes: ''));
   });
@@ -73,10 +66,7 @@ void main() {
       'test bloc emits [LiveSessionSelectOrFinishState] after a LiveSessionActivityCancelledEvent is added',
       () async {
     sut.selectedSkill = testSkill;
-    final expected = [
-      LiveSessionScreenInitial(),
-      LiveSessionSelectOrFinishState()
-    ];
+    final expected = [LiveSessionSelectOrFinishState()];
     expectLater(sut, emitsInOrder(expected));
     sut.add(LiveSessionActivityCancelledEvent());
   });
@@ -88,11 +78,7 @@ void main() {
             session: testSession, activities: testActivitiesList)))
         .thenAnswer((_) async => Right(1));
 
-    final expected = [
-      LiveSessionScreenInitial(),
-      LiveSessionProcessingState(),
-      LiveSessionFinishedState()
-    ];
+    final expected = [LiveSessionProcessingState(), LiveSessionFinishedState()];
     expectLater(sut, emitsInOrder(expected));
     sut.add(LiveSessionFinishedEvent());
   });

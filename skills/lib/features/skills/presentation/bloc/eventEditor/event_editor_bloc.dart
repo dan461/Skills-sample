@@ -3,8 +3,7 @@ import 'package:bloc/bloc.dart';
 import './bloc.dart';
 
 class EventEditorBloc extends Bloc<EventEditorEvent, EventEditorState> {
-  @override
-  EventEditorState get initialState => InitialEventEditorState();
+  EventEditorBloc() : super(InitialEventEditorState());
 
   @override
   Stream<EventEditorState> mapEventToState(

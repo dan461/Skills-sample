@@ -18,10 +18,8 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
   GoalModel goalModel;
   String goalTranslation = 'none';
 
-  GoaleditorBloc({this.updateGoalUC, this.deleteGoalWithId, this.getGoalById});
-
-  @override
-  GoalEditorState get initialState => EmptyGoalEditorState();
+  GoaleditorBloc({this.updateGoalUC, this.deleteGoalWithId, this.getGoalById})
+      : super(EmptyGoalEditorState());
 
   bool goalIsChanged(Map changeMap) {
     bool response = false;
@@ -56,7 +54,7 @@ class GoaleditorBloc extends Bloc<GoalEditorEvent, GoalEditorState> {
             timeRemaining: goal.goalTime,
             desc: goal.desc != null ? goal.desc : "");
         return GoalEditorGoalReturnedState(goal: goal);
-      }); 
+      });
 
       // edit Goal
     } else if (event is EditGoalEvent) {

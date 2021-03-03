@@ -32,7 +32,7 @@ class _SchedulerScreenState extends State<SchedulerScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (BuildContext context) => _bloc,
+      create: (BuildContext context) => _bloc,
       child: Scaffold(
         appBar: AppBar(
             centerTitle: true,

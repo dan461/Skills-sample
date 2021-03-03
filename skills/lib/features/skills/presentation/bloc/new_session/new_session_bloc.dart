@@ -15,7 +15,7 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
 
   NewSessionBloc({
     this.insertNewSession,
-  });
+  }) : super(InitialNewSessionState());
 
   TimeOfDay selectedStartTime;
   TimeOfDay selectedFinishTime;
@@ -33,9 +33,6 @@ class NewSessionBloc extends Bloc<NewSessionEvent, NewSessionState> {
   void onTransition(Transition<NewSessionEvent, NewSessionState> transition) {
     super.onTransition(transition);
   }
-
-  @override
-  NewSessionState get initialState => InitialNewSessionState();
 
   @override
   Stream<NewSessionState> mapEventToState(

@@ -35,10 +35,6 @@ void main() {
         isScheduled: true);
   });
 
-  test('test bloc initial state is correct', () {
-    expect(sut.initialState, equals(InitialNewSessionState()));
-  });
-
   group('InsertNewSession', () {
     test('test that InsertNewSession usecase is called', () async {
       when(mockInsertNewSessionUC(
@@ -58,7 +54,6 @@ void main() {
               SessionInsertOrUpdateParams(session: testSession)))
           .thenAnswer((_) async => Right(newSession));
       final expected = [
-        InitialNewSessionState(),
         NewSessionCrudInProgressState(),
         NewSessionInsertedState(newSession: newSession)
       ];
@@ -73,7 +68,6 @@ void main() {
               SessionInsertOrUpdateParams(session: testSession)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        InitialNewSessionState(),
         NewSessionCrudInProgressState(),
         NewSessionErrorState(CACHE_FAILURE_MESSAGE)
       ];

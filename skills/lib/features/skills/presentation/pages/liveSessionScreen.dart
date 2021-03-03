@@ -46,9 +46,9 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (context) => bloc,
+      create: (context) => bloc,
       child: BlocListener<LiveSessionScreenBloc, LiveSessionScreenState>(
-        bloc: bloc,
+        cubit: bloc,
         listener: (context, state) {
           if (state is LiveSessionFinishedState)
             Navigator.of(context).pop(true);

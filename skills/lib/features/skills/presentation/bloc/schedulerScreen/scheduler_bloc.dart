@@ -46,7 +46,8 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
   SchedulerBloc(
       {this.getSessionsInDateRange,
       this.getActiviesForSession,
-      this.getMapsForSessionsInDateRange}) {
+      this.getMapsForSessionsInDateRange})
+      : super(InitialSchedulerState()) {
     calendarControl.dataSource = this;
     calendarEvents = sessionsForRange;
   }
@@ -74,9 +75,6 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState>
     }
     return found;
   }
-
-  @override
-  SchedulerState get initialState => InitialSchedulerState();
 
   @override
   void onTransition(Transition<SchedulerEvent, SchedulerState> transition) {

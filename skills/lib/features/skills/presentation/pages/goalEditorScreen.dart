@@ -98,10 +98,10 @@ class _GoalEditorScreenState extends State<GoalEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (_) => _goalEditorBloc,
+      create: (_) => _goalEditorBloc,
       child: Builder(builder: (BuildContext context) {
         return BlocListener(
-          bloc: _goalEditorBloc,
+          cubit: _goalEditorBloc,
           listener: (context, state) {
             if (state is GoalUpdatedState || state is GoalDeletedState) {
               Navigator.of(context).pop(true);

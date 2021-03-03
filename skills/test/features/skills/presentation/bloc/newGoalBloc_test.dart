@@ -45,10 +45,6 @@ void main() {
         goalTime: 0);
   });
 
-  test('test bloc initial state is correct', () {
-    expect(sut.initialState, equals(InitialNewgoalState()));
-  });
-
   group('InsertNewGoal', () {
     test('test that InsertNewGoal usecase called', () async {
       when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
@@ -64,11 +60,7 @@ void main() {
         () async {
       when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => Right(newGoal));
-      final expected = [
-        InitialNewgoalState(),
-        NewGoalInsertingState(),
-        NewGoalInsertedState(newGoal)
-      ];
+      final expected = [NewGoalInsertingState(), NewGoalInsertedState(newGoal)];
       expectLater(sut, emitsInOrder(expected));
       sut.add(InsertNewGoalEvent(testGoal));
     });
@@ -79,7 +71,6 @@ void main() {
       when(mockInsertNewGoalUC(GoalCrudParams(id: null, goal: testGoal)))
           .thenAnswer((_) async => prefix1.Left(CacheFailure()));
       final expected = [
-        InitialNewgoalState(),
         NewGoalInsertingState(),
         NewGoalErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -90,24 +81,20 @@ void main() {
 
   group('AddGoalToSkill', () {
     test('test that AddGoalToSkill is called', () async {
-      when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1)))
+      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)))
           .thenAnswer((_) async => Right(1));
       sut.add(AddGoalToSkillEvent(skillId: 1, goalId: 1));
-      await untilCalled(mockAddGoalToSkill(
-          AddGoalToSkillParams(skillId: 1, goalId: 1)));
-      verify(mockAddGoalToSkill(
-          AddGoalToSkillParams(skillId: 1, goalId: 1)));
+      await untilCalled(
+          mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)));
+      verify(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)));
     });
 
     test(
         'test that bloc emits [AddingGoalToSkillState, GoalAddedToSkillState] on successful add',
         () async {
-      when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1)))
+      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)))
           .thenAnswer((_) async => Right(1));
       final expected = [
-        InitialNewgoalState(),
         AddingGoalToSkillState(),
         GoalAddedToSkillState(newId: 1, goalText: 'none')
       ];
@@ -118,11 +105,9 @@ void main() {
     test(
         'test that bloc emits [AddingGoalToSkillState, GoalEditorErrorState] upon unsuccessful add',
         () async {
-      when(mockAddGoalToSkill(
-              AddGoalToSkillParams(skillId: 1, goalId: 1)))
+      when(mockAddGoalToSkill(AddGoalToSkillParams(skillId: 1, goalId: 1)))
           .thenAnswer((_) async => prefix1.Left(CacheFailure()));
       final expected = [
-        InitialNewgoalState(),
         AddingGoalToSkillState(),
         NewGoalErrorState(CACHE_FAILURE_MESSAGE)
       ];

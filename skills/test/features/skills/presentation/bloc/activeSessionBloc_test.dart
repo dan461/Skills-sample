@@ -56,17 +56,12 @@ void main() {
     changeMap = {'isComplete': true, 'duration': testSession.duration};
   });
 
-  test('test for correct initial state', () {
-    expect(sut.initialState, equals(ActiveSessionInitial()));
-  });
-
   test(
       'test for bloc emitting [ActiveSessionInfoLoadedState] after ActiveSessionLoadInfoEvent added',
       () async {
     sut.add(ActiveSessionLoadInfoEvent(
         session: testSession, activities: testActivitiesList));
     final expected = [
-      ActiveSessionInitial(),
       ActiveSessionInfoLoadedState(
           activities: testActivitiesList, duration: testSession.duration)
     ];
@@ -77,10 +72,7 @@ void main() {
       'test for bloc emitting [ActivityReadyState] after ActivitySelectedForTimerEvent is added.',
       () async {
     sut.add(ActivitySelectedForTimerEvent(selectedActivity: testActivity));
-    final expected = [
-      ActiveSessionInitial(),
-      ActivityReadyState(activity: testActivity)
-    ];
+    final expected = [ActivityReadyState(activity: testActivity)];
     expectLater(sut, emitsInOrder(expected));
   });
 
@@ -95,10 +87,7 @@ void main() {
       'test for bloc emitting [ActivityTimerStoppedState] after ActivityTimerStoppedEvent is added.',
       () async {
     sut.add(ActivityTimerStoppedEvent());
-    final expected = [
-      ActiveSessionInitial(),
-      ActivityTimerStoppedState(activity: testActivity)
-    ];
+    final expected = [ActivityTimerStoppedState(activity: testActivity)];
     expectLater(sut, emitsInOrder(expected));
   });
 
@@ -124,7 +113,6 @@ void main() {
       sut.add(CurrentActivityFinishedEvent(
           activity: testActivity, elapsedTime: 20));
       final expected = [
-        ActiveSessionInitial(),
         ActiveSessionProcessingState(),
         CurrentActivityFinishedState()
       ];
@@ -141,7 +129,6 @@ void main() {
       sut.add(CurrentActivityFinishedEvent(
           activity: testActivity, elapsedTime: 20));
       final expected = [
-        ActiveSessionInitial(),
         ActiveSessionProcessingState(),
         ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -169,7 +156,6 @@ void main() {
 
       sut.add(ActiveSessionRefreshActivitiesEvent());
       final expected = [
-        ActiveSessionInitial(),
         ActiveSessionProcessingState(),
         ActiveSessionActivitiesRefreshedState(
             duration: testSession.duration, activities: testActivitiesList)
@@ -186,7 +172,6 @@ void main() {
 
       sut.add(ActiveSessionRefreshActivitiesEvent());
       final expected = [
-        ActiveSessionInitial(),
         ActiveSessionProcessingState(),
         ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
       ];
@@ -214,7 +199,6 @@ void main() {
 
       sut.add(CompleteActiveSessionEvent());
       final expected = [
-        ActiveSessionInitial(),
         ActiveSessionProcessingState(),
         ActiveSessionCompletedState()
       ];
@@ -230,7 +214,6 @@ void main() {
 
       sut.add(CompleteActiveSessionEvent());
       final expected = [
-        ActiveSessionInitial(),
         ActiveSessionProcessingState(),
         ActiveSessionErrorState(CACHE_FAILURE_MESSAGE)
       ];

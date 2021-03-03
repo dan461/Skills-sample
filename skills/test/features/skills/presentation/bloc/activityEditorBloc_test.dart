@@ -94,12 +94,11 @@ void main() {
     test(
         'test that bloc emits [ActivityEditorCrudInProgressState, ActivityEditorUpdateCompleteState] after successful update.',
         () async {
-          sut.selectedDuration = 25;
+      sut.selectedDuration = 25;
       when(mockUpdateActivityUC(
               ActivityUpdateParams(changeMap: map, activityId: 1)))
           .thenAnswer((_) async => Right(1));
       final expected = [
-        ActivityEditorInitial(),
         ActivityEditorCrudInProgressState(),
         ActivityEditorUpdateCompleteState()
       ];
@@ -110,12 +109,11 @@ void main() {
     test(
         'test that bloc emits [ActivityEditorCrudInProgressState, ActivityEditorErrorState] after unsuccessful update.',
         () async {
-          sut.selectedDuration = 25;
+      sut.selectedDuration = 25;
       when(mockUpdateActivityUC(
               ActivityUpdateParams(changeMap: map, activityId: 1)))
           .thenAnswer((_) async => Left(CacheFailure()));
       final expected = [
-        ActivityEditorInitial(),
         ActivityEditorCrudInProgressState(),
         ActivityEditorErrorState(CACHE_FAILURE_MESSAGE)
       ];

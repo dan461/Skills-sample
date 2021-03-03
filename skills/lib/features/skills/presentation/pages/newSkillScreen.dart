@@ -21,9 +21,9 @@ class _NewSkillScreenState extends State<NewSkillScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        builder: (BuildContext context) => bloc,
+        create: (BuildContext context) => bloc,
         child: BlocListener<NewskillBloc, NewSkillState>(
-          bloc: bloc,
+          cubit: bloc,
           listener: (context, state) {
             if (state is NewSkillInsertedState) {
               Navigator.of(context).pop();
